@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#D92323"/>
+<meta name="color-scheme" content="light"/>
+<link rel="icon" href="data:,"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<title>Karter's Learning Center</title>
+<style>
+:root{--red:#D92323;--red-d:#B91C1C;--orange:#FF6B1A;--gold:#FFB800;--gold-l:#FFF3C4;--cream:#FFF8EE;--ink:#2B1608;--muted:#7A5A44;--card:#fff;--line:#FFE1B8;--green:#16A34A;--green-bg:#DCFCE7;--radius:24px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden}
+h1,h2,h3,.fred{font-family:'Fredoka',sans-serif;letter-spacing:-.02em}
+button{font-family:inherit;cursor:pointer}
+.topbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:4px solid var(--red);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Fredoka';font-weight:700;font-size:20px;line-height:1;color:var(--red-d)}
+.brand small{display:block;font-family:'Nunito';font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.stars-pill{background:var(--gold);color:#431407;padding:8px 14px;border-radius:999px;font-weight:900;font-size:15px;white-space:nowrap}
+.hero{background:var(--red);color:#fff;padding:28px 18px 34px;position:relative;overflow:hidden}
+.hero-inner{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:center;position:relative;z-index:2}
+.hero h1{font-size:clamp(36px,6vw,62px);line-height:.95;margin:0}
+.hero h1 span{color:var(--gold)}
+.hero p{font-size:18px;line-height:1.5;font-weight:700;opacity:.95;max-width:560px}
+.hero-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.hstat{background:#fff;color:var(--ink);border-radius:16px;padding:10px 14px}
+.hstat b{font-family:'Fredoka';font-size:22px;display:block;line-height:1}
+.hstat span{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.court-visual{background:#fff;border-radius:28px;padding:18px;text-align:center;box-shadow:0 12px 0 rgba(0,0,0,.18)}
+.court-visual p{color:var(--ink);font-weight:900;margin:8px 0 0}
+.ball{width:92px;height:92px;margin:8px auto;border-radius:50%;background:#FF6B1A;border:4px solid #7C2D12;position:relative;overflow:hidden}
+.ball:before,.ball:after{content:"";position:absolute;background:#7C2D12}
+.ball:before{width:4px;height:100%;left:50%;top:0}.ball:after{width:100%;height:4px;top:50%;left:0}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 16px 48px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:-18px auto 18px;position:relative;z-index:3;max-width:720px}
+.tab{border:4px solid var(--ink);border-radius:999px;padding:16px;font-family:'Fredoka';font-size:20px;font-weight:700;background:#fff;box-shadow:0 5px 0 var(--ink)}
+.tab.active{background:var(--gold);box-shadow:0 2px 0 var(--ink);transform:translateY(2px)}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap}
+.section-head h2{font-size:32px;margin:6px 0 4px}
+.section-head p{margin:0;color:var(--muted);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.tcard{background:#fff;border:3px solid var(--line);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;gap:10px}
+.tcard:hover{border-color:var(--gold)}
+.ticon{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;font-size:28px;background:var(--gold-l);border:2px solid #FDE68A}
+.tcard h3{margin:0;font-size:22px}
+.tcard p{margin:0;color:var(--muted);font-weight:700;font-size:14px;line-height:1.5;flex:1}
+.meta{font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--red)}
+.play-btn{border:none;background:var(--red);color:#fff;padding:14px;border-radius:999px;font-family:'Fredoka';font-size:18px;font-weight:700;width:100%}
+.play-btn:active{transform:scale(.98)}
+/* Practice */
+#practiceView{display:none}
+.p-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.back{border:3px solid var(--ink);background:#fff;border-radius:999px;padding:10px 16px;font-weight:900}
+.leo-row{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:start}
+.leo-face{width:110px;height:110px;background:#fff;border:3px solid var(--gold);border-radius:24px;display:grid;place-items:center}
+.bubble{background:#fff;border:3px solid var(--ink);border-radius:20px;padding:16px 18px;position:relative;font-size:17px;line-height:1.55;font-weight:800;min-height:110px}
+.bubble b{color:var(--red-d)}
+.bubble:before{content:"";position:absolute;left:-13px;top:28px;width:20px;height:20px;background:#fff;border-left:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(45deg)}
+.gamecard{background:#fff;border:3px solid var(--line);border-radius:28px;padding:22px;margin-top:16px;box-shadow:0 8px 0 #FFE1B8}
+.qlabel{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:900;color:var(--orange)}
+.question{font-family:'Fredoka';font-size:clamp(32px,6vw,52px);line-height:1.1;margin:10px 0;text-align:center;word-break:break-word}
+.clue{ text-align:center;font-size:18px;font-weight:800;color:#5B3A22;line-height:1.6;background:#FFF7ED;border:2px dashed #FDBA74;border-radius:16px;padding:14px}
+.visual{display:flex;justify-content:center;margin:10px 0}
+.answer-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.answer-input{font-family:'Fredoka';font-size:32px;text-align:center;width:min(280px,100%);padding:14px;border:4px solid var(--ink);border-radius:18px;outline:none}
+.answer-input:focus{border-color:var(--red);box-shadow:0 0 0 4px #FECACA}
+.check-btn{background:var(--green);color:#fff;border:none;padding:16px 28px;border-radius:999px;font-family:'Fredoka';font-size:20px;font-weight:700}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:520px;margin:16px auto 0}
+.choice{padding:16px;border-radius:16px;border:3px solid var(--ink);background:#fff;font-family:'Fredoka';font-size:22px;font-weight:700}
+.choice:hover{background:var(--gold-l)}
+.feedback{margin-top:14px;border-radius:16px;padding:14px 16px;font-weight:800;line-height:1.55;display:none}
+.feedback.good{display:block;background:var(--green-bg);border:2px solid #86EFAC;color:#14532D}
+.feedback.bad{display:block;background:#FEF2F2;border:2px solid #FECACA;color:#7F1D1D}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.ghost{border:3px solid var(--ink);background:#fff;border-radius:999px;padding:11px 18px;font-weight:900}
+.goldbtn{border:3px solid var(--ink);background:var(--gold);border-radius:999px;padding:11px 18px;font-weight:900}
+/* Wizard */
+.modal{position:fixed;inset:0;background:rgba(43,22,8,.72);z-index:50;display:none;align-items:flex-end;justify-content:center;padding:12px}
+.modal.open{display:flex}
+.sheet{background:#fff;width:min(640px,100%);border-radius:28px 28px 20px 20px;padding:22px;max-height:88vh;overflow:auto}
+.sheet h3{font-size:28px;margin:4px 0}
+.stepdots{display:flex;gap:6px;margin:12px 0}.dot{width:36px;height:8px;border-radius:999px;background:#E5E7EB}.dot.on{background:var(--red)}
+.stepbox{background:#FFF7ED;border:2px solid var(--line);border-radius:18px;padding:16px;font-size:17px;line-height:1.6;font-weight:700}
+.example-big{font-family:'Fredoka';font-size:36px;text-align:center;margin:10px 0;color:var(--red-d)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:var(--ink);color:#fff;padding:12px 18px;border-radius:999px;font-weight:900;z-index:60;display:none}
+@media(max-width:760px){.hero-inner{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.tabs{grid-template-columns:1fr 1fr}.leo-row{grid-template-columns:78px 1fr}.leo-face{width:78px;height:78px}.choices{grid-template-columns:1fr}.brand{font-size:17px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Music dock */
+.music-dock{position:fixed;left:10px;right:10px;bottom:10px;z-index:45;max-width:860px;margin:0 auto}
+.music-bar{background:#B91C1C;color:#fff;border:3px solid #2B1608;border-radius:999px;box-shadow:0 6px 0 rgba(43,22,8,.35);padding:6px 8px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
+.music-play{width:50px;height:50px;flex:0 0 50px;border-radius:50%;border:3px solid #2B1608;background:#FFB800;color:#2B1608;font-size:28px;line-height:1;display:grid;place-items:center;box-shadow:0 4px 0 #2B1608}
+.music-play:active{transform:translateY(2px);box-shadow:0 2px 0 #2B1608}
+.music-meta{flex:1;min-width:120px}
+.music-meta b{font-family:'Fredoka';font-size:18px;display:block;line-height:1.1}
+.music-meta span{font-size:13px;font-weight:800;opacity:.92}
+.music-vol{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);padding:8px 10px;border-radius:999px}
+.music-vol label{font-size:12px;font-weight:900;letter-spacing:.04em}
+.music-vol input[type=range]{width:110px;accent-color:#FFB800;height:28px}
+.audio-only{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;left:-9999px;top:0}
+.audio-only iframe,.audio-only>div{width:1px;height:1px}
+body{padding-bottom:92px}
+@media(max-width:560px){.music-bar{gap:8px;padding:8px 10px;flex-wrap:wrap;border-radius:22px}.music-play{width:54px;height:54px;flex-basis:54px;font-size:24px}.music-meta b{font-size:16px}.music-meta span{font-size:12px}.music-vol{padding:6px 8px}.music-vol input[type=range]{width:70px}.music-meta{min-width:110px}body{padding-bottom:140px}}
+.bounce{animation:b .5s ease}@keyframes b{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <svg width="46" height="46" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="54" r="34" fill="#FFB800"/><circle cx="28" cy="28" r="13" fill="#FFB800"/><circle cx="72" cy="28" r="13" fill="#FFB800"/><circle cx="50" cy="54" r="24" fill="#FFEDB3"/><circle cx="42" cy="50" r="3.5" fill="#2B1608"/><circle cx="58" cy="50" r="3.5" fill="#2B1608"/><ellipse cx="50" cy="60" rx="6" ry="4" fill="#D92323"/><path d="M42 68 Q50 74 58 68" stroke="#2B1608" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+    <div>KARTER'S LEARNING CENTER<small>Math • Spelling • Basketball Fun</small></div>
+  </div>
+  <div class="stars-pill">⭐ <span id="totalStars">0</span> Stars</div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="fred" style="font-size:15px;letter-spacing:.14em;color:#FFD34D;margin-bottom:8px">🏀 KARTER'S LEARNING CENTER 🦁</div><h1>ROAR. SHOOT.<br><span>LEARN &amp; WIN!</span></h1>
+      <p>I'm Leo the Lion Coach! Pick a game on my basketball court. I'll show you an example first, cheer you on, and help you fix mistakes until you get it right — then we dribble to the next one!</p>
+      <div class="hero-stats">
+        <div class="hstat"><b>One at a time</b><span>Just you &amp; Leo</span></div>
+        <div class="hstat"><b>No rushing</b><span>Learn at your pace</span></div>
+        <div class="hstat"><b>Try again</b><span>Until you get it right</span></div>
+      </div>
+    </div>
+    <div class="court-visual">
+      <div class="ball" aria-hidden="true"></div>
+      <svg width="130" height="110" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="54" r="36" fill="#FFB800"/><circle cx="26" cy="26" r="14" fill="#FFB800"/><circle cx="74" cy="26" r="14" fill="#FFB800"/><circle cx="50" cy="54" r="25" fill="#FFEDB3"/><circle cx="41" cy="50" r="4" fill="#2B1608"/><circle cx="59" cy="50" r="4" fill="#2B1608"/><ellipse cx="50" cy="61" rx="7" ry="4.5" fill="#D92323"/><path d="M40 69 Q50 77 60 69" stroke="#2B1608" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+      <p>Leo says: “Mistakes help your brain grow. We try again together!”</p>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <!-- HOME -->
+  <div id="homeView">
+    <div class="tabs" role="tablist">
+      <button class="tab active" id="tabMath" onclick="showCat('math')">🏀 MATH COURT</button>
+      <button class="tab" id="tabSpell" onclick="showCat('spelling')">📣 SPELLING COURT</button>
+    </div>
+    <div class="section-head">
+      <div><h2 id="catTitle">Math Court — Pick Your Game!</h2><p id="catSub">Pick a game and play one prompt at a time with Leo. You can stop anytime and come back later — Leo will be waiting!</p></div>
+      <button class="ghost" onclick="openWizard('howto')">✨ How Leo Helps</button>
+    </div>
+    <div class="grid" id="topicGrid"></div>
+
+      </div>
+
+  <!-- PRACTICE -->
+  <div id="practiceView">
+    <div class="p-top">
+      <button class="back" onclick="goHome()">← All Games</button>
+      <span class="fred" id="pTitle" style="font-size:22px"></span>
+      <span class="stars-pill" id="pLevel"></span>
+    </div>
+    <div class="leo-row" style="margin-top:16px">
+      <div class="leo-face"><svg width="86" height="86" viewBox="0 0 100 100"><circle cx="50" cy="54" r="36" fill="#FFB800"/><circle cx="26" cy="26" r="14" fill="#FFB800"/><circle cx="74" cy="26" r="14" fill="#FFB800"/><circle cx="50" cy="54" r="25" fill="#FFEDB3"/><circle cx="41" cy="50" r="4" fill="#2B1608"/><circle cx="59" cy="50" r="4" fill="#2B1608"/><ellipse cx="50" cy="61" rx="7" ry="4.5" fill="#D92323"/><path d="M40 69 Q50 77 60 69" stroke="#2B1608" stroke-width="3" fill="none" stroke-linecap="round"/></svg></div>
+      <div class="bubble" id="leoBubble">Let's play!</div>
+    </div>
+
+    <div class="gamecard" id="gameCard">
+      <div class="qlabel" id="qLabel">Your turn — you can do it!</div>
+      <div class="visual" id="qVisual"></div>
+      <div class="question" id="qText"></div>
+      <div class="clue" id="qClue" style="display:none"></div>
+      <div id="choiceArea"></div>
+      <div class="answer-row" id="inputRow">
+        <input class="answer-input" id="answerInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type here"/>
+        <button class="check-btn" onclick="checkAnswer()">✓ Check It!</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div class="actions">
+        <button class="goldbtn" onclick="openWizard(currentTopic)">✨ Show Me an Example</button>
+        <button class="ghost" id="hearBtn" style="display:none" onclick="hearWord()">🔊 Hear the Word</button>
+        <button class="ghost" onclick="leoHint()">💡 Leo, Give Me a Hint</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+<!-- MUSIC DOCK : OFF by default, lives outside learning views so music keeps playing prompt to prompt -->
+<div class="music-dock" id="musicDock" aria-label="Music player">
+  <div class="music-bar">
+    <button class="music-play" id="musicToggle" onclick="toggleMusic()" aria-label="Play or pause music">▶️</button>
+    <div class="music-meta"><b>🎵 Music</b><span id="musicStatus">Music is OFF — tap the big gold button to play!</span></div>
+    <div class="music-vol"><label for="volRange">🔊 Volume</label><input type="range" id="volRange" min="0" max="100" value="70" oninput="setMusicVolume(this.value)"></div>
+  </div>
+  <div class="audio-only" id="ytWrap" aria-hidden="true"><div id="ytPlayer"></div></div>
+</div>
+
+<!-- WIZARD MODAL -->
+<div class="modal" id="wizardModal" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <div style="display:flex;justify-content:space-between;align-items:center"><span class="fred" style="color:var(--red);font-size:14px;letter-spacing:.1em">LEO'S EXAMPLE WIZARD</span><button class="ghost" onclick="closeWizard()">✕ Close</button></div>
+    <h3 id="wizTitle">Watch me first!</h3>
+    <div class="stepdots" id="wizDots"></div>
+    <div class="stepbox" id="wizBody"></div>
+    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+      <button class="ghost" id="wizBack" onclick="wizMove(-1)">← Back</button>
+      <button class="check-btn" id="wizNext" onclick="wizMove(1)" style="flex:1">Next Step →</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var KEY='leos-learning-court-v1';
+function loadP(){ try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}} }
+function saveP(p){ localStorage.setItem(KEY, JSON.stringify(p)); }
+var progress=loadP();
+function topicProg(id){ if(!progress[id]) progress[id]={done:0,stars:0,sec:0}; return progress[id]; }
+
+var TOPICS=[
+{id:'addition',cat:'math',icon:'➕',title:'Addition All-Stars',desc:'2- and 3-digit adding, regrouping, and adding in columns — like stacking points on the scoreboard!',std:'Common Core 2.NBT.5–7 • 3.NBT.2'},
+{id:'subtraction',cat:'math',icon:'➖',title:'Subtraction Slam Dunk',desc:'Taking away, borrowing/regrouping, and checking with addition.',std:'Common Core 2.NBT.5–7 • 3.NBT.2'},
+{id:'multiplication',cat:'math',icon:'✖️',title:'Multiplication Mania',desc:'Equal groups, arrays, skip-counting and times tables to 10×10.',std:'Common Core 3.OA.1–7'},
+{id:'division',cat:'math',icon:'➗',title:'Division Dream Team',desc:'Sharing fairly, grouping, and using multiplication to help divide.',std:'Common Core 3.OA.2–7'},
+{id:'placevalue',cat:'math',icon:'🔢',title:'Place Value Power',desc:'Hundreds, tens and ones — what each digit is really worth.',std:'Common Core 2.NBT.1–3'},
+{id:'money',cat:'math',icon:'🪙',title:'Money Court',desc:'Pennies, nickels, dimes, quarters and dollars — count the coins!',std:'Common Core 2.MD.8'},
+{id:'time',cat:'math',icon:'🕐',title:'Time-Out Clock',desc:'Read clocks to the hour, half-hour, quarter-hour and 5 minutes.',std:'Common Core 2.MD.7 • 3.MD.1'},
+{id:'fractions',cat:'math',icon:'🍕',title:'Fraction Fans',desc:'Halves, thirds, fourths and more — fair shares of a pizza & a game!',std:'Common Core 3.NF.1–3'},
+{id:'wordproblems',cat:'math',icon:'🏀',title:'Word Problem Playoffs',desc:'Basketball, lion and school stories — find what the story asks!',std:'Common Core 2.OA.1 • 3.OA.3, 8'},
+{id:'sightwords',cat:'spelling',icon:'👀',title:'Sight Word Sprint',desc:'Words you know in a flash — read them, spell them, win!',std:'Dolch Grade 2 & 3 • Fry Words'},
+{id:'vowels',cat:'spelling',icon:'🔤',title:'Vowel Sound Squad',desc:'Long & short vowels and vowel teams: ai, ee, ea, oa, igh and more.',std:'Grade 2–3 Phonics Patterns'},
+{id:'plurals',cat:'spelling',icon:'🦁',title:'Plurals Parade',desc:'Make one into many: add -s, -es, change y to -ies, and tricky ones!',std:'Grade 2–3 Spelling Patterns'},
+{id:'compound',cat:'spelling',icon:'🧩',title:'Compound Word Combo',desc:'Two small words join to make one big word: basket + ball = basketball!',std:'Grade 2–3 Spelling Patterns'},
+{id:'homophones',cat:'spelling',icon:'👂',title:'Homophone Hoops',desc:'Words that sound the same but spell & mean different: to, too, two!',std:'Grade 2–3 Homophone Sets'},
+];
+var LEVELS=['Warm-Up','Rookie','Starter','All-Star','Champion','MVP Finals'];
+function levelFor(done){ return Math.min(5, Math.floor(done/40)); }
+
+var WIZARDS={
+howto:{title:'How Leo Helps You Learn',steps:[{h:'1. Watch the example 👀',b:'Before a new kind of question, Leo shows a worked example — step by step. Watch what Leo does, not just the answer.'},{h:'2. Try it yourself 🏀',b:'Type your answer and tap <b>Check It!</b> Take your time. There is no timer rushing you.'},{h:'3. Wrong? We fix it together 🦁',b:'Leo will tell you <b>exactly what to check</b> — a place, a sound, or a rule — and you try the <b>same question again</b> until you get it right. You never lose for trying!'},{h:'4. Right? We celebrate & move on! 🎉',b:'Stars, praise, and a brand-new question. Keep playing, keep learning, and have fun on the court!'}]},
+addition:{title:'Addition — Watch Me!',steps:[{h:'Example: 47 + 28',b:'<div class="example-big">47 + 28 = ?</div>Line up the ones under the ones, and tens under tens.'},{h:'Step 1 — Add the ones',b:'7 + 8 = <b>15</b>. Write the 5, carry the 1 ten on top. That carrying is called <b>regrouping</b>!'},{h:'Step 2 — Add the tens',b:'4 + 2 = 6, plus the carried 1 = <b>7</b> tens.'},{h:'Answer!',b:'<div class="example-big">47 + 28 = 75</div>Now you try — add ones first, then tens!'}]},
+subtraction:{title:'Subtraction — Watch Me!',steps:[{h:'Example: 63 − 28',b:'<div class="example-big">63 − 28 = ?</div>Start with the ones: 3 − 8… uh oh, 3 is too small!'},{h:'Step 1 — Regroup (borrow)',b:'Borrow 1 ten from the 6. The 6 becomes 5, and the 3 becomes <b>13</b>. Now 13 − 8 = <b>5</b>.'},{h:'Step 2 — Subtract the tens',b:'5 − 2 = <b>3</b> tens.'},{h:'Answer + Check!',b:'<div class="example-big">63 − 28 = 35</div>Check: 35 + 28 = 63 ✓ It works!'}]},
+multiplication:{title:'Multiplication — Watch Me!',steps:[{h:'Example: 4 × 3',b:'4 × 3 means <b>4 groups of 3</b>. 🏀🏀🏀 &nbsp; 🏀🏀🏀 &nbsp; 🏀🏀🏀 &nbsp; 🏀🏀🏀'},{h:'Step 1 — Skip-count',b:'Count by 3s, four times: <b>3, 6, 9, 12</b>.'},{h:'Answer!',b:'<div class="example-big">4 × 3 = 12</div>Tip: 3 × 4 is also 12 — flip it and it still works!'}]},
+division:{title:'Division — Watch Me!',steps:[{h:'Example: 12 ÷ 3',b:'12 ÷ 3 means: share 12 into <b>3 equal groups</b>. How many in each group?'},{h:'Step 1 — Use multiplication to help',b:'Think: 3 × ? = 12. You know 3 × <b>4</b> = 12!'},{h:'Answer!',b:'<div class="example-big">12 ÷ 3 = 4</div>Division and multiplication are teammates!'}]},
+placevalue:{title:'Place Value — Watch Me!',steps:[{h:'Example: The number 352',b:'<div class="example-big">3 &nbsp; 5 &nbsp; 2</div>Hundreds place = 3, Tens place = 5, Ones place = 2.'},{h:'What is each digit worth?',b:'3 is worth <b>300</b>, 5 is worth <b>50</b>, 2 is worth <b>2</b>. 300 + 50 + 2 = 352.'},{h:'Remember!',b:'The <b>place</b> tells the <b>value</b>. Same digit, different place = different value!'}]},
+money:{title:'Money — Watch Me!',steps:[{h:'Example: 1 quarter + 1 dime + 1 nickel',b:'Know your coins: quarter = <b>25¢</b>, dime = <b>10¢</b>, nickel = <b>5¢</b>, penny = <b>1¢</b>.'},{h:'Step 1 — Start with the biggest',b:'25 + 10 = 35, then 35 + 5 = <b>40</b>.'},{h:'Answer!',b:'<div class="example-big">Total = 40¢</div>Count biggest coins first — it\'s faster and safer!'}]},
+time:{title:'Telling Time — Watch Me!',steps:[{h:'Example: 4:30',b:'Short hand = <b>hour</b>. Long hand = <b>minutes</b>.'},{h:'Step 1 — Hour hand',b:'Short hand is halfway past 4 → the hour is <b>4</b>.'},{h:'Step 2 — Minute hand',b:'Long hand points to 6 → 6 × 5 = <b>30 minutes</b>.'},{h:'Answer!',b:'<div class="example-big">4:30</div>Each big number on the clock is 5 minutes!'}]},
+fractions:{title:'Fractions — Watch Me!',steps:[{h:'Example: A pizza cut into 4 equal slices, you eat 1',b:'The bottom number (denominator) = how many <b>equal parts</b> in all: <b>4</b>.'},{h:'Top number = your parts',b:'The top number (numerator) = how many parts you are talking about: <b>1</b>.'},{h:'Answer!',b:'<div class="example-big">1/4 of the pizza</div>Parts must be <b>equal</b> for it to be a fraction!'}]},
+wordproblems:{title:'Word Problems — Watch Me!',steps:[{h:'Example story',b:'“Leo had 14 basketballs. He gave 5 to friends. How many does he have now?”'},{h:'Step 1 — What do we know? What is asked?',b:'Know: started with 14, gave away 5. Asked: how many <b>left</b> → that means <b>subtract</b>.'},{h:'Step 2 — Solve & label',b:'<div class="example-big">14 − 5 = 9 basketballs</div>Always say what your number means!'}]},
+sightwords:{title:'Sight Words — Watch Me!',steps:[{h:'What is a sight word?',b:'A word you can read & spell <b>in a flash</b>, without sounding it out — like <b>because, always, before</b>.'},{h:'Example: “always”',b:'Look — say — spell — check: <b>a-l-w-a-y-s</b>. Cover it, write it, check it!'},{h:'Your turn!',b:'Leo will show a sentence with the word missing. Listen with 🔊, picture the word, then type it exactly.'}]},
+vowels:{title:'Vowel Sounds — Watch Me!',steps:[{h:'Example: “rain”',b:'The vowel team <b>ai</b> works together to say the long A sound: r-<b>ai</b>-n.'},{h:'The rule',b:'When two vowels go walking, the first one does the talking! <b>ai, ay → A &nbsp;•&nbsp; ee, ea → E &nbsp;•&nbsp; oa, ow → O</b>'},{h:'Your turn!',b:'Listen for the vowel sound, then pick the letters that make that sound.'}]},
+plurals:{title:'Plurals — Watch Me!',steps:[{h:'Example: box → ?',b:'Most words just add <b>-s</b>: cat → cats. But <b>box</b> ends in x…'},{h:'The -es rule',b:'Words ending in <b>s, x, z, ch, sh</b> add <b>-es</b>: box → <b>boxes</b>, wish → wishes.'},{h:'The y rule',b:'Consonant + y? Change y to i and add -es: baby → <b>babies</b>. Vowel + y? Just add -s: boy → boys.'}]},
+compound:{title:'Compound Words — Watch Me!',steps:[{h:'Example: basket + ball',b:'Two whole words join together and keep <b>all</b> their letters.'},{h:'Answer!',b:'<div class="example-big">basket + ball = basketball</div>No spaces, no missing letters!'},{h:'Your turn!',b:'Leo gives you the two words (or a picture clue). Join them into one word.'}]},
+homophones:{title:'Homophones — Watch Me!',steps:[{h:'What are homophones?',b:'Words that <b>sound the same</b> but have different spellings and meanings.'},{h:'Example: to / too / two',b:'<b>two</b> = the number 2. <b>too</b> = also, or more than enough. <b>to</b> = all the other jobs (go to, to play).'},{h:'Your turn!',b:'Read the whole sentence. Ask: “What does this sentence <i>mean</i>?” — meaning picks the spelling!'}]},
+};
+var wizTopic='howto', wizStep=0;
+function openWizard(t){ wizTopic=t; wizStep=0; renderWiz(); document.getElementById('wizardModal').classList.add('open'); }
+function closeWizard(){ document.getElementById('wizardModal').classList.remove('open'); }
+function renderWiz(){ var w=WIZARDS[wizTopic]; document.getElementById('wizTitle').textContent=w.title; var s=w.steps[wizStep]; document.getElementById('wizBody').innerHTML='<div style="font-family:Fredoka;font-size:20px;margin-bottom:6px">'+s.h+'</div>'+s.b; document.getElementById('wizDots').innerHTML=w.steps.map(function(_,i){return '<div class="dot'+(i===wizStep?' on':'')+'"></div>'}).join(''); document.getElementById('wizNext').textContent= wizStep===w.steps.length-1 ? "I'm Ready — Let's Play! 🏀" : 'Next Step →'; document.getElementById('wizBack').style.visibility= wizStep===0?'hidden':'visible'; }
+function wizMove(d){ var w=WIZARDS[wizTopic]; if(d>0 && wizStep===w.steps.length-1){ closeWizard(); return; } wizStep=Math.max(0,Math.min(w.steps.length-1,wizStep+d)); renderWiz(); }
+
+/* ---------- WORD BANKS (real published lists / standard patterns) ---------- */
+var DOLCH2=['always','around','because','been','before','best','both','buy','call','cold','does',"don't",'fast','first','five','found','gave','goes','green','its','made','many','off','or','pull','read','right','sing','sit','sleep','tell','their','these','those','upon','us','use','very','wash','which','why','wish','work','would','write','your'];
+var DOLCH3=['about','better','bring','carry','clean','cut','done','draw','drink','eight','fall','far','full','got','grow','hold','hot','hurt','if','keep','kind','laugh','light','long','much','myself','never','only','own','pick','seven','shall','show','six','small','start','ten','today','together','try','warm'];
+var VOWEL_WORDS=[{w:'rain',team:'ai',sound:'long A'},{w:'train',team:'ai',sound:'long A'},{w:'play',team:'ay',sound:'long A'},{w:'day',team:'ay',sound:'long A'},{w:'tree',team:'ee',sound:'long E'},{w:'green',team:'ee',sound:'long E'},{w:'read',team:'ea',sound:'long E'},{w:'team',team:'ea',sound:'long E'},{w:'boat',team:'oa',sound:'long O'},{w:'coat',team:'oa',sound:'long O'},{w:'snow',team:'ow',sound:'long O'},{w:'night',team:'igh',sound:'long I'},{w:'light',team:'igh',sound:'long I'},{w:'pie',team:'ie',sound:'long I'},{w:'blue',team:'ue',sound:'long U'},{w:'moon',team:'oo',sound:'long OO'},{w:'book',team:'oo',sound:'short OO'},{w:'cake',team:'a_e',sound:'long A'},{w:'bike',team:'i_e',sound:'long I'},{w:'home',team:'o_e',sound:'long O'}];
+var PLURALS=[{s:'cat',p:'cats',rule:'just add -s'},{s:'dog',p:'dogs',rule:'just add -s'},{s:'box',p:'boxes',rule:'ends in x → add -es'},{s:'bus',p:'buses',rule:'ends in s → add -es'},{s:'wish',p:'wishes',rule:'ends in sh → add -es'},{s:'watch',p:'watches',rule:'ends in ch → add -es'},{s:'baby',p:'babies',rule:'consonant + y → change y to i, add -es'},{s:'city',p:'cities',rule:'consonant + y → change y to i, add -es'},{s:'boy',p:'boys',rule:'vowel + y → just add -s'},{s:'day',p:'days',rule:'vowel + y → just add -s'},{s:'child',p:'children',rule:'special word — it changes!'},{s:'foot',p:'feet',rule:'special word — it changes!'},{s:'tooth',p:'teeth',rule:'special word — it changes!'},{s:'mouse',p:'mice',rule:'special word — it changes!'},{s:'leaf',p:'leaves',rule:'f changes to v, add -es'},{s:'knife',p:'knives',rule:'fe changes to v, add -es'},{s:'lion',p:'lions',rule:'just add -s'},{s:'ball',p:'balls',rule:'just add -s'},{s:'fox',p:'foxes',rule:'ends in x → add -es'},{s:'puppy',p:'puppies',rule:'consonant + y → change y to i, add -es'}];
+var COMPOUNDS=[{a:'basket',b:'ball',clue:'The sport Leo loves most!'},{a:'sun',b:'shine',clue:'Bright light from the sun.'},{a:'butter',b:'fly',clue:'A pretty insect with wings.'},{a:'rain',b:'bow',clue:'Colors in the sky after rain.'},{a:'tooth',b:'brush',clue:'You clean your teeth with it.'},{a:'play',b:'ground',clue:'Where you play at recess.'},{a:'cup',b:'cake',clue:'A small sweet cake.'},{a:'snow',b:'man',clue:'You build him in winter.'},{a:'fire',b:'fly',clue:'A bug that glows at night.'},{a:'book',b:'bag',clue:'Another name for a backpack for books.'},{a:'star',b:'fish',clue:'A sea animal shaped like a star.'},{a:'jelly',b:'fish',clue:'A wiggly sea animal.'},{a:'pop',b:'corn',clue:'A crunchy movie snack.'},{a:'door',b:'bell',clue:'You ring it at a friend\'s house.'},{a:'bed',b:'room',clue:'The room where you sleep.'},{a:'bath',b:'room',clue:'The room with a tub.'},{a:'class',b:'room',clue:'Where your class learns.'},{a:'foot',b:'ball',clue:'A sport played with an oval ball.'},{a:'base',b:'ball',clue:'A sport with a bat and bases.'},{a:'birth',b:'day',clue:'The day you celebrate getting older.'}];
+var HOMOPHONES=[{set:['to','too','two'],answer:'two',sentence:'Leo has ___ basketballs — one red and one orange.',why:'“Two” is the number 2.'},{set:['to','too','two'],answer:'too',sentence:'Can I play basketball ___?',why:'“Too” means also.'},{set:['to','too','two'],answer:'to',sentence:'We walked ___ the gym.',why:'“To” shows where you are going.'},{set:['there','their',"they're"],answer:'their',sentence:'The lions are proud of ___ team.',why:'“Their” shows it belongs to them.'},{set:['there','their',"they're"],answer:'there',sentence:'Put the ball over ___.',why:'“There” is a place.'},{set:['there','their',"they're"],answer:"they're",sentence:'___ going to win the game!',why:'“They\'re” = they are.'},{set:['your',"you're"],answer:'your',sentence:'Is this ___ red jersey?',why:'“Your” shows it belongs to you.'},{set:['your',"you're"],answer:"you're",sentence:'___ a great speller!',why:'“You\'re” = you are.'},{set:['see','sea'],answer:'sea',sentence:'Fish swim in the deep blue ___.',why:'The “sea” is the ocean.'},{set:['see','sea'],answer:'see',sentence:'I can ___ the lion!',why:'“See” is what your eyes do.'},{set:['right','write'],answer:'write',sentence:'Please ___ your name on the paper.',why:'“Write” means using a pencil to make words.'},{set:['right','write'],answer:'right',sentence:'Turn ___ at the big red door.',why:'“Right” is a direction (and also means correct!).'},{set:['hear','here'],answer:'here',sentence:'Come and sit ___ next to Leo.',why:'“Here” is this place.'},{set:['hear','here'],answer:'hear',sentence:'I can ___ the crowd cheering!',why:'“Hear” is what your ears do.'},{set:['sun','son'],answer:'sun',sentence:'The ___ is shining today.',why:'The “sun” is in the sky.'},{set:['week','weak'],answer:'week',sentence:'We have practice every day this ___.',why:'A “week” is 7 days.'}];
+
+/* ---------- HELPERS ---------- */
+function R(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+var PRAISE=['ROAR! That\'s a slam dunk! 🏀','YES! You did it, superstar! ⭐','Amazing! Leo is doing a happy lion dance! 🦁','Swish! Nothing but net — and nothing but correct!','You are on fire! That brain is STRONG! 💪'];
+var TRYAGAIN=['Good try — champions always try again!','So close! Let\'s fix one little thing together.','I believe in you! Read Leo\'s tip, then try the same one again.','Mistakes make your brain grow. One more try!'];
+
+/* ---------- GENERATORS ---------- */
+function genMath(id,tier){
+  var a,b,ans,q,hint,check;
+  if(id==='addition'){ if(tier===0){a=R(12,89);b=R(11,79);}else if(tier<3){a=R(45,289);b=R(35,199);}else{a=R(234,879);b=R(156,789);} ans=a+b; q=a+' + '+b+' = ?'; hint='Add the <b>ones first</b>, then the tens. If the ones make 10 or more, regroup: carry 1 ten over.'; check=function(g){ if(g===ans-10||g===ans+10) return 'Watch the <b>tens place</b> — you may have missed the carried ten from the ones!'; if(g<ans) return 'Your answer is a little <b>too small</b>. Did you add BOTH numbers in every place?'; return 'Your answer is a little <b>too big</b>. Check the ones place first: '+ (a%10)+' + '+(b%10)+' — did you regroup?'; }; }
+  else if(id==='subtraction'){ a=R(35,99); if(tier>0)a=R(120,899); b=R(12,a-5); ans=a-b; q=a+' − '+b+' = ?'; hint='Start with the ones. If the top ones digit is too small, <b>regroup</b>: borrow 1 ten.'; check=function(g){ return 'Check the <b>ones place</b> first. Top ones = '+(a%10)+', bottom ones = '+(b%10)+'. If the top is smaller, borrow a ten, then subtract.'; }; }
+  else if(id==='multiplication'){ var maxF=tier===0?5:(tier<3?9:12); a=R(2,maxF); b=R(2,maxF); ans=a*b; q=a+' × '+b+' = ?'; hint='Think <b>'+a+' groups of '+b+'</b>. Skip-count by '+b+'s, '+a+' times.'; check=function(g){ return 'Skip-count with me: count by '+b+' — and stop after '+a+' counts. Or flip it: '+b+' × '+a+' is the same answer!'; }; }
+  else if(id==='division'){ b=R(2,tier<2?6:12); ans=R(2,12); a=b*ans; q=a+' ÷ '+b+' = ?'; hint='Use multiplication! Think: '+b+' × ? = '+a+'.'; check=function(g){ return 'Test your guess: does '+b+' × '+g+' equal '+a+'? If not, try a number '+(g* b<a?'bigger':'smaller')+'.'; }; }
+  else if(id==='placevalue'){ var n=tier===0?R(23,99):R(123,987); var places=[{n:'hundreds',v:Math.floor(n/100)},{n:'tens',v:Math.floor(n/10)%10},{n:'ones',v:n%10}]; var pl=tier===0?pick(places.slice(1)):pick(places); ans=pl.v; q='In '+n+', what digit is in the '+pl.n+' place?'; hint='Say the number slowly. From the right: <b>ones, tens, hundreds</b>.'; check=function(g){ return 'Point from the right: ones first, then tens, then hundreds. Which digit did you land on for the <b>'+pl.n+'</b> place in '+n+'?'; }; }
+  else if(id==='money'){ var coins=[{n:'quarter',v:25},{n:'dime',v:10},{n:'nickel',v:5},{n:'penny',v:1}]; var used=[]; var total=0; var cnt=tier===0?2:3; for(var i=0;i<cnt;i++){var c=pick(coins); used.push(c.n); total+=c.v;} ans=total; q='How many cents? '+used.join(' + '); hint='Coin values: quarter 25¢, dime 10¢, nickel 5¢, penny 1¢. Start with the <b>biggest</b> coin.'; check=function(g){ return 'Add again, biggest first: '+used.map(function(u){return u==='quarter'?'25':u==='dime'?'10':u==='nickel'?'5':'1'}).join(' + ')+'. Go slowly!'; }; }
+  else if(id==='time'){ var hrs=R(1,12); var mins=pick(tier===0?[0,30]:[0,15,30,45,5,10,20,25,35,40,50,55]); ans=hrs+':'+(mins<10?'0'+mins:mins); q='What time is on the clock?'; var angM=mins*6, angH=(hrs%12)*30+mins*0.5; var visual='<svg width="150" height="150" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#fff" stroke="#D92323" stroke-width="4"/><g font-size="10" font-weight="900" text-anchor="middle"><text x="50" y="14">12</text><text x="88" y="53">3</text><text x="50" y="93">6</text><text x="12" y="53">9</text></g><line x1="50" y1="50" x2="'+(50+24*Math.sin(angH*Math.PI/180))+'" y2="'+(50-24*Math.cos(angH*Math.PI/180))+'" stroke="#2B1608" stroke-width="5" stroke-linecap="round"/><line x1="50" y1="50" x2="'+(50+36*Math.sin(angM*Math.PI/180))+'" y2="'+(50-36*Math.cos(angM*Math.PI/180))+'" stroke="#D92323" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="50" r="4" fill="#FFB800"/></svg>'; return {q:q,ans:ans,display:'text',hint:'<b>Short hand = hour.</b> Long hand = minutes — count by 5s around the clock.',check:function(g){return 'First the short hand tells the hour. Then the long hand: each big number = 5 minutes. What hour is the short hand just past?';},visual:visual,placeholder:'e.g. 4:30'}; }
+  else if(id==='fractions'){ var den=pick([2,3,4,6,8]); var num=R(1,den-1); ans=num+'/'+den; q='What fraction is shaded?'; var cells=''; for(var k=0;k<den;k++){ cells+='<div style="flex:1;height:54px;border:3px solid #2B1608;background:'+(k<num?'#D92323':'#fff')+'"></div>'; } var visual='<div style="display:flex;gap:3px;width:min(340px,80vw)">'+cells+'</div>'; return {q:q,ans:ans,display:'text',hint:'Bottom number = total <b>equal</b> parts. Top number = shaded parts.',check:function(g){return 'Count ALL the equal parts first — that\'s your bottom number. Then count only the <b>red shaded</b> parts — that\'s your top number. Type it like 2/4.';},visual:visual,placeholder:'e.g. 1/2'}; }
+  else { var names=['Leo','Mia','Jayden','Sofia','Noah','Ava']; var objs=[{n:'basketballs',e:'🏀'},{n:'stickers',e:'⭐'},{n:'marbles',e:'🔵'},{n:'books',e:'📚'}]; var o=pick(objs); var nm=pick(names); var kind=R(0,2); if(kind===0){a=R(14,68);b=R(9,39);ans=a+b;q=nm+' had '+a+' '+o.n+'. '+nm+' got '+b+' more. How many '+o.n+' does '+nm+' have now?';hint='“Got more” means <b>add</b>.';check=function(){return 'The story says “got MORE” — that\'s adding. Set it up: '+a+' + '+b+'.';};}
+    else if(kind===1){a=R(25,80);b=R(8,a-6);ans=a-b;q=nm+' had '+a+' '+o.n+'. '+nm+' gave '+b+' to a friend. How many '+o.n+' are left?';hint='“Gave away / left” means <b>subtract</b>.';check=function(){return 'The story asks how many are LEFT after giving away — that\'s subtracting: '+a+' − '+b+'.';};}
+    else {var g=R(2,6);var per=R(2,9);ans=g*per;q='There are '+g+' teams. Each team has '+per+' players. How many players in all?';hint='Equal groups = <b>multiply</b>: '+g+' × '+per+'.';check=function(){return 'Equal groups is multiplication in disguise! '+g+' groups of '+per+' means '+g+' × '+per+'.';};} }
+  return {q:q,ans:String(ans),display:'number',hint:hint,check:check};
+}
+function sentenceFor(word){ var map={always:'We ___ brush our teeth before bed.',because:'I wore a coat ___ it was cold.',before:'Wash your hands ___ you eat.',their:'The players put on ___ red jerseys.',write:'Please ___ your name at the top.',would:'___ you like to play with Leo?',right:'You got the ___ answer — great job!',about:'This book is ___ a brave lion.',together:'Let\'s play ___ at recess!',never:'Leo ___ gives up on his team.'}; return map[word]||('Use the word in this sentence: “The ___ ” — no wait, spell the word you hear!'); }
+function genSpelling(id,tier){
+  if(id==='sightwords'){ var bank=tier<2?DOLCH2:DOLCH2.concat(DOLCH3); var w=pick(bank); return {q:'Spell the missing sight word',clue:sentenceFor(w)+'<br><small>Tap 🔊 Hear the Word, then type the whole word.</small>',ans:w,display:'text',speak:w,hint:'Picture the word in your mind. Say it slowly, letter by letter: it has <b>'+w.length+' letters</b> and starts with “<b>'+w[0]+'</b>”.',check:function(g){ if(g.length<w.length) return 'You\'re missing a letter — the word has <b>'+w.length+' letters</b>. Try again and count them!'; if(g.length>w.length) return 'One letter too many — the word has exactly <b>'+w.length+' letters</b>.'; return 'Check the <b>middle letters</b> carefully. It starts with “'+w[0]+'” and ends with “'+w[w.length-1]+'”. Sound it out slowly.'; }}; }
+  if(id==='vowels'){ var it=pick(VOWEL_WORDS); var blanked=it.w.replace(it.team,'__'); if(it.team==='a_e')blanked=it.w.replace('a','_').replace(/e$/,'_'); if(it.team==='i_e')blanked=it.w.replace('i','_').replace(/e$/,'_'); if(it.team==='o_e')blanked=it.w.replace('o','_').replace(/e$/,'_'); return {q:'Fill in the missing vowel letters to spell the word',clue:'Word: <span style="font-family:Fredoka;font-size:30px">'+blanked+'</span><br>The missing letters make the <b>'+it.sound+'</b> sound. Type the <b>whole word</b>.',ans:it.w,display:'text',speak:it.w,hint:'This word uses the vowel team <b>'+(it.team==='a_e'?'a + magic e':it.team==='i_e'?'i + magic e':it.team==='o_e'?'o + magic e':it.team)+'</b> to make the '+it.sound+' sound.',check:function(g){ return 'Listen for the <b>'+it.sound+'</b> sound in the middle. Which two letters work together to make it? The word is '+it.w.length+' letters long.'; }}; }
+  if(id==='plurals'){ var it2=pick(PLURALS); return {q:'Make it plural — more than one!',clue:'One <b>'+it2.s+'</b> → many ___<br><small>Plural means MORE THAN ONE.</small>',ans:it2.p,display:'text',hint:'Rule for this word: <b>'+it2.rule+'</b>.',check:function(g){ return 'Think of the rule: <b>'+it2.rule+'</b>. Start with “'+it2.s+'” and change the ending.'; }}; }
+  if(id==='compound'){ var it3=pick(COMPOUNDS); return {q:'Join the two words into ONE compound word',clue:'<span style="font-family:Fredoka;font-size:28px">'+it3.a+' + '+it3.b+' = ?</span><br>'+it3.clue,ans:it3.a+it3.b,display:'text',hint:'Keep <b>ALL</b> the letters from both words. No space in the middle!',check:function(g){ return 'Put them together with nothing missing: '+it3.a+' ( '+it3.a.length+' letters) + '+it3.b+' ('+it3.b.length+' letters) = '+(it3.a.length+it3.b.length)+' letters, no space!'; }}; }
+  var it4=pick(HOMOPHONES); return {q:'Pick the RIGHT word for this sentence',clue:it4.sentence,ans:it4.answer,display:'choice',choices:shuffle(it4.set),hint:it4.why,check:function(){ return it4.why+' Read the sentence again and ask what it <b>means</b>.'; }};
+}
+
+/* ---------- GAME STATE ---------- */
+var currentTopic=null, current=null, attempts=0, timerInt=null, cat='math';
+function showCat(c){ cat=c; document.getElementById('tabMath').classList.toggle('active',c==='math'); document.getElementById('tabSpell').classList.toggle('active',c==='spelling'); document.getElementById('catTitle').textContent= c==='math'?'Math Court — Pick Your Game!':'Spelling Court — Pick Your Game!'; renderGrid(); updateTotals(); }
+function renderGrid(){ var g=document.getElementById('topicGrid'); g.innerHTML=TOPICS.filter(function(t){return t.cat===cat}).map(function(t){ var p=topicProg(t.id); var started=p.done>0; var finished=p.done>=240; return '<article class="tcard"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+t.icon+'</div><span class="meta">'+(finished?'🏆 Finished!':started?'⭐ Keep Going!':'New Game')+'</span></div><h3>'+t.title+'</h3><p>'+t.desc+'</p><button class="play-btn" onclick="startTopic(\''+t.id+'\')">'+(started&&!finished?'▶ Keep Playing!':finished?'▶ Play Again!':'▶ Start Playing!')+'</button></article>'; }).join(''); }
+function updateTotals(){ var ts=0; TOPICS.forEach(function(t){var p=topicProg(t.id); ts+=p.stars;}); var el=document.getElementById('totalStars'); if(el) el.textContent=ts; }
+function leoSay(html){ document.getElementById('leoBubble').innerHTML=html; }
+function startTopic(id){ currentTopic=TOPICS.find(function(t){return t.id===id}); document.getElementById('homeView').style.display='none'; document.getElementById('practiceView').style.display='block'; document.getElementById('pTitle').textContent=currentTopic.icon+' '+currentTopic.title; window.scrollTo({top:0,behavior:'smooth'}); clearInterval(timerInt); timerInt=setInterval(function(){ topicProg(id).sec+=5; if(topicProg(id).sec%30===0) saveP(progress); },5000); openWizard(id); nextPrompt(true); }
+function goHome(){ clearInterval(timerInt); saveP(progress); document.getElementById('practiceView').style.display='none'; document.getElementById('homeView').style.display='block'; renderGrid(); updateTotals(); window.scrollTo({top:0}); }
+function nextPrompt(first){
+  var p=topicProg(currentTopic.id); var tier=levelFor(p.done);
+  current= currentTopic.cat==='math'? genMath(currentTopic.id,tier) : genSpelling(currentTopic.id,tier);
+  attempts=0;
+  document.getElementById('pLevel').textContent='Level '+(tier+1)+': '+LEVELS[tier];
+  document.getElementById('qText').textContent=current.q;
+  document.getElementById('qVisual').innerHTML=current.visual||'';
+  var clue=document.getElementById('qClue'); if(current.clue){clue.style.display='block'; clue.innerHTML=current.clue;} else clue.style.display='none';
+  var inp=document.getElementById('answerInput'); inp.value=''; inp.placeholder=current.placeholder||'Type here'; inp.type= current.display==='number'?'number':'text'; inp.inputMode= current.display==='number'?'numeric':'text';
+  document.getElementById('hearBtn').style.display= current.speak?'inline-block':'none';
+  var ch=document.getElementById('choiceArea');
+  if(current.display==='choice'){ document.getElementById('inputRow').style.display='none'; ch.innerHTML='<div class="choices">'+current.choices.map(function(c){return '<button class="choice" onclick="pickChoice(this,\''+c.replace(/'/g,"\\'")+'\')">'+c+'</button>'}).join('')+'</div>'; }
+  else { document.getElementById('inputRow').style.display='flex'; ch.innerHTML=''; }
+  document.getElementById('feedback').className='feedback'; document.getElementById('feedback').textContent='';
+  leoSay(first? 'Welcome to <b>'+currentTopic.title+'</b>! Watch my example with the ✨ button if you need it, then try this one. You\'ve got this, champ! 🏀' : pick(['New one! Read it carefully, then shoot your answer! 🏀','Here we go — I know you can get this one!','Eyes on the ball… here\'s your next one!']));
+  setTimeout(function(){ if(current.display!=='choice') inp.focus(); },80);
+}
+var chosen=null;
+function pickChoice(btn,val){ chosen=val; document.querySelectorAll('.choice').forEach(function(b){b.style.background='#fff'}); btn.style.background='#FFF3C4'; checkAnswer(); }
+function hearWord(){ if(!current.speak) return; try{ var u=new SpeechSynthesisUtterance(current.speak); u.rate=0.8; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch(e){} }
+function leoHint(){ leoSay('💡 <b>Leo\'s Hint:</b> '+current.hint); toast('Hint from Leo! Check his speech bubble 🦁'); }
+function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(function(){t.style.display='none'},2200); }
+function normalize(v){ return String(v).trim().toLowerCase().replace(/\s+/g,''); }
+function checkAnswer(){
+  var guess= current.display==='choice'? chosen : document.getElementById('answerInput').value;
+  var fb=document.getElementById('feedback');
+  if(guess===null||guess===undefined||normalize(guess)===''){ fb.className='feedback bad'; fb.innerHTML='✏️ Type (or tap) an answer first, then check it!'; return; }
+  var correct= normalize(guess)===normalize(current.ans);
+  if(current.display==='number'||currentTopic.cat==='math'){ var gn=parseFloat(guess); if(!isNaN(gn) && String(current.ans).indexOf('/')===-1 && String(current.ans).indexOf(':')===-1) correct= gn===parseFloat(current.ans); if(String(current.ans).indexOf(':')>-1) correct= normalize(guess)===normalize(current.ans); }
+  attempts++;
+  if(correct){
+    var p=topicProg(currentTopic.id); p.done+=1; if(attempts===1)p.stars+=1; else if(attempts===2)p.stars+=0; saveP(progress); updateTotals();
+    var card=document.getElementById('gameCard'); card.classList.remove('bounce'); void card.offsetWidth; card.classList.add('bounce');
+    fb.className='feedback good'; fb.innerHTML='🎉 '+pick(PRAISE)+(attempts>1?' You kept trying and fixed it — that\'s what champions do!':'');
+    leoSay('🎉 <b>'+pick(PRAISE)+'</b><br>Dribbling to the next one…');
+    chosen=null; setTimeout(function(){ if(p.done>=240){ leoSay('🏆 <b>YOU DID IT!</b> You finished '+currentTopic.title+'! ROAR! 🦁'); fb.className='feedback good'; fb.innerHTML='🏆 You finished this whole topic! Go back to All Games and pick your next adventure!'; } else nextPrompt(false); },1600);
+  } else {
+    fb.className='feedback bad';
+    var specific=''; try{ specific=current.check? current.check(normalize(guess)) : ''; }catch(e){ specific=''; }
+    fb.innerHTML='🦁 <b>Not yet — let\'s fix it together!</b><br>'+pick(TRYAGAIN)+'<br><br><b>What to fix:</b> '+specific+'<br><br>💡 <b>Hint:</b> '+current.hint+'<br><br>Try the <b>same one again</b> — you don\'t move on until you nail it, and I\'m right here with you!';
+    leoSay('🦁 <b>Good effort!</b> '+specific+'<br>Try the <b>same question</b> again — I\'m cheering for you!');
+    if(current.display!=='choice'){ var inp=document.getElementById('answerInput'); inp.select(); }
+  }
+}
+document.getElementById('answerInput').addEventListener('keydown',function(e){ if(e.key==='Enter') checkAnswer(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeWizard(); });
+
+/* ---------- MUSIC (YouTube embed, off by default) ---------- */
+var KB_VIDEOS=['mrCqAuX_7yo','ZiR2L9SAyLQ','2vUt3sg7Py4'];
+var ytPlayer=null, ytReady=false, ytLoading=false, musicPlaying=false, pendingPlay=false;
+function musicStatus(txt){ var el=document.getElementById('musicStatus'); if(el) el.textContent=txt; }
+function loadYouTubeAPI(){
+  if(ytLoading||ytReady) return; ytLoading=true; musicStatus('Loading your music… 🎵');
+  var tag=document.createElement('script'); tag.src='https://www.youtube.com/iframe_api'; tag.onerror=function(){ fallbackEmbed(); };
+  document.head.appendChild(tag);
+  setTimeout(function(){ if(!ytReady && !ytPlayer) fallbackEmbed(); }, 8000);
+}
+function onYouTubeIframeAPIReady(){
+  ytPlayer=new YT.Player('ytPlayer',{width:'1',height:'1',playerVars:{autoplay:0,playsinline:1,rel:0,modestbranding:1,controls:0,disablekb:1,fs:0,iv_load_policy:3},events:{onReady:function(e){ ytReady=true; try{e.target.setVolume(parseInt(document.getElementById('volRange').value,10)); e.target.cuePlaylist(KB_VIDEOS);}catch(err){} if(pendingPlay){ pendingPlay=false; playMusic(); } else { musicStatus('Music is OFF — tap the big gold button to play!'); } },onStateChange:function(e){ if(e.data===YT.PlayerState.PLAYING){ musicPlaying=true; document.getElementById('musicToggle').textContent='⏸️'; musicStatus('Music playing! 🎉 Tap pause anytime.'); } if(e.data===YT.PlayerState.PAUSED){ musicPlaying=false; document.getElementById('musicToggle').textContent='▶️'; musicStatus('Music paused — tap play when you want it back!'); } }}});
+}
+function fallbackEmbed(){
+  if(ytPlayer&&ytReady) return;
+  document.getElementById('ytPlayer').innerHTML='<iframe width="1" height="1" src="https://www.youtube.com/embed/'+KB_VIDEOS[0]+'?playlist='+KB_VIDEOS.slice(1).join(',')+'&autoplay=1&playsinline=1&rel=0&controls=0" title="Music" frameborder="0" allow="autoplay; encrypted-media" tabindex="-1" aria-hidden="true"></iframe>';
+  musicStatus('Music playing! 🎉 Tap pause anytime.');
+  document.getElementById('musicToggle').textContent='⏸️'; musicPlaying=true;
+}
+function playMusic(){ if(!ytPlayer||!ytReady){ pendingPlay=true; loadYouTubeAPI(); return; } try{ ytPlayer.playVideo(); }catch(e){ fallbackEmbed(); } }
+function toggleMusic(){
+  if(ytPlayer&&ytReady){ if(musicPlaying){ try{ytPlayer.pauseVideo();}catch(e){} } else { playMusic(); } return; }
+  if(musicPlaying && !ytReady){ /* fallback hidden-audio mode: clear embed to stop */ document.getElementById('ytPlayer').innerHTML=''; musicPlaying=false; document.getElementById('musicToggle').textContent='▶️'; musicStatus('Music is OFF — tap the big gold button to play!'); return; }
+  playMusic();
+}
+function setMusicVolume(v){ if(ytPlayer&&ytReady){ try{ ytPlayer.setVolume(parseInt(v,10)); if(parseInt(v,10)===0) ytPlayer.mute(); else ytPlayer.unMute(); }catch(e){} } }
+
+showCat('math');
+</script>
+</body>
+</html>
