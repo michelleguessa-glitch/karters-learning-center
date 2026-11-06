@@ -104,9 +104,9 @@ button{font-family:inherit;cursor:pointer}
 .frac-cell.on{background:var(--red)}
 .frac-count{text-align:center;font-weight:900;margin-top:8px;font-size:15px}
 .pad-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-.pad-btn{border:3px solid var(--ink);background:#fff;border-radius:999px;padding:10px 16px;font-weight:900;font-size:15px}
+.pad-btn{border:3px solid var(--ink);background:#fff;border-radius:999px;padding:10px 16px;font-weight:900;font-size:15px;touch-action:manipulation;cursor:pointer}
 .pad-btn.on{background:var(--gold)}
-.pad-clear{border:3px solid var(--ink);background:var(--red);color:#fff;border-radius:999px;padding:10px 20px;font-weight:900;font-size:16px;font-family:'Fredoka'}
+.pad-clear{border:3px solid var(--ink);background:var(--red);color:#fff;border-radius:999px;padding:10px 20px;font-weight:900;font-size:16px;font-family:'Fredoka';touch-action:manipulation;cursor:pointer}
 #scratchPad{display:block;width:100%;height:250px;background:#fff;border:3px dashed #FDBA74;border-radius:16px;touch-action:none;cursor:crosshair}
 .work-note{font-size:13px;font-weight:800;color:var(--muted);margin-top:8px;line-height:1.45}
 @media(max-width:860px){.play-layout.has-work{grid-template-columns:1fr}.work-panel{margin-top:4px}}
@@ -793,20 +793,36 @@ function setupWork(){
   setTimeout(function(){ fitPad(false); },60);
 }
 /* Scratch pad */
-var padTool='pen', padDrawing=false, padCtx=null, padGen=0;
+var padTool='pen', padDrawing=false, padCtx=null, padGen=0, padStore=null;
 function setPadTool(t){ padTool=t; var p=document.getElementById('padPenBtn'), e=document.getElementById('padEraserBtn'); if(p) p.classList.toggle('on',t==='pen'); if(e) e.classList.toggle('on',t==='eraser'); }
 function fitPad(keep){
   var c=document.getElementById('scratchPad'); if(!c||!c.clientWidth) return;
-  var gen=padGen; var url=null; if(keep&&padCtx){ try{ url=c.toDataURL(); }catch(e){} }
   var dpr=window.devicePixelRatio||1; var w=c.clientWidth, h=250;
+  if(keep&&padCtx){
+    /* Snapshot the drawing onto an offscreen canvas BEFORE the resize, and
+       copy it back synchronously below. The old code round-tripped the
+       snapshot through toDataURL() and an Image whose onload fired whenever
+       it happened to fire: on a touch device, where resize events arrive in
+       bursts (browser chrome showing/hiding while the page scrolls,
+       rotation, the on-screen keyboard), those overlapping async restores
+       were timing races — a restore landing after Clear repainted the very
+       strokes Clear had just erased, so on the device Clear looked broken
+       while a clean desktop click test passed. A canvas-to-canvas copy has
+       no async step at all: nothing can land late, ever. */
+    if(!padStore) padStore=document.createElement('canvas');
+    padStore.width=c.width; padStore.height=c.height;
+    var sctx=null; try{ sctx=padStore.getContext('2d'); }catch(e){}
+    if(sctx){ try{ sctx.drawImage(c,0,0); }catch(e){} }
+  }
   c.width=Math.round(w*dpr); c.height=Math.round(h*dpr);
   padCtx=c.getContext('2d'); padCtx.setTransform(dpr,0,0,dpr,0,0); padCtx.lineCap='round'; padCtx.lineJoin='round';
-  if(url){ var img=new Image(); img.onload=function(){ if(gen!==padGen) return; /* a Clear happened while this restore image was loading — never repaint the old strokes over it */ if(padCtx) padCtx.drawImage(img,0,0,w,h); }; img.src=url; }
+  if(keep&&padStore&&padStore.width){ try{ padCtx.drawImage(padStore,0,0,w,h); }catch(e){} }
 }
 function clearPad(){
   var c=document.getElementById('scratchPad'); if(!c) return;
-  padGen++; /* invalidate any fitPad restore image still loading, so it can never repaint cleared strokes */
+  padGen++; /* generation marker: anything still holding pre-clear pad state is now stale */
   padDrawing=false; /* end any stroke in progress so it cannot repaint after the clear */
+  if(padStore){ try{ padStore.width=0; padStore.height=0; }catch(e){} padStore=null; } /* destroy the resize snapshot too — otherwise the next resize would copy the cleared strokes straight back onto the pad */
   if(!c.clientWidth){ /* pad not laid out (panel hidden): no bitmap to erase — drop the live path; the next fitPad() sizes a fresh blank bitmap anyway */
     var x0=null; try{ x0=c.getContext('2d'); }catch(e){}
     if(x0){ padCtx=x0; try{ x0.beginPath(); }catch(e){} }
@@ -825,7 +841,25 @@ function clearPad(){
 function padPos(e){ var c=document.getElementById('scratchPad'); var r=c.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
 function initPad(){
   var c=document.getElementById('scratchPad'); if(!c) return;
-  var cb=document.getElementById('padClearBtn'); if(cb) cb.addEventListener('click',clearPad); /* direct binding as well as the inline handler — a tap or click can never be lost; clearing twice is harmless */
+  var cb=document.getElementById('padClearBtn');
+  if(cb){
+    cb.addEventListener('click',clearPad); /* direct binding as well as the inline handler */
+    /* Touch path: the pad lives inside a scrollable drawer, and on a phone
+       or tablet a tap with any finger drift is reclassified as a scroll —
+       the browser then cancels the click entirely, so Clear never ran even
+       though the button was tapped (a precise desktop click never drifts,
+       which is why this only showed up on the device). Fire on pointerup
+       too, when the touch both started and ended on the button. A stroke
+       drawn on the canvas cannot trigger this by accident: the canvas holds
+       pointer capture while drawing, so that pointerup is delivered to the
+       canvas, not the button. Clearing twice (pointerup, then the click
+       that follows a clean tap) is harmless. */
+    var cbDown=false;
+    cb.addEventListener('pointerdown',function(){ cbDown=true; });
+    cb.addEventListener('pointerup',function(){ if(cbDown){ cbDown=false; clearPad(); } });
+    cb.addEventListener('pointerleave',function(){ cbDown=false; });
+    cb.addEventListener('pointercancel',function(){ cbDown=false; });
+  }
   c.addEventListener('pointerdown',function(e){ if(!padCtx) fitPad(false); if(!padCtx) return; e.preventDefault(); padDrawing=true; try{c.setPointerCapture(e.pointerId);}catch(err){} var p=padPos(e); padCtx.beginPath(); padCtx.moveTo(p.x,p.y); padCtx.lineTo(p.x+0.1,p.y+0.1); padStroke(); });
   c.addEventListener('pointermove',function(e){ if(!padDrawing||!padCtx) return; e.preventDefault(); var p=padPos(e); padCtx.lineTo(p.x,p.y); padStroke(); });
   function end(){ if(padDrawing&&padCtx){ try{ padCtx.beginPath(); }catch(e){} } padDrawing=false; } /* drop the finished stroke's path so no later stroke() call can ever repaint it */
@@ -1273,9 +1307,12 @@ try{ sfxMuted=localStorage.getItem(SFX_KEY)==='1'; }catch(e){}
 function ensureAudio(){ if(sfxMuted) return null; try{ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); return audioCtx; }catch(e){ return null; } }
 function tone(freq,dur,type,vol,delay,slideTo){ var ctx=ensureAudio(); if(!ctx) return; var t=ctx.currentTime+(delay||0); var o=ctx.createOscillator(),g=ctx.createGain(); o.type=type||'sine'; o.frequency.setValueAtTime(freq,t); if(slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(30,slideTo),t+dur); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||.18,t+.02); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t+dur+.05); }
 function noiseBurst(dur,delay,freq,vol){ var ctx=ensureAudio(); if(!ctx) return; var t=ctx.currentTime+(delay||0); var len=Math.floor(ctx.sampleRate*dur); var buf=ctx.createBuffer(1,len,ctx.sampleRate); var data=buf.getChannelData(0); for(var i=0;i<len;i++) data[i]=Math.random()*2-1; var src=ctx.createBufferSource(); src.buffer=buf; var f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=freq||1000; var g=ctx.createGain(); g.gain.setValueAtTime(vol||.15,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); src.connect(f); f.connect(g); g.connect(ctx.destination); src.start(t); }
+function noiseSweep(dur,delay,fFrom,fTo,vol){ var ctx=ensureAudio(); if(!ctx) return; var t=ctx.currentTime+(delay||0); var len=Math.floor(ctx.sampleRate*dur); var buf=ctx.createBuffer(1,len,ctx.sampleRate); var data=buf.getChannelData(0); for(var i=0;i<len;i++) data[i]=Math.random()*2-1; var src=ctx.createBufferSource(); src.buffer=buf; var f=ctx.createBiquadFilter(); f.type='bandpass'; f.Q.value=1.1; f.frequency.setValueAtTime(fFrom,t); f.frequency.exponentialRampToValueAtTime(Math.max(60,fTo),t+dur); var g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||.3,t+dur*.3); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); src.connect(f); f.connect(g); g.connect(ctx.destination); src.start(t); src.stop(t+dur+.05); }
 function sfx(name){ if(sfxMuted) return;
   if(name==='bounce'){ tone(130,.12,'sine',.25,0,60); tone(120,.1,'sine',.18,.16,60); }
-  else if(name==='swish'){ noiseBurst(.35,0,1800,.22); noiseBurst(.25,.05,900,.12); }
+  /* The made-shot swoosh: filtered noise sweeping down in pitch as it
+     swells and fades — the rush of the ball snapping through the net. */
+  else if(name==='swish'){ noiseSweep(.5,0,2600,650,.34); noiseSweep(.34,.06,1500,500,.16); }
   else if(name==='rim'){ tone(620,.09,'square',.1,0); tone(940,.12,'square',.08,.07); tone(520,.1,'square',.07,.15); }
   else if(name==='cheer'){ noiseBurst(.9,0,700,.14); noiseBurst(.8,.1,500,.1); [523,659,784,1046].forEach(function(f,i){ tone(f,.22,'triangle',.12,i*.09); }); }
   else if(name==='buzzer'){ tone(165,.55,'sawtooth',.16,0); tone(155,.55,'sawtooth',.12,0); }
@@ -1363,28 +1400,48 @@ function playShot(success){
       ],{duration:dur});
       if(animS) animS.onfinish=function(){ settleShot(mySeq,true); };
       setTimeout(function(){ settleShot(mySeq,true); },dur+90);
-      setTimeout(function(){ if(mySeq===shotSeq){ sfx('swish'); rippleNet(hoopCX,hoopCY,dw); } },790);
+      setTimeout(function(){ if(mySeq===shotSeq) rippleNet(hoopCX,hoopCY,dw); },790);
+      /* The swoosh lands as the ball drops through the net (~.41 of the flight). */
+      setTimeout(function(){ if(mySeq===shotSeq) sfx('swish'); },870);
       setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },1060);
     } else {
-      /* Missed shot: arc to the rim, ricochet off it, fall to the floor,
-         one small bounce, then ROLL back across the floor to the player
-         (spinning as it rolls, ~1s), and he dribbles it again for the retry. */
+      /* Missed shot: the ball arcs up and CLANGS off the front of the rim,
+         POPS back UP above the iron (a true rebound off the rim — the
+         mechanic that makes a miss read nothing like a swish), falls back
+         down BESIDE the hoop (never through the net), bounces twice on the
+         floor, then ROLLS back across the floor to the player (spinning as
+         it rolls), and he dribbles it again for the retry. Same ~2s as
+         before, so Leo's tip and the retry never wait on the ball. */
       var landXM=Math.max(30,hx-118);
-      var rollDegM=Math.round(landXM/(Math.PI*Math.max(20,br.width))*360);
-      var rollMidXM=Math.round(landXM*0.48);
+      /* The pop: rise well clear of the rim so it reads as a rebound, but
+         never off the top of the stage — capped by the hoop's own headroom
+         at this stage size. */
+      var popH=Math.max(84,Math.round(sr.height*0.18));
+      popH=Math.max(46,Math.min(popH,Math.round(hoopCY-br.height/2-4)));
+      var bounce2Y=Math.max(5,Math.round(bounceY*0.45));
+      var rollStartXM=Math.max(8,landXM-44);
+      var rollDegM=Math.round(rollStartXM/(Math.PI*Math.max(20,br.width))*360);
+      var rollMidXM=Math.round(rollStartXM*0.48);
       var durM=2000;
       shotAnimActive=true;
       var animM=ball.animate([
         {transform:'translate(0,0) rotate(0deg)',easing:'ease-out'},
-        {transform:'translate('+midX+'px,'+midY+'px) rotate(55deg)',offset:.25,easing:'ease-in'},
-        {transform:'translate('+(hx-10)+'px,'+(hy-4)+'px) rotate(105deg)',offset:.38,easing:'ease-in'},
-        {transform:'translate('+(hx-70)+'px,'+(hy+130)+'px) rotate(150deg)',offset:.47,easing:'ease-in'},
-        {transform:'translate('+landXM+'px,'+floorY+'px) rotate(172deg)',offset:.56,easing:'ease-out'},
-        {transform:'translate('+(landXM-14)+'px,'+(floorY-bounceY)+'px) rotate(152deg)',offset:.60,easing:'ease-in'},
-        {transform:'translate('+(landXM-26)+'px,'+floorY+'px) rotate(132deg)',offset:.64,easing:'ease-in-out'},
-        {transform:'translate('+rollMidXM+'px,'+floorY+'px) rotate('+Math.round(132-rollDegM*0.55)+'deg)',offset:.82,easing:'ease-out'},
-        {transform:'translate(0,'+floorY+'px) rotate('+(132-rollDegM)+'deg)',offset:.95,easing:'ease-out'},
-        {transform:'translate(0,0) rotate('+(132-rollDegM)+'deg)',offset:1}
+        {transform:'translate('+midX+'px,'+midY+'px) rotate(55deg)',offset:.23,easing:'ease-in'},
+        /* Rim contact: front edge of the iron, right as the rim clang sounds. */
+        {transform:'translate('+(hx-16)+'px,'+(hy+3)+'px) rotate(104deg)',offset:.35,easing:'ease-out'},
+        /* The rebound pop: UP above the rim and back toward the shooter —
+           the spin checks up as the ball reverses direction off the iron. */
+        {transform:'translate('+(hx-60)+'px,'+(hy-popH)+'px) rotate(78deg)',offset:.46,easing:'ease-in'},
+        /* Down past the side of the hoop — beside it, never through it. */
+        {transform:'translate('+(hx-100)+'px,'+(hy+95)+'px) rotate(128deg)',offset:.58,easing:'ease-in'},
+        {transform:'translate('+landXM+'px,'+floorY+'px) rotate(168deg)',offset:.66,easing:'ease-out'},
+        {transform:'translate('+(landXM-13)+'px,'+(floorY-bounceY)+'px) rotate(152deg)',offset:.705,easing:'ease-in'},
+        {transform:'translate('+(landXM-26)+'px,'+floorY+'px) rotate(140deg)',offset:.75,easing:'ease-out'},
+        {transform:'translate('+(landXM-35)+'px,'+(floorY-bounce2Y)+'px) rotate(132deg)',offset:.78,easing:'ease-in'},
+        {transform:'translate('+rollStartXM+'px,'+floorY+'px) rotate(124deg)',offset:.815,easing:'ease-out'},
+        {transform:'translate('+rollMidXM+'px,'+floorY+'px) rotate('+Math.round(124-rollDegM*0.55)+'deg)',offset:.90,easing:'ease-out'},
+        {transform:'translate(0,'+floorY+'px) rotate('+(124-rollDegM)+'deg)',offset:.96,easing:'ease-out'},
+        {transform:'translate(0,0) rotate('+(124-rollDegM)+'deg)',offset:1}
       ],{duration:durM});
       if(animM) animM.onfinish=function(){ settleShot(mySeq,false); };
       setTimeout(function(){ settleShot(mySeq,false); },durM+90);
@@ -1537,6 +1594,41 @@ function tapBall(btn,val){
   if(parseInt(bonusQ.ans,10)===val){ sfx('swish'); sfx('cheer'); collection.bonusStars++; saveColl(); if(r) r.innerHTML='<div class="feedback good" style="display:block">🎉 SWISH! That ball was right — ⭐ bonus star earned!</div><button class="goldbtn" style="margin-top:10px" onclick="startBallRound()">↻ New Ball Round</button>'; }
   else { sfx('rim'); if(r) r.innerHTML='<div class="feedback bad" style="display:block">🦁 Off the rim! '+(bonusQ.hint||'Think it through and tap another ball — same problem!')+'</div>'; }
 }
+
+/* ---------- KEEP RETURNING DEVICES ON THE LATEST BUILD ----------
+   This page registers no service worker, so nothing forced a phone or
+   tablet that already had the page open (or held in its cache) to pick up
+   a fixed build — it could keep running an older copy whose Clear button
+   was still broken, which is exactly what happened with the scratch-pad
+   fix: verified fixed in a fresh desktop browser, still broken on the
+   device that had the page from before. So the page now checks itself:
+   on load, when restored from the back/forward cache, and whenever the
+   tab becomes visible again, it fetches this page fresh from the network
+   (cache:'no-store' — the network-first fetch a service worker would do)
+   and compares build stamps. If the served build differs from the running
+   one, it reloads once into the new build; a per-session guard makes a
+   reload loop impossible. Every future fix reaches returning devices the
+   same way, with nobody having to close and reopen anything by hand. */
+var APP_BUILD='20261106.3';
+var updCheckedAt=0, updReloading=false;
+function checkForNewBuild(){
+  var now=Date.now(); if(updReloading||now-updCheckedAt<20000) return; updCheckedAt=now;
+  if(!/^https?:$/.test(location.protocol)||typeof fetch!=='function') return;
+  try{
+    fetch(location.pathname+location.search,{cache:'no-store',credentials:'same-origin'}).then(function(r){ return r.ok?r.text():''; }).then(function(t){
+      if(!t||updReloading) return;
+      var m=t.match(/APP_BUILD\s*=\s*'([^']+)'/); if(!m) return;
+      var latest=m[1]; if(latest===APP_BUILD) return;
+      var seen=null; try{ seen=sessionStorage.getItem('klcBuildReload'); }catch(e){}
+      if(seen===latest) return; /* already reloaded once for this build — never loop */
+      try{ sessionStorage.setItem('klcBuildReload',latest); }catch(e){}
+      updReloading=true; location.reload();
+    }).catch(function(){});
+  }catch(e){}
+}
+window.addEventListener('pageshow',function(e){ if(e.persisted) checkForNewBuild(); });
+document.addEventListener('visibilitychange',function(){ if(!document.hidden) checkForNewBuild(); });
+setTimeout(checkForNewBuild,1500);
 
 updateGenreButtons();
 updateSongDisplay();
