@@ -793,32 +793,34 @@ function setupWork(){
   setTimeout(function(){ fitPad(false); },60);
 }
 /* Scratch pad */
-var padTool='pen', padDrawing=false, padCtx=null;
+var padTool='pen', padDrawing=false, padCtx=null, padGen=0;
 function setPadTool(t){ padTool=t; var p=document.getElementById('padPenBtn'), e=document.getElementById('padEraserBtn'); if(p) p.classList.toggle('on',t==='pen'); if(e) e.classList.toggle('on',t==='eraser'); }
 function fitPad(keep){
   var c=document.getElementById('scratchPad'); if(!c||!c.clientWidth) return;
-  var url=null; if(keep&&padCtx){ try{ url=c.toDataURL(); }catch(e){} }
+  var gen=padGen; var url=null; if(keep&&padCtx){ try{ url=c.toDataURL(); }catch(e){} }
   var dpr=window.devicePixelRatio||1; var w=c.clientWidth, h=250;
   c.width=Math.round(w*dpr); c.height=Math.round(h*dpr);
   padCtx=c.getContext('2d'); padCtx.setTransform(dpr,0,0,dpr,0,0); padCtx.lineCap='round'; padCtx.lineJoin='round';
-  if(url){ var img=new Image(); img.onload=function(){ if(padCtx) padCtx.drawImage(img,0,0,w,h); }; img.src=url; }
+  if(url){ var img=new Image(); img.onload=function(){ if(gen!==padGen) return; /* a Clear happened while this restore image was loading — never repaint the old strokes over it */ if(padCtx) padCtx.drawImage(img,0,0,w,h); }; img.src=url; }
 }
 function clearPad(){
   var c=document.getElementById('scratchPad'); if(!c) return;
-  /* Never trust the cached padCtx: it is only set by fitPad(), which returns
-     early whenever the pad has no layout width (panel hidden/animating), so the
-     old Clear silently did nothing whenever that context was missing or stale.
-     Always work from the canvas's LIVE context and erase its FULL backing
-     store in device pixels, so every pen stroke and eraser mark goes. */
+  padGen++; /* invalidate any fitPad restore image still loading, so it can never repaint cleared strokes */
   padDrawing=false; /* end any stroke in progress so it cannot repaint after the clear */
-  var ctx=c.getContext('2d'); if(!ctx) return;
-  padCtx=ctx;
-  ctx.save();
-  ctx.setTransform(1,0,0,1);
-  ctx.globalCompositeOperation='source-over';
-  ctx.clearRect(0,0,c.width,c.height);
-  ctx.restore();
-  try{ ctx.beginPath(); }catch(e){} /* drop the current stroke path so it is never re-stroked */
+  if(!c.clientWidth){ /* pad not laid out (panel hidden): no bitmap to erase — drop the live path; the next fitPad() sizes a fresh blank bitmap anyway */
+    var x0=null; try{ x0=c.getContext('2d'); }catch(e){}
+    if(x0){ padCtx=x0; try{ x0.beginPath(); }catch(e){} }
+    return;
+  }
+  var dpr=window.devicePixelRatio||1; var w=c.clientWidth, h=250;
+  /* Reassigning width/height is the one erase no leftover context state can
+     undo: it resets the whole bitmap to blank AND drops the current path, no
+     matter what transform, composite mode or half-finished stroke the shared
+     context was left in. The old clearRect under a hand-restored transform
+     could silently leave the strokes on the pad. */
+  c.width=Math.round(w*dpr); c.height=Math.round(h*dpr);
+  padCtx=c.getContext('2d');
+  if(padCtx){ padCtx.setTransform(dpr,0,0,dpr,0,0); padCtx.lineCap='round'; padCtx.lineJoin='round'; padCtx.globalCompositeOperation='source-over'; try{ padCtx.beginPath(); }catch(e){} }
 }
 function padPos(e){ var c=document.getElementById('scratchPad'); var r=c.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
 function initPad(){
@@ -826,7 +828,7 @@ function initPad(){
   var cb=document.getElementById('padClearBtn'); if(cb) cb.addEventListener('click',clearPad); /* direct binding as well as the inline handler — a tap or click can never be lost; clearing twice is harmless */
   c.addEventListener('pointerdown',function(e){ if(!padCtx) fitPad(false); if(!padCtx) return; e.preventDefault(); padDrawing=true; try{c.setPointerCapture(e.pointerId);}catch(err){} var p=padPos(e); padCtx.beginPath(); padCtx.moveTo(p.x,p.y); padCtx.lineTo(p.x+0.1,p.y+0.1); padStroke(); });
   c.addEventListener('pointermove',function(e){ if(!padDrawing||!padCtx) return; e.preventDefault(); var p=padPos(e); padCtx.lineTo(p.x,p.y); padStroke(); });
-  function end(){ padDrawing=false; }
+  function end(){ if(padDrawing&&padCtx){ try{ padCtx.beginPath(); }catch(e){} } padDrawing=false; } /* drop the finished stroke's path so no later stroke() call can ever repaint it */
   c.addEventListener('pointerup',end); c.addEventListener('pointercancel',end); c.addEventListener('pointerleave',end);
   var rzT=null; window.addEventListener('resize',function(){ var p=document.getElementById('workPanel'); if(!p||p.style.display==='none') return; clearTimeout(rzT); rzT=setTimeout(function(){ fitPad(true); },200); });
 }
