@@ -384,10 +384,9 @@ body.playing .work-panel h3{font-size:21px}
   <!-- GRADE PICKER -->
   <div id="gradeView" style="display:none">
     <div class="section-head">
-      <div><h2>Pick Your Grade! 🎒</h2><p>Leo matches every math and spelling game to your grade — counting and first words in Kindergarten, all the way up to long division and fraction operations in 5th grade. Tap your grade to start playing!</p></div>
+      <div><h2>Pick Your Grade! 🎒</h2><p>Tap your grade to start playing!</p></div>
     </div>
     <div class="grade-grid" id="gradeGrid"></div>
-    <p style="font-weight:800;color:var(--muted);margin-top:16px;line-height:1.5">Grown-ups: you can change the grade anytime from the home screen — every grade keeps its own stars, trophies and progress, so switching never erases anything.</p>
   </div>
 
   <!-- HOME -->
@@ -1771,7 +1770,7 @@ function tapBall(btn,val){
    one, it reloads once into the new build; a per-session guard makes a
    reload loop impossible. Every future fix reaches returning devices the
    same way, with nobody having to close and reopen anything by hand. */
-var APP_BUILD='20261106.5';
+var APP_BUILD='20261106.8';
 var updCheckedAt=0, updReloading=false;
 function checkForNewBuild(){
   var now=Date.now(); if(updReloading||now-updCheckedAt<20000) return; updCheckedAt=now;
