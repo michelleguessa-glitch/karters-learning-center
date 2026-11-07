@@ -170,6 +170,17 @@ button{font-family:inherit;cursor:pointer}
 .sport-pick-card .sp-name{font-family:'Fredoka';font-size:18px;font-weight:700;line-height:1.15;text-align:center}
 .sport-pick-card.on{background:var(--gold);box-shadow:0 4px 0 var(--ink),0 0 0 3px var(--red)}
 .sport-pick-card .sp-today-tag{font-size:11.5px;font-weight:900;letter-spacing:.05em;text-transform:uppercase}
+/* Classic-build teaser: locked sports stay visible but grayed and dashed,
+   and the modal carries an unlock panel (no prices on the page). */
+.sport-pick-card.locked{background:#F1EADF;color:var(--muted);border-style:dashed;box-shadow:0 4px 0 rgba(43,22,8,.3)}
+.sport-pick-card.locked .sp-emoji{filter:grayscale(.55);opacity:.7}
+.sport-pick-card .sp-lock-tag{font-size:12.5px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:#7F1D1D}
+.sport-locked-msg{display:none;margin-top:12px;background:#FFF7ED;border:3px solid var(--ink);border-radius:16px;padding:12px 14px;font-weight:800;line-height:1.5}
+.classic-unlock{margin-top:14px;background:var(--gold-l);border:3px solid var(--ink);border-radius:18px;padding:14px;text-align:center}
+.classic-unlock b{font-family:'Fredoka';font-size:19px;display:block;line-height:1.2}
+.classic-unlock p{font-weight:800;color:var(--muted);margin:5px 0 11px;line-height:1.45}
+.unlock-btn{display:inline-block;background:var(--red);color:#fff;border:3px solid var(--ink);border-radius:999px;padding:13px 24px;font-family:'Fredoka';font-size:19px;font-weight:700;box-shadow:0 4px 0 var(--ink);text-decoration:none;line-height:1.2}
+.unlock-btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
 @media(max-width:560px){.sport-pick-grid{grid-template-columns:1fr 1fr}.sport-pick-card .sp-emoji{font-size:36px}}
 .grade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
 .grade-card{border:4px solid var(--ink);border-radius:26px;background:#fff;padding:20px 14px;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:0 6px 0 var(--ink);text-align:center}
@@ -584,8 +595,10 @@ body.playing .work-panel h3{font-size:21px}
 
   <!-- HOME -->
   <div id="homeView">
-    <!-- SPORT SWITCHER (custom build only — the wizard pick is NOT locked:
-         a child can switch sports any time, right here at the top) -->
+    <!-- SPORT SWITCHER (both builds — the pick is NOT locked: a child can
+         switch sports any time, right here at the top. The classic build
+         plays Basketball, Soccer and Tennis; the other sports show locked
+         with an Upgrade to Unlock button to the Customized edition.) -->
     <div class="sport-switcher" id="sportSwitcher" style="display:none">
       <button class="sport-switch-btn" id="sportSwitchBtn" onclick="openSportPicker()" aria-label="Pick your sport for today">
         <span class="ss-main"><span id="sportSwitchEmoji">🏀</span> Pick Your Sport for Today!</span>
@@ -751,8 +764,14 @@ body.playing .work-panel h3{font-size:21px}
   <div class="sheet">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span class="fred" style="color:var(--red);font-size:15px;letter-spacing:.08em">🏅 SWITCH MY SPORT</span><button class="ghost" onclick="closeSportPicker()">✕ Done!</button></div>
     <h3>Pick Your Sport for Today!</h3>
-    <p style="font-weight:800;color:var(--muted);margin:4px 0 6px;line-height:1.5">Tap a sport and your WHOLE world changes right away — the place you play, the words, your coach's title, and how every game scores! Your favorite color, your mascot, your coach, your grade and all your stars stay exactly the same.</p>
+    <p id="sportModalIntro" style="font-weight:800;color:var(--muted);margin:4px 0 6px;line-height:1.5">Tap a sport and your WHOLE world changes right away — the place you play, the words, your coach's title, and how every game scores! Your favorite color, your mascot, your coach, your grade and all your stars stay exactly the same.</p>
     <div class="sport-pick-grid" id="sportPickGrid"></div>
+    <div class="sport-locked-msg" id="sportLockedMsg" role="status"></div>
+    <div class="classic-unlock" id="classicUnlockPanel" style="display:none">
+      <b>🔓 Unlock All Sports!</b>
+      <p>This version includes Basketball, Soccer and Tennis. The Customized edition unlocks every sport — plus favorite colors, favorite animals, naming your world, and customizing your coach.</p>
+      <a class="unlock-btn" href="https://www.scalewithmichelle.com/l/creative-learning-center" target="_blank" rel="noopener">Upgrade to Unlock</a>
+    </div>
     <button class="check-btn" onclick="closeSportPicker()" style="width:100%;margin-top:14px">✅ Keep This Sport — Let's Play!</button>
   </div>
 </div>
@@ -906,11 +925,11 @@ homophones:{0:'These words sound the same! Listen, think about what the sentence
    wording — "Swish", "slam dunk", basketballs — appears ONLY in the
    basketball world (and on the locked standard link, which IS the
    basketball world). */
-function activeSportId(){ return (typeof customUnlocked!=='undefined'&&customUnlocked&&typeof myTheme!=='undefined'&&myTheme&&myTheme.sport)?myTheme.sport:'basketball'; }
+function activeSportId(){ return effectiveSportId(); }
 function countObj(){ var i=sportInfo(); return {emoji:i.countEmoji||i.tokenEmoji||'🏀',name:i.countName||'basketballs'}; }
 function sportifyTitle(t){ if(!t) return t; if(activeSportId()==='basketball') return t; var i=sportInfo(); return t.replace('Subtraction Slam Dunk','Subtraction '+i.subGame).replace('Word Problem Playoffs','Word Problem '+i.wpGame).replace('Homophone Hoops','Homophone '+i.wpGame).replace(/Hoops/g,i.wpGame); }
-function sportifyDesc(d){ if(!d) return d; if(activeSportId()==='basketball') return d; var i=sportInfo(); var s=themeSport(); var out=d.replace('basket + ball = basketball','sun + shine = sunshine'); out=out.replace(/basketballs/g,i.countName).replace(/Basketball/g,s.name).replace(/basketball/g,s.name.toLowerCase()); return out; }
-function topicIcon(t){ if(!t) return ''; if(t.id==='wordproblems'&&activeSportId()!=='basketball') return themeSport().emoji; return t.icon; }
+function sportifyDesc(d){ if(!d) return d; if(activeSportId()==='basketball') return d; var i=sportInfo(); var s=effectiveSportObj(); var out=d.replace('basket + ball = basketball','sun + shine = sunshine'); out=out.replace(/basketballs/g,i.countName).replace(/Basketball/g,s.name).replace(/basketball/g,s.name.toLowerCase()); return out; }
+function topicIcon(t){ if(!t) return ''; if(t.id==='wordproblems'&&activeSportId()!=='basketball') return effectiveSportObj().emoji; return t.icon; }
 /* Sport-aware praise: the generic cheers always fit, the sport's own
    make line joins them, and the basketball-only lines ("Swish! Nothing
    but net", "slam dunk") exist only in the basketball list. */
@@ -1546,6 +1565,10 @@ function checkAnswer(){
   if(current.display==='number'||currentTopic.cat==='math'){ var gn=parseFloat(guess); if(!isNaN(gn) && String(current.ans).indexOf('/')===-1 && String(current.ans).indexOf(':')===-1) correct= gn===parseFloat(current.ans); if(String(current.ans).indexOf(':')>-1) correct= normalize(guess)===normalize(current.ans); }
   attempts++;
   if(correct){
+    /* Instant crowd reaction — clapping + excited cheers start the moment
+       the right answer is checked, then the full crowd celebration lands
+       again with the score (swish / goal / point) a beat later. */
+    try{ sfx('clap'); }catch(e){}
     var p=topicProg(currentTopic.id); p.done+=1; if(attempts===1)p.stars+=1; else if(attempts===2)p.stars+=0; saveP(progress); updateTotals();
     var shot=onGameCorrect();
     var card=document.getElementById('gameCard'); card.classList.remove('bounce'); void card.offsetWidth; card.classList.add('bounce');
@@ -1811,13 +1834,142 @@ function ensureAudio(){ if(sfxMuted) return null; try{ if(!audioCtx) audioCtx=ne
 function tone(freq,dur,type,vol,delay,slideTo){ var ctx=ensureAudio(); if(!ctx) return; var t=ctx.currentTime+(delay||0); var o=ctx.createOscillator(),g=ctx.createGain(); o.type=type||'sine'; o.frequency.setValueAtTime(freq,t); if(slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(30,slideTo),t+dur); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||.18,t+.02); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t+dur+.05); }
 function noiseBurst(dur,delay,freq,vol){ var ctx=ensureAudio(); if(!ctx) return; var t=ctx.currentTime+(delay||0); var len=Math.floor(ctx.sampleRate*dur); var buf=ctx.createBuffer(1,len,ctx.sampleRate); var data=buf.getChannelData(0); for(var i=0;i<len;i++) data[i]=Math.random()*2-1; var src=ctx.createBufferSource(); src.buffer=buf; var f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=freq||1000; var g=ctx.createGain(); g.gain.setValueAtTime(vol||.15,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); src.connect(f); f.connect(g); g.connect(ctx.destination); src.start(t); }
 function noiseSweep(dur,delay,fFrom,fTo,vol){ var ctx=ensureAudio(); if(!ctx) return; var t=ctx.currentTime+(delay||0); var len=Math.floor(ctx.sampleRate*dur); var buf=ctx.createBuffer(1,len,ctx.sampleRate); var data=buf.getChannelData(0); for(var i=0;i<len;i++) data[i]=Math.random()*2-1; var src=ctx.createBufferSource(); src.buffer=buf; var f=ctx.createBiquadFilter(); f.type='bandpass'; f.Q.value=1.1; f.frequency.setValueAtTime(fFrom,t); f.frequency.exponentialRampToValueAtTime(Math.max(60,fTo),t+dur); var g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||.3,t+dur*.3); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); src.connect(f); f.connect(g); g.connect(ctx.destination); src.start(t); src.stop(t+dur+.05); }
+/* ===== CROWD CELEBRATION — clapping + cheering crowd for every RIGHT answer =====
+   Built entirely with WebAudio so it works on any tablet with no files to load:
+   • HAND CLAPS — short, sharp filtered-noise snaps. One clap is two micro-bursts
+     (palms hit + room snap). A crowd is MANY hands, never perfectly together,
+     so claps are scattered with tiny random timing / pitch / loudness offsets.
+   • CROWD ROAR — a long bed of filtered noise that swells up fast like a real
+     crowd gasping “oooh — YAY!” and then settles, with a slow wobble so it
+     breathes instead of sounding like static.
+   • CHEER VOICES — little voice-like glides up (“yay!” / “woo!”) at different
+     pitches, layered under the roar so it reads as people, not beeps.
+   The regular ‘cheer’ is for a single right answer. ‘celebration’ is the BIG
+   version for winning the whole game. ‘clap’ is the instant burst that fires
+   the moment the answer is checked, before the ball even lands. */
+function singleClap(delay,vol){
+  var ctx=ensureAudio(); if(!ctx) return;
+  var baseFreq=1250+Math.random()*950;
+  /* two hits per clap: the palm strike and its snap echo 18ms later */
+  [0,0.018+Math.random()*0.012].forEach(function(off,idx){
+    var t=ctx.currentTime+(delay||0)+off;
+    var dur=idx===0?0.055:0.045;
+    var len=Math.max(256,Math.floor(ctx.sampleRate*dur));
+    var buf=ctx.createBuffer(1,len,ctx.sampleRate); var d=buf.getChannelData(0);
+    for(var i=0;i<len;i++){ var p=i/len; d[i]=(Math.random()*2-1)*Math.pow(1-p,1.35); }
+    var src=ctx.createBufferSource(); src.buffer=buf;
+    var f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=baseFreq+(idx?260:0); f.Q.value=1.05;
+    var hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=820;
+    var g=ctx.createGain(); var v=(vol||0.20)*(idx?0.62:1);
+    g.gain.setValueAtTime(v,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    src.connect(f); f.connect(hp); hp.connect(g); g.connect(ctx.destination);
+    src.start(t);
+  });
+}
+function crowdRoar(delay,dur,vol){
+  var ctx=ensureAudio(); if(!ctx) return;
+  var t0=ctx.currentTime+(delay||0);
+  /* two layers: warm low roar + brighter cheer layer */
+  [{freq:520,q:0.7,v:1},{freq:980,q:0.9,v:0.72}].forEach(function(layer){
+    var len=Math.floor(ctx.sampleRate*dur);
+    var buf=ctx.createBuffer(1,len,ctx.sampleRate); var d=buf.getChannelData(0);
+    for(var i=0;i<len;i++) d[i]=Math.random()*2-1;
+    var src=ctx.createBufferSource(); src.buffer=buf; src.loop=true;
+    var f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.setValueAtTime(layer.freq*0.82,t0); f.frequency.linearRampToValueAtTime(layer.freq*1.18,t0+dur*0.28); f.frequency.linearRampToValueAtTime(layer.freq*0.92,t0+dur); f.Q.value=layer.q;
+    var g=ctx.createGain();
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.exponentialRampToValueAtTime((vol||0.20)*layer.v,t0+0.16);
+    g.gain.setValueAtTime((vol||0.20)*layer.v*0.86,t0+dur*0.52);
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+    /* gentle wobble so the crowd breathes */
+    try{ var lfo=ctx.createOscillator(); lfo.frequency.value=5.2+Math.random()*1.6; var lg=ctx.createGain(); lg.gain.value=(vol||0.20)*layer.v*0.16; lfo.connect(lg); lg.connect(g.gain); lfo.start(t0); lfo.stop(t0+dur); }catch(e){}
+    src.connect(f); f.connect(g); g.connect(ctx.destination);
+    src.start(t0); src.stop(t0+dur+0.05);
+  });
+}
+function cheerVoice(delay,base){
+  var ctx=ensureAudio(); if(!ctx) return;
+  var t=ctx.currentTime+(delay||0);
+  var o=ctx.createOscillator(), g=ctx.createGain();
+  o.type='triangle';
+  var start=base||(540+Math.random()*260);
+  o.frequency.setValueAtTime(start,t);
+  o.frequency.exponentialRampToValueAtTime(start*1.48,t+0.13);
+  o.frequency.exponentialRampToValueAtTime(start*1.22,t+0.30);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(0.075,t+0.06);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+0.34);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(t); o.stop(t+0.38);
+}
+function crowdReactionBurst(big){
+  try{
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var stage=document.getElementById('courtStage'); if(!stage) return;
+    var sr=stage.getBoundingClientRect(); if(!sr.width) return;
+    var chars=big?['👏','👏','🙌','🎉','👏','⭐','🙌','👏']:['👏','👏','🙌','👏','🎉','👏'];
+    var n=big?14:8;
+    for(var i=0;i<n;i++){
+      var s=document.createElement('span'); s.className='sparkle-bit'; s.textContent=chars[i%chars.length];
+      var sz=17+Math.random()*13; s.style.fontSize=sz+'px';
+      var x=sr.width*(0.10+Math.random()*0.80), y=sr.height*(0.58+Math.random()*0.18);
+      s.style.left=Math.round(x)+'px'; s.style.top=Math.round(y)+'px'; s.style.zIndex='7';
+      stage.appendChild(s);
+      var rise=44+Math.random()*46, drift=(Math.random()*36-18);
+      var anim=s.animate([
+        {transform:'translate(0,0) scale(.7)',opacity:0},
+        {transform:'translate('+(drift*0.4)+'px,'+(-rise*0.45)+'px) scale(1.12)',opacity:1,offset:.35},
+        {transform:'translate('+drift+'px,'+(-rise)+'px) scale(1)',opacity:0}
+      ],{duration:820+Math.random()*420,delay:Math.random()*180,easing:'cubic-bezier(.22,.61,.36,1)'});
+      (function(el,a){ if(a) a.onfinish=function(){ el.remove(); }; setTimeout(function(){ el.remove(); },1700); })(s,anim);
+    }
+  }catch(e){}
+}
+function playClapping(count,dur,vol){
+  /* first 4 claps land together on a beat — that's the “everybody clap!” hit —
+     then the rest scatter like a real crowd joining in */
+  var beat=[0,0.135,0.27,0.405];
+  for(var b=0;b<Math.min(4,count);b++) singleClap(beat[b],(vol||0.24)*(1-b*0.07));
+  for(var i=4;i<count;i++){
+    var when=0.08+Math.random()*Math.max(0.2,(dur||1.3)-0.22);
+    singleClap(when,0.09+Math.random()*((vol||0.24)-0.09));
+  }
+}
+function playCrowdCelebration(big){
+  if(sfxMuted) return;
+  if(big){
+    crowdRoar(0,2.7,0.27);
+    crowdRoar(0.55,1.9,0.16);
+    playClapping(34,2.35,0.26);
+    /* second wave of claps — the crowd keeps going */
+    setTimeout(function(){ if(!sfxMuted) playClapping(14,1.1,0.19); },980);
+    [0.03,0.14,0.26,0.42,0.58,0.74].forEach(function(dl,i){ cheerVoice(dl,520+i*46+Math.random()*60); });
+    [523,659,784,1046].forEach(function(f,i){ tone(f,.20,'triangle',.07,0.08+i*0.08); });
+    tone(2350,.34,'sine',.045,0.52,3120); /* a happy whistle in the crowd */
+    crowdReactionBurst(true);
+  } else {
+    crowdRoar(0,1.65,0.21);
+    playClapping(20,1.45,0.24);
+    [0.02,0.13,0.27,0.44].forEach(function(dl,i){ cheerVoice(dl,545+i*52+Math.random()*55); });
+    [659,784,1046].forEach(function(f,i){ tone(f,.16,'triangle',.06,0.05+i*0.07); });
+    crowdReactionBurst(false);
+  }
+}
 function sfx(name){ if(sfxMuted) return;
   if(name==='bounce'){ tone(130,.12,'sine',.25,0,60); tone(120,.1,'sine',.18,.16,60); }
   /* The made-shot swoosh: filtered noise sweeping down in pitch as it
      swells and fades — the rush of the ball snapping through the net. */
   else if(name==='swish'){ noiseSweep(.5,0,2600,650,.34); noiseSweep(.34,.06,1500,500,.16); }
   else if(name==='rim'){ tone(620,.09,'square',.1,0); tone(940,.12,'square',.08,.07); tone(520,.1,'square',.07,.15); }
-  else if(name==='cheer'){ noiseBurst(.9,0,700,.14); noiseBurst(.8,.1,500,.1); [523,659,784,1046].forEach(function(f,i){ tone(f,.22,'triangle',.12,i*.09); }); }
+  /* RIGHT ANSWER = THE CROWD GOES WILD: clapping hands + a cheering,
+     excited crowd roar + “yay!” voices. Fires on every correct answer
+     (the shot/score sounds call ‘cheer’ at the make moment) and again
+     as the big ‘celebration’ when the whole game is won. */
+  else if(name==='cheer'||name==='crowd'){ playCrowdCelebration(false); }
+  else if(name==='celebration'||name==='bigCheer'){ playCrowdCelebration(true); }
+  /* Instant clap burst — heard the very moment Check It! is tapped on a
+     right answer, so the excitement starts before the ball lands. */
+  else if(name==='clap'){ crowdRoar(0,0.85,0.16); playClapping(10,0.72,0.25); cheerVoice(0.02,620); cheerVoice(0.14,700); crowdReactionBurst(false); }
   else if(name==='buzzer'){ tone(165,.55,'sawtooth',.16,0); tone(155,.55,'sawtooth',.12,0); }
   else if(name==='tap'){ tone(680,.07,'triangle',.13,0,920); }
   else if(name==='pop'){ tone(540,.09,'sine',.15,0,1020); }
@@ -1830,7 +1982,7 @@ function sfx(name){ if(sfxMuted) return;
   else if(name==='fire'){ noiseBurst(.4,0,2400,.16); tone(300,.4,'sine',.12,0,900); }
 }
 function updateSfxBtn(){ var b=document.getElementById('sfxBtn'); if(!b) return; b.textContent= sfxMuted?'🔇 Sounds OFF':'🔊 Sounds ON'; b.classList.toggle('off',sfxMuted); b.setAttribute('aria-pressed',sfxMuted?'false':'true'); }
-function toggleSfx(){ sfxMuted=!sfxMuted; try{ localStorage.setItem(SFX_KEY,sfxMuted?'1':'0'); }catch(e){} updateSfxBtn(); if(!sfxMuted){ sfx('bounce'); toast('Game sounds are ON! 🔊 (Your music does not change.)'); } else toast('Game sounds are OFF. Your music does not change.'); }
+function toggleSfx(){ sfxMuted=!sfxMuted; try{ localStorage.setItem(SFX_KEY,sfxMuted?'1':'0'); }catch(e){} updateSfxBtn(); if(!sfxMuted){ sfx('cheer'); toast('Sounds ON — that’s the crowd when you get it right! 👏 (Music does not change.)'); } else toast('Game sounds are OFF. Your music does not change.'); }
 
 /* ----- Game session: scoreboard, streaks, Leo's team ----- */
 var gameSession={topicId:null,player:0,leo:0,target:20,streak:0,onFire:false,championship:false,over:false,pendingReward:''};
@@ -2190,7 +2342,7 @@ function launchConfetti(card){
   card.classList.remove('bounce'); void card.offsetWidth; card.classList.add('bounce');
 }
 function showWinCelebration(){
-  sfx('buzzer'); setTimeout(function(){ sfx('cheer'); },350);
+  sfx('buzzer'); setTimeout(function(){ sfx('celebration'); },350); setTimeout(function(){ sfx('clap'); },1450);
   var champ=gameSession.championship;
   document.getElementById('winIcon').textContent= champ?'🏆':'🥇';
   document.getElementById('winTitle').textContent= champ?'CHAMPIONSHIP WINNER!':'YOU WIN THE GAME!';
@@ -2246,7 +2398,9 @@ var THEME_SPORTS=[
      point; soccer: off the post; hockey: the puck slides wide…), and what
      the player does while waiting (tennis: bouncing the ball on his
      racket; swimming: bobbing in the water; hockey: skating in place…).
-   The standard (plain) link is locked to basketball, exactly as before. */
+   The standard (plain) link plays the classic teaser set — Basketball,
+   Soccer and Tennis (see CLASSIC_FREE_SPORTS below); its other sports
+   stay visible but locked behind the Upgrade to Unlock button. */
 var SPORT_INFO={
 basketball:{arena:'Court',venue:'basketball court',contest:'game',headline:'SHOOT.<br><span>LEARN &amp; WIN!</span>',tokenType:'ball',tokenEmoji:'🏀',countEmoji:'🏀',countName:'basketballs',subGame:'Slam Dunk',wpGame:'Playoffs',idleDrop:'46px',readyMsg:'Your player is ready — answer to shoot! 🏀',makeMsg:'🎉 SWISH! +PTS points for your team!',makeShort:'Your player scored',missMsg:'Off the rim! Read Leo\u2019s tip and shoot again on this same one! 🏀',missShort:'Off the rim!',nextPhrase:'then we dribble to the next one!',promptPhrases:['New one! Read it carefully, then shoot your answer! 🏀','Here we go — I know you can get this one!','Eyes on the ball… here\u2019s your next one!'],playerDesc:'He is the player who shoots in every game!',bonusDesc:'Free-throw tapping and tap-the-right-ball games!',bonusTapName:'Free-Throw Tap',bonusTapDesc:'Tap SHOOT when the ball marker is in the green SWISH ZONE!',zone:'SWISH ZONE',ballRoundName:'Tap the Right Ball',note:'Basketball: your player dribbles while he waits, shoots on your answer — swish scores, off the rim means try the same one again. This is the SHARED basketball logic for both worlds: girls\u2019 basketball follows it exactly the same way — dribble while waiting, shoot on the answer, a swish through the net scores, and a miss pops back up off the rim, falls beside the hoop, bounces on the floor and rolls back to the player for the retry on the same one.'},
 tennis:{arena:'Tennis Court',venue:'tennis court',contest:'match',headline:'SERVE.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'🎾',countEmoji:'🎾',countName:'tennis balls',subGame:'Tiebreak',wpGame:'Match Point',idleDrop:'13px',stageBg:'linear-gradient(180deg,#3E7CC4 0 54%,#2F9E63 54% 100%)',readyMsg:'Your player is bouncing the ball on his racket — answer to serve! 🎾',makeMsg:'🎉 OVER THE NET! It lands on the other side! +PTS points!',makeShort:'Your player smashed it over the net and scored',missMsg:'The ball landed on YOUR side of the net — no point! Read Leo\u2019s tip and serve again on this same one! 🎾',missShort:'It landed on your side of the net!',nextPhrase:'then we bounce the ball and rally to the next one!',promptPhrases:['New one! Read it carefully, then serve your answer! 🎾','Here we go — bounce, focus… here\u2019s your next one!','Racket ready… here\u2019s your next one!'],playerDesc:'He is the player who serves and rallies in every game!',bonusDesc:'Rally tapping and tap-the-right-ball games!',bonusTapName:'Rally Tap',bonusTapDesc:'Tap HIT when the ball marker is in the green OVER-THE-NET ZONE!',zone:'OVER-THE-NET ZONE',ballRoundName:'Tap the Right Ball',note:'Tennis: your player bounces the ball on his racket while he waits. A right answer smashes it over the net onto the other side — point! A wrong answer lands on YOUR side — no point, serve again.'},
@@ -2259,9 +2413,30 @@ hockey:{arena:'Hockey Rink',venue:'hockey rink',contest:'game',headline:'SKATE.<
 running:{arena:'Running Track',venue:'running track',contest:'race',headline:'RUN.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'👟',countEmoji:'👟',countName:'running shoes',subGame:'Sprint',wpGame:'Photo Finish',idleDrop:'10px',stageBg:'linear-gradient(180deg,#B4552D 0 100%)',readyMsg:'Your runner is jogging in place — answer to sprint! 👟',makeMsg:'🎉 FIRST ACROSS THE LINE! You win the sprint! +PTS points!',makeShort:'Your runner crossed the finish line first and scored',missMsg:'You stumbled on the track — no point! Read Leo\u2019s tip and run this same one again! 👟',missShort:'A stumble — run it again!',nextPhrase:'then we jog back to the start for the next one!',promptPhrases:['New one! Read it carefully, then sprint to your answer! 👟','Here we go — ready, set… here\u2019s your next one!','Spikes ready… here\u2019s your next one!'],playerDesc:'He is the runner who races in every game!',bonusDesc:'Finish-line tapping and tap-the-right-ball games!',bonusTapName:'Finish-Line Tap',bonusTapDesc:'Tap SPRINT when the marker is in the green FINISH ZONE!',zone:'FINISH ZONE',ballRoundName:'Tap the Right Ball',note:'Running: your runner jogs in place while he waits. A right answer wins the sprint to the finish line! A wrong answer is a stumble — get up and run the same one again.'},
 gymnastics:{arena:'Gymnastics Gym',venue:'gymnastics gym',contest:'meet',headline:'FLIP.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'⭐',countEmoji:'⭐',countName:'stars',subGame:'Stick-It',wpGame:'Finals',idleDrop:'8px',stageBg:'linear-gradient(180deg,#FDE8C8 0 58%,#C98B4B 58% 100%)',readyMsg:'Your boy gymnast is on the balance beam, arms out, balancing while he waits — answer to walk the beam! 🤸‍♂️',makeMsg:'🎉 HE STICKS THE LANDING! He walked the whole beam and stuck it! +PTS points!',makeShort:'Your boy gymnast walked the beam and stuck the landing',missMsg:'He wobbled and stepped off the beam — no point! He climbs back on. Read Leo\u2019s tip and walk this same one again! 🤸‍♂️',missShort:'A wobble — he stepped off the beam!',nextPhrase:'then we climb back on the beam for the next one!',promptPhrases:['New one! Read it carefully, then walk the beam with your answer! 🤸‍♂️','Here we go — arms out, eyes ahead… here\u2019s your next one!','Beam ready… here\u2019s your next one!'],playerDesc:'He is the boy gymnast who walks the beam in every game!',bonusDesc:'Beam-balance tapping and tap-the-right-star games!',bonusTapName:'Beam Tap',bonusTapDesc:'Tap STICK IT when the marker is in the green STUCK-LANDING ZONE!',zone:'STUCK-LANDING ZONE',ballRoundName:'Tap the Right Star',note:'Gymnastics — BOYS: this gymnast is a BOY gymnast (he/him), never a girl gymnast — same boy player as every other sport in this boys\u2019 world, in his team gear, no skirt or dress. He waits ON the balance beam, balancing with his arms out. A right answer walks him all the way across the beam and he sticks the landing, then comes back. A wrong answer wobbles him — he steps off the beam onto the mat, climbs back on, and walks the same one again until he sticks it.'}
 };
+/* ===== CLASSIC-BUILD SPORT TEASER (Michelle's exception, this feature
+   only) =====
+   The classic build shows the same sport switcher as the custom build,
+   with THREE sports playable — Basketball (the home sport), Soccer and
+   Tennis. Every other sport stays visible in the picker but locked
+   (🔒); tapping one gives a gentle kid message, and the picker carries
+   an "Upgrade to Unlock" button to the Creative Learning Center product
+   page, where the Customized edition is chosen. No prices appear on
+   this page. The custom build stays fully unlocked: no locks, no
+   upgrade button.
+   The classic sport choice is stored under its OWN key, separate from
+   the customized world's saved theme, so the two builds never overwrite
+   each other's sport. */
+var CLASSIC_FREE_SPORTS=['basketball','soccer','tennis'];
+var CLASSIC_SPORT_KEY='karter-classic-sport-v1';
+function isClassicFreeSport(id){ return CLASSIC_FREE_SPORTS.indexOf(id)>=0; }
+function classicSportId(){ try{ var v=localStorage.getItem(CLASSIC_SPORT_KEY); if(v&&isClassicFreeSport(v)) return v; }catch(e){} return 'basketball'; }
+function effectiveSportId(){
+  if(typeof customUnlocked!=='undefined'&&customUnlocked) return (typeof myTheme!=='undefined'&&myTheme&&myTheme.sport)?myTheme.sport:'basketball';
+  return classicSportId();
+}
+function effectiveSportObj(){ var id=effectiveSportId(); return THEME_SPORTS.find(function(s){return s.id===id})||THEME_SPORTS[0]; }
 function sportInfo(){
-  var locked=(typeof customUnlocked!=='undefined'&&!customUnlocked);
-  var id=locked?'basketball':((typeof myTheme!=='undefined'&&myTheme&&myTheme.sport)||'basketball');
+  var id=effectiveSportId();
   return SPORT_INFO[id]||SPORT_INFO.basketball;
 }
 /* Drawn scene for each sport's home — a full detailed venue, the way the
@@ -2428,7 +2603,7 @@ function applyCoachDisplay(lockedOut,sportObj){
     team=ca.emoji+' '+possessiveName(name)+' '+coachAnimalName()+'s';
   }
   var intro=document.getElementById('heroCoachIntro');
-  if(intro) intro.textContent= lockedOut? title : (title+', your '+(sportObj?sportObj.name:'Basketball').toLowerCase()+' coach');
+  if(intro) intro.textContent= (lockedOut&&(!sportObj||sportObj.id==='basketball'))? title : (title+', your '+(sportObj?sportObj.name:'Basketball').toLowerCase()+' coach');
   var badge=document.getElementById('heroCoachBadge'); if(badge) badge.textContent=(sportObj?sportObj.emoji:'🏀')+' '+title.toUpperCase()+' — HEAD COACH';
   var style=document.getElementById('heroCoachStyle'); if(style) style.textContent=sub;
   document.querySelectorAll('.coach-first-name').forEach(function(el){ el.textContent=name; });
@@ -2447,7 +2622,11 @@ function themeWorldName(){
 }
 function applyTheme(){
   var lockedOut=(typeof customUnlocked!=='undefined'&&!customUnlocked);
-  var c=lockedOut?THEME_COLORS[0]:themeColor(), s=lockedOut?THEME_SPORTS[0]:themeSport(), a=lockedOut?THEME_ANIMALS[0]:themeAnimal();
+  /* Classic build: color and mascot stay the fixed red / Leo look, but the
+     SPORT follows the classic teaser pick (Basketball, Soccer or Tennis),
+     so the whole world — headline, venue, coach title, game language —
+     switches with it, exactly like the custom build. */
+  var c=lockedOut?THEME_COLORS[0]:themeColor(), s=lockedOut?effectiveSportObj():themeSport(), a=lockedOut?THEME_ANIMALS[0]:themeAnimal();
   var root=document.documentElement;
   root.style.setProperty('--red',c.primary);
   root.style.setProperty('--red-d',c.dark);
@@ -2458,7 +2637,7 @@ function applyTheme(){
   document.querySelectorAll('.theme-sport-emoji').forEach(function(el){ el.textContent=s.emoji; });
   var court=document.getElementById('tpCourt'); if(court) court.style.background=c.primary;
   var prev=document.getElementById('themePreview'); if(prev) prev.style.background=c.soft;
-  var displayName= lockedOut? generatedWorldName() : themeWorldName();
+  var displayName= lockedOut? ('Lion '+s.name+' World') : themeWorldName();
   var nm=document.getElementById('tpName'); if(nm) nm.textContent=displayName;
   var sub=document.getElementById('tpSub'); if(sub) sub.textContent=c.name+' • '+s.name+' • '+a.name;
   var sum=document.getElementById('themeSummary');
@@ -2471,8 +2650,8 @@ function applyTheme(){
   var eyebrow=document.getElementById('heroEyebrow');
   if(lockedOut){
     if(brand) brand.textContent="KARTER'S COURT";
-    if(brandSub) brandSub.textContent='Math • Spelling • Basketball Fun';
-    if(eyebrow) eyebrow.textContent="🏀 KARTER'S COURT 🦁";
+    if(brandSub) brandSub.textContent='Math • Spelling • '+s.name+' Fun';
+    if(eyebrow) eyebrow.textContent=s.emoji+" KARTER'S COURT 🦁";
     document.title="Karter's Court";
   } else {
     var named= !!(String(myTheme.worldName||'').trim()||String(myTheme.childName||'').trim());
@@ -2514,7 +2693,7 @@ function applySportTheme(lockedOut,c,s){
   var scene=document.getElementById('sportScene');
   if(scene){ if(s.id==='basketball'){ scene.style.display='none'; scene.innerHTML=''; } else { scene.style.display='block'; scene.innerHTML=sportSceneHTML(s.id,c.primary); } }
   var vlabel=document.getElementById('sportVenueLabel');
-  if(vlabel){ if(s.id==='basketball'){ vlabel.style.display='none'; } else { vlabel.style.display='block'; vlabel.textContent=s.emoji+' '+themeWorldName()+' — '+info.arena; } }
+  if(vlabel){ if(s.id==='basketball'){ vlabel.style.display='none'; } else { vlabel.style.display='block'; vlabel.textContent=s.emoji+' '+(lockedOut?('Lion '+s.name+' World'):themeWorldName())+' — '+info.arena; } }
   var tok=document.getElementById('shotBall');
   if(tok){
     tok.classList.toggle('sport-token',info.tokenType!=='ball');
@@ -2527,32 +2706,66 @@ function applySportTheme(lockedOut,c,s){
   try{ if(typeof updateScoreboard==='function'&&typeof gameSession!=='undefined'&&gameSession) updateScoreboard(); }catch(e){}
 }
 function setThemePart(key,val){ myTheme[key]=val; saveTheme(); applyTheme(); renderThemeStudio(); renderAllPlayers(); try{ sfx('pick'); }catch(e){} }
-/* ===== SPORT SWITCHER — the wizard pick is NOT locked =====
+/* ===== SPORT SWITCHER — the pick is NOT locked =====
    The big button at the top of home opens big sport cards. Picking one
-   changes ONLY myTheme.sport (through setThemePart): applyTheme +
-   applySportTheme immediately re-skin the scene, headline, coach title,
-   tabs, token, waiting move and ready message; renderGrid re-words the
-   game cards (titles, blurbs, icons, praise and counters all read the
-   active sport at render time); and an in-progress game's scoreboard
-   re-labels via applySportTheme's updateScoreboard call. Color, animal,
-   coach, world name, grade and all progress are never touched. Custom
-   build only — the switcher is hidden and the picker will not open on
-   the classic build. */
+   changes ONLY the sport: applyTheme + applySportTheme immediately
+   re-skin the scene, headline, coach title, tabs, token, waiting move
+   and ready message; renderGrid re-words the game cards (titles,
+   blurbs, icons, praise and counters all read the active sport at
+   render time); and an in-progress game's scoreboard re-labels via
+   applySportTheme's updateScoreboard call. Color, animal, coach, world
+   name, grade and all progress are never touched.
+   Both builds show the switcher. The CUSTOM build switches freely
+   among every sport (the pick saves into the child's theme). The
+   CLASSIC build plays Basketball, Soccer and Tennis (the pick saves
+   under its own classic key); its other sports render locked, and
+   tapping one shows the gentle locked message plus the Upgrade to
+   Unlock panel. The custom build never shows locks or the panel. */
 function renderSportSwitcher(){
   var wrap=document.getElementById('sportSwitcher'); if(!wrap) return;
   var unlocked=(typeof isCustomUnlocked==='function')?isCustomUnlocked():false;
-  wrap.style.display= unlocked?'':'none';
-  if(!unlocked) return;
-  var s=themeSport();
+  wrap.style.display='';
+  var s=effectiveSportObj();
   var em=document.getElementById('sportSwitchEmoji'); if(em) em.textContent=s.emoji;
   var today=document.getElementById('sportToday'); if(today) today.textContent='Today: '+s.name+' '+s.emoji+' — tap to change';
+  var intro=document.getElementById('sportModalIntro');
+  if(intro) intro.textContent= unlocked
+    ? 'Tap a sport and your WHOLE world changes right away — the place you play, the words, your coach\u2019s title, and how every game scores! Your favorite color, your mascot, your coach, your grade and all your stars stay exactly the same.'
+    : 'Basketball 🏀, Soccer ⚽ and Tennis 🎾 are open — tap one and your WHOLE world changes right away: the place you play, the words, your coach\u2019s title, and how every game scores! The other sports are locked in this version — tap Upgrade to Unlock below to open them all. Your grade and all your stars stay exactly the same.';
+  var panel=document.getElementById('classicUnlockPanel'); if(panel) panel.style.display= unlocked?'none':'';
   var grid=document.getElementById('sportPickGrid');
-  if(grid) grid.innerHTML=THEME_SPORTS.map(function(sp){ var on=myTheme.sport===sp.id; return '<button class="sport-pick-card'+(on?' on':'')+'" onclick="switchSport(\''+sp.id+'\')" aria-label="Play '+sp.name+' today"><span class="sp-emoji">'+sp.emoji+'</span><span class="sp-name">'+sp.name+'</span>'+(on?'<span class="sp-today-tag">⭐ Playing today!</span>':'')+'</button>'; }).join('');
+  if(grid) grid.innerHTML=THEME_SPORTS.map(function(sp){
+    var on=effectiveSportId()===sp.id;
+    var locked=!unlocked&&!isClassicFreeSport(sp.id);
+    if(locked) return '<button class="sport-pick-card locked" onclick="lockedSportTap(\''+sp.id+'\')" aria-label="'+sp.name+' — locked"><span class="sp-emoji">'+sp.emoji+'</span><span class="sp-name">'+sp.name+'</span><span class="sp-lock-tag">🔒 Locked</span></button>';
+    return '<button class="sport-pick-card'+(on?' on':'')+'" onclick="switchSport(\''+sp.id+'\')" aria-label="Play '+sp.name+' today"><span class="sp-emoji">'+sp.emoji+'</span><span class="sp-name">'+sp.name+'</span>'+(on?'<span class="sp-today-tag">⭐ Playing today!</span>':'')+'</button>';
+  }).join('');
 }
-function openSportPicker(){ if(!isCustomUnlocked()){ return; } renderSportSwitcher(); document.getElementById('sportModal').classList.add('open'); try{ sfx('open'); }catch(e){} }
+function openSportPicker(){ renderSportSwitcher(); var lm=document.getElementById('sportLockedMsg'); if(lm){ lm.style.display='none'; lm.innerHTML=''; } document.getElementById('sportModal').classList.add('open'); try{ sfx('open'); }catch(e){} }
 function closeSportPicker(){ document.getElementById('sportModal').classList.remove('open'); }
+function lockedSportTap(id){
+  var sp=THEME_SPORTS.find(function(x){return x.id===id}); if(!sp) return;
+  var msg='🔒 This sport is locked! Ask a grown-up to unlock every sport.';
+  var box=document.getElementById('sportLockedMsg');
+  if(box){ box.innerHTML=msg; box.style.display='block'; try{ box.scrollIntoView({block:'nearest'}); }catch(e){} }
+  toast('🔒 This sport is locked! Ask a grown-up to unlock every sport.');
+  try{ sfx('rim'); }catch(e){}
+}
 function switchSport(id){
-  if(!isCustomUnlocked()){ return; }
+  if(!isCustomUnlocked()){
+    /* Classic build: only the three teaser sports can be picked. */
+    if(!isClassicFreeSport(id)){ lockedSportTap(id); return; }
+    if(classicSportId()===id){ closeSportPicker(); return; }
+    try{ localStorage.setItem(CLASSIC_SPORT_KEY,id); }catch(e){}
+    applyTheme();
+    renderSportSwitcher();
+    try{ renderGrid(); }catch(e){}
+    try{ if(typeof updateScoreboard==='function'&&typeof gameSession!=='undefined'&&gameSession) updateScoreboard(); }catch(e){}
+    closeSportPicker();
+    var cs=effectiveSportObj();
+    toast(cs.emoji+' Today: '+cs.name+'! Your whole world switched — same grade and stars!');
+    return;
+  }
   if(myTheme.sport===id){ closeSportPicker(); return; }
   setThemePart('sport',id);
   renderSportSwitcher();
@@ -2753,11 +2966,13 @@ var customUnlocked=false;
   }catch(e){ customUnlocked=isCustomLink; }
 })();
 function isCustomUnlocked(){ return !!customUnlocked; }
-/* The two links differ only in what the child sees — nothing on this page
-   mentions buying, prices or checkout. The plain link simply has no
+/* The two links differ in what the child sees. The plain link has no
    customization cards; the custom link shows the Make It Yours card and
    the My Player card as ordinary parts of the world, and the hero line
-   invites the child to use them. */
+   invites the child to use them. One exception, for the sport teaser
+   only: the plain link's sport picker shows its locked sports with an
+   "Upgrade to Unlock" button to the product page (no prices anywhere
+   on this page). The custom build shows no locks and no such button. */
 function applyVersionUI(){
   var unlocked=isCustomUnlocked();
   var card=document.getElementById('makeYoursCard'); if(card) card.style.display= unlocked?'':'none';
