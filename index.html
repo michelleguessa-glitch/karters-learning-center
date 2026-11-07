@@ -52,6 +52,10 @@ button{font-family:inherit;cursor:pointer}
 .meta{font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--red)}
 .play-btn{border:none;background:var(--red);color:#fff;padding:14px;border-radius:999px;font-family:'Fredoka';font-size:18px;font-weight:700;width:100%}
 .play-btn:active{transform:scale(.98)}
+.tcard.locked{background:#FFF7ED;border:3px dashed #B45309}
+.tcard.locked .ticon{background:#E5E7EB;border-color:#D1D5DB;filter:grayscale(.4)}
+.lock-badge{display:inline-block;background:var(--gold);border:2px solid var(--ink);border-radius:999px;padding:5px 11px;font-family:'Fredoka';font-weight:700;font-size:14px;color:var(--ink)}
+.play-btn.locked-btn{background:#6B7280}
 /* Practice */
 #practiceView{display:none}
 .p-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
@@ -147,6 +151,18 @@ button{font-family:inherit;cursor:pointer}
 @media(max-width:680px){.music-dock{margin:8px 12px 24px;max-width:calc(100% - 24px)}.music-bar{gap:5px;padding:5px 6px;flex-wrap:wrap;border-radius:20px}.music-play{width:38px;height:38px;flex-basis:38px;font-size:19px}.music-ctl{width:34px;height:34px;flex-basis:34px;font-size:13px}.music-meta b{font-size:13px}.music-meta span{font-size:11px}.music-vol{padding:4px 6px}.music-vol input[type=range]{width:56px}.music-meta{min-width:100px}.genre-row{max-width:260px}}
 
 /* ===== GAME LAYER + PLAYER STUDIO ===== */
+/* Grade picker */
+.grade-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:10px 14px;margin-bottom:14px;box-shadow:0 4px 0 var(--ink)}
+.grade-bar b{font-family:'Fredoka';font-size:19px}
+.grade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.grade-card{border:4px solid var(--ink);border-radius:26px;background:#fff;padding:20px 14px;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:0 6px 0 var(--ink);text-align:center}
+.grade-card:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
+.grade-card.on{background:var(--gold-l);border-color:var(--red)}
+.grade-card .g-emoji{font-size:34px}
+.grade-card .g-big{font-family:'Fredoka';font-size:56px;font-weight:700;line-height:1;color:var(--red-d)}
+.grade-card .g-name{font-family:'Fredoka';font-size:21px;font-weight:700}
+.grade-card .g-blurb{font-size:13px;font-weight:800;color:var(--muted);line-height:1.4}
+@media(max-width:760px){.grade-grid{grid-template-columns:1fr 1fr}.grade-card .g-big{font-size:44px}}
 .sfx-btn{border:3px solid var(--ink);background:#fff;border-radius:999px;padding:8px 13px;font-weight:900;font-size:14px;white-space:nowrap}
 .sfx-btn.off{background:#FEE2E2;color:#7F1D1D}
 .leo-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
@@ -365,8 +381,18 @@ body.playing .work-panel h3{font-size:21px}
 </section>
 
 <main class="wrap">
+  <!-- GRADE PICKER -->
+  <div id="gradeView" style="display:none">
+    <div class="section-head">
+      <div><h2>Pick Your Grade! 🎒</h2><p>Leo matches every math and spelling game to your grade — counting and first words in Kindergarten, all the way up to long division and fraction operations in 5th grade. Tap your grade to start playing!</p></div>
+    </div>
+    <div class="grade-grid" id="gradeGrid"></div>
+    <p style="font-weight:800;color:var(--muted);margin-top:16px;line-height:1.5">Grown-ups: you can change the grade anytime from the home screen — every grade keeps its own stars, trophies and progress, so switching never erases anything.</p>
+  </div>
+
   <!-- HOME -->
   <div id="homeView">
+    <div class="grade-bar"><b id="gradeName">🎒 My Grade</b><span style="font-weight:800;color:var(--muted)">Every game is set to this grade's learning level.</span><button class="ghost" style="margin-left:auto" onclick="openGradePicker()">🎒 Change Grade</button></div>
     <div class="tabs" role="tablist">
       <button class="tab active" id="tabMath" onclick="showCat('math')">🏀 MATH COURT</button>
       <button class="tab" id="tabSpell" onclick="showCat('spelling')">📣 SPELLING COURT</button>
@@ -542,17 +568,37 @@ var KEY='leos-learning-court-v1';
 function loadP(){ try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}} }
 function saveP(p){ localStorage.setItem(KEY, JSON.stringify(p)); }
 var progress=loadP();
-function topicProg(id){ if(!progress[id]) progress[id]={done:0,stars:0,sec:0}; return progress[id]; }
+var GRADE_KEY='karter-grade-v1';
+var GRADES=[
+{id:'K',name:'Kindergarten',big:'K',emoji:'🧸',blurb:'Counting to 20, letter sounds & first sight words'},
+{id:'1',name:'1st Grade',big:'1',emoji:'✏️',blurb:'Adding & taking away to 100, clocks & first vowel teams'},
+{id:'2',name:'2nd Grade',big:'2',emoji:'📚',blurb:'Regrouping, coins, vowel teams & plurals'},
+{id:'3',name:'3rd Grade',big:'3',emoji:'🚀',blurb:'Times tables, division & fractions'},
+{id:'4',name:'4th Grade',big:'4',emoji:'🧭',blurb:'Big multiplication, fraction adding & dollar money'},
+{id:'5',name:'5th Grade',big:'5',emoji:'🏆',blurb:'Long division, fraction operations & multi-step stories'}
+];
+var currentGrade=null;
+try{ currentGrade=localStorage.getItem(GRADE_KEY); }catch(e){}
+function gradeIdx(){ for(var i=0;i<GRADES.length;i++){ if(GRADES[i].id===currentGrade) return i; } return 2; }
+function gradeTier(){ return gradeIdx(); }
+function gradeLabel(){ return GRADES[gradeIdx()].name; }
+function progKey(id){ return id+'@'+(currentGrade||'2'); }
+function topicProg(id){ var k=progKey(id); if(!progress[k]){ if((currentGrade||'2')==='2'&&progress[id]) progress[k]=progress[id]; else progress[k]={done:0,stars:0,sec:0}; } return progress[k]; }
+function renderGradeCards(){ var el=document.getElementById('gradeGrid'); if(!el) return; el.innerHTML=GRADES.map(function(gr){ return '<button class="grade-card'+(currentGrade===gr.id?' on':'')+'" onclick="setGrade(\''+gr.id+'\')"><span class="g-emoji">'+gr.emoji+'</span><span class="g-big">'+gr.big+'</span><span class="g-name">'+gr.name+'</span><span class="g-blurb">'+gr.blurb+'</span></button>'; }).join(''); }
+function updateGradeBar(){ var n=document.getElementById('gradeName'); if(n) n.textContent='🎒 My Grade: '+gradeLabel(); }
+function setGrade(id){ currentGrade=id; try{ localStorage.setItem(GRADE_KEY,id); }catch(e){} var gv=document.getElementById('gradeView'), hv=document.getElementById('homeView'); if(gv) gv.style.display='none'; if(hv) hv.style.display='block'; renderGradeCards(); updateGradeBar(); renderGrid(); updateTotals(); toast('🎒 '+gradeLabel()+' — Leo set every game to your grade level!'); window.scrollTo({top:0}); }
+function openGradePicker(){ stopLeoSpeech(); renderGradeCards(); var gv=document.getElementById('gradeView'), hv=document.getElementById('homeView'); if(hv) hv.style.display='none'; if(gv) gv.style.display='block'; window.scrollTo({top:0}); }
+function applyGradeGate(){ renderGradeCards(); updateGradeBar(); var ok=false; for(var i=0;i<GRADES.length;i++){ if(GRADES[i].id===currentGrade) ok=true; } if(!ok){ var gv=document.getElementById('gradeView'), hv=document.getElementById('homeView'); if(hv) hv.style.display='none'; if(gv) gv.style.display='block'; } }
 
 var TOPICS=[
-{id:'addition',cat:'math',icon:'➕',title:'Addition All-Stars',desc:'2- and 3-digit adding, regrouping, and adding in columns — like stacking points on the scoreboard!',std:'Common Core 2.NBT.5–7 • 3.NBT.2'},
+{id:'addition',cat:'math',icon:'➕',title:'Addition All-Stars',desc:'Adding at YOUR grade level — counting on in Kindergarten, regrouping in the middle grades, big multi-digit columns by 5th grade!',std:'Common Core 2.NBT.5–7 • 3.NBT.2'},
 {id:'subtraction',cat:'math',icon:'➖',title:'Subtraction Slam Dunk',desc:'Taking away, borrowing/regrouping, and checking with addition.',std:'Common Core 2.NBT.5–7 • 3.NBT.2'},
-{id:'multiplication',cat:'math',icon:'✖️',title:'Multiplication Mania',desc:'Equal groups, arrays, skip-counting and times tables to 10×10.',std:'Common Core 3.OA.1–7'},
-{id:'division',cat:'math',icon:'➗',title:'Division Dream Team',desc:'Sharing fairly, grouping, and using multiplication to help divide.',std:'Common Core 3.OA.2–7'},
-{id:'placevalue',cat:'math',icon:'🔢',title:'Place Value Power',desc:'Hundreds, tens and ones — what each digit is really worth.',std:'Common Core 2.NBT.1–3'},
+{id:'multiplication',cat:'math',icon:'✖️',title:'Multiplication Mania',desc:'Equal groups, arrays, skip-counting and times tables — growing to multi-digit multiplication in 4th and 5th grade.',std:'Common Core 3.OA.1–7'},
+{id:'division',cat:'math',icon:'➗',title:'Division Dream Team',desc:'Sharing fairly and grouping — growing to big division and long division in 4th and 5th grade.',std:'Common Core 3.OA.2–7'},
+{id:'placevalue',cat:'math',icon:'🔢',title:'Place Value Power',desc:'Ones, tens, hundreds and beyond — what each digit is really worth at your grade level.',std:'Common Core 2.NBT.1–3'},
 {id:'money',cat:'math',icon:'🪙',title:'Money Court',desc:'Pennies, nickels, dimes, quarters and dollars — count the coins!',std:'Common Core 2.MD.8'},
 {id:'time',cat:'math',icon:'🕐',title:'Time-Out Clock',desc:'Read clocks to the hour, half-hour, quarter-hour and 5 minutes.',std:'Common Core 2.MD.7 • 3.MD.1'},
-{id:'fractions',cat:'math',icon:'🍕',title:'Fraction Fans',desc:'Halves, thirds, fourths and more — fair shares of a pizza & a game!',std:'Common Core 3.NF.1–3'},
+{id:'fractions',cat:'math',icon:'🍕',title:'Fraction Fans',desc:'Halves, thirds, fourths and more — fair shares of a pizza & a game!',std:'Common Core 1.G.3 • 2.G.3 • 3.NF.1–3'},
 {id:'wordproblems',cat:'math',icon:'🏀',title:'Word Problem Playoffs',desc:'Basketball, lion and school stories — find what the story asks!',std:'Common Core 2.OA.1 • 3.OA.3, 8'},
 {id:'sightwords',cat:'spelling',icon:'👀',title:'Sight Word Sprint',desc:'Words you know in a flash — read them, spell them, win!',std:'Dolch Grade 2 & 3 • Fry Words'},
 {id:'vowels',cat:'spelling',icon:'🔤',title:'Vowel Sound Squad',desc:'Long & short vowels and vowel teams: ai, ee, ea, oa, igh and more.',std:'Grade 2–3 Phonics Patterns'},
@@ -593,8 +639,11 @@ function openWizard(t){
     var topic=TOPICS.find(function(x){return x.id===id});
     wizTitleStr="Leo's Example — "+(topic?topic.title:id);
     if(note) note.style.display='block';
-    try{ wizSteps=buildWorkedExample(id); }catch(e){ wizSteps=null; }
-    if(!wizSteps||!wizSteps.length){ var w=WIZARDS[id]; wizSteps=w?w.steps:[{h:'Watch me!',b:'Leo is getting an example ready — tap Next and watch the steps!'}]; }
+    if(isTopicLocked(topic)){ wizSteps=[{h:'🔒 Opens in 3rd Grade!',b:'🦁 Leo says: <b>'+(topic?topic.title:'This game')+'</b> is a <b>3rd-grade skill</b> (Common Core 3.OA) — multiplication and division start in 3rd grade, not in '+gradeLabel()+'. Pick <b>Addition All-Stars</b> or <b>Subtraction Slam Dunk</b> — those fit your grade right now!'}]; }
+    else{
+      try{ wizSteps=buildWorkedExample(id); }catch(e){ wizSteps=null; }
+      if(!wizSteps||!wizSteps.length){ var w=WIZARDS[id]; wizSteps=w?w.steps:[{h:'Watch me!',b:'Leo is getting an example ready — tap Next and watch the steps!'}]; }
+    }
   }
   renderWiz(); document.getElementById('wizardModal').classList.add('open');
 }
@@ -616,7 +665,7 @@ function dotsStr(n,ch){ var o=''; for(var i=0;i<n;i++) o+=ch; return o; }
 function groupsHTML(groups,per,ch){ var h='<div class="group-dots">'; for(var i=0;i<groups;i++) h+='<span class="gd">'+dotsStr(per,ch||'●')+'</span>'; return h+'</div>'; }
 function buildWorkedExample(id){
   var topic=TOPICS.find(function(x){return x.id===id}); if(!topic) return null;
-  var prog=topicProg(id); var tier=levelFor(prog.done);
+  var prog=topicProg(id); var tier=gradeTier();
   var ex=null,tries=0;
   while(tries<10){ ex= topic.cat==='math'? genMath(id,tier) : genSpelling(id,tier); tries++; if(!current||!current.ans||(String(ex.ans)!==String(current.ans)&&ex.q!==current.q)) break; }
   if(!ex) return null;
@@ -642,7 +691,7 @@ function buildWorkedExample(id){
     steps=[{h:'Watch this one: '+a4+' ÷ '+b4,b:a4+' ÷ '+b4+' means share '+a4+' into <b>'+b4+' equal groups</b>. Here they are, shared fairly:'+groupsHTML(b4,parseInt(ex.ans,10),'⭐')},
     {h:'Step 1 — Use multiplication to help',b:'Think: '+b4+' × ? = '+a4+'. You know '+b4+' × <b>'+ex.ans+'</b> = '+a4+' — so each group gets '+ex.ans+'.'},
     finCustom('<div class="example-big">'+a4+' ÷ '+b4+' = '+ex.ans+'</div>Division and multiplication are teammates!')] }
-  else if(id==='placevalue'&&nums.length>=1){ var n=nums[0],ds=String(n).split(''),names=['ones','tens','hundreds'],vals=ds.map(function(d,i){ var f=ds.length-1-i; return parseInt(d,10)*Math.pow(10,f); });
+  else if(id==='placevalue'&&nums.length>=1){ var n=nums[0],ds=String(n).split(''),names=['ones','tens','hundreds','thousands','ten-thousands','hundred-thousands'],vals=ds.map(function(d,i){ var f=ds.length-1-i; return parseInt(d,10)*Math.pow(10,f); });
     steps=[{h:'Watch this one: the number '+n,b:'A <b>different</b> number, worked the same way. Each digit lives in a place:'+'<div class="letter-boxes">'+ds.map(function(d,i){return '<span class="letter-box">'+d+'<small style="display:block;font-size:10px;font-family:Nunito">'+(names[ds.length-1-i]||'')+'</small></span>'}).join('')+'</div>'},
     {h:'Step 1 — What is each digit worth?',b:ds.map(function(d,i){return '<b>'+d+'</b> in the '+(names[ds.length-1-i]||'')+' place = <b>'+vals[i]+'</b>'}).join(' • ')+'<br>Put them together: '+vals.join(' + ')+' = '+n+'.'},
     finCustom('<div class="example-big">'+n+' = '+vals.join(' + ')+'</div>The <b>place</b> tells the <b>value</b>! For YOUR number, point from the right: ones, tens, hundreds.')] }
@@ -655,6 +704,16 @@ function buildWorkedExample(id){
     {h:'Step 1 — The short hand tells the hour',b:'The short hand is just past <b>'+hh+'</b>, so the hour is <b>'+hh+'</b>.'},
     {h:'Step 2 — The long hand tells the minutes',b:'Each big number on the clock = 5 minutes. This long hand shows <b>'+mm+' minutes</b>.'},
     finCustom('<div class="example-big">This clock says '+ex.ans+'</div>Short hand = hour, long hand = minutes counted by 5s!')] }
+  else if(id==='fractions'&&String(ex.ans).indexOf('/')===-1){ /* Kindergarten whole/half sharing example — words only, no fraction notation */
+    steps=[{h:'Watch this sharing shape',b:'A <b>different</b> shape, shared the same way.'+(ex.visual?'<div class="ex-visual">'+ex.visual+'</div>':'')},
+    {h:'Step 1 — Count the equal parts',b:'The shape is cut into <b>2 equal parts</b>. Equal means both parts are exactly the same size!'},
+    {h:'Step 2 — How much is shaded?',b: ex.ans==='Whole' ? 'Both parts are shaded red — that is the <b>whole</b> shape!' : 'Just 1 of the 2 parts is shaded red — that is a <b>half</b> of the shape!'},
+    finCustom('<div class="example-big">Answer: '+ex.ans+'</div>One part of two shaded = half. Both parts shaded = whole!')] }
+  else if(id==='fractions'&&String(ex.q).indexOf('+')>-1){ var fpa=String(ex.ans).split('/');
+    steps=[{h:'Watch this one: '+ex.q.replace(' = ?',''),b:'A <b>different</b> fraction-adding problem, worked the same way as yours.'},
+    {h:'Step 1 — Make the bottoms match (if they need it)',b:'Fractions can only be added when the bottom numbers (denominators) match. If they already match, great — if not, change each fraction so both bottoms become the same number.'},
+    {h:'Step 2 — Add the tops only',b:'Add the top numbers (numerators). The bottom number stays the same!'},
+    finCustom('<div class="example-big">'+ex.q.replace(' = ?','')+' = '+ex.ans+'</div>Tops add, bottom stays — that is the whole trick!')] }
   else if(id==='fractions'){ var fp=String(ex.ans).split('/'),fn=fp[0],fd=fp[1];
     steps=[{h:'Watch this fraction',b:'A <b>different</b> shaded bar, worked the same way.'+(ex.visual?'<div class="ex-visual">'+ex.visual+'</div>':'')},
     {h:'Step 1 — Count ALL the equal parts',b:'Count every part, shaded or not: there are <b>'+fd+'</b> equal parts. That is the <b>bottom</b> number.'},
@@ -714,27 +773,120 @@ var TRYAGAIN=['Good try — champions always try again!','So close! Let\'s fix o
 
 /* ---------- GENERATORS ---------- */
 function genMath(id,tier){
+  /* tier here is the SELECTED GRADE index: 0=Kindergarten, 1=1st, 2=2nd, 3=3rd, 4=4th, 5=5th.
+     Every range below follows the Common Core State Standards progression for that grade. */
+  var gr=(typeof tier==='number'&&tier>=0&&tier<=5)?tier:2;
   var a,b,ans,q,hint,check;
-  if(id==='addition'){ if(tier===0){a=R(12,89);b=R(11,79);}else if(tier<3){a=R(45,289);b=R(35,199);}else{a=R(234,879);b=R(156,789);} ans=a+b; q=a+' + '+b+' = ?'; hint='Add the <b>ones first</b>, then the tens. If the ones make 10 or more, regroup: carry 1 ten over.'; check=function(g){ if(g===ans-10||g===ans+10) return 'Watch the <b>tens place</b> — you may have missed the carried ten from the ones!'; if(g<ans) return 'Your answer is a little <b>too small</b>. Did you add BOTH numbers in every place?'; return 'Your answer is a little <b>too big</b>. Check the ones place first: '+ (a%10)+' + '+(b%10)+' — did you regroup?'; }; }
-  else if(id==='subtraction'){ a=R(35,99); if(tier>0)a=R(120,899); b=R(12,a-5); ans=a-b; q=a+' − '+b+' = ?'; hint='Start with the ones. If the top ones digit is too small, <b>regroup</b>: borrow 1 ten.'; check=function(g){ return 'Check the <b>ones place</b> first. Top ones = '+(a%10)+', bottom ones = '+(b%10)+'. If the top is smaller, borrow a ten, then subtract.'; }; }
-  else if(id==='multiplication'){ var maxF=tier===0?5:(tier<3?9:12); a=R(2,maxF); b=R(2,maxF); ans=a*b; q=a+' × '+b+' = ?'; hint='Think <b>'+a+' groups of '+b+'</b>. Skip-count by '+b+'s, '+a+' times.'; check=function(g){ return 'Skip-count with me: count by '+b+' — and stop after '+a+' counts. Or flip it: '+b+' × '+a+' is the same answer!'; }; }
-  else if(id==='division'){ b=R(2,tier<2?6:12); ans=R(2,12); a=b*ans; q=a+' ÷ '+b+' = ?'; hint='Use multiplication! Think: '+b+' × ? = '+a+'.'; check=function(g){ return 'Test your guess: does '+b+' × '+g+' equal '+a+'? If not, try a number '+(g* b<a?'bigger':'smaller')+'.'; }; }
-  else if(id==='placevalue'){ var n=tier===0?R(23,99):R(123,987); var places=[{n:'hundreds',v:Math.floor(n/100)},{n:'tens',v:Math.floor(n/10)%10},{n:'ones',v:n%10}]; var pl=tier===0?pick(places.slice(1)):pick(places); ans=pl.v; q='In '+n+', what digit is in the '+pl.n+' place?'; hint='Say the number slowly. From the right: <b>ones, tens, hundreds</b>.'; check=function(g){ return 'Point from the right: ones first, then tens, then hundreds. Which digit did you land on for the <b>'+pl.n+'</b> place in '+n+'?'; }; }
-  else if(id==='money'){ var coins=[{n:'quarter',v:25},{n:'dime',v:10},{n:'nickel',v:5},{n:'penny',v:1}]; var used=[]; var total=0; var cnt=tier===0?2:3; for(var i=0;i<cnt;i++){var c=pick(coins); used.push(c.n); total+=c.v;} ans=total; q='How many cents? '+used.join(' + '); hint='Coin values: quarter 25¢, dime 10¢, nickel 5¢, penny 1¢. Start with the <b>biggest</b> coin.'; check=function(g){ return 'Add again, biggest first: '+used.map(function(u){return u==='quarter'?'25':u==='dime'?'10':u==='nickel'?'5':'1'}).join(' + ')+'. Go slowly!'; }; }
-  else if(id==='time'){ var hrs=R(1,12); var mins=pick(tier===0?[0,30]:[0,15,30,45,5,10,20,25,35,40,50,55]); ans=hrs+':'+(mins<10?'0'+mins:mins); q='What time is on the clock?'; var angM=mins*6, angH=(hrs%12)*30+mins*0.5; var visual='<svg width="150" height="150" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#fff" stroke="#D92323" stroke-width="4"/><g font-size="10" font-weight="900" text-anchor="middle"><text x="50" y="14">12</text><text x="88" y="53">3</text><text x="50" y="93">6</text><text x="12" y="53">9</text></g><line x1="50" y1="50" x2="'+(50+24*Math.sin(angH*Math.PI/180))+'" y2="'+(50-24*Math.cos(angH*Math.PI/180))+'" stroke="#2B1608" stroke-width="5" stroke-linecap="round"/><line x1="50" y1="50" x2="'+(50+36*Math.sin(angM*Math.PI/180))+'" y2="'+(50-36*Math.cos(angM*Math.PI/180))+'" stroke="#D92323" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="50" r="4" fill="#FFB800"/></svg>'; return {q:q,ans:ans,display:'text',hint:'<b>Short hand = hour.</b> Long hand = minutes — count by 5s around the clock.',check:function(g){return 'First the short hand tells the hour. Then the long hand: each big number = 5 minutes. What hour is the short hand just past?';},visual:visual,placeholder:'e.g. 4:30'}; }
-  else if(id==='fractions'){ var den=pick([2,3,4,6,8]); var num=R(1,den-1); ans=num+'/'+den; q='What fraction is shaded?'; var cells=''; for(var k=0;k<den;k++){ cells+='<div style="flex:1;height:54px;border:3px solid #2B1608;background:'+(k<num?'#D92323':'#fff')+'"></div>'; } var visual='<div style="display:flex;gap:3px;width:min(340px,80vw)">'+cells+'</div>'; return {q:q,ans:ans,display:'text',hint:'Bottom number = total <b>equal</b> parts. Top number = shaded parts.',check:function(g){return 'Count ALL the equal parts first — that\'s your bottom number. Then count only the <b>red shaded</b> parts — that\'s your top number. Type it like 2/4.';},visual:visual,placeholder:'e.g. 1/2'}; }
-  else { var names=['Leo','Mia','Jayden','Sofia','Noah','Ava']; var objs=[{n:'basketballs',e:'🏀'},{n:'stickers',e:'⭐'},{n:'marbles',e:'🔵'},{n:'books',e:'📚'}]; var o=pick(objs); var nm=pick(names); var kind=R(0,2); if(kind===0){a=R(14,68);b=R(9,39);ans=a+b;q=nm+' had '+a+' '+o.n+'. '+nm+' got '+b+' more. How many '+o.n+' does '+nm+' have now?';hint='“Got more” means <b>add</b>.';check=function(){return 'The story says “got MORE” — that\'s adding. Set it up: '+a+' + '+b+'.';};}
-    else if(kind===1){a=R(25,80);b=R(8,a-6);ans=a-b;q=nm+' had '+a+' '+o.n+'. '+nm+' gave '+b+' to a friend. How many '+o.n+' are left?';hint='“Gave away / left” means <b>subtract</b>.';check=function(){return 'The story asks how many are LEFT after giving away — that\'s subtracting: '+a+' − '+b+'.';};}
-    else {var g=R(2,6);var per=R(2,9);ans=g*per;q='There are '+g+' teams. Each team has '+per+' players. How many players in all?';hint='Equal groups = <b>multiply</b>: '+g+' × '+per+'.';check=function(){return 'Equal groups is multiplication in disguise! '+g+' groups of '+per+' means '+g+' × '+per+'.';};} }
+  if(id==='addition'){
+    if(gr===0){ a=R(1,9); b=R(1,10-a); hint='Count ALL the balls! Start at '+a+' and count on with your fingers or the dots.'; }
+    else if(gr===1){ a=R(15,89); b=R(11,100-a); hint='Add the <b>ones first</b>, then the tens.'; }
+    else if(gr===2){ a=R(28,189); b=R(19,169); hint='Add the <b>ones first</b>, then the tens. If the ones make 10 or more, regroup: carry 1 ten over.'; }
+    else if(gr===3){ a=R(234,879); b=R(156,789); hint='Line up the places: ones, tens, hundreds. Add each column and regroup when a column reaches 10.'; }
+    else if(gr===4){ a=R(1234,9876); b=R(234,5678); hint='Work column by column from the ones, regrouping as you go — thousands too!'; }
+    else { a=R(3456,19876); b=R(1234,9876); hint='Work column by column from the ones, regrouping as you go — ten-thousands too!'; }
+    ans=a+b; q=a+' + '+b+' = ?';
+    check=function(gv){ if(gv===ans-10||gv===ans+10) return 'Watch the <b>tens place</b> — you may have missed the carried ten from the ones!'; if(gv<ans) return 'Your answer is a little <b>too small</b>. Did you add BOTH numbers in every place?'; return 'Your answer is a little <b>too big</b>. Check the ones place first: '+(a%10)+' + '+(b%10)+' — did you regroup?'; };
+    if(gr===0){ var visK='<div style="font-size:28px;letter-spacing:3px;text-align:center;line-height:1.5">'+dotsStr(a,'🏀')+'<br>➕<br>'+dotsStr(b,'🏀')+'</div>'; return {q:q,ans:String(ans),display:'number',hint:hint,check:check,visual:visK}; }
+  }
+  else if(id==='subtraction'){
+    if(gr===0){ a=R(3,10); b=R(1,a-1); hint='Start with '+a+' balls. Take away '+b+' — count what is left!'; }
+    else if(gr===1){ a=R(15,99); b=R(11,a-5); hint='Start with the ones. Count back, or regroup if the top ones digit is too small.'; }
+    else if(gr===2){ a=R(52,299); b=R(23,a-9); hint='Start with the ones. If the top ones digit is too small, <b>regroup</b>: borrow 1 ten.'; }
+    else if(gr===3){ a=R(234,999); b=R(123,a-11); hint='Ones, tens, then hundreds — regroup whenever the top digit is too small.'; }
+    else if(gr===4){ a=R(1234,9999); b=R(345,a-21); hint='Work from the ones through the thousands, regrouping as you go.'; }
+    else { a=R(2345,19999); b=R(1234,a-31); hint='Work from the ones through the ten-thousands, regrouping as you go.'; }
+    ans=a-b; q=a+' − '+b+' = ?';
+    check=function(gv){ return 'Check the <b>ones place</b> first. Top ones = '+(a%10)+', bottom ones = '+(b%10)+'. If the top is smaller, borrow a ten, then subtract.'; };
+  }
+  else if(id==='multiplication'){
+    if(gr<3){ /* Common Core: formal multiplication (3.OA) starts in Grade 3 — it does not exist in K, 1st or 2nd. Below 3rd, Leo only counts equal groups: NO × symbol, NO times-table prompt. (The topic card is also locked on the home screen; this is the safety net so Example / bonus / championship calls can never serve a formal × prompt below 3rd grade.) */
+      var ga=R(2,3), gb2=R(2,4), tot=ga*gb2;
+      return {q:'How many stars in all? Count every star!',ans:String(tot),display:'number',hint:'Count the stars one by one — point to each star as you count!',check:function(gv){ return 'Count slowly and point to every star. There are '+ga+' groups — count ALL the stars in ALL the groups!'; },visual:groupsHTML(ga,gb2,'⭐')};
+    }
+    if(gr===3){ a=R(2,10); b=R(2,10); hint='Think <b>'+a+' groups of '+b+'</b>. Skip-count by '+b+'s, '+a+' times.'; }
+    else if(gr===4){ if(R(0,1)){ a=R(13,99); b=R(3,9); } else { a=R(12,29); b=R(12,19); } hint='Break it apart! Multiply the ones first, then the tens, then add the parts (partial products).'; }
+    else { a=R(24,199); b=R(13,49); hint='Use partial products: break the second number into tens and ones, multiply each part, then add.'; }
+    ans=a*b; q=a+' × '+b+' = ?';
+    check=function(gv){ if(gr>=4) return 'Check your partial products: multiply by the ones, then by the tens, and add the parts. One part at a time!'; return 'Skip-count with me: count by '+b+' — and stop after '+a+' counts. Or flip it: '+b+' × '+a+' is the same answer!'; };
+  }
+  else if(id==='division'){
+    if(gr<3){ /* Common Core: formal division (3.OA) starts in Grade 3 — it does not exist in K, 1st or 2nd. Below 3rd, Leo only shares fairly and counts one group: NO ÷ symbol, NO division prompt. (The topic card is also locked on the home screen; this is the safety net for Example / bonus / championship calls.) */
+      var perD=R(2,5);
+      return {q:'Leo shared stars fairly into 2 groups. How many stars are in each group?',ans:String(perD),display:'number',hint:'Look at ONE group and count its stars!',check:function(gv){ return 'Count the stars in just ONE group — the groups are fair, so both groups match!'; },visual:groupsHTML(2,perD,'⭐')};
+    }
+    if(gr===3){ b=R(2,9); ans=R(3,12); }
+    else if(gr===4){ b=R(3,9); ans=R(12,48); }
+    else { b=R(12,25); ans=R(11,39); }
+    a=b*ans; q=a+' ÷ '+b+' = ?'; hint='Use multiplication! Think: '+b+' × ? = '+a+'.';
+    check=function(gv){ return 'Test your guess: does '+b+' × '+gv+' equal '+a+'? If not, try a number '+((gv*b)<a?'bigger':'smaller')+'.'; };
+  }
+  else if(id==='placevalue'){
+    var n; if(gr===0) n=R(11,20); else if(gr===1) n=R(23,120); else if(gr===2) n=R(123,987); else if(gr===3) n=R(1023,9987); else if(gr===4) n=R(10234,99876); else n=R(102345,998765);
+    var namesPV=['ones','tens','hundreds','thousands','ten-thousands','hundred-thousands'];
+    var dsPV=String(n).split('');
+    var pls=dsPV.map(function(d,i){ var fr=dsPV.length-1-i; return {n:namesPV[fr],v:parseInt(d,10),place:Math.pow(10,fr)}; });
+    var pl=pick(pls);
+    if(gr===4&&R(0,1)){ ans=pl.v*pl.place; q='In '+n+', what is the VALUE of the digit in the '+pl.n+' place?'; hint='Value = the digit × its place. A digit in the '+pl.n+' place is worth the digit times '+pl.place+'.'; check=function(gv){ return 'The digit is '+pl.v+' and it lives in the '+pl.n+' place, so multiply: '+pl.v+' × '+pl.place+'.'; }; return {q:q,ans:String(ans),display:'number',hint:hint,check:check}; }
+    ans=pl.v; q='In '+n+', what digit is in the '+pl.n+' place?'; hint= gr<=1?'Say the number slowly. From the right: <b>ones, then tens</b>.':'Say the number slowly. From the right: <b>ones, tens, hundreds</b> and beyond.';
+    check=function(gv){ return 'Point from the right: ones first, then tens, then hundreds. Which digit did you land on for the <b>'+pl.n+'</b> place in '+n+'?'; };
+  }
+  else if(id==='money'){
+    var coinVals={quarter:25,dime:10,nickel:5,penny:1};
+    if(gr===0){ var cn=pick(['penny','nickel','dime','quarter']); ans=coinVals[cn]; q='How many cents is one '+cn+' worth?'; hint='Coin values: penny = 1¢, nickel = 5¢, dime = 10¢, quarter = 25¢.'; check=function(gv){ return 'Remember the coin values: penny 1¢, nickel 5¢, dime 10¢, quarter 25¢. Which coin did Leo ask about?'; }; return {q:q,ans:String(ans),display:'number',hint:hint,check:check}; }
+    if(gr>=4){ var dl=R(1,9); var usedD=[]; var totD=0; var cntD=R(2,3); var coinNms=['quarter','dime','nickel','penny']; for(var di=0;di<cntD;di++){ var cd=pick(coinNms); usedD.push(cd); totD+=coinVals[cd]; } var totalD=dl*100+totD; ans=(totalD/100).toFixed(2); q='How many dollars in all? $'+dl+' + '+usedD.join(' + '); hint='Coins first: '+usedD.map(function(u){return coinVals[u]+'¢';}).join(' + ')+' = '+totD+'¢. Then add the $'+dl+' — write it as dollars and cents, like 2.60.'; check=function(gv){ return 'Add the coins first ('+totD+'¢ in coins), then put the $'+dl+' in front: dollars before the dot, cents after it.'; }; return {q:q,ans:ans,display:'text',hint:hint,check:check,placeholder:'e.g. 2.60'}; }
+    var coins=[{n:'quarter',v:25},{n:'dime',v:10},{n:'nickel',v:5},{n:'penny',v:1}]; var used=[]; var total=0; var cnt= gr===1?2:(gr===2?3:4); for(var i=0;i<cnt;i++){var c=pick(coins); used.push(c.n); total+=c.v;} ans=total; q='How many cents? '+used.join(' + '); hint='Coin values: quarter 25¢, dime 10¢, nickel 5¢, penny 1¢. Start with the <b>biggest</b> coin.'; check=function(gv){ return 'Add again, biggest first: '+used.map(function(u){return u==='quarter'?'25':u==='dime'?'10':u==='nickel'?'5':'1'}).join(' + ')+'. Go slowly!'; };
+  }
+  else if(id==='time'){ var hrs=R(1,12); var mins= gr===0?0 : gr===1?pick([0,30]) : gr<=3?pick([0,5,10,15,20,25,30,35,40,45,50,55]) : R(1,59); ans=hrs+':'+(mins<10?'0'+mins:mins); q='What time is on the clock?'; var angM=mins*6, angH=(hrs%12)*30+mins*0.5; var visual='<svg width="150" height="150" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#fff" stroke="#D92323" stroke-width="4"/><g font-size="10" font-weight="900" text-anchor="middle"><text x="50" y="14">12</text><text x="88" y="53">3</text><text x="50" y="93">6</text><text x="12" y="53">9</text></g><line x1="50" y1="50" x2="'+(50+24*Math.sin(angH*Math.PI/180))+'" y2="'+(50-24*Math.cos(angH*Math.PI/180))+'" stroke="#2B1608" stroke-width="5" stroke-linecap="round"/><line x1="50" y1="50" x2="'+(50+36*Math.sin(angM*Math.PI/180))+'" y2="'+(50-36*Math.cos(angM*Math.PI/180))+'" stroke="#D92323" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="50" r="4" fill="#FFB800"/></svg>'; return {q:q,ans:ans,display:'text',hint: gr<=1?'<b>Short hand = hour.</b> Long hand straight up = :00, straight down = :30.':'<b>Short hand = hour.</b> Long hand = minutes — count by 5s around the clock'+(gr>=4?', then count the little extra minutes':'')+'.',check:function(gv){return 'First the short hand tells the hour. Then the long hand: each big number = 5 minutes. What hour is the short hand just past?';},visual:visual,placeholder:'e.g. 4:30'}; }
+  else if(id==='fractions'){
+    if(gr===4){ var den4=pick([4,6,8]); var n1=R(1,3), n2=R(1,den4-1-n1); if(n2<1){ n1=1; n2=1; } ans=(n1+n2)+'/'+den4; q=n1+'/'+den4+' + '+n2+'/'+den4+' = ?'; hint='Same bottom number (denominator)? Just add the <b>top</b> numbers — the bottom stays the same!'; check=function(gv){ return 'The bottom number never changes when it matches: add only the tops, '+(n1)+' + '+(n2)+', over '+den4+'. Type it like '+(n1+n2)+'/'+den4+'.'; }; return {q:q,ans:ans,display:'text',hint:hint,check:check,placeholder:'e.g. 3/4'}; }
+    if(gr===5){ var set5=pick([[1,2,1,4,'3/4'],[1,3,1,6,'1/2'],[1,2,1,3,'5/6'],[2,3,1,6,'5/6'],[1,4,1,2,'3/4'],[3,4,1,8,'7/8'],[1,5,1,10,'3/10'],[2,5,1,10,'1/2']]); ans=set5[4]; q=set5[0]+'/'+set5[1]+' + '+set5[2]+'/'+set5[3]+' = ?'; hint='The bottoms are different! First make them match: find a bottom number both can become (like turning halves into fourths), then add the tops.'; check=function(gv){ return 'Make the denominators match first — change each fraction so both bottoms are equal, THEN add the tops. The answer is a fraction like 3/4.'; }; return {q:q,ans:ans,display:'text',hint:hint,check:check,placeholder:'e.g. 3/4'}; }
+    if(gr===0){ /* Kindergarten: NO fraction standards yet — only whole/half shape-sharing visuals (K geometry sharing), answered in WORDS with tap choices. No fraction notation, no fraction arithmetic. */
+      var numK=pick([1,2]); var cellsK=''; for(var kk=0;kk<2;kk++){ cellsK+='<div style="flex:1;height:54px;border:3px solid #2B1608;background:'+(kk<numK?'#D92323':'#fff')+'"></div>'; }
+      var visK2='<div style="display:flex;gap:3px;width:min(340px,80vw)">'+cellsK+'</div>';
+      return {q:'How much of the shape is shaded red?',ans:(numK===2?'Whole':'Half'),display:'choice',choices:shuffle(['Half','Whole','None']),hint:'The shape is cut into <b>2 equal parts</b>. One part shaded is a <b>half</b>. Both parts shaded is the <b>whole</b> shape!',check:function(gv){ return 'Count the red parts: 1 of the 2 equal parts is a <b>half</b>; both parts red is the <b>whole</b> shape.'; },visual:visK2};
+    }
+    /* Grades 1–2 (1.G.3 / 2.G.3): geometry partitioning ONLY — halves, thirds, fourths of a
+       shaded shape. No fraction arithmetic, no fraction-of-a-number. Grade 3 (3.NF) keeps
+       halves, thirds, fourths, sixths and eighths naming; arithmetic starts at Grade 4+. */
+    var den= gr===1?pick([2,4]) : gr===2?pick([2,3,4]) : pick([2,3,4,6,8]); var num=R(1,den-1); ans=num+'/'+den; q='What fraction is shaded?'; var cells=''; for(var k=0;k<den;k++){ cells+='<div style="flex:1;height:54px;border:3px solid #2B1608;background:'+(k<num?'#D92323':'#fff')+'"></div>'; } var visualF='<div style="display:flex;gap:3px;width:min(340px,80vw)">'+cells+'</div>'; return {q:q,ans:ans,display:'text',hint:'Bottom number = total <b>equal</b> parts. Top number = shaded parts.',check:function(gv){return 'Count ALL the equal parts first — that\'s your bottom number. Then count only the <b>red shaded</b> parts — that\'s your top number. Type it like 2/4.';},visual:visualF,placeholder:'e.g. 1/2'}; }
+  else { var names=['Leo','Mia','Jayden','Sofia','Noah','Ava']; var objs=[{n:'basketballs',e:'🏀'},{n:'stickers',e:'⭐'},{n:'marbles',e:'🔵'},{n:'books',e:'📚'}]; var o=pick(objs); var nm=pick(names); var kind= gr>=4?R(0,3):(gr>=3?R(0,2):R(0,1)); /* multiplication stories are 3.OA — K/1st/2nd stories are add & subtract only (2.OA.1) */
+    if(kind===0){ var addMax=[9,68,168,468,768,986][gr]; a=R(gr===0?3:14,addMax); b=R(gr===0?2:9,[8,39,89,189,389,689][gr]); if(gr===0&&a+b>10){ b=10-a; } ans=a+b; q=nm+' had '+a+' '+o.n+'. '+nm+' got '+b+' more. How many '+o.n+' does '+nm+' have now?'; hint='“Got more” means <b>add</b>.'; check=function(){return 'The story says “got MORE” — that\'s adding. Set it up: '+a+' + '+b+'.';}; }
+    else if(kind===1){ a=R([6,25,45,145,345,745][gr],[10,80,180,480,880,1480][gr]); b=R(gr===0?2:8,a-3); ans=a-b; q=nm+' had '+a+' '+o.n+'. '+nm+' gave '+b+' to a friend. How many '+o.n+' are left?'; hint='“Gave away / left” means <b>subtract</b>.'; check=function(){return 'The story asks how many are LEFT after giving away — that\'s subtracting: '+a+' − '+b+'.';}; }
+    else if(kind===2){ var gg=R(2,gr===2?6:9); var per=R(2,9); ans=gg*per; q='There are '+gg+' teams. Each team has '+per+' players. How many players in all?'; hint='Equal groups = <b>multiply</b>: '+gg+' × '+per+'.'; check=function(){return 'Equal groups is multiplication in disguise! '+gg+' groups of '+per+' means '+gg+' × '+per+'.';}; }
+    else { var pk=R(2,6); var pp=R(3,9); var st=R(5,40); ans=st+pk*pp; q=nm+' had '+st+' '+o.n+'. '+nm+' bought '+pk+' packs with '+pp+' '+o.n+' in each pack. How many '+o.n+' does '+nm+' have in all now?'; hint='Two steps! First multiply the packs: '+pk+' × '+pp+'. Then add the '+st+' he already had.'; check=function(){return 'Step 1: '+pk+' packs × '+pp+' = '+(pk*pp)+'. Step 2: add the '+st+' he started with.';}; } }
   return {q:q,ans:String(ans),display:'number',hint:hint,check:check};
 }
 function sentenceFor(word){ var map={always:'We ___ brush our teeth before bed.',because:'I wore a coat ___ it was cold.',before:'Wash your hands ___ you eat.',their:'The players put on ___ red jerseys.',write:'Please ___ your name at the top.',would:'___ you like to play with Leo?',right:'You got the ___ answer — great job!',about:'This book is ___ a brave lion.',together:'Let\'s play ___ at recess!',never:'Leo ___ gives up on his team.'}; return map[word]||('Use the word in this sentence: “The ___ ” — no wait, spell the word you hear!'); }
+/* Grade-leveled spelling banks — all from published lists & standard phonics sequences:
+   Dolch Pre-Primer / Primer / Grade 1 lists, Fry words for grades 4–5, and the standard
+   phonics progression: short-vowel CVC (K) → silent-e & basic teams (1) → vowel teams (2)
+   → r-controlled vowels & diphthongs (3) → diphthongs & patterns (4) → advanced ie/ei/eigh (5). */
+var DOLCH_PRE=['a','and','away','big','blue','can','come','down','find','for','funny','go','help','here','in','is','it','jump','little','look','make','me','my','not','one','play','red','run','said','see','the','three','to','two','up','we','where','yellow','you'];
+var DOLCH_PRIMER=['all','am','are','at','ate','be','black','brown','but','came','did','do','eat','four','get','good','have','he','into','like','must','new','no','now','on','our','out','please','pretty','ran','ride','saw','say','she','so','soon','that','there','they','this','too','under','want','was','well','went','what','white','who','will','with','yes'];
+var DOLCH1=['after','again','an','any','as','ask','by','could','every','fly','from','give','going','had','has','her','him','his','how','just','know','let','live','may','of','old','once','open','over','put','round','some','stop','take','thank','them','then','think','walk','were','when'];
+var FRY4=['example','important','children','side','feet','car','mile','night','walk','white','sea','began','grow','took','river','four','carry','state','once','book','hear','stop','without','second','later','idea','enough','eat','face','watch','far','really','almost','let','above','girl','sometimes','cut','young','talk','soon','list','song','leave','family','body','music','color','stand','sun','questions','fish','area','mark','dog','horse','birds','problem','complete','room','knew','since','ever','piece','told','usually','friends','easy','heard','order','red','door','sure','become','top','ship','across','today','during','short','better','best'];
+var FRY5=['however','low','hours','black','class','happens','whole','remember','early','waves','reached','listen','wind','rock','space','covered','fast','several','hold','toward','five','step','morning','passed','vowel','true','hundred','against','pattern','numeral','table','north','slowly','money','map','busy','pulled','draw','voice','seen','cold','brought','understand','warm','common','strong','special','heart','produce','fact','street','inch','multiply','nothing','course','stay','wheel','full','force','blue','object','decide','surface','deep','moon','island','foot','system','busy','test','record','boat','common','gold','possible','plane','dry','wonder','laugh','thousand','ago','ran','check','game','shape','equate','hot','miss','brought','heat','snow','tire','bring','yes','distant','fill','east','paint','language','among','grand','ball','yet','wave','drop','heart','present','heavy','dance','engine','position','arm','wide','sail','material','size','vary','settle','speak','weight','general','ice','matter','circle','pair','include','divide','syllable','felt','perhaps','pick','sudden','count','square','reason','length','represent','art','region','energy','hunt','probable','bed','brother','egg','ride','cell','believe','fraction','forest','sit','race','window','store','summer','train','sleep','prove','lone','leg','exercise','wall','catch','mount','wish','sky','board','joy','winter','sat','written','wild','instrument','kept','glass','grass','cow','job','edge','sign','visit','past','soft','fun','bright','gas','weather','month','million','bear','finish','happy','hope','clothe','strange','gone','jump','baby','village','meet','root','buy','raise','solve','metal','whether','push','seven','paragraph','third','shall','held','hair','describe','cook','floor','either','result','burn','hill','safe','cat','century','consider','type','law','bit','coast','copy','phrase','silent','tall','sand','soil','roll','temperature','finger','industry','value','fight','lie','beat','excite','natural','view','sense','capital','chair','danger','fruit','rich','thick','soldier','process','operate','practice','separate','difficult','doctor','please','protect','noon','locate','ring','character','insect','caught','period','indicate','radio','spoke','atom','human','history','effect','electric','expect','crop','modern','element','hit','student','corner','party','supply','bone','rail','imagine','provide','agree','thus','capital','won\'t','chair','danger','fruit','rich','thick','soldier','process','operate','practice','separate','difficult','doctor','please','protect','noon','whose','locate','ring','character','insect','caught','period','indicate','radio','spoke','atom','human','history','effect','electric','expect','crop','modern','element','hit','student','corner','party','supply','bone','rail','imagine','provide','agree','thus','won\'t','chair'];
+var CVC_WORDS=[{w:'cat',m:'a',s:'short A'},{w:'map',m:'a',s:'short A'},{w:'bed',m:'e',s:'short E'},{w:'hen',m:'e',s:'short E'},{w:'pig',m:'i',s:'short I'},{w:'six',m:'i',s:'short I'},{w:'dog',m:'o',s:'short O'},{w:'top',m:'o',s:'short O'},{w:'sun',m:'u',s:'short U'},{w:'cup',m:'u',s:'short U'}];
+var MAGIC_E=[{w:'cake',team:'a_e',sound:'long A'},{w:'bike',team:'i_e',sound:'long I'},{w:'home',team:'o_e',sound:'long O'},{w:'nose',team:'o_e',sound:'long O'},{w:'cube',team:'u_e',sound:'long U'},{w:'kite',team:'i_e',sound:'long I'}];
+var R_WORDS=[{w:'car',team:'ar',sound:'AR'},{w:'star',team:'ar',sound:'AR'},{w:'bird',team:'ir',sound:'ER'},{w:'girl',team:'ir',sound:'ER'},{w:'corn',team:'or',sound:'OR'},{w:'fork',team:'or',sound:'OR'},{w:'her',team:'er',sound:'ER'},{w:'burn',team:'ur',sound:'ER'},{w:'coin',team:'oi',sound:'OY'},{w:'boy',team:'oy',sound:'OY'},{w:'cow',team:'ow',sound:'OW'},{w:'out',team:'ou',sound:'OW'}];
+var DIP_WORDS=[{w:'straw',team:'aw',sound:'AW'},{w:'hawk',team:'aw',sound:'AW'},{w:'chew',team:'ew',sound:'long OO'},{w:'autumn',team:'au',sound:'AW'},{w:'sauce',team:'au',sound:'AW'},{w:'fruit',team:'ui',sound:'long OO'},{w:'snow',team:'ow',sound:'long O'}];
+var ADV_WORDS=[{w:'receive',team:'ei',sound:'long E'},{w:'believe',team:'ie',sound:'long E'},{w:'neighbor',team:'eigh',sound:'long A'},{w:'height',team:'eigh',sound:'long I'},{w:'weight',team:'eigh',sound:'long A'},{w:'chief',team:'ie',sound:'long E'}];
+var PLURALS_ADV=[{s:'hero',p:'heroes',rule:'ends in o → add -es'},{s:'potato',p:'potatoes',rule:'ends in o → add -es'},{s:'tomato',p:'tomatoes',rule:'ends in o → add -es'},{s:'echo',p:'echoes',rule:'ends in o → add -es'},{s:'sheep',p:'sheep',rule:'special word — it stays the same!'},{s:'deer',p:'deer',rule:'special word — it stays the same!'},{s:'woman',p:'women',rule:'special word — it changes inside!'},{s:'person',p:'people',rule:'special word — it changes!'},{s:'goose',p:'geese',rule:'special word — it changes!'},{s:'wolf',p:'wolves',rule:'f changes to v, add -es'},{s:'half',p:'halves',rule:'f changes to v, add -es'}];
+var HOMOPHONES_ADV=[{set:['principal','principle'],answer:'principal',sentence:'The ___ of our school visited our class.',why:'The “principal” is the person who leads a school.'},{set:['principal','principle'],answer:'principle',sentence:'Honesty is an important ___ to live by.',why:'A “principle” is a rule or belief.'},{set:['stationary','stationery'],answer:'stationery',sentence:'She wrote the letter on pretty ___.',why:'“Stationery” is paper for writing (think: E for envelope).'},{set:['capital','capitol'],answer:'capital',sentence:'Austin is the ___ city of Texas.',why:'A “capital” is the main city (and also a big letter!).'},{set:['dessert','desert'],answer:'dessert',sentence:'We had ice cream for ___ after dinner.',why:'“Dessert” is the sweet treat — it has TWO s\'s because you want seconds!'},{set:['allowed','aloud'],answer:'aloud',sentence:'The teacher read the story ___.',why:'“Aloud” means out loud, with your voice.'},{set:['brake','break'],answer:'break',sentence:'Be careful not to ___ the glass.',why:'“Break” means to crack or snap something.'},{set:['peace','piece'],answer:'piece',sentence:'May I have a ___ of pizza?',why:'A “piece” is one part of a whole.'},{set:['mail','male'],answer:'mail',sentence:'The letter came in the ___ today.',why:'“Mail” is letters and packages.'},{set:['weather','whether'],answer:'whether',sentence:'We do not know ___ the game will be rained out.',why:'“Whether” is about choices and ifs.'},{set:['sail','sale'],answer:'sale',sentence:'The jerseys are on ___ at the store.',why:'A “sale” is when prices go down.'},{set:['tail','tale'],answer:'tale',sentence:'Grandpa told us a funny ___ about a lion.',why:'A “tale” is a story.'}];
 function genSpelling(id,tier){
-  if(id==='sightwords'){ var bank=tier<2?DOLCH2:DOLCH2.concat(DOLCH3); var w=pick(bank); return {q:'Spell the missing sight word',clue:sentenceFor(w)+'<br><small>Tap 🔊 Hear the Word, then type the whole word.</small>',ans:w,display:'text',speak:w,hint:'Picture the word in your mind. Say it slowly, letter by letter: it has <b>'+w.length+' letters</b> and starts with “<b>'+w[0]+'</b>”.',check:function(g){ if(g.length<w.length) return 'You\'re missing a letter — the word has <b>'+w.length+' letters</b>. Try again and count them!'; if(g.length>w.length) return 'One letter too many — the word has exactly <b>'+w.length+' letters</b>.'; return 'Check the <b>middle letters</b> carefully. It starts with “'+w[0]+'” and ends with “'+w[w.length-1]+'”. Sound it out slowly.'; }}; }
-  if(id==='vowels'){ var it=pick(VOWEL_WORDS); var blanked=it.w.replace(it.team,'__'); if(it.team==='a_e')blanked=it.w.replace('a','_').replace(/e$/,'_'); if(it.team==='i_e')blanked=it.w.replace('i','_').replace(/e$/,'_'); if(it.team==='o_e')blanked=it.w.replace('o','_').replace(/e$/,'_'); return {q:'Fill in the missing vowel letters to spell the word',clue:'Word: <span style="font-family:Fredoka;font-size:30px">'+blanked+'</span><br>The missing letters make the <b>'+it.sound+'</b> sound. Type the <b>whole word</b>.',ans:it.w,display:'text',speak:it.w,hint:'This word uses the vowel team <b>'+(it.team==='a_e'?'a + magic e':it.team==='i_e'?'i + magic e':it.team==='o_e'?'o + magic e':it.team)+'</b> to make the '+it.sound+' sound.',check:function(g){ return 'Listen for the <b>'+it.sound+'</b> sound in the middle. Which two letters work together to make it? The word is '+it.w.length+' letters long.'; }}; }
-  if(id==='plurals'){ var it2=pick(PLURALS); return {q:'Make it plural — more than one!',clue:'One <b>'+it2.s+'</b> → many ___<br><small>Plural means MORE THAN ONE.</small>',ans:it2.p,display:'text',hint:'Rule for this word: <b>'+it2.rule+'</b>.',check:function(g){ return 'Think of the rule: <b>'+it2.rule+'</b>. Start with “'+it2.s+'” and change the ending.'; }}; }
-  if(id==='compound'){ var it3=pick(COMPOUNDS); return {q:'Join the two words into ONE compound word',clue:'<span style="font-family:Fredoka;font-size:28px">'+it3.a+' + '+it3.b+' = ?</span><br>'+it3.clue,ans:it3.a+it3.b,display:'text',hint:'Keep <b>ALL</b> the letters from both words. No space in the middle!',check:function(g){ return 'Put them together with nothing missing: '+it3.a+' ( '+it3.a.length+' letters) + '+it3.b+' ('+it3.b.length+' letters) = '+(it3.a.length+it3.b.length)+' letters, no space!'; }}; }
-  var it4=pick(HOMOPHONES); return {q:'Pick the RIGHT word for this sentence',clue:it4.sentence,ans:it4.answer,display:'choice',choices:shuffle(it4.set),hint:it4.why,check:function(){ return it4.why+' Read the sentence again and ask what it <b>means</b>.'; }};
+  var gr=(typeof tier==='number'&&tier>=0&&tier<=5)?tier:2;
+  if(id==='sightwords'){ var bank= gr===0?DOLCH_PRE.concat(DOLCH_PRIMER) : gr===1?DOLCH_PRIMER.concat(DOLCH1) : gr===2?DOLCH2 : gr===3?DOLCH3.concat(DOLCH2) : gr===4?FRY4 : FRY5; var w=pick(bank); var sent=sentenceFor(w); var clue= (sent.indexOf('Use the word')===0)? 'Listen to the word with 🔊 Hear the Word, picture it in your mind, then type it exactly.' : sent; return {q:'Spell the missing sight word',clue:clue+'<br><small>Tap 🔊 Hear the Word, then type the whole word.</small>',ans:w,display:'text',speak:w,hint:'Picture the word in your mind. Say it slowly, letter by letter: it has <b>'+w.length+' letters</b> and starts with “<b>'+w[0]+'</b>”.',check:function(g){ if(g.length<w.length) return 'You\'re missing a letter — the word has <b>'+w.length+' letters</b>. Try again and count them!'; if(g.length>w.length) return 'One letter too many — the word has exactly <b>'+w.length+' letters</b>.'; return 'Check the <b>middle letters</b> carefully. It starts with “'+w[0]+'” and ends with “'+w[w.length-1]+'”. Sound it out slowly.'; }}; }
+  if(id==='vowels'){
+    if(gr===0){ var cv=pick(CVC_WORDS); var blankedC=cv.w.replace(cv.m,'_'); return {q:'Fill in the missing vowel letter to spell the word',clue:'Word: <span style="font-family:Fredoka;font-size:30px">'+blankedC+'</span><br>The missing letter makes the <b>'+cv.s+' sound</b>. Type the <b>whole word</b>.',ans:cv.w,display:'text',speak:cv.w,hint:'This is a short-vowel word. The middle letter is the vowel that says the <b>'+cv.s+' sound</b>: “'+cv.m+'”.',check:function(g){ return 'Say the word slowly and listen to the middle sound — the '+cv.s+' sound. Which vowel letter makes that sound?'; }}; }
+    var bankV= gr===1? MAGIC_E.concat(VOWEL_WORDS.filter(function(x){return ['ai','ay','ee','ea','oa'].indexOf(x.team)>-1;})) : gr===2? VOWEL_WORDS : gr===3? R_WORDS : gr===4? DIP_WORDS : ADV_WORDS;
+    var it=pick(bankV); var blanked=it.w.replace(it.team,'__'); if(it.team.indexOf('_')>-1){ var firstL=it.team[0]; blanked=it.w.replace(firstL,'_').replace(/e$/,'_'); }
+    var teamName= it.team==='a_e'?'a + magic e':it.team==='i_e'?'i + magic e':it.team==='o_e'?'o + magic e':it.team==='u_e'?'u + magic e':it.team;
+    return {q:'Fill in the missing vowel letters to spell the word',clue:'Word: <span style="font-family:Fredoka;font-size:30px">'+blanked+'</span><br>The missing letters make the <b>'+it.sound+'</b> sound. Type the <b>whole word</b>.',ans:it.w,display:'text',speak:it.w,hint:'This word uses the pattern <b>'+teamName+'</b> to make the '+it.sound+' sound.',check:function(g){ return 'Listen for the <b>'+it.sound+'</b> sound. Which letters work together to make it? The word is '+it.w.length+' letters long.'; }};
+  }
+  if(id==='plurals'){ var bankP= gr<=1? PLURALS.filter(function(x){return x.rule==='just add -s';}) : gr===2? PLURALS.filter(function(x){return x.rule.indexOf('special')!==0&&x.rule.indexOf('f changes')!==0&&x.rule.indexOf('fe changes')!==0;}) : gr===3? PLURALS : PLURALS.concat(PLURALS_ADV); var it2=pick(bankP); return {q:'Make it plural — more than one!',clue:'One <b>'+it2.s+'</b> → many ___<br><small>Plural means MORE THAN ONE.</small>',ans:it2.p,display:'text',hint:'Rule for this word: <b>'+it2.rule+'</b>.',check:function(g){ return 'Think of the rule: <b>'+it2.rule+'</b>. Start with “'+it2.s+'” and change the ending.'; }}; }
+  if(id==='compound'){ var bankC= gr<=1? COMPOUNDS.filter(function(x){return (x.a.length+x.b.length)<=8;}) : COMPOUNDS; var it3=pick(bankC); return {q:'Join the two words into ONE compound word',clue:'<span style="font-family:Fredoka;font-size:28px">'+it3.a+' + '+it3.b+' = ?</span><br>'+it3.clue,ans:it3.a+it3.b,display:'text',hint:'Keep <b>ALL</b> the letters from both words. No space in the middle!',check:function(g){ return 'Put them together with nothing missing: '+it3.a+' ( '+it3.a.length+' letters) + '+it3.b+' ('+it3.b.length+' letters) = '+(it3.a.length+it3.b.length)+' letters, no space!'; }}; }
+  var bankH= gr<=1? HOMOPHONES.filter(function(x){return ['sea','see','sun','hear','here','two','to'].indexOf(x.answer)>-1;}) : gr<=3? HOMOPHONES : HOMOPHONES.concat(HOMOPHONES_ADV);
+  var it4=pick(bankH); return {q:'Pick the RIGHT word for this sentence',clue:it4.sentence,ans:it4.answer,display:'choice',choices:shuffle(it4.set),hint:it4.why,check:function(){ return it4.why+' Read the sentence again and ask what it <b>means</b>.'; }};
 }
 
 /* ---------- WORK IT OUT (math only) ---------- */
@@ -1007,10 +1159,12 @@ function hearWizardStep(){ if(!wizSteps||!wizSteps.length) return; var st=wizSte
 /* ---------- GAME STATE ---------- */
 var currentTopic=null, current=null, attempts=0, timerInt=null, cat='math';
 function showCat(c){ cat=c; document.getElementById('tabMath').classList.toggle('active',c==='math'); document.getElementById('tabSpell').classList.toggle('active',c==='spelling'); document.getElementById('catTitle').textContent= c==='math'?'Math Court — Pick Your Game!':'Spelling Court — Pick Your Game!'; renderGrid(); updateTotals(); }
-function renderGrid(){ var g=document.getElementById('topicGrid'); g.innerHTML=TOPICS.filter(function(t){return t.cat===cat}).map(function(t){ var p=topicProg(t.id); var started=p.done>0; var finished=p.done>=240; return '<article class="tcard"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+t.icon+'</div><span class="meta">'+(finished?'🏆 Finished!':started?'⭐ Keep Going!':'New Game')+'</span></div><h3>'+t.title+'</h3><p>'+t.desc+'</p><button class="play-btn" onclick="startTopic(\''+t.id+'\')">'+(started&&!finished?'▶ Keep Playing!':finished?'▶ Play Again!':'▶ Start Playing!')+'</button></article>'; }).join(''); }
+function isTopicLocked(t){ return !!t&&(t.id==='multiplication'||t.id==='division')&&gradeTier()<3; }
+function lockedTopicTap(id){ var t=TOPICS.find(function(x){return x.id===id}); var name=t?t.title:'That game'; var msg='🦁 Leo says: '+name+' is a 3rd-grade skill — it opens in 3rd Grade! Try Addition All-Stars or Subtraction Slam Dunk — they fit '+gradeLabel()+'!'; toast(msg); try{ speakLeo(msg,true); }catch(e){} }
+function renderGrid(){ var g=document.getElementById('topicGrid'); g.innerHTML=TOPICS.filter(function(t){return t.cat===cat}).map(function(t){ var p=topicProg(t.id); var started=p.done>0; var finished=p.done>=240; if(isTopicLocked(t)){ return '<article class="tcard locked"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+t.icon+'</div><span class="lock-badge">🔒 Opens in 3rd Grade!</span></div><h3>'+t.title+'</h3><p><b>'+t.title+'</b> is a <b>3rd-grade skill</b> (Common Core 3.OA) — multiplication and division start in 3rd grade, so this game stays locked in '+gradeLabel()+'. 🦁 Leo says: try <b>Addition All-Stars</b> or <b>Subtraction Slam Dunk</b> — they fit your grade right now!</p><button class="play-btn locked-btn" onclick="lockedTopicTap(\''+t.id+'\')">🔒 Opens in 3rd Grade!</button></article>'; } return '<article class="tcard"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+t.icon+'</div><span class="meta">'+(finished?'🏆 Finished!':started?'⭐ Keep Going!':'New Game')+'</span></div><h3>'+t.title+'</h3><p>'+t.desc+'</p><button class="play-btn" onclick="startTopic(\''+t.id+'\')">'+(started&&!finished?'▶ Keep Playing!':finished?'▶ Play Again!':'▶ Start Playing!')+'</button></article>'; }).join(''); }
 function updateTotals(){ var ts=0; TOPICS.forEach(function(t){var p=topicProg(t.id); ts+=p.stars;}); var el=document.getElementById('totalStars'); if(el) el.textContent=ts; }
 function leoSay(html){ document.getElementById('leoBubble').innerHTML=html; speakLeo(html); }
-function startTopic(id){ currentTopic=TOPICS.find(function(t){return t.id===id}); document.body.classList.add('playing'); document.getElementById('homeView').style.display='none'; document.getElementById('practiceView').style.display='block'; document.getElementById('pTitle').textContent=currentTopic.icon+' '+currentTopic.title; window.scrollTo({top:0}); clearInterval(timerInt); timerInt=setInterval(function(){ topicProg(id).sec+=5; if(topicProg(id).sec%30===0) saveP(progress); },5000); initGameSession(id); renderAllPlayers(); nextPrompt(true); openWizard(id); }
+function startTopic(id){ var lt=TOPICS.find(function(t){return t.id===id}); if(isTopicLocked(lt)){ lockedTopicTap(id); return; } currentTopic=lt; document.body.classList.add('playing'); document.getElementById('homeView').style.display='none'; document.getElementById('practiceView').style.display='block'; document.getElementById('pTitle').textContent=currentTopic.icon+' '+currentTopic.title; window.scrollTo({top:0}); clearInterval(timerInt); timerInt=setInterval(function(){ topicProg(id).sec+=5; if(topicProg(id).sec%30===0) saveP(progress); },5000); initGameSession(id); renderAllPlayers(); nextPrompt(true); openWizard(id); }
 function goHome(){ stopLeoSpeech(); stopDribble(); if(typeof toggleWorkPanel==='function') toggleWorkPanel(false); document.body.classList.remove('playing'); clearInterval(timerInt); saveP(progress); document.getElementById('practiceView').style.display='none'; document.getElementById('homeView').style.display='block'; renderGrid(); updateTotals(); renderAllPlayers(); window.scrollTo({top:0}); }
 function goHomeFromOverlay(){
   stopWizAuto(); stopLeoSpeech(); stopFt();
@@ -1020,10 +1174,10 @@ function goHomeFromOverlay(){
 }
 function nextPrompt(first){
   stopLeoSpeech();
-  var p=topicProg(currentTopic.id); var tier=levelFor(p.done);
+  var p=topicProg(currentTopic.id); var tier=gradeTier();
   current= currentTopic.cat==='math'? genMath(currentTopic.id,tier) : genSpelling(currentTopic.id,tier);
   attempts=0;
-  document.getElementById('pLevel').textContent='Level '+(tier+1)+': '+LEVELS[tier];
+  document.getElementById('pLevel').textContent='🎒 '+gradeLabel();
   document.getElementById('qText').textContent=current.q;
   document.getElementById('qVisual').innerHTML=current.visual||'';
   var clue=document.getElementById('qClue'); if(current.clue){clue.style.display='block'; clue.innerHTML=current.clue;} else clue.style.display='none';
@@ -1263,7 +1417,7 @@ function loadColl(){ try{ var c=JSON.parse(localStorage.getItem(COLL_KEY)); if(c
 var collection=loadColl();
 function saveColl(){ try{ localStorage.setItem(COLL_KEY,JSON.stringify(collection)); }catch(e){} }
 function hasGear(id){ return collection.gear.indexOf(id)>-1; }
-function unlockGear(id){ if(hasGear(id)) return null; collection.gear.push(id); saveColl(); var g=GEAR_DEFS.find(function(x){return x.id===id}); if(g) toast('🎁 NEW GEAR UNLOCKED: '+g.name+'! Find it in My Player!'); return g; }
+function unlockGear(id){ if(hasGear(id)) return null; collection.gear.push(id); saveColl(); var g=GEAR_DEFS.find(function(x){return x.id===id}); if(g){ try{ sfx('unlock'); }catch(e){} toast('🎁 NEW GEAR UNLOCKED: '+g.name+'! Find it in My Player!'); } return g; }
 
 /* ----- Player SVG (layered, his exact design everywhere) ----- */
 function jerseyTextColor(c){ return (c==='#FFFFFF'||c==='#FFB800')?'#B91C1C':'#FFFFFF'; }
@@ -1316,6 +1470,14 @@ function sfx(name){ if(sfxMuted) return;
   else if(name==='rim'){ tone(620,.09,'square',.1,0); tone(940,.12,'square',.08,.07); tone(520,.1,'square',.07,.15); }
   else if(name==='cheer'){ noiseBurst(.9,0,700,.14); noiseBurst(.8,.1,500,.1); [523,659,784,1046].forEach(function(f,i){ tone(f,.22,'triangle',.12,i*.09); }); }
   else if(name==='buzzer'){ tone(165,.55,'sawtooth',.16,0); tone(155,.55,'sawtooth',.12,0); }
+  else if(name==='tap'){ tone(680,.07,'triangle',.13,0,920); }
+  else if(name==='pop'){ tone(540,.09,'sine',.15,0,1020); }
+  else if(name==='pick'){ tone(760,.07,'triangle',.14,0); tone(1010,.09,'triangle',.12,.055); }
+  else if(name==='open'){ [523,659,784].forEach(function(f,i){ tone(f,.11,'triangle',.12,i*.05); }); }
+  else if(name==='close'){ tone(720,.08,'triangle',.11,0,470); }
+  else if(name==='step'){ tone(600,.07,'triangle',.12,0,800); }
+  else if(name==='unlock'){ [523,659,784,1046,1318].forEach(function(f,i){ tone(f,.16,'triangle',.13,i*.07); }); noiseBurst(.35,.05,900,.06); }
+  else if(name==='sparkle'){ [1318,1568,2093].forEach(function(f,i){ tone(f,.12,'sine',.09,i*.05); }); }
   else if(name==='fire'){ noiseBurst(.4,0,2400,.16); tone(300,.4,'sine',.12,0,900); }
 }
 function updateSfxBtn(){ var b=document.getElementById('sfxBtn'); if(!b) return; b.textContent= sfxMuted?'🔇 Sounds OFF':'🔊 Sounds ON'; b.classList.toggle('off',sfxMuted); b.setAttribute('aria-pressed',sfxMuted?'false':'true'); }
@@ -1583,8 +1745,8 @@ function shootFreeThrow(){
 }
 function startBallRound(){
   stopFt(); var play=document.getElementById('bonusPlay'); if(!play) return;
-  var topics=['addition','subtraction','multiplication']; var tid=topics[Math.floor(Math.random()*topics.length)];
-  bonusQ=genMath(tid,1); var ans=parseInt(bonusQ.ans,10);
+  var topics= gradeTier()>=3? ['addition','subtraction','multiplication'] : ['addition','subtraction']; /* no × prompts below 3rd grade — multiplication opens in 3rd Grade */ var tid=topics[Math.floor(Math.random()*topics.length)];
+  bonusQ=genMath(tid,gradeTier()); var ans=parseInt(bonusQ.ans,10);
   var opts=[ans]; while(opts.length<3){ var cand=ans+(Math.floor(Math.random()*9)-4||2); if(cand>=0&&opts.indexOf(cand)===-1) opts.push(cand); }
   opts=shuffle(opts);
   play.innerHTML='<div class="work-sec-title">🏀 Tap the Right Ball!</div><div class="question" style="font-size:36px">'+bonusQ.q+'</div><div class="bonus-balls">'+opts.map(function(v){ return '<button class="bonus-ball" onclick="tapBall(this,'+v+')">'+v+'</button>'; }).join('')+'</div><div id="ballResult" style="margin-top:10px"></div>';
@@ -1609,7 +1771,7 @@ function tapBall(btn,val){
    one, it reloads once into the new build; a per-session guard makes a
    reload loop impossible. Every future fix reaches returning devices the
    same way, with nobody having to close and reopen anything by hand. */
-var APP_BUILD='20261106.3';
+var APP_BUILD='20261106.5';
 var updCheckedAt=0, updReloading=false;
 function checkForNewBuild(){
   var now=Date.now(); if(updReloading||now-updCheckedAt<20000) return; updCheckedAt=now;
@@ -1637,6 +1799,30 @@ updateSfxBtn();
 renderAllPlayers();
 showCat('math');
 renderAllPlayers();
+/* SOUND AT EVERY TOUCHPOINT: one cheerful WebAudio blip for anything a learner
+   taps — buttons, game cards, grade cards, choices, studio picks, pad tools,
+   music controls, navigation — all through sfx(), so the Sounds ON/OFF toggle
+   governs every one of them and the music player stays separate. Throttled so
+   fast tapping never stacks into noise; the scratch pad canvas is excluded so
+   drawing stays silent-stroke-free, and shot sounds (swish/rim/cheer) still
+   fire from the game itself. */
+var lastTapSfx=0;
+document.addEventListener('pointerdown',function(e){
+  if(typeof sfxMuted!=='undefined'&&sfxMuted) return;
+  var t=e.target; if(!t||!t.closest) return;
+  if(t.id==='scratchPad') return;
+  var btn=t.closest('button'); var inp=t.closest('input,select,textarea');
+  if(!btn&&!inp) return;
+  var now=Date.now(); if(now-lastTapSfx<70) return; lastTapSfx=now;
+  if(btn){ var oc=btn.getAttribute('onclick')||'';
+    if(/checkAnswer/.test(oc)) sfx('step');
+    else if(/setDesign|setHair|toggleDesign|toggleSpecial|pickChoice|toggleFrac|changeNumber/.test(oc)) sfx('pick');
+    else if(/goHome|close/.test(oc)) sfx('close');
+    else if(/open|startTopic|showCat|setGrade|setGenre|toggleMusic|nextSong|prevSong/.test(oc)) sfx('open');
+    else sfx('tap');
+  } else { sfx('pop'); }
+},true);
+applyGradeGate();
 </script>
 </body>
 </html>
