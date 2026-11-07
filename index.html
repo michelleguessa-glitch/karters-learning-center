@@ -60,7 +60,7 @@ button{font-family:inherit;cursor:pointer}
    other learning game): its two entry buttons stack full-width. */
 .tcard .w-card-btns{display:flex;flex-direction:column;gap:8px}
 .tcard .w-card-btns .goldbtn{width:100%;text-align:center;padding:13px 14px;font-family:'Fredoka';font-size:17px}
-.hero{background:var(--red);color:#fff;padding:32px 18px 42px;position:relative;overflow:hidden;border-bottom:6px solid var(--theme-tertiary)}
+.hero{background-color:var(--red);background-image:none;color:#fff;padding:32px 18px 42px;position:relative;z-index:1;isolation:isolate;overflow:hidden;border-bottom:6px solid var(--theme-tertiary)}
 .hero-inner{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:center;position:relative;z-index:2}
 .hero h1{font-size:clamp(36px,6vw,62px);line-height:.95;margin:0}
 .hero h1 span{color:var(--gold)}
@@ -427,6 +427,25 @@ body.custom-world[data-world-color="white"] .music-bar{color:var(--ink)}
 .theme-preview .tp-sub{font-size:13px;font-weight:800;opacity:.95;line-height:1.4;margin-top:3px}
 .fav-chip{border:3px solid var(--ink);background:#fff;border-radius:999px;padding:10px 14px;font-weight:900;font-size:15px}
 .fav-chip.on{background:var(--gold)}
+/* ===== BACKGROUND TEMPLATE PICKER — the wizard's Step 2 and the Theme
+   Studio's matching section present the background choice the same way:
+   one template card per sport, each card showing that sport's accepted
+   background template design itself (worldBackdropSVG — the fixed
+   back-end design that becomes the page background), its emoji and
+   its name. Picking a template is the child's SINGLE background/sport
+   choice: the template's design becomes the whole world's background
+   and its sport becomes the favorite / home sport the games and
+   language follow. There is no separate favorite-sport pick beside
+   it, and the templates are shown nowhere else on the page. */
+.bg-template-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.bg-template-card{border:3px solid var(--ink);background:#fff;border-radius:18px;padding:0;overflow:hidden;box-shadow:0 4px 0 var(--ink);display:flex;flex-direction:column;text-align:center;font-family:inherit;cursor:pointer}
+.bg-template-card:active{transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
+.bg-template-card .bgt-scene{position:relative;height:104px;overflow:hidden;background:var(--cream);border-bottom:3px solid var(--ink);display:block}
+.bg-template-card .bgt-scene svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.bg-template-card .bgt-name{font-family:'Fredoka';font-weight:700;font-size:16.5px;line-height:1.15;padding:8px 6px 9px;display:flex;align-items:center;justify-content:center;gap:6px}
+.bg-template-card.on{box-shadow:0 4px 0 var(--ink),0 0 0 3px var(--gold);background:var(--gold-l)}
+.bg-template-card.on .bgt-name{background:var(--gold)}
+@media(max-width:560px){.bg-template-grid{grid-template-columns:1fr 1fr}.bg-template-card .bgt-scene{height:92px}}
 /* ===== THREE-COLOR PICKER — Primary / Secondary / Tertiary =====
    The wizard's color step (and the Theme Studio rebuild) picks THREE
    different colors. Primary is the MAIN color: hero background and the
@@ -459,8 +478,10 @@ body[data-world-color="white"] .lion-coach-badge{color:var(--ink)}
 .theme-note{background:#FFF7ED;border:2px solid var(--line);border-radius:14px;padding:11px 13px;font-weight:800;font-size:14px;line-height:1.5;margin-top:12px}
 @media(max-width:760px){.make-yours .play-btn{width:100%;margin-left:0}.theme-preview{position:relative}}
 /* ===== SETUP WIZARD — first-open flow for the customized world =====
-   One step at a time: favorite color → favorite sport → favorite
-   animal → name your world → review, then straight to Pick Your Grade. */
+   One step at a time: favorite colors → background (the favorite
+   sport's scene — one single pick, never asked again) → favorite
+   animal → coach → name your world → review, then straight to
+   Pick Your Grade. */
 .setup-shell{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start;margin-top:16px}
 .setup-card{background:#fff;border:3px solid var(--line);border-radius:28px;padding:22px;box-shadow:0 8px 0 var(--line)}
 .setup-card h3{font-size:28px;margin:2px 0 6px}
@@ -650,14 +671,25 @@ body.playing .work-panel h3{font-size:21px}
 @keyframes wbFloat{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-14px) rotate(6deg)}}
 .wrap{position:relative;z-index:1}
 .music-dock{position:relative;z-index:1;margin-left:auto;margin-right:auto;align-items:center}
-/* HERO = SOLID COLOR, ALWAYS: the hero section's background is one
-   solid color — the brand primary red on the classic/default design,
-   the child's picked primary color on the custom build (applyWorldTheme
-   stamps it inline). The sport-field scene paints behind the whole
-   page and behind the game stage, but NEVER inside or behind the
-   hero, so the hero's old floating sport pattern stays hidden and
-   unpainted and the hero sits on its solid color alone. */
-.hero-pattern{display:none;position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:.20;z-index:1}
+/* HERO = ITS ORIGINAL DESIGN, FULLY OPAQUE: the hero section carries
+   its own design as it always did — the solid primary color (the brand
+   red on the classic/default design, the child's picked primary color
+   on the custom build, which applyWorldTheme stamps inline) with the
+   hero's own floating sport pattern and court lines painted over that
+   color INSIDE the hero (.hero-pattern, below). The hero is fully
+   opaque: its background color and its solid underlay sit in the
+   hero's own isolated layer above the fixed page backdrop, so the
+   sport-field scene behind the whole page is NEVER visible through
+   the hero — only the hero's own pattern shows, on top of its solid
+   color. */
+.hero-pattern{position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:.20;z-index:1}
+/* Solid underlay inside the hero's own isolated layer: the same original
+   primary color (brand red #D92323 by default, the picked Primary in a
+   customized world — --red always holds it), fully opaque, sitting under
+   the hero words and picture. Even if the fixed page backdrop (z-index 0)
+   paints first, this layer and the hero's own background-color cover it
+   completely — the sport scene can never show through the hero. */
+.hero::before{content:"";position:absolute;inset:0;background-color:var(--red);background-image:none;z-index:0;pointer-events:none}
 .hero-pattern .hp-float{position:absolute;line-height:1;animation:wbFloat 8s ease-in-out infinite}
 .hero-pattern .hp-lines{position:absolute;left:0;right:0;bottom:0;height:52px;border-top:4px solid rgba(255,255,255,.5);background:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 3px,transparent 3px 74px)}
 /* Wizard / Theme Studio previews: the mini world shows the real sport
@@ -1037,8 +1069,9 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
     <!-- MAKE IT YOURS is NOT a card on this page. It is the SETUP WIZARD
          (setupView, above): on the customized link it opens by itself the
          first time a family opens the page and walks them through
-         building their theme one step at a time — favorite color,
-         favorite sport, favorite animal, coach, world name, review —
+         building their theme one step at a time — favorite colors,
+         background (favorite sport — one pick, never asked twice),
+         favorite animal, coach, world name, review —
          with a progress bar, like an intake form. After that first run,
          the same wizard is re-opened from the ☰ Menu ("Make It Yours —
          Setup Wizard", customized link only). The classic link never
@@ -3208,8 +3241,7 @@ function fixTrioDuplicates(t){
   return t;
 }
 /* The trio the SPORT SCENES paint with, kept in step with the world's
-   three colors by applyWorldTheme (and swapped temporarily by the
-   template test gallery). Scene rule (Michelle's): every DESIGN
+   three colors by applyWorldTheme. Scene rule (Michelle's): every DESIGN
    element in a sport background uses ONLY these three colors — no
    other design colors creep in. Natural things keep their natural
    colors: grass stays green, a football stays brown, basketballs
@@ -3435,11 +3467,11 @@ function sportSceneHTML(id,accent){
     +[86,124,162,200].map(function(y,ri){ return [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14].map(function(i){ var cols=[accent,B2,T3]; return '<rect x="'+(52+i*47)+'" y="'+y+'" width="37" height="29" rx="9" fill="'+cols[(i+ri)%3]+'" opacity="'+(.34+ri*.13)+'"/>'; }).join(''); }).join('')
     +'<rect y="238" width="800" height="10" fill="#0B1C2C" opacity=".8"/>'
     /* Light beams from the two top corners, crossing over the rink. */
-    +'<polygon points="70,120 150,120 560,372 250,372" fill="#FFFFFF" opacity=".13"/>'
-    +'<polygon points="650,120 730,120 550,372 240,372" fill="#FFFFFF" opacity=".13"/>'
-    /* Boards — one curved band in Tertiary, a Secondary kick stripe
+    +'<polygon points="70,120 150,120 560,372 250,372" fill="#FFFFFF" opacity=".26"/>'
+    +'<polygon points="650,120 730,120 550,372 240,372" fill="#FFFFFF" opacity=".26"/>'
+    /* Boards — one curved band in the Primary, a Secondary kick stripe
        and a bright white top rail. */
-    +'<path d="M0 252 Q400 224 800 252 L800 322 Q400 292 0 322 Z" fill="'+T3+'"/>'
+    +'<path d="M0 252 Q400 224 800 252 L800 322 Q400 292 0 322 Z" fill="'+accent+'"/>'
     +'<path d="M0 300 Q400 272 800 300 L800 322 Q400 292 0 322 Z" fill="'+B2+'" opacity=".8"/>'
     +'<path d="M0 252 Q400 224 800 252" fill="none" stroke="#FFFFFF" stroke-width="9"/>'
     /* The ice, in perspective below the boards. */
@@ -3460,14 +3492,15 @@ function sportSceneHTML(id,accent){
     +'<path d="M62 392 L106 360 M62 392 L106 392 M62 392 L106 424 M106 330 L74 392 L106 448" fill="none" stroke="#7A9BB5" stroke-width="2.5"/>'
     +'<rect x="106" y="322" width="126" height="128" rx="4" fill="rgba(225,240,250,.55)" stroke="#2B3440" stroke-width="9"/>'
     +'<path d="M106 354 L232 418 M106 386 L232 450 M232 354 L106 418 M232 386 L106 450 M169 322 L106 386 M169 322 L232 386 M169 450 L106 386 M169 450 L232 386" stroke="#7A9BB5" stroke-width="2.5" fill="none"/>'
-    /* Stick + puck at center ice: pale shaft lying flat, its real
-       red blade curled up at the left end, black grip tape at the
-       right, and the black puck resting just below the blade. */
+    /* Stick + puck at center ice: a clear wood-brown shaft lying
+       flat at center ice, its real red blade curled up at the left
+       end, black grip tape at the right, and the black puck resting
+       just below the blade. */
     +'<ellipse cx="392" cy="428" rx="128" ry="11" fill="#B9D9EE" opacity=".75"/>'
-    +'<line x1="330" y1="408" x2="516" y2="408" stroke="#A9C6DA" stroke-width="8" stroke-linecap="round"/>'
-    +'<line x1="462" y1="408" x2="516" y2="408" stroke="#1F2937" stroke-width="9" stroke-linecap="round"/>'
+    +'<line x1="330" y1="408" x2="516" y2="408" stroke="#8A5A2B" stroke-width="11" stroke-linecap="round"/>'
+    +'<line x1="462" y1="408" x2="516" y2="408" stroke="#1F2937" stroke-width="11" stroke-linecap="round"/>'
     +'<path d="M336 416 C314 416 308 392 314 376 C317 366 330 364 334 374 C337 383 334 396 340 404 Z" fill="#D92323"/>'
-    +'<g transform="translate(292,434)"><ellipse rx="17" ry="6" cy="4" fill="#0B0B0D"/><rect x="-17" y="-4" width="34" height="8" fill="#17171A"/><ellipse rx="17" ry="6" cy="-4" fill="#26262B"/></g>'
+    +'<g transform="translate(292,434)"><ellipse rx="17" ry="6" cy="4" fill="#000000"/><rect x="-17" y="-4" width="34" height="8" fill="#000000"/><ellipse rx="17" ry="6" cy="-4" fill="#0A0A0A"/></g>'
     /* The two floodlight banks, top corners, trimmed in the trio. */
     +floodS(8,10,1.02,-5,B2)+floodS(668,10,1.02,5,accent)
     +netMesh);
@@ -3777,7 +3810,7 @@ function applyWorldTheme(){
      attributes only ever change when the world itself is rebuilt in
      the wizard / Theme Studio — never from the sport bar. */
   if(document.body){ document.body.setAttribute('data-world-color',c.id); document.body.setAttribute('data-world-color2',c2.id); document.body.setAttribute('data-world-color3',c3.id); document.body.setAttribute('data-world-sport',ds.id); document.body.setAttribute('data-world-animal',a.id); document.body.classList.toggle('custom-world',!lockedOut); }
-  var hero=document.getElementById('heroSection'); if(hero){ hero.style.background=c.primary; hero.style.backgroundImage='none'; } /* solid primary color only — never the sport scene */
+  var hero=document.getElementById('heroSection'); if(hero){ hero.style.backgroundColor=c.primary; hero.style.backgroundImage='none'; } /* solid original primary color only, fully opaque — never the sport scene, never transparent */
   document.querySelectorAll('.theme-animal-emoji').forEach(function(el){ el.textContent=a.emoji; });
   document.querySelectorAll('.theme-sport-emoji').forEach(function(el){ el.textContent=ds.emoji; });
   var court=document.getElementById('tpCourt'); if(court){ court.style.background=c.primary; court.style.borderColor=c3.primary; court.style.boxShadow='0 0 0 3px '+c2.bright; }
@@ -3786,7 +3819,7 @@ function applyWorldTheme(){
   var nm=document.getElementById('tpName'); if(nm) nm.textContent=displayName;
   var sub=document.getElementById('tpSub'); if(sub) sub.textContent=c.name+' • '+c2.name+' • '+c3.name+' • '+ds.name+' • '+a.name;
   var sum=document.getElementById('themeSummary');
-  if(sum) sum.textContent='Your world right now: '+displayName+' — Primary '+c.name+' (hero and Play buttons), Secondary '+c2.name+' (stars, tabs, shiny buttons and frames) and Tertiary '+c3.name+' (card borders and the hero\u2019s edge), your favorite '+ds.name+' '+ds.emoji+' as your home sport, and a '+a.name+' '+a.emoji+' mascot, with your own player out there playing. The three colors dress your cards and your hero space; the background behind them is your sport\u2019s own scene. This is your world\u2019s theme, and it stays just like this. The sport bar only switches today\u2019s games and their words — it never changes your world. Want a new world? Rebuild it here or in the Make It Yours setup wizard — pick different colors, a different favorite sport or animal, or rename your world any time.';
+  if(sum) sum.textContent='Your world right now: '+displayName+' — Primary '+c.name+' (hero and Play buttons), Secondary '+c2.name+' (stars, tabs, shiny buttons and frames) and Tertiary '+c3.name+' (card borders and the hero\u2019s edge), your favorite '+ds.name+' '+ds.emoji+' as your home sport, and a '+a.name+' '+a.emoji+' mascot, with your own player out there playing. The three colors dress your cards and your hero space, and your hero is always the solid Primary color with nothing showing through it; your sport\u2019s own scene sits behind the cards below the hero, never behind the hero. This is your world\u2019s theme, and it stays just like this. The sport bar only switches today\u2019s games and their words — it never changes your world. Want a new world? Rebuild it here or in the Make It Yours setup wizard — pick different colors, a different favorite sport or animal, or rename your world any time.';
   /* The name they gave their world becomes the world's name everywhere:
      the top bar, the hero banner and the page title. The plain version
      always keeps the original Karter's Court name. Two small TEXT
@@ -3860,7 +3893,7 @@ function worldBackdropSVG(id,c){
   var B2=SCENE_TRIO.sb, SS=SCENE_TRIO.ss, T3=SCENE_TRIO.t, T3D=SCENE_TRIO.td, T3S=SCENE_TRIO.ts;
   function wrap(inner){ return '<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+inner+'</svg>'; }
   function pom(x,y,r,c1,c2){ var pts=[[0,-.62],[.55,-.3],[.62,.25],[.25,.6],[-.3,.55],[-.62,.15],[-.45,-.42],[0,0]],s=''; for(var i=0;i<pts.length;i++){ s+='<circle cx="'+(x+pts[i][0]*r)+'" cy="'+(y+pts[i][1]*r)+'" r="'+(r*.52)+'" fill="'+(i%2?c2:c1)+'" opacity=".92"/>'; } return s; }
-  function puck(x,y,s){ return '<g transform="translate('+x+','+y+') scale('+s+')"><ellipse rx="34" ry="12" cy="7" fill="#241A12"/><rect x="-34" y="-9" width="68" height="15" fill="#17110B"/><ellipse rx="34" ry="12" cy="-9" fill="#3A2A1A"/></g>'; }
+  function puck(x,y,s){ return '<g transform="translate('+x+','+y+') scale('+s+')"><ellipse rx="34" ry="12" cy="7" fill="#000000"/><rect x="-34" y="-9" width="68" height="15" fill="#050505"/><ellipse rx="34" ry="12" cy="-9" fill="#0A0A0A"/></g>'; }
   function fball(x,y,r,rot){ return '<g transform="translate('+x+','+y+') rotate('+rot+')"><ellipse rx="'+r+'" ry="'+(r*.62)+'" fill="#8A4B21" stroke="#5B2D10" stroke-width="5"/><path d="M'+(-r*.4)+' 0H'+(r*.4)+'" stroke="#fff" stroke-width="6"/><path d="M-12 -8V8M0 -10V10M12 -8V8" stroke="#fff" stroke-width="5"/></g>'; }
   function bball(x,y,r){ return '<g transform="translate('+x+','+y+')"><circle r="'+r+'" fill="#FF6B1A" stroke="#7C2D12" stroke-width="5"/><path d="M'+(-r)+' 0H'+r+'M0 '+(-r)+'V'+r+'" stroke="#7C2D12" stroke-width="5"/></g>'; }
   /* Arena floodlight bank (Hockey scene): tilted grid of bright
@@ -3878,9 +3911,9 @@ function worldBackdropSVG(id,c){
     '<rect width="1440" height="900" fill="#14273D"/>'
     +[150,218,286,354].map(function(y,ri){ return [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16].map(function(i){ var cols=[P,B2,T3]; return '<rect x="'+(86+i*80)+'" y="'+y+'" width="64" height="50" rx="15" fill="'+cols[(i+ri)%3]+'" opacity="'+(.32+ri*.13)+'"/>'; }).join(''); }).join('')
     +'<rect y="418" width="1440" height="16" fill="#0B1C2C" opacity=".8"/>'
-    +'<polygon points="130,205 270,205 1010,600 450,600" fill="#FFFFFF" opacity=".12"/>'
-    +'<polygon points="1170,205 1310,205 990,600 430,600" fill="#FFFFFF" opacity=".12"/>'
-    +'<path d="M0 440 Q720 396 1440 440 L1440 548 Q720 500 0 548 Z" fill="'+T3+'"/>'
+    +'<polygon points="130,205 270,205 1010,600 450,600" fill="#FFFFFF" opacity=".25"/>'
+    +'<polygon points="1170,205 1310,205 990,600 430,600" fill="#FFFFFF" opacity=".25"/>'
+    +'<path d="M0 440 Q720 396 1440 440 L1440 548 Q720 500 0 548 Z" fill="'+P+'"/>'
     +'<path d="M0 512 Q720 466 1440 512 L1440 548 Q720 500 0 548 Z" fill="'+B2+'" opacity=".8"/>'
     +'<path d="M0 440 Q720 396 1440 440" fill="none" stroke="#FFFFFF" stroke-width="15"/>'
     +'<path d="M0 548 Q720 500 1440 548 L1440 900 L0 900 Z" fill="#F2F9FF"/>'
@@ -3898,10 +3931,10 @@ function worldBackdropSVG(id,c){
     +'<rect x="192" y="530" width="226" height="206" rx="6" fill="rgba(225,240,250,.55)" stroke="#2B3440" stroke-width="15"/>'
     +'<path d="M192 582 L418 686 M192 634 L418 736 M418 582 L192 686 M418 634 L192 736 M305 530 L192 634 M305 530 L418 634 M305 736 L192 634 M305 736 L418 634" stroke="#7A9BB5" stroke-width="4" fill="none"/>'
     +'<ellipse cx="706" cy="690" rx="228" ry="18" fill="#B9D9EE" opacity=".75"/>'
-    +'<line x1="596" y1="656" x2="930" y2="656" stroke="#A9C6DA" stroke-width="14" stroke-linecap="round"/>'
-    +'<line x1="832" y1="656" x2="930" y2="656" stroke="#1F2937" stroke-width="15" stroke-linecap="round"/>'
+    +'<line x1="596" y1="656" x2="930" y2="656" stroke="#8A5A2B" stroke-width="17" stroke-linecap="round"/>'
+    +'<line x1="832" y1="656" x2="930" y2="656" stroke="#1F2937" stroke-width="18" stroke-linecap="round"/>'
     +'<path d="M606 668 C570 668 560 626 572 596 C578 580 600 578 606 594 C612 610 608 634 618 650 Z" fill="#D92323"/>'
-    +'<g transform="translate(526,698)"><ellipse rx="30" ry="10" cy="7" fill="#0B0B0D"/><rect x="-30" y="-7" width="60" height="14" fill="#17171A"/><ellipse rx="30" ry="10" cy="-7" fill="#26262B"/></g>'
+    +'<g transform="translate(556,700)"><ellipse rx="30" ry="10" cy="7" fill="#000000"/><rect x="-30" y="-7" width="60" height="14" fill="#000000"/><ellipse rx="30" ry="10" cy="-7" fill="#0A0A0A"/></g>'
     +floodW(14,16,1.8,-5,B2)+floodW(1202,16,1.8,5,P));
   if(id==='football') return wrap(
     [0,1,2,3,4,5,6,7,8,9,10,11].map(function(i){ return '<rect x="'+(i*120)+'" width="120" height="900" fill="'+(i%2?'#449244':'#4CA34A')+'"/>'; }).join('')
@@ -4046,7 +4079,7 @@ function renderWorldBackground(lockedOut,c,ds){
   var bd=document.getElementById('worldBackdrop');
   if(bd) bd.innerHTML= worldBackdropSVG(ds.id,c)+'<div class="wb-veil"></div>'+WB_POS.map(function(p,i){ return '<span class="wb-float" style="left:'+p.l+';top:'+p.t+';font-size:'+p.s+'px;animation-delay:'+p.d+'">'+floats[i%floats.length]+'</span>'; }).join('');
   var hp=document.getElementById('heroPattern');
-  if(hp) hp.innerHTML=''; /* the hero keeps NO sport pattern — its background stays the solid primary color */
+  if(hp) hp.innerHTML= WB_POS.map(function(p,i){ return '<span class="hp-float" style="left:'+p.l+';top:'+p.t+';font-size:'+p.s+'px;animation-delay:'+p.d+'">'+floats[i%floats.length]+'</span>'; }).join('')+'<div class="hp-lines" aria-hidden="true"></div>'; /* the hero's OWN floating sport pattern + court lines, painted inside the hero over its solid primary color — never the page scene showing through */
   var sceneHTML=sportSceneHTML(ds.id,c.primary);
   var spS=document.getElementById('spScene'); if(spS) spS.innerHTML=sceneHTML;
   var tpS=document.getElementById('tpScene'); if(tpS) tpS.innerHTML=sceneHTML;
@@ -4234,11 +4267,36 @@ function switchSport(id){
   var s=effectiveSportObj();
   toast(s.emoji+' Today: '+s.name+'! Your games and words switched — your world stays YOUR world!');
 }
+/* ===== BACKGROUND TEMPLATES — the single background / sport pick =====
+   One template card per sport in THEME_SPORTS (Basketball, Soccer,
+   Tennis, Baseball, Football, Gymnastics, Swimming, Hockey, Running),
+   each card rendering that sport's accepted background template design
+   itself via worldBackdropSVG — the same fixed back-end design
+   renderWorldBackground paints as the page background — with the
+   sport's emoji and name as its label (the wizard's existing labels;
+   no new words). The reviewed templates live HERE, as the wizard's
+   background choices: they are not displayed anywhere else on his page.
+   fnName is the caller's existing pick handler: the wizard passes
+   'setupPick', the Theme Studio passes 'setThemePart'; both write the
+   one myTheme.sport value, so picking a template sets the page
+   background AND the sport (games and language follow the picked
+   sport) in a single choice — there is no separate favorite-sport
+   step — and the generated onclick keeps the lock rule working
+   unchanged (while the keep-original toggle is ON, a template other
+   than the original Basketball unlocks and applies; Basketball keeps
+   the lock). */
+function bgTemplateGridHTML(fnName){
+  var c=themeColor();
+  return '<div class="bg-template-grid" role="group" aria-label="Choose your background">'+THEME_SPORTS.map(function(s){
+    var on=myTheme.sport===s.id;
+    return '<button type="button" class="bg-template-card'+(on?' on':'')+'" onclick="'+fnName+'(\'sport\',\''+s.id+'\')" aria-label="'+s.name+' background" aria-pressed="'+(on?'true':'false')+'"><span class="bgt-scene" aria-hidden="true">'+worldBackdropSVG(s.id,c)+'</span><span class="bgt-name">'+s.emoji+' '+s.name+'</span></button>';
+  }).join('')+'</div>';
+}
 function renderThemeStudio(){
   var o=document.getElementById('themeOptions'); if(!o) return;
   var h='';
-  h+='<div class="opt-group"><h4>🎨 1. Your three colors — Primary, Secondary &amp; Tertiary</h4>'+trioPickerHTML('setThemeColorSlot')+'<p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">Primary <b>'+themeColor().name+'</b> paints the hero and Play buttons, Secondary <b>'+themeColor2().name+'</b> shines on stars, tabs, shiny buttons and frames, and Tertiary <b>'+themeColor3().name+'</b> pops on card borders and the hero\u2019s edge. The background behind the cards and hero stays your sport\u2019s scene.</p></div>';
-  h+='<div class="opt-group"><h4>🏅 2. What is your favorite sport?</h4><div class="opt-row">'+THEME_SPORTS.map(function(s){ return '<button class="fav-chip'+(myTheme.sport===s.id?' on':'')+'" onclick="setThemePart(\'sport\',\''+s.id+'\')">'+s.emoji+' '+s.name+'</button>'; }).join('')+'</div><p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">This is your <b>default</b> sport — the one your world is built around. Its field or court, with that sport\u2019s own tools in it (an ice rink with pucks and sticks, a football field with footballs, a gymnastics gym with a beam, rings, bars and gymnasts), becomes the background of your whole world. It sets your world\u2019s theme and the sport your games start with. Switching sport on the sport bar later changes only the games and their words — never your world\u2019s background. '+(SPORT_INFO[myTheme.sport]||SPORT_INFO.basketball).note+'</p></div>';
+  h+='<div class="opt-group"><h4>🎨 1. Your three colors — Primary, Secondary &amp; Tertiary</h4>'+trioPickerHTML('setThemeColorSlot')+'<p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">Primary <b>'+themeColor().name+'</b> paints the hero and Play buttons, Secondary <b>'+themeColor2().name+'</b> shines on stars, tabs, shiny buttons and frames, and Tertiary <b>'+themeColor3().name+'</b> pops on card borders and the hero\u2019s edge. Your hero stays its solid Primary color with nothing showing through it — your sport\u2019s scene shows only behind the cards below the hero.</p></div>';
+  h+='<div class="opt-group"><h4>🏅 2. What is your favorite sport?</h4>'+bgTemplateGridHTML('setThemePart')+'<p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">This is your <b>default</b> sport — the one your world is built around. Its field or court, with that sport\u2019s own tools in it (an ice rink with pucks and sticks, a football field with footballs, a gymnastics gym with a beam, rings, bars and gymnasts), becomes the background of your whole world. It sets your world\u2019s theme and the sport your games start with. Switching sport on the sport bar later changes only the games and their words — never your world\u2019s background. '+(SPORT_INFO[myTheme.sport]||SPORT_INFO.basketball).note+'</p></div>';
   h+='<div class="opt-group"><h4>🐾 3. What is your favorite animal?</h4><div class="opt-row">'+THEME_ANIMALS.map(function(a){ return '<button class="fav-chip'+(myTheme.animal===a.id?' on':'')+'" onclick="setThemePart(\'animal\',\''+a.id+'\')">'+a.emoji+' '+a.name+'</button>'; }).join('')+'</div><p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">Your '+themeAnimal().name+' '+themeAnimal().emoji+' is your team mascot — it cheers beside Coach Leo in your <b>'+themeWorldName()+'</b>.</p></div>';
   h+='<div class="opt-group" id="themeCoachSection"><h4>👦 4. Customize your coach</h4>'
     +'<div class="coach-preview-card">'+coachAvatarHTML(coachOutfitEmoji())+'<span><b>'+setupEsc(coachTitle())+'</b><small>'+coachIdentity().label+' • '+coachIdentity().pronouns+' • '+coachOutfitEmoji()+' '+coachOutfit().name+'</small></span></div>'
@@ -4269,7 +4327,10 @@ function closeThemeStudio(){ document.getElementById('themeModal').classList.rem
 
 /* ----- SETUP WIZARD (customized world, first open) -----
    The flow a family meets the first time they open the customized link:
-   Step 1 favorite color → Step 2 favorite sport → Step 3 favorite
+   Step 1 favorite colors → Step 2 background (every background
+   template IS a favorite sport's home, so this one pick is also the
+   favorite / default sport — there is deliberately no separate
+   favorite-sport step later in the wizard) → Step 3 favorite
    animal → Step 4 customize your coach (name, face, outfit — the coach
    is always a boy coach in this boys' world, and the sport and mascot
    outfits follow the favorite sport & animal picks)
@@ -4473,9 +4534,9 @@ function renderSetup(){
   if(next) next.textContent= setupStep===4? 'See My World →' : (setupStep===5? '🎒 Pick My Grade →' : 'Next Step →');
   var h='';
   if(setupStep===0){
-    h+='<h3>🎨 Step 1 of 6 — Pick your THREE colors!</h3><p class="setup-lead">Your world wears three colors, and each one has a job. Your <b>Primary</b> paints the hero and the big Play buttons, your <b>Secondary</b> shines on the stars, tabs, shiny buttons and picture frames, and your <b>Tertiary</b> pops on the card borders and the hero\u2019s edge. Together they dress every card and the whole hero space — and behind them, your page background is your sport\u2019s own scene, the sport you pick next!</p><div class="opt-group">'+trioPickerHTML('setupPickColor')+'</div>';
+    h+='<h3>🎨 Step 1 of 6 — Pick your THREE colors!</h3><p class="setup-lead">Your world wears three colors, and each one has a job. Your <b>Primary</b> paints the hero and the big Play buttons, your <b>Secondary</b> shines on the stars, tabs, shiny buttons and picture frames, and your <b>Tertiary</b> pops on the card borders and the hero\u2019s edge. Together they dress every card, and your Primary paints the hero one solid color — your page background behind the cards is your sport\u2019s own scene, the sport you pick next, and it never shows through the hero!</p><div class="opt-group">'+trioPickerHTML('setupPickColor')+'</div>';
   } else if(setupStep===1){
-    h+='<h3>🏅 Step 2 of 6 — Pick your favorite sport!</h3><p class="setup-lead">Your favorite sport is your DEFAULT sport — together with your color and your animal, it builds your world\u2019s theme and background, and it is the sport your games start with! That sport\u2019s own field or court becomes the background of your WHOLE world, with that sport\u2019s tools in it: a soccer field with goals and balls, an ice rink with pucks and sticks, a football field with footballs resting on it, a tennis court with its net, a swimming pool with lanes — and a gymnastics gym filled with a balance beam, still rings, a pommel horse, parallel bars, a vault and gymnasts mid-move! Later, the sport bar can switch the games and their words for today — but your world\u2019s background never changes. It stays the world you build here!</p><div class="opt-group"><div class="opt-row">'+THEME_SPORTS.map(function(s){ return '<button class="fav-chip'+(myTheme.sport===s.id?' on':'')+'" onclick="setupPick(\'sport\',\''+s.id+'\')">'+s.emoji+' '+s.name+'</button>'; }).join('')+'</div><p style="font-weight:800;color:var(--muted);margin:8px 0 0;font-size:15px">'+(SPORT_INFO[myTheme.sport]||SPORT_INFO.basketball).note+'</p></div>';
+    h+='<h3>🖼️ Step 2 of 6 — Pick your background!</h3><p class="setup-lead">Your favorite sport is your DEFAULT sport — together with your color and your animal, it builds your world\u2019s theme and background, and it is the sport your games start with! That sport\u2019s own field or court becomes the background of your WHOLE world, with that sport\u2019s tools in it: a soccer field with goals and balls, an ice rink with pucks and sticks, a football field with footballs resting on it, a tennis court with its net, a swimming pool with lanes — and a gymnastics gym filled with a balance beam, still rings, a pommel horse, parallel bars, a vault and gymnasts mid-move! Later, the sport bar can switch the games and their words for today — but your world\u2019s background never changes. It stays the world you build here!</p><div class="opt-group">'+bgTemplateGridHTML('setupPick')+'<p style="font-weight:800;color:var(--muted);margin:8px 0 0;font-size:15px">'+(SPORT_INFO[myTheme.sport]||SPORT_INFO.basketball).note+'</p></div>';
   } else if(setupStep===2){
     h+='<h3>🐾 Step 3 of 6 — Pick your favorite animal!</h3><p class="setup-lead">Your animal becomes your team mascot, cheering right beside Coach Leo.</p><div class="opt-group"><div class="opt-row">'+THEME_ANIMALS.map(function(a){ return '<button class="fav-chip'+(myTheme.animal===a.id?' on':'')+'" onclick="setupPick(\'animal\',\''+a.id+'\')">'+a.emoji+' '+a.name+'</button>'; }).join('')+'</div></div>';
   } else if(setupStep===3){
