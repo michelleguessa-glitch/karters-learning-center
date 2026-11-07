@@ -914,7 +914,7 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
   <div class="hero-inner">
     <div>
       <div class="fred" id="heroEyebrow" style="font-size:15px;letter-spacing:.14em;color:#FFD34D;margin-bottom:8px">🏀 KARTER'S COURT 🦁</div><h1 id="heroHeadline">SHOOT.<br><span>LEARN &amp; WIN!</span></h1>
-      <p>I'm <span id="heroCoachIntro">Coach Leo</span>! Pick a game on <span id="heroVenue">my basketball court</span>. I'll show you an example first and help you fix mistakes until you get it right — <span id="heroNext">then we dribble to the next one!</span> <span id="heroCustomSentence"></span></p>
+      <p>I'm <span id="heroCoachIntro">Coach Leo</span>! Pick a game on <span id="heroVenue">my basketball court</span>. I'll show you an example first and help you fix mistakes until you get it right — <span id="heroNext">then we dribble to the next one!</span></p>
       <div class="hero-stats">
         <div class="hstat"><b>One at a time</b><span>Just you &amp; Leo</span></div>
         <div class="hstat"><b>No rushing</b><span>Learn at your pace</span></div>
@@ -4054,7 +4054,6 @@ function applySportTheme(lockedOut,c,s){
   var info=sportInfo();
   var headline=document.getElementById('heroHeadline'); if(headline) headline.innerHTML=info.headline;
   var venue=document.getElementById('heroVenue'); if(venue) venue.textContent='my '+info.venue;
-  var heroS2=document.getElementById('heroCustomSentence'); if(heroS2) heroS2.textContent=(typeof customUnlocked!=='undefined'&&customUnlocked)?heroCustomSentenceText():'';
   var nxt=document.getElementById('heroNext'); if(nxt) nxt.textContent=info.nextPhrase;
   /* Coach LANGUAGE follows the active sport — "Coach Leo, your tennis
      coach" and the badge on the hero. The setup / theme previews keep
@@ -4444,7 +4443,6 @@ function isCustomUnlocked(){ return !!customUnlocked; }
    the product page — inside the sport picker, where all the sports
    are shown (no prices anywhere on this page). The custom build
    shows no locks and no such button. */
-function heroCustomSentenceText(){ var t=trioColors(); return 'And this '+sportInfo().venue+' is YOURS — you built it in the Make It Yours setup wizard: your three colors (Primary '+t[0].name+', Secondary '+t[1].name+', Tertiary '+t[2].name+') dressing your hero and every card, your favorite sport and your favorite animal, your world name, and your boy coach — his name, his face and how he dresses. Want to change it? Open the ☰ Menu and tap "Make It Yours — Setup Wizard" to walk through it again, step by step.'; }
 function applyVersionUI(){
   var unlocked=isCustomUnlocked();
   var setupItem=document.getElementById('menuSetupItem'); if(setupItem) setupItem.style.display= unlocked?'':'none';
@@ -4461,8 +4459,6 @@ function applyVersionUI(){
     var tm=document.getElementById('themeModal'); if(tm) tm.classList.remove('open');
     var sv=document.getElementById('setupView'); if(sv) sv.style.display='none';
   }
-  var heroS=document.getElementById('heroCustomSentence');
-  if(heroS) heroS.textContent= unlocked?heroCustomSentenceText():'';
   if(unlocked){ try{ applyTheme(); }catch(e){} }
   try{ renderAllPlayers(); }catch(e){}
   try{ renderSportSwitcher(); }catch(e){}
