@@ -4303,12 +4303,19 @@ function updateSetupKeepToggle(){
   var st=document.getElementById('setupKeepState'); if(st) st.textContent=on?'On':'Off';
 }
 function setupToggleKeepOriginal(){
-  if(setupKeepOriginalOn()){ /* Locked: flipping the switch alone does
-       NOT unlock. The tap takes them to the background choice — the
-       wizard's sport step, whose field or court IS the page
-       background. Only choosing a background other than the original
-       there (or in the Theme Studio) turns the toggle off. */
-    setupStep=1; renderSetup(); window.scrollTo({top:0}); try{ sfx('step'); }catch(e){} return; }
+  if(setupKeepOriginalOn()){ /* Flipping the switch OFF does NOT unlock
+       the page and does NOT clear the lock: it automatically opens the
+       Make It Yours setup wizard from Step 1, prompting them to move
+       through the wizard. The lock flag and the original design stay
+       exactly as they are while they walk the steps — the ONLY thing
+       that turns the toggle off is choosing a page background other
+       than the original inside the wizard (a favorite sport other than
+       Basketball, whose field or court IS the page background; see
+       setupPick) or in the Theme Studio. If they leave the wizard
+       without making that choice, nothing has changed: the original
+       design stays in place and the page stays as it was. */
+    var tm=document.getElementById('themeModal'); if(tm) tm.classList.remove('open');
+    openSetupWizard(); return; }
   myTheme=defaultTheme(); setSetupKeepFlag(true); setActiveSportId('basketball'); saveTheme(); applyTheme(); renderSetup(); renderAllPlayers(); try{ sfx('pick'); }catch(e){}
 }
 /* ===== THE LOCK =====
@@ -4323,10 +4330,12 @@ function setupToggleKeepOriginal(){
    whose field or court is the page background — in the wizard's
    background (sport) step or in the Theme Studio. That choice turns
    the toggle OFF and unlocks; flipping the toggle switch alone never
-   unlocks (its tap goes to the background choice instead). The
-   background-choice buttons themselves therefore stay live while
-   locked. The Player Studio is not part of the lock — the player
-   is not theme, background, colors or coach. */
+   unlocks — its tap automatically opens the setup wizard from Step 1
+   instead, prompting them to move through the wizard, and leaving the
+   wizard without that background choice leaves the original design
+   and the lock untouched. The background-choice buttons themselves
+   therefore stay live while locked. The Player Studio is not part of
+   the lock — the player is not theme, background, colors or coach. */
 function setupLocked(){ return setupKeepOriginalOn(); }
 function lockControlsIn(root){
   if(!root) return;
