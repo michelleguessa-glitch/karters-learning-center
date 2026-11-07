@@ -1,0 +1,23 @@
+name: Publish newest build as index.html
+
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-index.yml'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish newest build as index.html
+        run: |
+          mv -f math-and-spelling-pwa.html index.html
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish newest build as index.html" || echo "nothing to commit"
+          git push
