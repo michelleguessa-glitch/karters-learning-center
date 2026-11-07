@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 <title>Karter's Court</title>
 <style>
-:root{--red:#D92323;--red-d:#B91C1C;--orange:#0F766E;--gold:#FFB800;--gold-l:#FEF3C7;--cream:#FFF8EE;--ink:#2B1608;--muted:#7A5A44;--card:#fff;--line:#CCFBF1;--green:#16A34A;--green-bg:#DCFCE7;--radius:24px;--theme-primary:#D92323;--theme-primary-dark:#B91C1C;--theme-primary-soft:#FFF3C4;--theme-secondary:#B45309;--theme-secondary-bright:#FFB800;--theme-secondary-dark:#92400E;--theme-secondary-soft:#FEF3C7;--theme-tertiary:#0F766E;--theme-tertiary-dark:#115E59;--theme-tertiary-soft:#CCFBF1}
+:root{--red:#D92323;--red-d:#B91C1C;--orange:#FF6B1A;--gold:#FFB800;--gold-l:#FEF3C7;--cream:#FFF8EE;--ink:#2B1608;--muted:#7A5A44;--card:#fff;--line:#FFE1B8;--green:#16A34A;--green-bg:#DCFCE7;--radius:24px;--theme-primary:#D92323;--theme-primary-dark:#B91C1C;--theme-primary-soft:#FFF3C4;--theme-secondary:#B45309;--theme-secondary-bright:#FFB800;--theme-secondary-dark:#92400E;--theme-secondary-soft:#FEF3C7;--theme-tertiary:#FFE1B8;--theme-tertiary-dark:#FDBA74;--theme-tertiary-soft:#FFE1B8}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden}
 h1,h2,h3,.fred{font-family:'Fredoka',sans-serif;letter-spacing:-.02em}
 button{font-family:inherit;cursor:pointer}
@@ -476,6 +476,21 @@ body[data-world-color="white"] .lion-coach-badge{color:var(--ink)}
 .setup-progress-top .sp-pct{color:var(--red-d)}
 .setup-progress-track{height:14px;background:#F1EADF;border:3px solid var(--ink);border-radius:999px;overflow:hidden}
 .setup-progress-fill{height:100%;background:var(--gold);border-radius:999px;transition:width .35s ease}
+/* Default toggle — keep the original design. His build is the default:
+   the switch starts ON, and any pick in the wizard turns it OFF. */
+.setup-default-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#FFF7ED;border:3px solid var(--ink);border-radius:16px;padding:11px 13px;margin:0 0 14px}
+.setup-default-toggle .sdt-label{font-family:'Fredoka';font-weight:700;font-size:17px;line-height:1.2}
+.setup-default-toggle .sdt-right{display:flex;align-items:center;gap:9px;flex:none}
+.setup-default-toggle .sdt-state{font-weight:900;font-size:14px;min-width:26px;text-align:right}
+.sdt-switch{width:62px;height:36px;flex:0 0 62px;border-radius:999px;border:3px solid var(--ink);background:#fff;padding:0;position:relative;box-shadow:0 3px 0 var(--ink)}
+.sdt-switch:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.sdt-switch .sdt-knob{position:absolute;top:3px;left:4px;width:24px;height:24px;border-radius:50%;background:var(--muted);transition:left .2s ease,background .2s ease}
+.sdt-switch.on{background:var(--gold)}
+.sdt-switch.on .sdt-knob{left:30px;background:var(--red)}
+/* Locked while the toggle is ON: every pick control in the wizard step
+   and in the Theme Studio is disabled and dimmed. The wizard's Back /
+   Next buttons and the toggle itself stay live. */
+.setup-body.locked button:disabled,.setup-body.locked input:disabled,#themeOptions.locked button:disabled,#themeOptions.locked input:disabled{opacity:.55;cursor:not-allowed}
 .setup-input{font-family:'Fredoka';font-size:24px;text-align:center;width:100%;padding:13px;border:4px solid var(--ink);border-radius:18px;outline:none;background:#fff}
 .setup-input:focus{border-color:var(--red);box-shadow:0 0 0 4px #FECACA}
 .setup-input.world{font-size:21px}
@@ -950,6 +965,10 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
         <div style="font-weight:900;font-size:14.5px;line-height:1.45;margin-top:10px">This is YOUR world taking shape — it updates with every pick! ⭐</div>
       </div>
       <div class="setup-card">
+        <div class="setup-default-toggle" id="setupDefaultToggle">
+          <span class="sdt-label" id="setupDefaultLabel">Keep the original design</span>
+          <span class="sdt-right"><span class="sdt-state" id="setupKeepState">On</span><button type="button" class="sdt-switch on" id="setupKeepBtn" role="switch" aria-checked="true" aria-labelledby="setupDefaultLabel" onclick="setupToggleKeepOriginal()"><span class="sdt-knob" aria-hidden="true"></span></button></span>
+        </div>
         <div class="setup-progress" id="setupProgress" role="progressbar" aria-label="Setup progress" aria-valuemin="1" aria-valuemax="6" aria-valuenow="1">
           <div class="setup-progress-top"><span id="setupProgressLabel">Step 1 of 6</span><span class="sp-pct" id="setupProgressPct">17%</span></div>
           <div class="setup-progress-track"><div class="setup-progress-fill" id="setupProgressFill" style="width:17%"></div></div>
@@ -3137,6 +3156,7 @@ var THEME_COLORS=[
  {id:'orange',name:'Orange',primary:'#EA580C',dark:'#C2410C',soft:'#FFEDD5',bright:'#FB923C'},
  {id:'teal',name:'Teal',primary:'#0F766E',dark:'#115E59',soft:'#CCFBF1',bright:'#2DD4BF'},
  {id:'gold',name:'Gold',primary:'#B45309',dark:'#92400E',soft:'#FEF3C7',bright:'#FFB800'},
+ {id:'cream',name:'Cream',primary:'#FFE1B8',dark:'#FDBA74',soft:'#FFE1B8',bright:'#FFF8EE'},
  {id:'white',name:'White',primary:'#F8FAFC',dark:'#64748B',soft:'#E2E8F0',bright:'#FFFFFF'}
 ];
 /* ===== THE THREE WORLD COLORS — Primary / Secondary / Tertiary =====
@@ -3162,7 +3182,7 @@ var TRIO_SLOTS=[
  {key:'color2',label:'Secondary',emoji:'⭐',job:'Your HIGHLIGHT — stars, tabs, shiny buttons, icon boxes and picture frames.'},
  {key:'color3',label:'Tertiary',emoji:'✨',job:'Your POP accent — card borders, the hero\u2019s edge and soft fills.'}
 ];
-var CLASSIC_TRIO={color:'red',color2:'gold',color3:'teal'};
+var CLASSIC_TRIO={color:'red',color2:'gold',color3:'cream'};
 function colorById(id){ return THEME_COLORS.find(function(c){return c.id===id})||THEME_COLORS[0]; }
 function trioIds(){ return [myTheme.color,myTheme.color2,myTheme.color3]; }
 function trioColors(){
@@ -3173,7 +3193,7 @@ function trioColors(){
 /* Keep the three picks three DIFFERENT colors: fill any missing or
    duplicate slot from this preference order. */
 function fixTrioDuplicates(t){
-  var order=['gold','teal','white','blue','orange','green','red'];
+  var order=['gold','cream','white','blue','orange','green','red'];
   var used={}; used[t.color]=true;
   if(!t.color2||used[t.color2]){ t.color2=order.find(function(id){return !used[id];}); }
   used[t.color2]=true;
@@ -3189,7 +3209,7 @@ function fixTrioDuplicates(t){
    stay orange, ice stays icy, pool water stays blue, wood stays
    wood, and real field markings (chalk lines, hockey's blue lines)
    stay what they are. */
-var SCENE_TRIO={p:'#D92323',pd:'#B91C1C',ps:'#FFF3C4',s:'#B45309',sb:'#FFB800',sd:'#92400E',ss:'#FEF3C7',t:'#0F766E',td:'#115E59',ts:'#CCFBF1'};
+var SCENE_TRIO={p:'#D92323',pd:'#B91C1C',ps:'#FFF3C4',s:'#B45309',sb:'#FFB800',sd:'#92400E',ss:'#FEF3C7',t:'#FFE1B8',td:'#FDBA74',ts:'#FFE1B8'};
 function setSceneTrio(trio){
   SCENE_TRIO={p:trio[0].primary,pd:trio[0].dark,ps:trio[0].soft,s:trio[1].primary,sb:trio[1].bright,sd:trio[1].dark,ss:trio[1].soft,t:trio[2].primary,td:trio[2].dark,ts:trio[2].soft};
 }
@@ -3563,13 +3583,13 @@ var COACH_OUTFITS=[
  {id:'gold',name:'Superstar Gold Jacket',emoji:'⭐',desc:'A shiny gold jacket and star shades for championship day.'},
  {id:'tracksuit',name:'Cozy Tracksuit & Cap',emoji:'🧢',desc:'A comfy tracksuit and cap, ready to run drills right beside you.'}
 ];
-function defaultTheme(){ return {color:'red',color2:'gold',color3:'teal',sport:'basketball',animal:'lion',childName:'',worldName:'',coachName:'Leo',coachIdentity:'he',coachBase:'lion',coachFace:'man',coachSkin:4,coachHair:'twists',coachHairColor:'#17120B',coachOutfit:'classic'}; }
+function defaultTheme(){ return {color:'red',color2:'gold',color3:'cream',sport:'basketball',animal:'lion',childName:'',worldName:'',coachName:'Leo',coachIdentity:'he',coachBase:'lion',coachFace:'man',coachSkin:4,coachHair:'twists',coachHairColor:'#17120B',coachOutfit:'classic'}; }
 function loadTheme(){ try{ var t=JSON.parse(localStorage.getItem(THEME_KEY)); if(t&&typeof t==='object'){ var base=defaultTheme(); if(THEME_COLORS.some(function(c){return c.id===t.color})) base.color=t.color; if(THEME_COLORS.some(function(c){return c.id===t.color2})) base.color2=t.color2; if(THEME_COLORS.some(function(c){return c.id===t.color3})) base.color3=t.color3; fixTrioDuplicates(base); if(THEME_SPORTS.some(function(s){return s.id===t.sport})) base.sport=t.sport; if(THEME_ANIMALS.some(function(a){return a.id===t.animal})) base.animal=t.animal; if(typeof t.childName==='string') base.childName=t.childName.slice(0,24); if(typeof t.worldName==='string') base.worldName=t.worldName.slice(0,40); if(typeof t.coachName==='string') base.coachName=t.coachName.slice(0,24); if(COACH_IDENTITIES.some(function(x){return x.id===t.coachIdentity})) base.coachIdentity=t.coachIdentity; if(t.coachBase==='lion'||t.coachBase==='fav') base.coachBase=t.coachBase; base.coachFace='man'; if(COACH_OUTFITS.some(function(x){return x.id===t.coachOutfit})) base.coachOutfit=t.coachOutfit; if(typeof t.coachSkin==='number'&&t.coachSkin>=0&&t.coachSkin<SKINS.length) base.coachSkin=Math.floor(t.coachSkin); if(HAIR_STYLES.some(function(x){return x[0]===t.coachHair})) base.coachHair=t.coachHair; if(HAIR_COLORS.some(function(x){return x[0]===t.coachHairColor})) base.coachHairColor=t.coachHairColor; return base; } }catch(e){} return defaultTheme(); }
 var myTheme=loadTheme();
 function saveTheme(){ try{ localStorage.setItem(THEME_KEY,JSON.stringify(myTheme)); }catch(e){} }
 function themeColor(){ return THEME_COLORS.find(function(c){return c.id===myTheme.color})||THEME_COLORS[0]; }
 function themeColor2(){ return THEME_COLORS.find(function(c){return c.id===myTheme.color2})||THEME_COLORS[5]; }
-function themeColor3(){ return THEME_COLORS.find(function(c){return c.id===myTheme.color3})||THEME_COLORS[4]; }
+function themeColor3(){ return THEME_COLORS.find(function(c){return c.id===myTheme.color3})||colorById('cream'); }
 function themeSport(){ return THEME_SPORTS.find(function(s){return s.id===myTheme.sport})||THEME_SPORTS[0]; }
 function themeAnimal(){ return THEME_ANIMALS.find(function(a){return a.id===myTheme.animal})||THEME_ANIMALS[0]; }
 function coachIdentity(){ return COACH_IDENTITIES.find(function(x){return x.id===myTheme.coachIdentity})||COACH_IDENTITIES[0]; }
@@ -3702,6 +3722,7 @@ function trioPickerHTML(handler){
 /* One pick for one slot. A color already doing another job cannot be
    picked twice — the three colors must be three DIFFERENT colors. */
 function pickTrioColor(key,val,rerender){
+  if(typeof setupLocked==='function'&&setupLocked()) return; /* locked on the original design */
   var ids=trioIds(), keys=['color','color2','color3'], labels=['Primary','Secondary','Tertiary'];
   var other=ids.indexOf(val);
   if(other>=0&&keys[other]!==key){
@@ -4097,7 +4118,7 @@ function applySportTheme(lockedOut,c,s){
   if(msg&&!document.body.classList.contains('playing')) msg.textContent=info.readyMsg;
   try{ if(typeof updateScoreboard==='function'&&typeof gameSession!=='undefined'&&gameSession) updateScoreboard(); }catch(e){}
 }
-function setThemePart(key,val){ myTheme[key]=val; if(key==='sport') setActiveSportId(val); saveTheme(); applyTheme(); renderThemeStudio(); renderAllPlayers(); try{ sfx('pick'); }catch(e){} }
+function setThemePart(key,val){ if(typeof setupLocked==='function'&&setupLocked()){ if(key==='sport'&&val!==defaultTheme().sport){ setSetupKeepFlag(false); } else return; } myTheme[key]=val; if(key==='sport') setActiveSportId(val); saveTheme(); applyTheme(); renderThemeStudio(); renderAllPlayers(); try{ sfx('pick'); }catch(e){} }
 /* ===== SPORT SWITCHER — games and language only, never the theme =====
    The big button at the top of home opens big sport cards. Picking one
    changes ONLY the ACTIVE sport: applySportTheme immediately switches
@@ -4220,8 +4241,10 @@ function renderThemeStudio(){
   h+='<div class="opt-group"><h4>✏️ 5. Name your world</h4><p style="font-weight:800;color:var(--muted);margin:0 0 8px;font-size:14px;line-height:1.45">Type your name and your world takes it — John becomes <b>John\u2019s Court</b>, Jamie becomes <b>Jamie\u2019s Court</b>. You can also type any world name you like in the second box.</p><label class="setup-field-label" for="studioChildName" style="margin-top:2px">Your first name</label><input class="setup-input" id="studioChildName" maxlength="24" autocomplete="off" placeholder="e.g. John" value="'+String(myTheme.childName||'').replace(/"/g,'&quot;')+'" onchange="setThemeNameField(\'childName\',this.value)"/><label class="setup-field-label" for="studioWorldName">Your world\u2019s name</label><input class="setup-input world" id="studioWorldName" maxlength="40" autocomplete="off" placeholder="e.g. John\u2019s Court" value="'+String(myTheme.worldName||'').replace(/"/g,'&quot;')+'" onchange="setThemeNameField(\'worldName\',this.value)"/><p style="font-weight:800;color:var(--muted);margin:7px 0 0;font-size:14px">Your world is called: <b>'+themeWorldName()+'</b></p></div>';
   h+='<div class="opt-group"><h4>👤 6. Your player / avatar</h4><p style="font-weight:800;color:var(--muted);margin:0 0 8px;font-size:14px;line-height:1.45">Your player plays in the world you just built. Dress him in your colors — skin, hair, jersey, number, shoes and gear.</p><button class="opt-chip" onclick="closeThemeStudio();openStudio()">🎨 Open My Player Studio</button></div>';
   o.innerHTML=h;
+  lockControlsIn(o); /* toggle ON = the studio's picks are locked too */
 }
 function setThemeNameField(key,val){
+  if(typeof setupLocked==='function'&&setupLocked()) return;
   val=String(val||'').trim().slice(0, key==='childName'?24:40);
   if(key==='childName'){
     var prevSug=suggestedWorldName();
@@ -4230,8 +4253,8 @@ function setThemeNameField(key,val){
   } else { myTheme.worldName=val; }
   saveTheme(); applyTheme(); renderThemeStudio(); renderAllPlayers(); try{ sfx('pick'); }catch(e){}
 }
-function setCoachPart(key,val){ if(key==='identity') setCoachIdentity(val); else if(key==='base') myTheme.coachBase=val; else if(key==='face') myTheme.coachFace='man'; else if(key==='skin') myTheme.coachSkin=val; else if(key==='hair') myTheme.coachHair=val; else if(key==='hairColor') myTheme.coachHairColor=val; else if(key==='outfit') myTheme.coachOutfit=val; saveTheme(); applyTheme(); renderThemeStudio(); renderAllPlayers(); try{ sfx('pick'); }catch(e){} }
-function setCoachNameField(val){ myTheme.coachName=String(val||'').trim().slice(0,24); saveTheme(); applyTheme(); renderThemeStudio(); renderAllPlayers(); }
+function setCoachPart(key,val){ if(typeof setupLocked==='function'&&setupLocked()) return; if(key==='identity') setCoachIdentity(val); else if(key==='base') myTheme.coachBase=val; else if(key==='face') myTheme.coachFace='man'; else if(key==='skin') myTheme.coachSkin=val; else if(key==='hair') myTheme.coachHair=val; else if(key==='hairColor') myTheme.coachHairColor=val; else if(key==='outfit') myTheme.coachOutfit=val; saveTheme(); applyTheme(); renderThemeStudio(); renderAllPlayers(); try{ sfx('pick'); }catch(e){} }
+function setCoachNameField(val){ if(typeof setupLocked==='function'&&setupLocked()) return; myTheme.coachName=String(val||'').trim().slice(0,24); saveTheme(); applyTheme(); renderThemeStudio(); renderAllPlayers(); }
 function openCoachStudio(){ if(!isCustomUnlocked()){ return; } openThemeStudio(); setTimeout(function(){ var el=document.getElementById('themeCoachSection'); if(el) el.scrollIntoView({block:'start'}); },80); }
 function openThemeStudio(){ if(!isCustomUnlocked()){ return; } renderThemeStudio(); applyTheme(); document.getElementById('themeModal').classList.add('open'); renderAllPlayers(); try{ sfx('open'); }catch(e){} }
 function closeThemeStudio(){ document.getElementById('themeModal').classList.remove('open'); saveTheme(); applyTheme(); renderAllPlayers(); }
@@ -4252,6 +4275,79 @@ function closeThemeStudio(){ document.getElementById('themeModal').classList.rem
    screen: the wizard IS Make It Yours. */
 var SETUP_DONE_KEY='karter-setup-done-v1';
 var setupStep=0, setupLastSug='';
+/* ===== DEFAULT TOGGLE — keep the original design =====
+   His build is the default for both classic and custom. On the custom
+   build the wizard opens on that original design, and this toggle —
+   shown at the top of the wizard on every step — starts ON. It stays
+   ON while the design is the original. The moment the user changes
+   anything in the wizard (a color, the sport, the animal, the coach,
+   a name), the toggle turns OFF on its own: custom changes only when
+   the user changes it. Tapping the toggle ON again puts the original
+   design back, whole, and locks. While ON, the page is locked (see
+   THE LOCK below): flipping the switch OFF does not unlock — only
+   choosing a page background other than the original does. */
+var KEEP_ORIGINAL_KEY='karter-keep-original-v1';
+function setupKeepFlag(){ try{ var v=localStorage.getItem(KEEP_ORIGINAL_KEY); return v===null? true : v==='1'; }catch(e){ return true; } }
+function setSetupKeepFlag(on){ try{ localStorage.setItem(KEEP_ORIGINAL_KEY,on?'1':'0'); }catch(e){} }
+function setupIsOriginalDesign(){ var d=defaultTheme(); for(var k in d){ if(myTheme[k]!==d[k]) return false; } return true; }
+function setupKeepOriginalOn(){ return setupKeepFlag()&&setupIsOriginalDesign(); }
+function updateSetupKeepToggle(){
+  /* Any change away from the original design clears the flag for
+     good, whichever screen made the change (wizard or Theme Studio),
+     because applyTheme reaches this through updateSetupPreview. */
+  if(setupKeepFlag()&&!setupIsOriginalDesign()) setSetupKeepFlag(false);
+  var btn=document.getElementById('setupKeepBtn'); if(!btn) return;
+  var on=setupKeepOriginalOn();
+  btn.setAttribute('aria-checked',on?'true':'false');
+  btn.classList.toggle('on',on);
+  var st=document.getElementById('setupKeepState'); if(st) st.textContent=on?'On':'Off';
+}
+function setupToggleKeepOriginal(){
+  if(setupKeepOriginalOn()){ /* Flipping the switch OFF does NOT unlock
+       the page and does NOT clear the lock: it automatically opens the
+       Make It Yours setup wizard from Step 1, prompting them to move
+       through the wizard. The lock flag and the original design stay
+       exactly as they are while they walk the steps — the ONLY thing
+       that turns the toggle off is choosing a page background other
+       than the original inside the wizard (a favorite sport other than
+       Basketball, whose field or court IS the page background; see
+       setupPick) or in the Theme Studio. If they leave the wizard
+       without making that choice, nothing has changed: the original
+       design stays in place and the page stays as it was. */
+    var tm=document.getElementById('themeModal'); if(tm) tm.classList.remove('open');
+    openSetupWizard(); return; }
+  myTheme=defaultTheme(); setSetupKeepFlag(true); setActiveSportId('basketball'); saveTheme(); applyTheme(); renderSetup(); renderAllPlayers(); try{ sfx('pick'); }catch(e){}
+}
+/* ===== THE LOCK =====
+   While the toggle is ON the page is locked on the original design:
+   theme, background, colors and coach stay exactly as shipped, and no
+   customization control — in the wizard or in the Theme Studio — can
+   change the page. Every theme setter below checks this first, and
+   renderSetup / renderThemeStudio disable their pick controls while
+   it holds. The lock holds until the user chooses to update the page
+   background: the ONLY thing that clears it is choosing a page
+   background other than the original — a different favorite sport,
+   whose field or court is the page background — in the wizard's
+   background (sport) step or in the Theme Studio. That choice turns
+   the toggle OFF and unlocks; flipping the toggle switch alone never
+   unlocks — its tap automatically opens the setup wizard from Step 1
+   instead, prompting them to move through the wizard, and leaving the
+   wizard without that background choice leaves the original design
+   and the lock untouched. The background-choice buttons themselves
+   therefore stay live while locked. The Player Studio is not part of
+   the lock — the player is not theme, background, colors or coach. */
+function setupLocked(){ return setupKeepOriginalOn(); }
+function lockControlsIn(root){
+  if(!root) return;
+  var locked=setupLocked();
+  root.classList.toggle('locked',locked);
+  root.querySelectorAll('button,input').forEach(function(el){
+    var oc=el.getAttribute&&el.getAttribute('onclick')||'';
+    if(oc.indexOf('openStudio')>=0){ el.disabled=false; return; } /* Player Studio stays open */
+    if(oc.indexOf("setupPick('sport'")>=0||oc.indexOf("setThemePart('sport'")>=0){ el.disabled=false; return; } /* the background choice stays live — it is the only way out of the lock */
+    el.disabled=locked;
+  });
+}
 function isSetupDone(){ try{ return localStorage.getItem(SETUP_DONE_KEY)==='1'; }catch(e){ return false; } }
 function markSetupDone(){ try{ localStorage.setItem(SETUP_DONE_KEY,'1'); }catch(e){} }
 function setupEsc(v){ return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
@@ -4273,6 +4369,7 @@ function applySetupGate(){
   return false;
 }
 function updateSetupPreview(){
+  updateSetupKeepToggle();
   var court=document.getElementById('spCourt'); if(!court) return;
   var c=themeColor(), c2=themeColor2(), c3=themeColor3(), s=themeSport(), a=themeAnimal();
   court.style.background=c.primary; court.style.borderColor=c3.primary; court.style.boxShadow='0 0 0 3px '+c2.bright;
@@ -4282,15 +4379,25 @@ function updateSetupPreview(){
   var coachEl=document.getElementById('spCoach'); if(coachEl){ /* coach line text is set by applyCoachDisplay; colors ride the CSS vars */ }
 }
 function setupPick(key,val){
+  if(setupLocked()){
+    /* The one way out of the lock: choosing a page background other
+       than the original (a different sport's field or court). That
+       choice turns the toggle OFF and unlocks, then applies. Picking
+       the original background, or anything else, changes nothing. */
+    if(key==='sport'&&val!==defaultTheme().sport){ setSetupKeepFlag(false); }
+    else return;
+  }
   myTheme[key]=val; if(key==='sport') setActiveSportId(val); saveTheme(); applyTheme(); renderSetup(); renderAllPlayers(); try{ sfx('pick'); }catch(e){}
 }
 function setupPickColor(key,val){ pickTrioColor(key,val,'setup'); }
 function setThemeColorSlot(key,val){ pickTrioColor(key,val,'studio'); }
 function setupPickCoach(key,val){
+  if(setupLocked()) return; /* locked on the original design */
   if(key==='identity') setCoachIdentity(val); else if(key==='base') myTheme.coachBase=val; else if(key==='face') myTheme.coachFace='man'; else if(key==='skin') myTheme.coachSkin=val; else if(key==='hair') myTheme.coachHair=val; else if(key==='hairColor') myTheme.coachHairColor=val; else if(key==='outfit') myTheme.coachOutfit=val;
   saveTheme(); applyTheme(); renderSetup(); renderAllPlayers(); try{ sfx('pick'); }catch(e){}
 }
 function setupCoachNameInput(el){
+  if(setupLocked()) return;
   myTheme.coachName=String(el.value||'').slice(0,24);
   saveTheme(); applyTheme();
 }
@@ -4300,6 +4407,7 @@ function setupReadCoachInputs(){
   saveTheme();
 }
 function setupChildInput(el){
+  if(setupLocked()) return;
   var prevSug=setupLastSug||suggestedWorldName();
   myTheme.childName=String(el.value||'').slice(0,24);
   var wEl=document.getElementById('setupWorldName');
@@ -4309,6 +4417,7 @@ function setupChildInput(el){
   saveTheme(); applyTheme();
 }
 function setupWorldInput(el){
+  if(setupLocked()) return;
   myTheme.worldName=String(el.value||'').slice(0,40);
   saveTheme(); applyTheme();
 }
@@ -4362,6 +4471,7 @@ function renderSetup(){
       +'<div class="sr-row"><span class="sr-emoji">👑</span><span><small>Your world</small>'+setupEsc(themeWorldName())+'</span></div></div>';
   }
   body.innerHTML=h;
+  lockControlsIn(body); /* toggle ON = this step's picks are locked */
   updateSetupPreview();
 }
 function setupMove(dir){
