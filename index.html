@@ -953,11 +953,14 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
          Pick Your Sport bar, a little breathing space, then the
          Math Court / Spelling Court tabs that tell you which area
          you're in, then — underneath the courts — the row of cards
-         across (My Player Design Studio, Trophy Case, Bonus Round),
-         then — BELOW those cards — the chosen section's title
-         (e.g. "Math Tennis Court — Pick Your Game!"), and directly
-         underneath that title the game cards grid for that category.
-         Every block keeps real space around it — nothing stacked. -->
+         across (on the custom link: My Player Design Studio, Trophy
+         Case, Bonus Round; on the classic link the Player Studio is
+         not part of the build at all, so the same row carries just
+         Trophy Case and Bonus Round), then — BELOW those cards —
+         the chosen section's title (e.g. "Math Tennis Court — Pick
+         Your Game!"), and directly underneath that title the game
+         cards grid for that category. Every block keeps real space
+         around it — nothing stacked. -->
     <!-- MAKE IT YOURS is NOT a card on this page. It is the SETUP WIZARD
          (setupView, above): on the customized link it opens by itself the
          first time a family opens the page and walks them through
@@ -971,8 +974,13 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
       <button class="tab active" id="tabMath" onclick="showCat('math')"><span class="theme-sport-emoji">🏀</span> <span id="tabMathLabel">MATH COURT</span></button>
       <button class="tab" id="tabSpell" onclick="showCat('spelling')">📣 <span id="tabSpellLabel">SPELLING COURT</span></button>
     </div>
-    <div class="game-hub" aria-label="Your game stuff">
-      <button class="hub-card hub-player" id="playerHubCard" onclick="openStudio()"><span class="mini-player player-slot" data-size="mini"></span><span><b>🎨 My Player — Design &amp; Dress Him!</b><span>Pick his skin, hair, jersey, number, shoes and gear. <span id="playerHubDesc">He is the player who shoots in every game!</span></span></span></button>
+    <div class="game-hub" id="gameHub" aria-label="Your game stuff">
+      <!-- PLAYER STUDIO CARD — CUSTOM LINK ONLY. The classic build has
+           NO Player Studio and NO setup wizard: this card starts hidden
+           and applyVersionUI() reveals it only on the customized link.
+           In classic the hub keeps the same layout and spacing with
+           just Trophy Case and Bonus Round (the .no-player grid). -->
+      <button class="hub-card hub-player" id="playerHubCard" style="display:none" onclick="openStudio()"><span class="mini-player player-slot" data-size="mini"></span><span><b>🎨 My Player — Design &amp; Dress Him!</b><span>Pick his skin, hair, jersey, number, shoes and gear. <span id="playerHubDesc">He is the player who shoots in every game!</span></span></span></button>
       <button class="hub-card" onclick="openTrophies()"><span class="hub-emoji">🏆</span><span><b>Trophy Case</b><span>See every trophy and piece of gear you have won.</span></span></button>
       <button class="hub-card" onclick="openBonus()"><span class="hub-emoji">🎁</span><span><b>Bonus Round</b><span id="bonusHubDesc">Free-throw tapping and tap-the-right-ball games!</span></span></button>
     </div>
@@ -2398,7 +2406,7 @@ function loadColl(){ try{ var c=JSON.parse(localStorage.getItem(COLL_KEY)); if(c
 var collection=loadColl();
 function saveColl(){ try{ localStorage.setItem(COLL_KEY,JSON.stringify(collection)); }catch(e){} }
 function hasGear(id){ return collection.gear.indexOf(id)>-1; }
-function unlockGear(id){ if(hasGear(id)) return null; collection.gear.push(id); saveColl(); var g=GEAR_DEFS.find(function(x){return x.id===id}); if(g){ try{ sfx('unlock'); }catch(e){} toast('🎁 NEW GEAR UNLOCKED: '+g.name+'! Find it in My Player!'); } return g; }
+function unlockGear(id){ if(hasGear(id)) return null; collection.gear.push(id); saveColl(); var g=GEAR_DEFS.find(function(x){return x.id===id}); if(g){ try{ sfx('unlock'); }catch(e){} toast('🎁 NEW GEAR UNLOCKED: '+g.name+(((typeof isCustomUnlocked==='function')&&isCustomUnlocked())?'! Find it in My Player!':'! See it in your Trophy Case!')); } return g; }
 
 /* ----- Player SVG (layered, his exact design everywhere) ----- */
 function jerseyTextColor(c){ return (c==='#FFFFFF'||c==='#FFB800')?'#B91C1C':'#FFFFFF'; }
@@ -2466,7 +2474,12 @@ function renderPlayerSVG(d){
   + '<rect x="48" y="234" width="38" height="14" rx="7" fill="'+shoes+'" stroke="#2B1608" stroke-width="2.5"/><rect class="p-shoe-r" x="114" y="234" width="38" height="14" rx="7" fill="'+shoes+'" stroke="#2B1608" stroke-width="2.5"/>'
   + '</svg>';
 }
-function renderAllPlayers(){ document.querySelectorAll('.player-slot').forEach(function(el){ el.innerHTML=renderPlayerSVG(playerDesign); }); var sp=document.getElementById('studioPreview'); if(sp&&document.getElementById('studioModal').classList.contains('open')){ sp.innerHTML=renderPlayerSVG(playerDesign); } var sn=document.getElementById('studioName'); if(sn) sn.textContent='#'+playerDesign.number+' — Your Player ⭐'; var ball=document.getElementById('shotBall'); if(ball&&gameSession) ball.classList.toggle('fire',!!gameSession.onFire); }
+/* Which player the world actually SHOWS. Custom link: the child's own
+   saved design from the Player Studio. Classic link: ALWAYS the plain
+   default player — a design saved on this device while it was unlocked
+   must never leak into the classic build, where there is no studio. */
+function activePlayerDesign(){ var unlocked=(typeof isCustomUnlocked==='function')?isCustomUnlocked():false; return unlocked? playerDesign : defaultDesign(); }
+function renderAllPlayers(){ var shown=activePlayerDesign(); document.querySelectorAll('.player-slot').forEach(function(el){ el.innerHTML=renderPlayerSVG(shown); }); var sp=document.getElementById('studioPreview'); if(sp&&document.getElementById('studioModal').classList.contains('open')){ sp.innerHTML=renderPlayerSVG(playerDesign); } var sn=document.getElementById('studioName'); if(sn) sn.textContent='#'+playerDesign.number+' — Your Player ⭐'; var ball=document.getElementById('shotBall'); if(ball&&gameSession) ball.classList.toggle('fire',!!gameSession.onFire); }
 
 /* ----- Sound effects (WebAudio, separate from music) ----- */
 var audioCtx=null, sfxMuted=false;
@@ -4034,31 +4047,48 @@ var customUnlocked=false;
   }catch(e){ customUnlocked=isCustomLink; }
 })();
 function isCustomUnlocked(){ return !!customUnlocked; }
-/* The classic and custom homepages are laid out EXACTLY the same —
-   same hero, same Pick Your Sport bar, same Math / Spelling Court
-   tabs, same three hub cards across (My Player, Trophy Case, Bonus
-   Round), same sport-named title above the same games grid, same
-   spacing, and the same centered music player at the bottom. The
-   ONLY difference is customization: only the custom link runs the
-   Make It Yours SETUP WIZARD and opens the studios — there is no
-   Make It Yours card: the wizard opens by itself on a first open
-   and walks the family through building their theme step by step,
-   and after that it is re-opened from the ☰ Menu. On the classic
-   link the My Player card still shows in the same place; tapping
-   it explains it unlocks with the Customized edition. One
-   exception, for the sport teaser only: the plain link shows its
-   locked sports in the picker, with an always-visible "Upgrade to
-   Unlock" button to the product page — inside the sport picker,
-   where all the sports are shown (no prices anywhere on this
-   page). The custom build shows no locks and no such button. */
+/* The classic and custom homepages share the SAME layout — same
+   hero, same Pick Your Sport bar, same Math / Spelling Court tabs,
+   same hub row in the same place with the same spacing, same
+   sport-named title above the same games grid, and the same centered
+   music player at the bottom. The difference is ONLY what lives in
+   that layout: customization is custom-link-only. The classic build
+   has NO setup wizard and NO Player Studio at all — the "My Player —
+   Design & Dress Him!" hub card is not on its home screen, the hub
+   row simply carries Trophy Case and Bonus Round (the .no-player
+   grid keeps the same balanced spacing), the player on the court is
+   always the plain default player (never a design saved while the
+   device was unlocked), and no studio or theme modal can open. On
+   the custom link the wizard opens by itself on a first open and
+   walks the family through building their theme step by step; after
+   that it is re-opened from the ☰ Menu, and the My Player card sits
+   in the hub row where the studio opens from. One exception, for
+   the sport teaser only: the plain link shows its locked sports in
+   the picker, with an always-visible "Upgrade to Unlock" button to
+   the product page — inside the sport picker, where all the sports
+   are shown (no prices anywhere on this page). The custom build
+   shows no locks and no such button. */
 function heroCustomSentenceText(){ return 'And this '+sportInfo().venue+' is YOURS — you built it in the Make It Yours setup wizard: your favorite color, your favorite sport and your favorite animal, your world name, and your boy coach — his name, his face and how he dresses. Want to change it? Open the ☰ Menu and tap "Make It Yours — Setup Wizard" to walk through it again, step by step.'; }
 function applyVersionUI(){
   var unlocked=isCustomUnlocked();
   var setupItem=document.getElementById('menuSetupItem'); if(setupItem) setupItem.style.display= unlocked?'':'none';
-  var hub=document.getElementById('playerHubCard'); if(hub){ hub.style.display=''; if(hub.parentElement) hub.parentElement.classList.remove('no-player'); }
+  /* Player Studio card: CUSTOM ONLY. Classic hides it completely (it
+     also starts hidden in the markup, so it can never flash on a
+     classic open) and the hub switches to the two-card .no-player
+     layout; custom shows it in its usual hub spot. */
+  var hub=document.getElementById('playerHubCard');
+  if(hub){ hub.style.display= unlocked?'':'none'; var hubRow=hub.parentElement; if(hubRow) hubRow.classList.toggle('no-player',!unlocked); }
+  if(!unlocked){
+    /* Nothing customization-shaped may linger in classic: close any
+       studio / theme modal and keep the setup wizard shut. */
+    var sm=document.getElementById('studioModal'); if(sm) sm.classList.remove('open');
+    var tm=document.getElementById('themeModal'); if(tm) tm.classList.remove('open');
+    var sv=document.getElementById('setupView'); if(sv) sv.style.display='none';
+  }
   var heroS=document.getElementById('heroCustomSentence');
   if(heroS) heroS.textContent= unlocked?heroCustomSentenceText():'';
   if(unlocked){ try{ applyTheme(); }catch(e){} }
+  try{ renderAllPlayers(); }catch(e){}
   try{ renderSportSwitcher(); }catch(e){}
 }
 
@@ -4069,7 +4099,7 @@ function openTrophies(){
   h+='<p style="font-weight:800;line-height:1.5">🏀 Games won: <b>'+collection.wins+'</b> &nbsp;•&nbsp; 🏆 Championships: <b>'+collection.champWins+'</b> &nbsp;•&nbsp; 🔥 Best hot streak: <b>'+collection.bestStreak+'</b> &nbsp;•&nbsp; ⭐ Bonus stars: <b>'+collection.bonusStars+'</b></p>';
   if(collection.trophies.length){ h+='<div class="trophy-grid">'+collection.trophies.slice().reverse().map(function(t){ return '<div class="trophy-item"><span class="ti">'+t.icon+'</span><br><b>'+t.name+'</b><small>Won on '+t.when+'</small></div>'; }).join('')+'</div>'; }
   else h+='<div class="empty-note">No trophies yet — win a game (first team to the target score!) and your trophy will live right here. Leo believes in you! 🦁</div>';
-  h+='<div class="work-sec-title" style="margin-top:16px">🎽 Your Gear</div><div class="trophy-grid">'+GEAR_DEFS.map(function(g){ var owned=hasGear(g.id); return '<div class="trophy-item"><span class="ti">'+(owned?g.icon:'🔒')+'</span><br><b>'+g.name+'</b><small>'+(owned?'Unlocked! Dress your player with it in My Player 🎨':'Locked — '+g.how)+'</small></div>'; }).join('')+'</div>';
+  h+='<div class="work-sec-title" style="margin-top:16px">🎽 Your Gear</div><div class="trophy-grid">'+GEAR_DEFS.map(function(g){ var owned=hasGear(g.id); return '<div class="trophy-item"><span class="ti">'+(owned?g.icon:'🔒')+'</span><br><b>'+g.name+'</b><small>'+(owned?(isCustomUnlocked()?'Unlocked! Dress your player with it in My Player 🎨':'Unlocked!'):'Locked — '+g.how)+'</small></div>'; }).join('')+'</div>';
   b.innerHTML=h;
   document.getElementById('trophyModal').classList.add('open');
 }
@@ -4121,7 +4151,7 @@ function stopFt(){ if(ftInt){ clearInterval(ftInt); ftInt=null; } }
 function renderBonusHome(){
   var b=document.getElementById('bonusBody'); if(!b) return;
   var bi=sportInfo();
-  b.innerHTML='<div style="display:flex;gap:12px;align-items:center;background:#FFF7ED;border:2px solid var(--line);border-radius:16px;padding:10px"><div class="bonus-player" style="width:70px;height:96px;flex:0 0 70px">'+renderPlayerSVG(playerDesign)+'</div><p style="font-weight:800;line-height:1.5;margin:0">Your player is warmed up! Bonus games earn ⭐ bonus stars for your Trophy Case.</p></div>'
+  b.innerHTML='<div style="display:flex;gap:12px;align-items:center;background:#FFF7ED;border:2px solid var(--line);border-radius:16px;padding:10px"><div class="bonus-player" style="width:70px;height:96px;flex:0 0 70px">'+renderPlayerSVG(activePlayerDesign())+'</div><p style="font-weight:800;line-height:1.5;margin:0">Your player is warmed up! Bonus games earn ⭐ bonus stars for your Trophy Case.</p></div>'
   +'<div class="trophy-grid"><button class="hub-card" onclick="startFreeThrow()"><span class="hub-emoji">🎯</span><span><b>'+bi.bonusTapName+'</b><span>'+bi.bonusTapDesc+'</span></span></button>'
   +'<button class="hub-card" onclick="startBallRound()"><span class="hub-emoji">'+bi.tokenEmoji+'</span><span><b>'+bi.ballRoundName+'</b><span>A real math problem — tap the one with the right answer!</span></span></button></div><div id="bonusPlay"></div>';
 }
