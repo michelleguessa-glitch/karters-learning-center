@@ -440,28 +440,6 @@ button{font-family:inherit;cursor:pointer}
 body[data-world-color="white"] .hero{color:var(--ink)}
 body[data-world-color="white"] .play-btn{background:#F8FAFC;color:var(--ink);box-shadow:inset 0 0 0 3px var(--ink)}
 body[data-world-color="white"] .lion-coach-badge{color:var(--ink)}
-/* ===== SPORT BACKGROUND TEMPLATES — TEST RUN GALLERY =====
-   One fixed template design per sport (the same worldBackdropSVG the
-   real page background uses). Only the three picked colors change
-   between learners; natural things keep natural colors — grass stays
-   green, a football stays brown, ice stays icy, wood stays wood.
-   This gallery renders every template in the TEST palette —
-   Primary Red, Secondary White, Tertiary Blue — for approval. */
-.template-gallery{margin:34px 0 6px}
-.template-gallery h2{font-size:30px;margin:4px 0 6px}
-.template-gallery .tg-lead{font-weight:800;color:var(--muted);line-height:1.55;margin:0 0 6px;max-width:760px}
-.tg-palette{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 16px;font-weight:900;font-size:14px}
-.tg-palette .tg-dot{width:26px;height:26px;border-radius:50%;border:3px solid var(--ink);display:inline-block;vertical-align:-7px;margin-right:5px}
-.template-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.template-card{border:3px solid var(--ink);border-radius:20px;overflow:hidden;background:#fff;box-shadow:0 5px 0 var(--ink)}
-.template-card .t-scene{line-height:0}
-.template-card .t-scene svg{width:100%;height:auto;display:block}
-.template-card .t-label{display:flex;align-items:center;gap:9px;padding:11px 14px;border-top:3px solid var(--ink);background:#fff}
-.template-card .t-label .t-emoji{font-size:27px;line-height:1}
-.template-card .t-label b{font-family:'Fredoka';font-size:19px;line-height:1.1;display:block}
-.template-card .t-label span{font-size:12.5px;font-weight:800;color:var(--muted);line-height:1.35;display:block}
-body.playing #templateGallery{display:none}
-@media(max-width:760px){.template-grid{grid-template-columns:1fr}}
 .theme-note{background:#FFF7ED;border:2px solid var(--line);border-radius:14px;padding:11px 13px;font-weight:800;font-size:14px;line-height:1.5;margin-top:12px}
 @media(max-width:760px){.make-yours .play-btn{width:100%;margin-left:0}.theme-preview{position:relative}}
 /* ===== SETUP WIZARD — first-open flow for the customized world =====
@@ -1042,21 +1020,6 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
     <div class="grid" id="topicGrid"></div>
 
       </div>
-
-  <!-- SPORT BACKGROUND TEMPLATES — TEST RUN (approval gallery).
-       Every sport's background template, rendered in ONE test palette
-       (Primary Red, Secondary White, Tertiary Blue) so the fixed
-       template designs can be approved. In a child's real world the
-       same templates render in their three wizard colors; only the
-       colors change, never the design. Natural colors stay natural:
-       grass green, football brown, ice icy, pool water blue. -->
-  <section class="template-gallery" id="templateGallery" aria-label="Sport background templates test run">
-    <h2>🏟️ Background Templates — Test Run</h2>
-    <p class="tg-lead">Here is every sport's background template — the design each learner's world is built from. The design never changes; only the three colors change, swapped for whatever the learner picks in the wizard. These nine are all shown in one test palette:</p>
-    <div class="tg-palette"><span><span class="tg-dot" style="background:#D92323"></span>Primary: Red</span><span><span class="tg-dot" style="background:#FFFFFF"></span>Secondary: White</span><span><span class="tg-dot" style="background:#2563EB"></span>Tertiary: Blue</span></div>
-    <p class="tg-lead">Natural things keep their natural colors in every template — the grass stays green, a football stays brown, the ice stays icy and the pool water stays blue. Everything else wears only the three picked colors.</p>
-    <div class="template-grid" id="templateGrid"></div>
-  </section>
 
   <!-- PRACTICE -->
   <div id="practiceView">
@@ -3869,25 +3832,6 @@ function renderWorldBackground(lockedOut,c,ds){
   var spS=document.getElementById('spScene'); if(spS) spS.innerHTML=sceneHTML;
   var tpS=document.getElementById('tpScene'); if(tpS) tpS.innerHTML=sceneHTML;
 }
-/* ===== TEMPLATE TEST GALLERY — every sport background, one palette =====
-   Renders the SAME worldBackdropSVG templates the real page background
-   uses, once per sport, in the fixed TEST palette — Primary Red,
-   Secondary White, Tertiary Blue — so the template designs can be
-   seen and approved. SCENE_TRIO is swapped only for the synchronous
-   string building, then restored to the world's real trio. */
-var TEST_TRIO_IDS=['red','white','blue'];
-function renderTemplateGallery(){
-  var grid=document.getElementById('templateGrid'); if(!grid) return;
-  var testTrio=TEST_TRIO_IDS.map(function(id){ return colorById(id); });
-  var savedTrio=trioColors();
-  setSceneTrio(testTrio);
-  var h=THEME_SPORTS.map(function(s){
-    return '<div class="template-card"><div class="t-scene">'+worldBackdropSVG(s.id,testTrio[0])+'</div>'
-      +'<div class="t-label"><span class="t-emoji">'+s.emoji+'</span><span><b>'+s.name+' — Background Template</b><span>Test palette: Red • White • Blue — in a learner\u2019s world these become their Primary • Secondary • Tertiary.</span></span></div></div>';
-  }).join('');
-  setSceneTrio(savedTrio);
-  grid.innerHTML=h;
-}
 function applyTheme(){
   applyWorldTheme();
   var lockedOut=(typeof customUnlocked!=='undefined'&&!customUnlocked);
@@ -4129,7 +4073,6 @@ function openSetupWizard(){
      away while it runs, so the first thing a first-time family sees is
      Step 1 — not the home screen behind it. */
   if(hero) hero.style.display='none';
-  var tg=document.getElementById('templateGallery'); if(tg) tg.style.display='none';
   if(sv) sv.style.display='block';
   renderSetup(); window.scrollTo({top:0}); try{ sfx('open'); }catch(e){}
 }
@@ -4241,7 +4184,6 @@ function finishSetup(){
   setupReadNameInputs(); saveTheme(); markSetupDone(); applyTheme(); renderAllPlayers();
   var sv=document.getElementById('setupView'); if(sv) sv.style.display='none';
   var hero=document.getElementById('heroSection'); if(hero) hero.style.display='';
-  var tg2=document.getElementById('templateGallery'); if(tg2) tg2.style.display='';
   /* Next step in the flow: the Pick Your Grade card. A grade already saved
      on this device goes straight home into the world instead. */
   var ok=false; for(var i=0;i<GRADES.length;i++){ if(GRADES[i].id===currentGrade) ok=true; }
@@ -5224,7 +5166,6 @@ document.addEventListener('pointerdown',function(e){
   } else { sfx('pop'); }
 },true);
 applyVersionUI();
-renderTemplateGallery();
 /* First-open order matters: on the customized link, a first-time family
    meets the Make It Yours SETUP WIZARD before anything else — it opens
    on its own and walks them through building their theme step by step.
