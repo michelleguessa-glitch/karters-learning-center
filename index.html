@@ -177,6 +177,7 @@ button{font-family:inherit;cursor:pointer}
 .sport-pick-card .sp-lock-tag{font-size:12.5px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:#7F1D1D}
 .sport-locked-msg{display:none;margin-top:12px;background:#FFF7ED;border:3px solid var(--ink);border-radius:16px;padding:12px 14px;font-weight:800;line-height:1.5}
 .classic-unlock{margin-top:14px;background:var(--gold-l);border:3px solid var(--ink);border-radius:18px;padding:14px;text-align:center}
+.classic-unlock-home{margin-top:12px}
 .classic-unlock b{font-family:'Fredoka';font-size:19px;display:block;line-height:1.2}
 .classic-unlock p{font-weight:800;color:var(--muted);margin:5px 0 11px;line-height:1.45}
 .unlock-btn{display:inline-block;background:var(--red);color:#fff;border:3px solid var(--ink);border-radius:999px;padding:13px 24px;font-family:'Fredoka';font-size:19px;font-weight:700;box-shadow:0 4px 0 var(--ink);text-decoration:none;line-height:1.2}
@@ -598,12 +599,20 @@ body.playing .work-panel h3{font-size:21px}
     <!-- SPORT SWITCHER (both builds — the pick is NOT locked: a child can
          switch sports any time, right here at the top. The classic build
          plays Basketball, Soccer and Tennis; the other sports show locked
-         with an Upgrade to Unlock button to the Customized edition.) -->
+         in the picker, and the Upgrade to Unlock panel below is ALWAYS
+         visible in the classic build — right here on the home screen and
+         at the top of the picker — never only after tapping a locked
+         sport. The custom build shows no locks and no upgrade panel.) -->
     <div class="sport-switcher" id="sportSwitcher" style="display:none">
       <button class="sport-switch-btn" id="sportSwitchBtn" onclick="openSportPicker()" aria-label="Pick your sport for today">
         <span class="ss-main"><span id="sportSwitchEmoji">🏀</span> Pick Your Sport for Today!</span>
         <span class="ss-today" id="sportToday">Today: Basketball 🏀 — tap to change</span>
       </button>
+      <div class="classic-unlock classic-unlock-home" id="classicUnlockHomePanel" style="display:none">
+        <b>🔓 Unlock All Sports!</b>
+        <p>Basketball, Soccer and Tennis are open to play. The other sports are locked 🔒 — the Customized edition unlocks every sport.</p>
+        <a class="unlock-btn" href="https://www.scalewithmichelle.com/l/creative-learning-center" target="_blank" rel="noopener">Upgrade to Unlock</a>
+      </div>
     </div>
     <div class="grade-bar"><b id="gradeName">🎒 My Grade</b><span style="font-weight:800;color:var(--muted)">Every game is set to this grade's learning level.</span><button class="ghost" style="margin-left:auto" onclick="openGradePicker()">🎒 Change Grade</button></div>
     <div class="tabs" role="tablist">
@@ -765,13 +774,13 @@ body.playing .work-panel h3{font-size:21px}
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span class="fred" style="color:var(--red);font-size:15px;letter-spacing:.08em">🏅 SWITCH MY SPORT</span><button class="ghost" onclick="closeSportPicker()">✕ Done!</button></div>
     <h3>Pick Your Sport for Today!</h3>
     <p id="sportModalIntro" style="font-weight:800;color:var(--muted);margin:4px 0 6px;line-height:1.5">Tap a sport and your WHOLE world changes right away — the place you play, the words, your coach's title, and how every game scores! Your favorite color, your mascot, your coach, your grade and all your stars stay exactly the same.</p>
-    <div class="sport-pick-grid" id="sportPickGrid"></div>
-    <div class="sport-locked-msg" id="sportLockedMsg" role="status"></div>
     <div class="classic-unlock" id="classicUnlockPanel" style="display:none">
       <b>🔓 Unlock All Sports!</b>
       <p>This version includes Basketball, Soccer and Tennis. The Customized edition unlocks every sport — plus favorite colors, favorite animals, naming your world, and customizing your coach.</p>
       <a class="unlock-btn" href="https://www.scalewithmichelle.com/l/creative-learning-center" target="_blank" rel="noopener">Upgrade to Unlock</a>
     </div>
+    <div class="sport-pick-grid" id="sportPickGrid"></div>
+    <div class="sport-locked-msg" id="sportLockedMsg" role="status"></div>
     <button class="check-btn" onclick="closeSportPicker()" style="width:100%;margin-top:14px">✅ Keep This Sport — Let's Play!</button>
   </div>
 </div>
@@ -2718,9 +2727,12 @@ function setThemePart(key,val){ myTheme[key]=val; saveTheme(); applyTheme(); ren
    Both builds show the switcher. The CUSTOM build switches freely
    among every sport (the pick saves into the child's theme). The
    CLASSIC build plays Basketball, Soccer and Tennis (the pick saves
-   under its own classic key); its other sports render locked, and
-   tapping one shows the gentle locked message plus the Upgrade to
-   Unlock panel. The custom build never shows locks or the panel. */
+   under its own classic key); its other sports render locked, and the
+   Upgrade to Unlock panel is ALWAYS visible in the classic build —
+   under the sport button on the home screen and at the top of this
+   picker, before any sport is tapped. Tapping a locked sport also
+   shows the gentle locked message. The custom build never shows locks
+   or either panel. */
 function renderSportSwitcher(){
   var wrap=document.getElementById('sportSwitcher'); if(!wrap) return;
   var unlocked=(typeof isCustomUnlocked==='function')?isCustomUnlocked():false;
@@ -2731,8 +2743,9 @@ function renderSportSwitcher(){
   var intro=document.getElementById('sportModalIntro');
   if(intro) intro.textContent= unlocked
     ? 'Tap a sport and your WHOLE world changes right away — the place you play, the words, your coach\u2019s title, and how every game scores! Your favorite color, your mascot, your coach, your grade and all your stars stay exactly the same.'
-    : 'Basketball 🏀, Soccer ⚽ and Tennis 🎾 are open — tap one and your WHOLE world changes right away: the place you play, the words, your coach\u2019s title, and how every game scores! The other sports are locked in this version — tap Upgrade to Unlock below to open them all. Your grade and all your stars stay exactly the same.';
+    : 'Basketball 🏀, Soccer ⚽ and Tennis 🎾 are open — tap one and your WHOLE world changes right away: the place you play, the words, your coach\u2019s title, and how every game scores! The other sports are locked 🔒 in this version — tap Upgrade to Unlock above to open them all. Your grade and all your stars stay exactly the same.';
   var panel=document.getElementById('classicUnlockPanel'); if(panel) panel.style.display= unlocked?'none':'';
+  var homePanel=document.getElementById('classicUnlockHomePanel'); if(homePanel) homePanel.style.display= unlocked?'none':'';
   var grid=document.getElementById('sportPickGrid');
   if(grid) grid.innerHTML=THEME_SPORTS.map(function(sp){
     var on=effectiveSportId()===sp.id;
@@ -2970,9 +2983,11 @@ function isCustomUnlocked(){ return !!customUnlocked; }
    customization cards; the custom link shows the Make It Yours card and
    the My Player card as ordinary parts of the world, and the hero line
    invites the child to use them. One exception, for the sport teaser
-   only: the plain link's sport picker shows its locked sports with an
-   "Upgrade to Unlock" button to the product page (no prices anywhere
-   on this page). The custom build shows no locks and no such button. */
+   only: the plain link shows its locked sports in the picker, with an
+   always-visible "Upgrade to Unlock" button to the product page —
+   under the sport button on the home screen and at the top of the
+   picker (no prices anywhere on this page). The custom build shows
+   no locks and no such button. */
 function applyVersionUI(){
   var unlocked=isCustomUnlocked();
   var card=document.getElementById('makeYoursCard'); if(card) card.style.display= unlocked?'':'none';
