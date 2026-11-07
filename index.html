@@ -587,6 +587,10 @@ function renderGradeCards(){ var el=document.getElementById('gradeGrid'); if(!el
 function updateGradeBar(){ var n=document.getElementById('gradeName'); if(n) n.textContent='🎒 My Grade: '+gradeLabel(); }
 function setGrade(id){ currentGrade=id; try{ localStorage.setItem(GRADE_KEY,id); }catch(e){} var gv=document.getElementById('gradeView'), hv=document.getElementById('homeView'); if(gv) gv.style.display='none'; if(hv) hv.style.display='block'; renderGradeCards(); updateGradeBar(); renderGrid(); updateTotals(); toast('🎒 '+gradeLabel()+' — Leo set every game to your grade level!'); window.scrollTo({top:0}); }
 function openGradePicker(){ stopLeoSpeech(); renderGradeCards(); var gv=document.getElementById('gradeView'), hv=document.getElementById('homeView'); if(hv) hv.style.display='none'; if(gv) gv.style.display='block'; window.scrollTo({top:0}); }
+/* GRADE GATE: a first-time learner (no grade saved on this device yet)
+   lands on "Pick Your Grade!" and must tap a grade card before the home
+   screen is reachable. Once a grade is saved, opening the page goes
+   straight to the home screen at that saved grade — no picker first. */
 function applyGradeGate(){ renderGradeCards(); updateGradeBar(); var ok=false; for(var i=0;i<GRADES.length;i++){ if(GRADES[i].id===currentGrade) ok=true; } if(!ok){ var gv=document.getElementById('gradeView'), hv=document.getElementById('homeView'); if(hv) hv.style.display='none'; if(gv) gv.style.display='block'; } }
 
 var TOPICS=[
@@ -605,6 +609,45 @@ var TOPICS=[
 {id:'compound',cat:'spelling',icon:'🧩',title:'Compound Word Combo',desc:'Two small words join to make one big word: basket + ball = basketball!',std:'Grade 2–3 Spelling Patterns'},
 {id:'homophones',cat:'spelling',icon:'👂',title:'Homophone Hoops',desc:'Words that sound the same but spell & mean different: to, too, two!',std:'Grade 2–3 Homophone Sets'},
 ];
+/* ===== GRADE-TRUE TITLES & TAGLINES =====
+   A card must name the skill actually played at the picked grade, so neither
+   the learner nor a grown-up is promised a skill that grade does not teach.
+   The maps below override the displayed title/tagline per grade index
+   (0=Kindergarten … 5=5th); any grade not listed keeps the topic's true
+   title/desc above. Only the words on screen change — the games, prompts,
+   grade progressions and progress keys (topic ids) never change, so stars
+   and trophies stay with the same topic at every grade. Locked games
+   (Multiplication/Division below 3rd grade) have no overrides: they keep
+   their true titles under the gold lock, and Leo's lock message explains
+   them. Audit basis (what each grade actually plays, from the generators):
+   K fractions = whole/half shape sharing in words (no fraction notation);
+   1st+ fractions = partitioning shapes into halves/fourths and beyond.
+   K sight words = Dolch Pre-Primer/Primer first words; K vowels = short
+   vowel letter sounds inside CVC words. K–1st homophones = a small set of
+   sound-alike word choices. K place value = teen numbers as tens & ones. */
+var GRADE_TITLES={
+fractions:{0:'Sharing Squad'},
+sightwords:{0:'First Words Sprint'},
+vowels:{0:'Letter Sound Squad'},
+homophones:{0:'Sound-Alike Hoops',1:'Sound-Alike Hoops'},
+placevalue:{0:'Tens & Ones Team'}
+};
+var GRADE_DESCS={
+addition:{0:'Count the basketballs and add them up — little numbers to 10!',1:'Add the ones first, then the tens — bigger adding, step by step!'},
+subtraction:{0:'Take basketballs away and count what is left — little numbers to 10!',1:'Taking away bigger numbers — count back, or borrow a ten when you need to!'},
+placevalue:{0:'Teen numbers are one ten and some ones — find the digit in the tens place and the ones place!',1:'Ones and tens — what each digit is really worth!'},
+money:{0:'Meet the coins! A penny is 1¢, a nickel is 5¢, a dime is 10¢ and a quarter is 25¢.',1:'Count the coins! Add up pennies, nickels, dimes and quarters — in cents!',2:'Pennies, nickels, dimes and quarters — count the coins and add up the cents!',3:'Pennies, nickels, dimes and quarters — count the coins and add up the cents!'},
+time:{0:'Read the clock when the long hand points straight up — o’clock time!',1:'Read clocks to the hour and the half-hour!',2:'Read clocks to the hour, the half-hour, and every 5 minutes around the clock!',4:'Read clocks to the exact minute!',5:'Read clocks to the exact minute!'},
+fractions:{0:'Share the shape fairly! One red part out of two is a half — both parts red is the whole shape!',1:'Shapes cut into halves and fourths — count the equal parts and name the share!',2:'Halves, thirds and fourths — fair shares! Count all the parts, then count the red ones.',3:'Halves, thirds, fourths, sixths and eighths — count the equal parts and name the fraction!',4:'Add fractions with the same bottom number — the tops add, the bottom stays!',5:'Add fractions with different bottom numbers — make the bottoms match first, then add the tops!'},
+wordproblems:{0:'Tiny basketball and school stories — add or take away to find the answer!',1:'Basketball and school stories — add or take away to find the answer!',2:'Basketball and school stories — add or take away to find the answer!'},
+sightwords:{0:'Your very first words! See the word, hear the word, spell the word!'},
+vowels:{0:'Short words with one missing sound — listen for a, e, i, o, u in the middle!',1:'Magic e and vowel teams — ai, ay, ee, ea and oa work together to make one long sound!',3:'Tricky sounds: ar, er, ir, or, ur, oi, oy, ou and ow!',4:'Tricky vowel teams: aw, au, ew, ui and ow — listen closely and spell them!',5:'The trickiest teams of all: ie, ei and eigh!'},
+plurals:{0:'Make one into many — just add -s! One cat becomes many cats!',1:'Make one into many — just add -s! One dog becomes many dogs!',2:'Make one into many: add -s, add -es, or change y to -ies!'},
+compound:{0:'Two small words join to make one word: sun + shine = sunshine!',1:'Two small words join to make one word: sun + shine = sunshine!'},
+homophones:{0:'These words sound the same! Listen, think about what the sentence means, and tap the right word!',1:'These words sound the same! Listen, think about what the sentence means, and tap the right word!'}
+};
+function topicTitle(t){ if(!t) return ''; var m=GRADE_TITLES[t.id]; var g=gradeTier(); return (m&&m[g])||t.title; }
+function topicDesc(t){ if(!t) return ''; var m=GRADE_DESCS[t.id]; var g=gradeTier(); return (m&&m[g])||t.desc; }
 var LEVELS=['Warm-Up','Rookie','Starter','All-Star','Champion','MVP Finals'];
 function levelFor(done){ return Math.min(5, Math.floor(done/40)); }
 
@@ -636,7 +679,7 @@ function openWizard(t){
   else{
     wizTopic=id;
     var topic=TOPICS.find(function(x){return x.id===id});
-    wizTitleStr="Leo's Example — "+(topic?topic.title:id);
+    wizTitleStr="Leo's Example — "+(topic?topicTitle(topic):id);
     if(note) note.style.display='block';
     if(isTopicLocked(topic)){ wizSteps=[{h:'🔒 Opens in 3rd Grade!',b:'🦁 Leo says: <b>'+(topic?topic.title:'This game')+'</b> is a <b>3rd-grade skill</b> (Common Core 3.OA) — multiplication and division start in 3rd grade, not in '+gradeLabel()+'. Pick <b>Addition All-Stars</b> or <b>Subtraction Slam Dunk</b> — those fit your grade right now!'}]; }
     else{
@@ -1138,6 +1181,9 @@ function buildTaskSpeech(){
   var parts=[];
   var id=currentTopic?currentTopic.id:'';
   var instr=TASK_INSTRUCTIONS[id]||'';
+  /* Grade-true spoken instructions: at Kindergarten the fractions game is shape SHARING in words (no fraction bar to count) and the vowels game is one missing letter sound in a short word. */
+  if(gradeTier()===0&&id==='fractions') instr='Here is what to do: look at the shape. It is cut into 2 equal parts. If 1 part is red, that is a half. If both parts are red, that is the whole shape!';
+  if(gradeTier()===0&&id==='vowels') instr='Here is what to do: listen to the short word, hear the sound in the middle, and spell the whole word with the right vowel letter.';
   if(instr) parts.push(instr);
   var eq=equationInWords(current.q);
   if(eq){ parts.push('Here is your problem: '+eq); }
@@ -1159,11 +1205,11 @@ function hearWizardStep(){ if(!wizSteps||!wizSteps.length) return; var st=wizSte
 var currentTopic=null, current=null, attempts=0, timerInt=null, cat='math';
 function showCat(c){ cat=c; document.getElementById('tabMath').classList.toggle('active',c==='math'); document.getElementById('tabSpell').classList.toggle('active',c==='spelling'); document.getElementById('catTitle').textContent= c==='math'?'Math Court — Pick Your Game!':'Spelling Court — Pick Your Game!'; renderGrid(); updateTotals(); }
 function isTopicLocked(t){ return !!t&&(t.id==='multiplication'||t.id==='division')&&gradeTier()<3; }
-function lockedTopicTap(id){ var t=TOPICS.find(function(x){return x.id===id}); var name=t?t.title:'That game'; var msg='🦁 Leo says: '+name+' is a 3rd-grade skill — it opens in 3rd Grade! Try Addition All-Stars or Subtraction Slam Dunk — they fit '+gradeLabel()+'!'; toast(msg); try{ speakLeo(msg,true); }catch(e){} }
-function renderGrid(){ var g=document.getElementById('topicGrid'); g.innerHTML=TOPICS.filter(function(t){return t.cat===cat}).map(function(t){ var p=topicProg(t.id); var started=p.done>0; var finished=p.done>=240; if(isTopicLocked(t)){ return '<article class="tcard locked"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+t.icon+'</div><span class="lock-badge">🔒 Opens in 3rd Grade!</span></div><h3>'+t.title+'</h3><p><b>'+t.title+'</b> is a <b>3rd-grade skill</b> (Common Core 3.OA) — multiplication and division start in 3rd grade, so this game stays locked in '+gradeLabel()+'. 🦁 Leo says: try <b>Addition All-Stars</b> or <b>Subtraction Slam Dunk</b> — they fit your grade right now!</p><button class="play-btn locked-btn" onclick="lockedTopicTap(\''+t.id+'\')">🔒 Opens in 3rd Grade!</button></article>'; } return '<article class="tcard"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+t.icon+'</div><span class="meta">'+(finished?'🏆 Finished!':started?'⭐ Keep Going!':'New Game')+'</span></div><h3>'+t.title+'</h3><p>'+t.desc+'</p><button class="play-btn" onclick="startTopic(\''+t.id+'\')">'+(started&&!finished?'▶ Keep Playing!':finished?'▶ Play Again!':'▶ Start Playing!')+'</button></article>'; }).join(''); }
+function lockedTopicTap(id){ var t=TOPICS.find(function(x){return x.id===id}); var name=t?topicTitle(t):'That game'; var msg='🦁 Leo says: '+name+' is a 3rd-grade skill — it opens in 3rd Grade! Try Addition All-Stars or Subtraction Slam Dunk — they fit '+gradeLabel()+'!'; toast(msg); try{ speakLeo(msg,true); }catch(e){} }
+function renderGrid(){ var g=document.getElementById('topicGrid'); g.innerHTML=TOPICS.filter(function(t){return t.cat===cat}).map(function(t){ var p=topicProg(t.id); var started=p.done>0; var finished=p.done>=240; if(isTopicLocked(t)){ return '<article class="tcard locked"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+t.icon+'</div><span class="lock-badge">🔒 Opens in 3rd Grade!</span></div><h3>'+t.title+'</h3><p><b>'+t.title+'</b> is a <b>3rd-grade skill</b> (Common Core 3.OA) — multiplication and division start in 3rd grade, so this game stays locked in '+gradeLabel()+'. 🦁 Leo says: try <b>Addition All-Stars</b> or <b>Subtraction Slam Dunk</b> — they fit your grade right now!</p><button class="play-btn locked-btn" onclick="lockedTopicTap(\''+t.id+'\')">🔒 Opens in 3rd Grade!</button></article>'; } return '<article class="tcard"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+t.icon+'</div><span class="meta">'+(finished?'🏆 Finished!':started?'⭐ Keep Going!':'New Game')+'</span></div><h3>'+topicTitle(t)+'</h3><p>'+topicDesc(t)+'</p><button class="play-btn" onclick="startTopic(\''+t.id+'\')">'+(started&&!finished?'▶ Keep Playing!':finished?'▶ Play Again!':'▶ Start Playing!')+'</button></article>'; }).join(''); }
 function updateTotals(){ var ts=0; TOPICS.forEach(function(t){var p=topicProg(t.id); ts+=p.stars;}); var el=document.getElementById('totalStars'); if(el) el.textContent=ts; }
 function leoSay(html){ document.getElementById('leoBubble').innerHTML=html; speakLeo(html); }
-function startTopic(id){ var lt=TOPICS.find(function(t){return t.id===id}); if(isTopicLocked(lt)){ lockedTopicTap(id); return; } currentTopic=lt; document.body.classList.add('playing'); document.getElementById('homeView').style.display='none'; document.getElementById('practiceView').style.display='block'; document.getElementById('pTitle').textContent=currentTopic.icon+' '+currentTopic.title; window.scrollTo({top:0}); clearInterval(timerInt); timerInt=setInterval(function(){ topicProg(id).sec+=5; if(topicProg(id).sec%30===0) saveP(progress); },5000); initGameSession(id); renderAllPlayers(); nextPrompt(true); openWizard(id); }
+function startTopic(id){ var lt=TOPICS.find(function(t){return t.id===id}); if(isTopicLocked(lt)){ lockedTopicTap(id); return; } currentTopic=lt; document.body.classList.add('playing'); document.getElementById('homeView').style.display='none'; document.getElementById('practiceView').style.display='block'; document.getElementById('pTitle').textContent=currentTopic.icon+' '+topicTitle(currentTopic); window.scrollTo({top:0}); clearInterval(timerInt); timerInt=setInterval(function(){ topicProg(id).sec+=5; if(topicProg(id).sec%30===0) saveP(progress); },5000); initGameSession(id); renderAllPlayers(); nextPrompt(true); openWizard(id); }
 function goHome(){ stopLeoSpeech(); stopDribble(); if(typeof toggleWorkPanel==='function') toggleWorkPanel(false); document.body.classList.remove('playing'); clearInterval(timerInt); saveP(progress); document.getElementById('practiceView').style.display='none'; document.getElementById('homeView').style.display='block'; renderGrid(); updateTotals(); renderAllPlayers(); window.scrollTo({top:0}); }
 function goHomeFromOverlay(){
   stopWizAuto(); stopLeoSpeech(); stopFt();
@@ -1187,7 +1233,7 @@ function nextPrompt(first){
   else { document.getElementById('inputRow').style.display='flex'; ch.innerHTML=''; }
   document.getElementById('feedback').className='feedback'; document.getElementById('feedback').textContent='';
   setupWork();
-  leoSay(first? 'Welcome to <b>'+currentTopic.title+'</b>! Watch my example with the ✨ button if you need it, then try this one. You\'ve got this, champ! 🏀' : pick(['New one! Read it carefully, then shoot your answer! 🏀','Here we go — I know you can get this one!','Eyes on the ball… here\'s your next one!']));
+  leoSay(first? 'Welcome to <b>'+topicTitle(currentTopic)+'</b>! Watch my example with the ✨ button if you need it, then try this one. You\'ve got this, champ! 🏀' : pick(['New one! Read it carefully, then shoot your answer! 🏀','Here we go — I know you can get this one!','Eyes on the ball… here\'s your next one!']));
   startDribble();
   setTimeout(function(){ if(current.display!=='choice') inp.focus(); },80);
 }
@@ -1214,7 +1260,7 @@ function checkAnswer(){
     leoSay('🎉 <b>'+praiseTxt+'</b><br>'+(shot.won?'That\'s the winning basket — get ready to celebrate! 🏆':'Dribbling to the next one…'));
     chosen=null;
     if(shot.won){ setTimeout(function(){ showWinCelebration(); },1250); }
-    else { setTimeout(function(){ if(p.done>=240){ leoSay('🏆 <b>YOU DID IT!</b> You finished '+currentTopic.title+'! ROAR! 🦁'); fb.className='feedback good'; fb.innerHTML='🏆 You finished this whole topic! Go back to All Games and pick your next adventure!'; startDribble(); } else nextPrompt(false); },1700); }
+    else { setTimeout(function(){ if(p.done>=240){ leoSay('🏆 <b>YOU DID IT!</b> You finished '+topicTitle(currentTopic)+'! ROAR! 🦁'); fb.className='feedback good'; fb.innerHTML='🏆 You finished this whole topic! Go back to All Games and pick your next adventure!'; startDribble(); } else nextPrompt(false); },1700); }
   } else {
     onGameWrong();
     fb.className='feedback bad';
@@ -1640,7 +1686,7 @@ function onGameWrong(){
 }
 function awardWin(){
   collection.wins++;
-  var topic=currentTopic?currentTopic.title:'Game';
+  var topic=currentTopic?topicTitle(currentTopic):'Game';
   var tName= gameSession.championship?('🏆 Championship Trophy — '+topic):('🥇 Game Trophy — '+topic);
   collection.trophies.push({icon:gameSession.championship?'🏆':'🥇',name:tName,when:new Date().toLocaleDateString()});
   var rewards=[tName];
@@ -1770,7 +1816,7 @@ function tapBall(btn,val){
    one, it reloads once into the new build; a per-session guard makes a
    reload loop impossible. Every future fix reaches returning devices the
    same way, with nobody having to close and reopen anything by hand. */
-var APP_BUILD='20261106.8';
+var APP_BUILD='20261106.10';
 var updCheckedAt=0, updReloading=false;
 function checkForNewBuild(){
   var now=Date.now(); if(updReloading||now-updCheckedAt<20000) return; updCheckedAt=now;
