@@ -3637,8 +3637,17 @@ function applyCoachDisplay(lockedOut,sportObj){
     sub=coachOutfitEmoji(co)+' '+co.name+' • '+ci.pronouns;
     team= ca.emoji+' '+possessiveName(name)+' '+coachAnimalName()+'s';
   }
+  /* HERO PARAGRAPH RULE: the hero paragraph never changes when a
+     learner customizes their world — no custom coach name, no
+     ", your … coach" suffix, no colors, animal, world name or any
+     other custom-build detail goes into it. It always opens
+     "I'm Coach Leo!" exactly as written in the page; the only
+     parts of that paragraph that ever change are the sport's own
+     venue and closing phrase, set by applySportTheme from
+     SPORT_INFO. The coach's custom name still shows everywhere
+     OUTSIDE this paragraph (badge, style line, previews). */
   var intro=document.getElementById('heroCoachIntro');
-  if(intro) intro.textContent= (lockedOut&&(!sportObj||sportObj.id==='basketball'))? title : (title+', your '+(sportObj?sportObj.name:'Basketball').toLowerCase()+' coach');
+  if(intro) intro.textContent='Coach Leo';
   var badge=document.getElementById('heroCoachBadge'); if(badge) badge.textContent=(sportObj?sportObj.emoji:'🏀')+' '+title.toUpperCase()+' — HEAD COACH';
   var style=document.getElementById('heroCoachStyle'); if(style) style.textContent=sub;
   document.querySelectorAll('.coach-first-name').forEach(function(el){ el.textContent=name; });
@@ -4055,10 +4064,14 @@ function applySportTheme(lockedOut,c,s){
   var headline=document.getElementById('heroHeadline'); if(headline) headline.innerHTML=info.headline;
   var venue=document.getElementById('heroVenue'); if(venue) venue.textContent='my '+info.venue;
   var nxt=document.getElementById('heroNext'); if(nxt) nxt.textContent=info.nextPhrase;
-  /* Coach LANGUAGE follows the active sport — "Coach Leo, your tennis
-     coach" and the badge on the hero. The setup / theme previews keep
+  /* The badge on the hero follows the active sport. The hero
+     PARAGRAPH does not: per the hero paragraph rule in
+     applyCoachDisplay, its coach intro stays "Coach Leo" in every
+     world, classic or customized — only this function's venue and
+     nextPhrase updates above (the sport's own name and language)
+     change inside that paragraph. The setup / theme previews keep
      the default world's coach line (set by applyWorldTheme). */
-  var cIntro=document.getElementById('heroCoachIntro'); if(cIntro) cIntro.textContent=(lockedOut&&s.id==='basketball')?coachTitle():(coachTitle()+', your '+s.name.toLowerCase()+' coach');
+  var cIntro=document.getElementById('heroCoachIntro'); if(cIntro) cIntro.textContent='Coach Leo';
   var cBadge=document.getElementById('heroCoachBadge'); if(cBadge) cBadge.textContent=s.emoji+' '+coachTitle().toUpperCase()+' — HEAD COACH';
   var tabEm=document.querySelector('#tabMath .theme-sport-emoji'); if(tabEm) tabEm.textContent=s.emoji;
   var tm=document.getElementById('tabMathLabel'); if(tm) tm.textContent='MATH '+info.arena.toUpperCase();
