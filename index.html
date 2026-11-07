@@ -650,7 +650,14 @@ body.playing .work-panel h3{font-size:21px}
 @keyframes wbFloat{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-14px) rotate(6deg)}}
 .wrap{position:relative;z-index:1}
 .music-dock{position:relative;z-index:1;margin-left:auto;margin-right:auto;align-items:center}
-.hero-pattern{position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:.20;z-index:1}
+/* HERO = SOLID COLOR, ALWAYS: the hero section's background is one
+   solid color — the brand primary red on the classic/default design,
+   the child's picked primary color on the custom build (applyWorldTheme
+   stamps it inline). The sport-field scene paints behind the whole
+   page and behind the game stage, but NEVER inside or behind the
+   hero, so the hero's old floating sport pattern stays hidden and
+   unpainted and the hero sits on its solid color alone. */
+.hero-pattern{display:none;position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:.20;z-index:1}
 .hero-pattern .hp-float{position:absolute;line-height:1;animation:wbFloat 8s ease-in-out infinite}
 .hero-pattern .hp-lines{position:absolute;left:0;right:0;bottom:0;height:52px;border-top:4px solid rgba(255,255,255,.5);background:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 3px,transparent 3px 74px)}
 /* Wizard / Theme Studio previews: the mini world shows the real sport
@@ -3770,7 +3777,7 @@ function applyWorldTheme(){
      attributes only ever change when the world itself is rebuilt in
      the wizard / Theme Studio — never from the sport bar. */
   if(document.body){ document.body.setAttribute('data-world-color',c.id); document.body.setAttribute('data-world-color2',c2.id); document.body.setAttribute('data-world-color3',c3.id); document.body.setAttribute('data-world-sport',ds.id); document.body.setAttribute('data-world-animal',a.id); document.body.classList.toggle('custom-world',!lockedOut); }
-  var hero=document.getElementById('heroSection'); if(hero) hero.style.background=c.primary;
+  var hero=document.getElementById('heroSection'); if(hero){ hero.style.background=c.primary; hero.style.backgroundImage='none'; } /* solid primary color only — never the sport scene */
   document.querySelectorAll('.theme-animal-emoji').forEach(function(el){ el.textContent=a.emoji; });
   document.querySelectorAll('.theme-sport-emoji').forEach(function(el){ el.textContent=ds.emoji; });
   var court=document.getElementById('tpCourt'); if(court){ court.style.background=c.primary; court.style.borderColor=c3.primary; court.style.boxShadow='0 0 0 3px '+c2.bright; }
@@ -3831,7 +3838,8 @@ function renderWorldBackdrop(lockedOut,c,ds,displayName){
 /* ===== WORLD BACKDROP — the wizard sport's field & tools, page-wide =====
    A wide, soft, video-game-smooth scene built from the DEFAULT sport's
    field or court and that sport's own tools, laid behind the whole
-   page, woven through the hero, and shown live in the wizard / Theme
+   page — but never inside or behind the hero, which sits on its
+   solid primary color — and shown live in the wizard / Theme
    Studio previews while the child builds. Dance gets a studio with
    ballerinas, a barre and music notes; gymnastics gets a full gym —
    beam, still rings, pommel horse, parallel bars, vault and gymnasts
@@ -4038,7 +4046,7 @@ function renderWorldBackground(lockedOut,c,ds){
   var bd=document.getElementById('worldBackdrop');
   if(bd) bd.innerHTML= worldBackdropSVG(ds.id,c)+'<div class="wb-veil"></div>'+WB_POS.map(function(p,i){ return '<span class="wb-float" style="left:'+p.l+';top:'+p.t+';font-size:'+p.s+'px;animation-delay:'+p.d+'">'+floats[i%floats.length]+'</span>'; }).join('');
   var hp=document.getElementById('heroPattern');
-  if(hp) hp.innerHTML= WB_POS.map(function(p,i){ return '<span class="hp-float" style="left:'+p.l+';top:'+(8+ (i*22))+'%;font-size:'+(40+((i*13)%26))+'px;animation-delay:'+p.d+'">'+floats[i%floats.length]+'</span>'; }).join('')+'<div class="hp-lines"></div>';
+  if(hp) hp.innerHTML=''; /* the hero keeps NO sport pattern — its background stays the solid primary color */
   var sceneHTML=sportSceneHTML(ds.id,c.primary);
   var spS=document.getElementById('spScene'); if(spS) spS.innerHTML=sceneHTML;
   var tpS=document.getElementById('tpScene'); if(tpS) tpS.innerHTML=sceneHTML;
@@ -4278,19 +4286,28 @@ var setupStep=0, setupLastSug='';
 /* ===== DEFAULT TOGGLE — keep the original design =====
    His build is the default for both classic and custom. On the custom
    build the wizard opens on that original design, and this toggle —
-   shown at the top of the wizard on every step — starts ON. It stays
-   ON while the design is the original. The moment the user changes
-   anything in the wizard (a color, the sport, the animal, the coach,
-   a name), the toggle turns OFF on its own: custom changes only when
-   the user changes it. Tapping the toggle ON again puts the original
-   design back, whole, and locks. While ON, the page is locked (see
-   THE LOCK below): flipping the switch OFF does not unlock — only
-   choosing a page background other than the original does. */
+   shown at the top of the wizard on every step — starts ON. It is a
+   REAL switch: it actually flips between On and Off, and the switch
+   the child sees always shows the state it is in.
+   • Flipping it OFF actually turns it off (the saved keep-original
+     state goes off, the switch shows Off) and automatically prompts
+     the child to move through the Make It Yours wizard: the wizard
+     opens at Step 1 and they walk the steps and make their choices
+     there. Their background choice inside the wizard is the favorite
+     sport step — a sport other than Basketball is a new page
+     background, and it applies like any other pick once the toggle
+     is off.
+   • Flipping it ON saves the keep-original state and closes the
+     wizard: the original design is put back whole, saved, and the
+     page is back on it, locked (see THE LOCK below).
+   The toggle also turns OFF on its own the moment the design stops
+   being the original (a background / sport pick made while locked,
+   below), so its shown state never disagrees with the design. */
 var KEEP_ORIGINAL_KEY='karter-keep-original-v1';
 function setupKeepFlag(){ try{ var v=localStorage.getItem(KEEP_ORIGINAL_KEY); return v===null? true : v==='1'; }catch(e){ return true; } }
 function setSetupKeepFlag(on){ try{ localStorage.setItem(KEEP_ORIGINAL_KEY,on?'1':'0'); }catch(e){} }
 function setupIsOriginalDesign(){ var d=defaultTheme(); for(var k in d){ if(myTheme[k]!==d[k]) return false; } return true; }
-function setupKeepOriginalOn(){ return setupKeepFlag()&&setupIsOriginalDesign(); }
+function setupKeepOriginalOn(){ return setupKeepFlag(); }
 function updateSetupKeepToggle(){
   /* Any change away from the original design clears the flag for
      good, whichever screen made the change (wizard or Theme Studio),
@@ -4303,20 +4320,29 @@ function updateSetupKeepToggle(){
   var st=document.getElementById('setupKeepState'); if(st) st.textContent=on?'On':'Off';
 }
 function setupToggleKeepOriginal(){
-  if(setupKeepOriginalOn()){ /* Flipping the switch OFF does NOT unlock
-       the page and does NOT clear the lock: it automatically opens the
-       Make It Yours setup wizard from Step 1, prompting them to move
-       through the wizard. The lock flag and the original design stay
-       exactly as they are while they walk the steps — the ONLY thing
-       that turns the toggle off is choosing a page background other
-       than the original inside the wizard (a favorite sport other than
-       Basketball, whose field or court IS the page background; see
-       setupPick) or in the Theme Studio. If they leave the wizard
-       without making that choice, nothing has changed: the original
-       design stays in place and the page stays as it was. */
+  if(setupKeepFlag()){ /* Flip OFF: the switch actually turns off —
+       the saved keep-original state goes off and the switch shows
+       Off — and the child is automatically prompted to move through
+       the Make It Yours wizard: it opens at Step 1 and they walk the
+       steps there, making their choices inside it (the background
+       choice is the favorite sport step — a sport other than
+       Basketball, whose field or court IS the page background).
+       Turning the toggle off does not itself change the design: the
+       original design stays in place until they pick inside the
+       wizard, and the wizard's picks are live because the toggle —
+       and with it the lock — is now off. */
+    setSetupKeepFlag(false); updateSetupKeepToggle();
     var tm=document.getElementById('themeModal'); if(tm) tm.classList.remove('open');
-    openSetupWizard(); return; }
-  myTheme=defaultTheme(); setSetupKeepFlag(true); setActiveSportId('basketball'); saveTheme(); applyTheme(); renderSetup(); renderAllPlayers(); try{ sfx('pick'); }catch(e){}
+    openSetupWizard();
+    updateSetupKeepToggle(); /* renderSetup repainted the switch — keep it showing Off */
+    try{ sfx('pick'); }catch(e){}
+    return; }
+  /* Flip ON: save the keep-original state and close the wizard. The
+     original design goes back whole, is saved, and the page returns
+     to it, locked on the original again. */
+  myTheme=defaultTheme(); setSetupKeepFlag(true); setActiveSportId('basketball'); saveTheme(); markSetupDone(); applyTheme(); renderAllPlayers(); try{ sfx('pick'); }catch(e){}
+  if(typeof goHome==='function'){ goHome(); }
+  else { var sv=document.getElementById('setupView'); if(sv) sv.style.display='none'; var hero=document.getElementById('heroSection'); if(hero) hero.style.display=''; var hv=document.getElementById('homeView'); if(hv) hv.style.display='block'; window.scrollTo({top:0}); }
 }
 /* ===== THE LOCK =====
    While the toggle is ON the page is locked on the original design:
@@ -4325,17 +4351,21 @@ function setupToggleKeepOriginal(){
    change the page. Every theme setter below checks this first, and
    renderSetup / renderThemeStudio disable their pick controls while
    it holds. The lock holds until the user chooses to update the page
-   background: the ONLY thing that clears it is choosing a page
-   background other than the original — a different favorite sport,
-   whose field or court is the page background — in the wizard's
-   background (sport) step or in the Theme Studio. That choice turns
-   the toggle OFF and unlocks; flipping the toggle switch alone never
-   unlocks — its tap automatically opens the setup wizard from Step 1
-   instead, prompting them to move through the wizard, and leaving the
-   wizard without that background choice leaves the original design
-   and the lock untouched. The background-choice buttons themselves
-   therefore stay live while locked. The Player Studio is not part of
-   the lock — the player is not theme, background, colors or coach. */
+   background, and there are two doors into that choice, both through
+   the wizard:
+   • Flip the toggle OFF — it really turns off — and the wizard
+     automatically opens at Step 1, prompting them to move through
+     it; their choices, the new background (favorite sport) among
+     them, are made inside the wizard.
+   • Choose a page background other than the original — a different
+     favorite sport, whose field or court is the page background —
+     directly in the wizard's background (sport) step or in the
+     Theme Studio. That choice turns the toggle OFF and unlocks.
+   The background-choice buttons themselves therefore stay live
+   while locked. Flipping the toggle back ON restores the original
+   design whole, saves it, and closes the wizard (see the toggle
+   above). The Player Studio is not part of the lock — the player
+   is not theme, background, colors or coach. */
 function setupLocked(){ return setupKeepOriginalOn(); }
 function lockControlsIn(root){
   if(!root) return;
@@ -4344,7 +4374,7 @@ function lockControlsIn(root){
   root.querySelectorAll('button,input').forEach(function(el){
     var oc=el.getAttribute&&el.getAttribute('onclick')||'';
     if(oc.indexOf('openStudio')>=0){ el.disabled=false; return; } /* Player Studio stays open */
-    if(oc.indexOf("setupPick('sport'")>=0||oc.indexOf("setThemePart('sport'")>=0){ el.disabled=false; return; } /* the background choice stays live — it is the only way out of the lock */
+    if(oc.indexOf("setupPick('sport'")>=0||oc.indexOf("setThemePart('sport'")>=0){ el.disabled=false; return; } /* the background choice stays live — picking a new background is a direct way out of the lock */
     el.disabled=locked;
   });
 }
@@ -4380,10 +4410,12 @@ function updateSetupPreview(){
 }
 function setupPick(key,val){
   if(setupLocked()){
-    /* The one way out of the lock: choosing a page background other
+    /* One way out of the lock: choosing a page background other
        than the original (a different sport's field or court). That
        choice turns the toggle OFF and unlocks, then applies. Picking
-       the original background, or anything else, changes nothing. */
+       the original background, or anything else, changes nothing.
+       (The other door is the toggle itself — flipping it OFF opens
+       this wizard at Step 1 with the lock released.) */
     if(key==='sport'&&val!==defaultTheme().sport){ setSetupKeepFlag(false); }
     else return;
   }
