@@ -299,12 +299,16 @@ body.custom-world[data-world-color="white"] .music-bar{color:var(--ink)}
 .sport-pick-card.locked{background:#F1EADF;color:var(--muted);border-style:dashed;box-shadow:0 4px 0 rgba(43,22,8,.3)}
 .sport-pick-card.locked .sp-emoji{filter:grayscale(.55);opacity:.7}
 .sport-pick-card .sp-lock-tag{font-size:12.5px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:#7F1D1D}
-.sport-locked-msg{display:none;margin-top:12px;background:#FFF7ED;border:3px solid var(--ink);border-radius:16px;padding:12px 14px;font-weight:800;line-height:1.5}
 .classic-unlock{margin-top:14px;background:var(--gold-l);border:3px solid var(--ink);border-radius:18px;padding:14px;text-align:center}
 .classic-unlock b{font-family:'Fredoka';font-size:19px;display:block;line-height:1.2}
 .classic-unlock p{font-weight:800;color:var(--muted);margin:5px 0 11px;line-height:1.45}
 .unlock-btn{display:inline-block;background:var(--red);color:#fff;border:3px solid var(--ink);border-radius:999px;padding:13px 24px;font-family:'Fredoka';font-size:19px;font-weight:700;box-shadow:0 4px 0 var(--ink);text-decoration:none;line-height:1.2}
 .unlock-btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
+.unlock-btn:focus-visible{outline:4px solid var(--gold);outline-offset:3px}
+/* Tapping a locked sport lands the child right on this button: a brief
+   pulse shows them where they were taken — no banner, no message. */
+.unlock-btn.flash{animation:unlockFlash .65s ease-in-out 2}
+@keyframes unlockFlash{0%,100%{transform:scale(1)}50%{transform:scale(1.07);box-shadow:0 4px 0 var(--ink),0 0 0 5px var(--gold)}}
 @media(max-width:560px){.sport-pick-grid{grid-template-columns:1fr 1fr}.sport-pick-card .sp-emoji{font-size:36px}}
 .grade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
 .grade-card{border:4px solid var(--ink);border-radius:26px;background:#fff;padding:20px 14px;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:0 6px 0 var(--ink);text-align:center}
@@ -1476,15 +1480,12 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
 <div class="modal" id="sportModal" role="dialog" aria-modal="true" aria-label="Pick your sport for today">
   <div class="sheet">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span class="fred" style="color:var(--red);font-size:15px;letter-spacing:.08em">🏅 SWITCH MY SPORT</span><button class="ghost" onclick="closeSportPicker()">✕ Done!</button></div>
+    <div class="classic-unlock" id="classicUnlockPanel" style="display:none">
+      <a class="unlock-btn" id="upgradeUnlockBtn" href="https://www.scalewithmichelle.com/l/creative-learning-center-customized" target="_blank" rel="noopener">Upgrade to Unlock</a>
+    </div>
     <h3>Pick Your Sport for Today!</h3>
     <p id="sportModalIntro" style="font-weight:800;color:var(--muted);margin:4px 0 6px;line-height:1.5">Tap a sport and your GAMES change right away — the words, your coach's title for the game, and how every game plays and scores — on your own world's background, which never changes! Your WORLD does not change: its background, your favorite color, your mascot, your coach, your grade and all your stars stay exactly the same.</p>
-    <div class="classic-unlock" id="classicUnlockPanel" style="display:none">
-      <b>🔓 Unlock All Sports!</b>
-      <p>This version includes Basketball, Soccer and Tennis. The Customized edition unlocks every sport — plus favorite colors, favorite animals, naming your world, and customizing your coach.</p>
-      <a class="unlock-btn" href="https://www.scalewithmichelle.com/l/creative-learning-center-customized" target="_blank" rel="noopener">Upgrade to Unlock</a>
-    </div>
     <div class="sport-pick-grid" id="sportPickGrid"></div>
-    <div class="sport-locked-msg" id="sportLockedMsg" role="status"></div>
     <button class="check-btn" onclick="closeSportPicker()" style="width:100%;margin-top:14px">✅ Keep This Sport — Let's Play!</button>
   </div>
 </div>
@@ -3414,6 +3415,14 @@ var THEME_COLORS=[
  {id:'cream',name:'Cream',primary:'#FFE1B8',dark:'#FDBA74',soft:'#FFE1B8',bright:'#FFF8EE'},
  {id:'white',name:'White',primary:'#F8FAFC',dark:'#64748B',soft:'#E2E8F0',bright:'#FFFFFF'}
 ];
+/* The SEVEN colors a learner may pick in the wizard / Theme Studio —
+   Michelle's confirmed seven selections: Red, Blue, Green, Orange,
+   Teal, Gold, White. Cream is NOT one of them and is never rendered
+   as a pickable swatch; it stays in THEME_COLORS only so colorById
+   can resolve the classic world's built-in third color under the
+   hood (CLASSIC_TRIO color3:'cream'), exactly as the classic page
+   has always used it. */
+var PICKABLE_COLORS=THEME_COLORS.filter(function(c){return c.id!=='cream';});
 /* ===== THE THREE WORLD COLORS — Primary / Secondary / Tertiary =====
    A customized world is built from THREE different colors the child
    picks in the wizard's color step (and can rebuild any time in the
@@ -3448,7 +3457,7 @@ function trioColors(){
 /* Keep the three picks three DIFFERENT colors: fill any missing or
    duplicate slot from this preference order. */
 function fixTrioDuplicates(t){
-  var order=['gold','cream','white','blue','orange','green','red'];
+  var order=['gold','white','blue','orange','green','red','teal'];
   var used={}; used[t.color]=true;
   if(!t.color2||used[t.color2]){ t.color2=order.find(function(id){return !used[id];}); }
   used[t.color2]=true;
@@ -3789,8 +3798,7 @@ function sportSceneHTML(id,accent){
     +'<rect x="26" y="26" width="748" height="508" fill="none" stroke="'+W+'" stroke-width="6"/>'
     +'<line x1="400" y1="26" x2="400" y2="534" stroke="'+W+'" stroke-width="5"/><circle cx="400" cy="280" r="76" fill="none" stroke="'+W+'" stroke-width="5"/><circle cx="400" cy="280" r="88" fill="none" stroke="'+T3+'" stroke-width="4" opacity=".7"/>'
     +'<rect x="26" y="170" width="150" height="220" fill="none" stroke="'+W+'" stroke-width="5"/><rect x="26" y="222" width="62" height="116" fill="none" stroke="'+W+'" stroke-width="5"/><path d="M176 196 A150 150 0 0 1 176 364" fill="none" stroke="'+W+'" stroke-width="5"/>'
-    +'<rect x="624" y="170" width="150" height="220" fill="none" stroke="'+W+'" stroke-width="5"/><rect x="712" y="222" width="62" height="116" fill="none" stroke="'+W+'" stroke-width="5"/><path d="M624 196 A150 150 0 0 0 624 364" fill="none" stroke="'+W+'" stroke-width="5"/>'
-    +'<g transform="translate(120,470)"><circle r="30" fill="#FF6B1A" stroke="#7C2D12" stroke-width="4"/><path d="M-30 0H30M0 -30V30" stroke="#7C2D12" stroke-width="4"/></g><g transform="translate(690,96)"><circle r="22" fill="#FF6B1A" stroke="#7C2D12" stroke-width="4"/><path d="M-22 0H22M0 -22V22" stroke="#7C2D12" stroke-width="4"/></g>');
+    +'<rect x="624" y="170" width="150" height="220" fill="none" stroke="'+W+'" stroke-width="5"/><rect x="712" y="222" width="62" height="116" fill="none" stroke="'+W+'" stroke-width="5"/><path d="M624 196 A150 150 0 0 0 624 364" fill="none" stroke="'+W+'" stroke-width="5"/>');
   if(id==='dance') return wrap(
     '<rect width="800" height="560" fill="#FFF7ED"/>'
     +'<rect width="800" height="120" fill="'+accent+'"/>'
@@ -3983,7 +3991,7 @@ function trioPickerHTML(handler){
   TRIO_SLOTS.forEach(function(slot,si){
     var cur=colorById(ids[si]);
     h+='<div class="trio-slot" style="border-color:'+cur.soft+';box-shadow:0 3px 0 '+cur.soft+'"><div class="trio-slot-head"><span class="trio-dot" style="background:'+cur.primary+'"></span><b>'+(si+1)+'. '+slot.label+'</b><span class="trio-job">'+slot.job+'</span></div>'
-      +'<div class="opt-row">'+THEME_COLORS.map(function(c){
+      +'<div class="opt-row">'+PICKABLE_COLORS.map(function(c){
         var taken=ids.indexOf(c.id)>=0&&ids[si]!==c.id;
         return '<button class="swatch'+(ids[si]===c.id?' on':'')+'" style="background:'+c.primary+(taken?';opacity:.32':'')+'" onclick="'+handler+'(\''+slot.key+'\',\''+c.id+'\')" aria-label="'+slot.label+' color: '+c.name+(taken?' — already picked for another job':'')+'" title="'+c.name+(taken?' (already picked)':'')+'"></button>';
       }).join('')+'</div>'
@@ -4162,7 +4170,6 @@ function worldBackdropSVG(id,c){
   function pom(x,y,r,c1,c2){ var pts=[[0,-.62],[.55,-.3],[.62,.25],[.25,.6],[-.3,.55],[-.62,.15],[-.45,-.42],[0,0]],s=''; for(var i=0;i<pts.length;i++){ s+='<circle cx="'+(x+pts[i][0]*r)+'" cy="'+(y+pts[i][1]*r)+'" r="'+(r*.52)+'" fill="'+(i%2?c2:c1)+'" opacity=".92"/>'; } return s; }
   function puck(x,y,s){ return '<g transform="translate('+x+','+y+') scale('+s+')"><ellipse rx="34" ry="12" cy="7" fill="#000000"/><rect x="-34" y="-9" width="68" height="15" fill="#050505"/><ellipse rx="34" ry="12" cy="-9" fill="#0A0A0A"/></g>'; }
   function fball(x,y,r,rot){ return '<g transform="translate('+x+','+y+') rotate('+rot+')"><ellipse rx="'+r+'" ry="'+(r*.62)+'" fill="#8A4B21" stroke="#5B2D10" stroke-width="5"/><path d="M'+(-r*.4)+' 0H'+(r*.4)+'" stroke="#fff" stroke-width="6"/><path d="M-12 -8V8M0 -10V10M12 -8V8" stroke="#fff" stroke-width="5"/></g>'; }
-  function bball(x,y,r){ return '<g transform="translate('+x+','+y+')"><circle r="'+r+'" fill="#FF6B1A" stroke="#7C2D12" stroke-width="5"/><path d="M'+(-r)+' 0H'+r+'M0 '+(-r)+'V'+r+'" stroke="#7C2D12" stroke-width="5"/></g>'; }
   /* Arena floodlight bank (Hockey scene): tilted grid of bright
      lamps in a dark housing on a pole, trimmed in a trio color.
      The lamps stay natural white. */
@@ -4336,8 +4343,7 @@ function worldBackdropSVG(id,c){
     +'<rect x="50" y="50" width="1340" height="800" fill="none" stroke="'+W+'" stroke-width="8"/>'
     +'<line x1="720" y1="50" x2="720" y2="850" stroke="'+W+'" stroke-width="7"/><circle cx="720" cy="450" r="150" fill="none" stroke="'+W+'" stroke-width="7"/><circle cx="720" cy="450" r="168" fill="none" stroke="'+T3+'" stroke-width="7" opacity=".7"/>'
     +'<rect x="50" y="250" width="270" height="400" fill="none" stroke="'+W+'" stroke-width="6"/><rect x="1120" y="250" width="270" height="400" fill="none" stroke="'+W+'" stroke-width="6"/>'
-    +'<path d="M320 320 A230 230 0 0 1 320 580" fill="none" stroke="'+W+'" stroke-width="6"/><path d="M1120 320 A230 230 0 0 0 1120 580" fill="none" stroke="'+W+'" stroke-width="6"/>'
-    +bball(210,740,48)+bball(1240,170,36)+bball(480,140,28));
+    +'<path d="M320 320 A230 230 0 0 1 320 580" fill="none" stroke="'+W+'" stroke-width="6"/><path d="M1120 320 A230 230 0 0 0 1120 580" fill="none" stroke="'+W+'" stroke-width="6"/>');
 }
 /* PAGE-BACKDROP OVERLAY — the hockey stick + puck at full strength.
    The template cards render worldBackdropSVG on its own and the
@@ -4491,7 +4497,10 @@ function setThemePart(key,val){ if(typeof setupLocked==='function'&&setupLocked(
    render locked, and the Upgrade to Unlock panel appears ONLY inside
    this picker, where all the sports are shown — never as a banner or
    card on the home screen under the sport button. Tapping a locked
-   sport also shows the gentle locked message. The custom build never
+   sport shows NO message at all — it simply takes the child straight
+   to that Upgrade to Unlock button (see lockedSportTap). The panel
+   itself carries ONLY that one button — no heading, no paragraph —
+   so the picker never looks cluttered. The custom build never
    shows locks or the panel. */
 function renderSportSwitcher(){
   var wrap=document.getElementById('sportSwitcher'); if(!wrap) return;
@@ -4509,20 +4518,31 @@ function renderSportSwitcher(){
   if(grid) grid.innerHTML=THEME_SPORTS.map(function(sp){
     var on=effectiveSportId()===sp.id;
     var locked=!unlocked&&!isClassicFreeSport(sp.id);
-    if(locked) return '<button class="sport-pick-card locked" onclick="lockedSportTap(\''+sp.id+'\')" aria-label="'+sp.name+' — locked"><span class="sp-emoji">'+sp.emoji+'</span><span class="sp-name">'+sp.name+'</span><span class="sp-lock-tag">🔒 Locked</span></button>';
+    if(locked) return '<button class="sport-pick-card locked" onclick="lockedSportTap()" aria-label="'+sp.name+' — locked. Go to the Upgrade to Unlock button."><span class="sp-emoji">'+sp.emoji+'</span><span class="sp-name">'+sp.name+'</span><span class="sp-lock-tag">🔒 Locked</span></button>';
     return '<button class="sport-pick-card'+(on?' on':'')+'" onclick="switchSport(\''+sp.id+'\')" aria-label="Play '+sp.name+' today"><span class="sp-emoji">'+sp.emoji+'</span><span class="sp-name">'+sp.name+'</span>'+(on?'<span class="sp-today-tag">⭐ Playing today!</span>':'')+'</button>';
   }).join('');
 }
-function openSportPicker(){ renderSportSwitcher(); var lm=document.getElementById('sportLockedMsg'); if(lm){ lm.style.display='none'; lm.innerHTML=''; } document.getElementById('sportModal').classList.add('open'); try{ sfx('open'); }catch(e){} }
-function closeSportPicker(){ document.getElementById('sportModal').classList.remove('open'); }
-function lockedSportTap(id){
-  var sp=THEME_SPORTS.find(function(x){return x.id===id}); if(!sp) return;
-  var msg='🔒 This sport is locked! Ask a grown-up to unlock every sport.';
-  var box=document.getElementById('sportLockedMsg');
-  if(box){ box.innerHTML=msg; box.style.display='block'; try{ box.scrollIntoView({block:'nearest'}); }catch(e){} }
-  toast('🔒 This sport is locked! Ask a grown-up to unlock every sport.');
-  try{ sfx('rim'); }catch(e){}
+/* Tapping a LOCKED sport does ONE thing: it takes the child straight to
+   the Upgrade to Unlock button at the top of this picker — the sheet
+   scrolls up to it, it takes focus, and it pulses once so they can see
+   where they landed. No banner, no toast, no spoken message, and the
+   sport does not switch. That button is the only upgrade element for
+   locked games/sports in the classic build. */
+function lockedSportTap(){
+  var panel=document.getElementById('classicUnlockPanel');
+  var btn=document.getElementById('upgradeUnlockBtn');
+  if(panel) panel.style.display='';
+  var target=btn||panel;
+  if(target&&target.scrollIntoView){ try{ target.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){ target.scrollIntoView(); } }
+  if(btn){
+    btn.classList.remove('flash'); void btn.offsetWidth; btn.classList.add('flash');
+    setTimeout(function(){ btn.classList.remove('flash'); },1400);
+    setTimeout(function(){ try{ btn.focus({preventScroll:true}); }catch(e){ try{ btn.focus(); }catch(e2){} } },350);
+  }
+  try{ sfx('tap'); }catch(e){}
 }
+function openSportPicker(){ renderSportSwitcher(); document.getElementById('sportModal').classList.add('open'); try{ sfx('open'); }catch(e){} }
+function closeSportPicker(){ document.getElementById('sportModal').classList.remove('open'); }
 /* Apply an ACTIVE-sport change: language + games ONLY. This is the
    one path the sport bar uses, and it deliberately never calls
    applyWorldTheme and never writes myTheme — so the page background
@@ -4552,7 +4572,7 @@ function applyActiveSport(){
 function switchSport(id){
   if(!isCustomUnlocked()){
     /* Classic build: only the three teaser sports can be picked. */
-    if(!isClassicFreeSport(id)){ lockedSportTap(id); return; }
+    if(!isClassicFreeSport(id)){ return; }
     if(classicSportId()===id){ closeSportPicker(); return; }
     try{ localStorage.setItem(CLASSIC_SPORT_KEY,id); }catch(e){}
     applyActiveSport();
