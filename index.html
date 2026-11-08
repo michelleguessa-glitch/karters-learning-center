@@ -938,7 +938,7 @@ body.playing .qlabel{font-size:11px}
    fixed pieces are tightened a touch to buy that room, and the
    short-screen steps below tighten a little further so short phones
    keep the same one-screen fit. */
-body.playing #practiceView .gamecard{flex:0 1 auto;min-height:auto;overflow:visible}
+body.playing #practiceView .gamecard{flex:0 1 auto;min-height:0;overflow:visible}
 body.playing #practiceView .court-stage{min-height:120px}
 body.playing #practiceView .tools-divider{margin-top:12px}
 body.playing #practiceView .tools-btn{margin-top:10px;padding:11px 18px}
@@ -973,6 +973,62 @@ body.playing #practiceView .tools-menu .goldbtn,body.playing #practiceView .tool
   body.playing #practiceView .answer-input{font-size:19px;padding:6px}
   body.playing #practiceView .check-btn{padding:7px 13px;font-size:15px}
   body.playing #practiceView .tools-btn{padding:7px 12px}
+}
+/* ===== GAME VIEW FIT, PASS 2 — the card's own pieces give room too =====
+   Michelle (Nov 8, with a screenshot of Karter's court on her phone):
+   "His game view makes you scroll to see the problem and to answer.
+   It should be fully visible upon opening the game and not scroll
+   the card under the game." A live check of the pass-1 build on a
+   390×844 phone screen found the real gap: a fresh problem JUST fit,
+   but the moment he answers, the feedback line joins the card — the
+   court is already down at its floor, and the card's own flex floor
+   was its content height (min-height:auto in the pass-1 rule), so
+   the card had nowhere to give and its tail went under the game: the
+   Helper Tools button measured clipped off by 43px after one answer,
+   its menu's last button further still. On Michelle's phone the page
+   itself had also slid up (the Kindergarten pill tucked under the
+   top bar): the playing body was sized 100dvh, and a shell that
+   reports the LARGE viewport lets the whole page scroll that extra
+   strip. Pass 2 changes fit only — same layout, same order:
+   1. The playing body is sized to the SMALL viewport (100svh; the
+      100dvh rule above stays as the fallback for older browsers) —
+      the height that is always fully visible — so the page is never
+      taller than what he can see and never scrolls under the bar.
+   2. The card may now shrink below its content height (min-height:0,
+      amended in the pass-1 rule above), and inside it the play column
+      is a real flex column whose ONE compressible piece is the
+      picture (.visual). The problem text, answer box, Check It, the
+      dashed line and the Helper Tools button are flex-none and stay
+      whole; if room ever runs short, the picture gives up height —
+      never the problem and never the answer area.
+   3. The court's floor drops a step at every screen height, so it
+      hands more room to the card before the picture gives any.
+   4. The Kindergarten / 1st-grade counting pictures (the 46px balls,
+      the 42px story objects) render a step smaller on phone widths
+      in the game view — still big enough to point at and count one
+      by one — which is where the fresh-problem headroom comes from. */
+body.playing{height:100svh}
+body.playing #practiceView .play-layout{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+body.playing #practiceView .play-main{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+body.playing #practiceView .play-main>*{flex:0 0 auto}
+body.playing #practiceView .visual{flex:0 1 auto;min-height:0;overflow:hidden}
+body.playing #practiceView .court-stage{min-height:88px}
+@media(max-width:900px){
+  body.playing #practiceView .visual>div{font-size:36px!important;line-height:1.12!important}
+  body.playing #practiceView .visual span:not(.gd){font-size:36px!important;line-height:1.12!important}
+}
+@media(max-height:740px){
+  body.playing #practiceView .court-stage{min-height:64px}
+  body.playing #practiceView .visual>div{font-size:32px!important}
+  body.playing #practiceView .visual span:not(.gd){font-size:32px!important}
+}
+@media(max-height:600px){
+  body.playing #practiceView .court-stage{min-height:48px}
+  body.playing #practiceView .visual>div{font-size:28px!important}
+  body.playing #practiceView .visual span:not(.gd){font-size:28px!important}
+}
+@media(max-height:480px){
+  body.playing #practiceView .court-stage{min-height:36px}
 }
 /* ===== SPORT THEME SCENES — the whole stage becomes the picked sport =====
    When the customized world picks a sport other than basketball, the photo
