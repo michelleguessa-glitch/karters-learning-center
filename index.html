@@ -1259,7 +1259,6 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
     <div class="court-visual">
       <img class="lion-hero-img" src="assets/coach-leo-cutout.png" data-coach-img="hero" alt="Coach Leo, a young man coach, in a red COACH LEO jacket with a whistle"/>
       <span class="lion-coach-badge" id="heroCoachBadge">🏀 COACH LEO — HEAD COACH</span>
-      <div><span class="coach-style-line" id="heroCoachStyle">🧥 Classic Coach Jacket • He/Him</span></div>
       <p><span class="coach-first-name">Leo</span> says: “Mistakes help your brain grow. We try again together!”</p>
     </div>
   </div>
@@ -1281,7 +1280,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
           <div class="sp-sub" id="spSub">Red • Basketball • Lion</div>
           </div>
         </div>
-        <div class="coach-line" id="spCoach">🏀 Coach Leo • 🧥 Classic Coach Jacket • He/Him</div>
+        <div class="coach-line" id="spCoach">🏀 Coach Leo</div>
         <div style="font-weight:900;font-size:14.5px;line-height:1.45;margin-top:10px">This is YOUR world taking shape — it updates with every pick! ⭐</div>
       </div>
       <div class="setup-card">
@@ -1667,7 +1666,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
           <div class="tp-sub" id="tpSub">Red • Basketball • Lion</div>
           </div>
         </div>
-        <div class="coach-line" id="tpCoach">🏀 Coach Leo • 🧥 Classic Coach Jacket • He/Him</div>
+        <div class="coach-line" id="tpCoach">🏀 Coach Leo</div>
         <div style="height:190px;max-width:150px;margin:0 auto" class="player-slot"></div>
         <div class="pname" style="text-align:center;background:#fff;border:2px solid var(--ink);border-radius:999px;font-family:'Fredoka';font-weight:700;padding:4px 8px;margin-top:6px;font-size:15px">Your player plays in YOUR world ⭐</div>
         <button class="goldbtn" style="width:100%;margin-top:10px" onclick="closeThemeStudio();openStudio()">👤 Choose My Player / Avatar</button>
@@ -4242,16 +4241,15 @@ function coachLookHTML(handler){
 }
 function setCoachIdentity(id){ var prev=coachIdentity(); var cur=String(myTheme.coachName||'').trim(); myTheme.coachIdentity=id; var ni=COACH_IDENTITIES.find(function(x){return x.id===id})||COACH_IDENTITIES[0]; if(!cur||cur===prev.defaultName||COACH_IDENTITIES.some(function(x){return x.defaultName===cur})) myTheme.coachName=ni.defaultName; }
 function applyCoachDisplay(lockedOut,sportObj){
-  var title,name,sub,animalEmoji,team;
+  var title,name,animalEmoji,team;
   /* BOTH builds: Coach Leo is a young MAN — a young human coach,
      not a lion. His name is Leo in both builds until a customized-
      build child renames him. The lion is the team mascot animal
      only, never the coach's face. */
-  if(lockedOut){ title='Coach Leo'; name='Leo'; sub='🧥 Classic Coach Jacket • He/Him'; animalEmoji='🏀'; team='🦁 Leo’s Lions'; }
+  if(lockedOut){ title='Coach Leo'; name='Leo'; animalEmoji='🏀'; team='🦁 Leo’s Lions'; }
   else{
-    var ci=coachIdentity(), co=coachOutfit(), ca=coachAnimalObj();
+    var ca=coachAnimalObj();
     title=coachTitle(); name=coachName(); animalEmoji=coachFaceEmoji();
-    sub=coachOutfitEmoji(co)+' '+co.name+' • '+ci.pronouns;
     team= ca.emoji+' '+possessiveName(name)+' '+coachAnimalName()+'s';
   }
   /* HERO SCRIPT RULE: the hero greeting is the FIXED script (see
@@ -4261,10 +4259,9 @@ function applyCoachDisplay(lockedOut,sportObj){
      (Leo, or the renamed coach on a custom link). */
   renderHeroScript(lockedOut);
   var badge=document.getElementById('heroCoachBadge'); if(badge) badge.textContent=(sportObj?sportObj.emoji:'🏀')+' '+title.toUpperCase()+' — HEAD COACH';
-  var style=document.getElementById('heroCoachStyle'); if(style) style.textContent=sub;
   document.querySelectorAll('.coach-first-name').forEach(function(el){ el.textContent=name; });
   var sb=document.getElementById('sbCoachTeam'); if(sb) sb.textContent=team;
-  var line=animalEmoji+' '+title+(lockedOut?'':' — your '+(sportObj?sportObj.name:'Basketball').toLowerCase()+' coach')+' • '+sub;
+  var line=animalEmoji+' '+title+(lockedOut?'':' — your '+(sportObj?sportObj.name:'Basketball').toLowerCase()+' coach');
   var sp=document.getElementById('spCoach'); if(sp) sp.textContent=line;
   var tp=document.getElementById('tpCoach'); if(tp) tp.textContent=line;
   /* Coach Leo's picture is ONE background-free cutout of him
