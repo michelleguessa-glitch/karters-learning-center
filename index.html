@@ -66,6 +66,15 @@ html{-webkit-tap-highlight-color:transparent}
 .nav-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex:1 1 auto;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:10px;font-family:'Fredoka';font-weight:700;font-size:20px;line-height:1;color:var(--red-d)}
 .brand small{display:block;font-family:'Nunito';font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+/* GRADES LINE — ALWAYS VISIBLE, LIKE ROYCE'S: the "K to 5th Grade"
+   line under KARTER'S COURT in the top bar shows at EVERY width and
+   in EVERY view. It used to be switched off on narrow phones
+   (max-width:420px) and again in the compact in-game bar, so on a
+   phone — the screen this page is mostly used on — the grades line
+   under Karter's Court could not be seen at all, while Royce's page
+   shows hers. Both hide rules are removed below; this line is never
+   display:none again. It stacks under the name inside the brand
+   block, so showing it adds a little bar height and no width. */
 .stars-pill{background:var(--gold);color:#431407;padding:8px 14px;border-radius:999px;font-weight:900;font-size:15px;white-space:nowrap}
 /* MENU — one dropdown in the TOP BAR holds the grade selection and
    Progress Report. There are no separate pill buttons for those two
@@ -131,6 +140,18 @@ html{-webkit-tap-highlight-color:transparent}
 .hero h1{font-size:clamp(36px,6vw,62px);line-height:.95;margin:0}
 .hero h1 span{color:var(--gold)}
 .hero p{font-size:18px;line-height:1.5;font-weight:700;opacity:.95;max-width:560px}
+/* WELCOME HEADSHOT — THE COACH, BESIDE HIS OWN GREETING: the round
+   headshot to the LEFT of the hero's Welcome introduction is Coach
+   Leo's, because Leo is the one saying the welcome ("Welcome … I'm
+   Coach Leo …"). It is a plain coach portrait carrying
+   data-coach-img="face", so updateCoachPortrait keeps it on the
+   coach — including a renamed coach in the customized world.
+   Karter's face stays ONLY in the top nav bar; his hero picture in
+   the court visual on the right is unchanged. */
+.hero-intro{display:flex;align-items:flex-start;gap:14px;margin-top:14px}
+.hero-intro p{margin:0;flex:1 1 auto;min-width:0}
+.hero-coach{width:74px;height:74px;flex:0 0 74px;border-radius:50%;object-fit:cover;object-position:50% 5%;border:3px solid var(--gold);box-shadow:0 0 0 3px rgba(255,255,255,.9);background:#FDE8C8;display:block}
+@media(max-width:420px){.hero-coach{width:60px;height:60px;flex-basis:60px}.hero-intro{gap:11px}}
 .hero-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 .hstat{background:#fff;color:var(--ink);border-radius:16px;padding:10px 14px;border-top:5px solid var(--theme-tertiary);box-shadow:inset 0 0 0 2px var(--theme-secondary-soft)}
 .hstat b{font-family:'Fredoka';font-size:22px;display:block;line-height:1}
@@ -138,6 +159,28 @@ html{-webkit-tap-highlight-color:transparent}
 .court-visual{background:#fff;border-radius:28px;padding:14px;text-align:center;box-shadow:0 12px 0 rgba(0,0,0,.18);border:4px solid var(--theme-tertiary);position:relative;overflow:hidden}
 .court-visual p{color:var(--ink);font-weight:900;margin:10px 0 0}
 .lion-brand{width:46px;height:46px;flex:0 0 46px;border-radius:50%;object-fit:cover;object-position:50% 5%;border:3px solid var(--red);box-shadow:0 0 0 2px var(--gold);display:block;background:#FDE8C8}
+/* NAV FACE — KARTER, NOT THE COACH: the round picture in the top bar
+   is KARTER's face now, cropped from his hero picture
+   (assets/karter-hero.webp). The spot keeps the .lion-brand circle,
+   size, red border and gold ring exactly as they were; this rule
+   turns the element into a round window and the img inside it is
+   the full hero picture scaled and shifted so the window shows
+   only the square around his face in the source (330x330 px at
+   x779 y124 of the 1920x1280 hero — his head and face, centered),
+   so his face reads clearly at this small size. Every measurement
+   is a percentage of the spot itself, so the same crop holds when
+   the playing layout shrinks the spot to 36px. The coach's face no
+   longer appears in the nav bar: this element carries NO
+   data-coach-img attribute, so updateCoachPortrait can never
+   re-point it at the coach cutout. This Karter-face window is used
+   ONLY here, in the top nav bar: the help areas — the profile beside
+   the hint speech bubble in the practice view and the Example
+   Wizard's header — show COACH Leo's face (the coach portrait
+   system, data-coach-img), never Karter's. The coach's own pictures
+   in the setup wizard, theme studio and writing practice are
+   untouched. */
+.karter-brand{overflow:hidden;position:relative;padding:0}
+.karter-brand img{position:absolute;display:block;max-width:none;width:581.8%;height:auto;left:-236.1%;top:-37.6%}
 .lion-hero-img{width:100%;height:330px;object-fit:cover;object-position:50% 10%;border-radius:20px;border:4px solid var(--red);box-shadow:0 0 0 3px var(--gold);display:block}
 .lion-coach-badge{display:inline-block;margin-top:10px;background:var(--red);color:#fff;font-family:'Fredoka';font-weight:700;font-size:13px;letter-spacing:.1em;padding:7px 14px;border-radius:999px;border:2px solid var(--ink)}
 .wiz-leo{width:52px;height:52px;flex:0 0 52px;border-radius:50%;object-fit:cover;object-position:50% 5%;border:3px solid var(--red);box-shadow:0 0 0 2px var(--gold);display:block;background:#FDE8C8}
@@ -171,6 +214,17 @@ html{-webkit-tap-highlight-color:transparent}
 .leo-row{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:start}
 .leo-face{width:110px;height:110px;background:#FDE8C8;border:4px solid var(--red);box-shadow:0 0 0 3px var(--gold);border-radius:50%;overflow:hidden;padding:0}
 .leo-face img{width:100%;height:100%;object-fit:cover;object-position:50% 5%;display:block}
+/* HINT & EXAMPLE PROFILE — THE COACH'S FACE, NOT KARTER'S: the
+   profile beside the speech bubble in the practice view is COACH
+   Leo's face — the face a learner sees with Leo's hints (leoHint
+   fills that bubble) — and the Example Wizard's header profile is
+   the coach's too. Both spots are plain coach portraits (the base
+   .leo-face img rule above and the .wiz-leo rule) carrying
+   data-coach-img="face", so updateCoachPortrait keeps them on the
+   coach cutout, exactly like the writing view's .leo-face. Karter's
+   face appears ONLY in the top nav bar (the .karter-brand window
+   above) and in his hero picture — never in a hint or example
+   area. */
 .bubble{background:#fff;border:3px solid var(--ink);border-radius:20px;padding:16px 18px;position:relative;font-size:17px;line-height:1.55;font-weight:800;min-height:110px}
 .bubble b{color:var(--red-d)}
 .bubble:before{content:"";position:absolute;left:-13px;top:28px;width:20px;height:20px;background:#fff;border-left:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(45deg)}
@@ -194,7 +248,6 @@ html{-webkit-tap-highlight-color:transparent}
 .goldbtn{border:3px solid var(--ink);background:var(--gold);border-radius:999px;padding:11px 18px;font-weight:900}
 /* Work It Out */
 .play-layout{display:block}
-.play-layout.has-work{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
 .work-panel{background:#FFF8EE;border:3px solid var(--red);border-radius:22px;padding:16px;box-shadow:0 5px 0 var(--gold)}
 .work-panel h3{margin:0;font-size:26px;color:var(--red-d)}
 .work-help{margin:4px 0 12px;color:var(--muted);font-weight:800;font-size:14px;line-height:1.45}
@@ -252,7 +305,6 @@ html{-webkit-tap-highlight-color:transparent}
 .lkey.right{background:var(--green-bg);border-color:var(--green)}
 .lkey.wrong{background:#FEF2F2;border-color:#FCA5A5}
 @media(max-width:560px){.letter-keypad{grid-template-columns:repeat(5,1fr);gap:7px}.lkey{font-size:23px;padding:11px 2px;border-radius:13px}#tracePad{height:300px}.w-mode-btn{font-size:16px}}
-@media(max-width:860px){.play-layout.has-work{grid-template-columns:1fr}.work-panel{margin-top:4px}}
 /* Wizard */
 .modal{position:fixed;inset:0;background:rgba(43,22,8,.72);z-index:50;display:none;align-items:flex-end;justify-content:center;padding:12px}
 .modal.open{display:flex}
@@ -272,7 +324,7 @@ html{-webkit-tap-highlight-color:transparent}
 .example-big{font-family:'Fredoka';font-size:36px;text-align:center;margin:10px 0;color:var(--red-d)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:var(--ink);color:#fff;padding:12px 18px;border-radius:999px;font-weight:900;z-index:60;display:none}
 @media(max-width:760px){.hero-inner{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.tabs{grid-template-columns:1fr 1fr}.leo-row{grid-template-columns:78px 1fr}.leo-face{width:78px;height:78px}.lion-hero-img{height:300px}.choices{grid-template-columns:1fr}.brand{font-size:17px}.tab{font-size:16px;padding:13px 6px}.topbar{padding:8px 16px}.home-btn{font-size:16px;padding:11px 16px}}
-@media(max-width:420px){.brand small{display:none}.gamecard{padding:16px 12px}.bubble{font-size:16px;padding:13px 14px;min-height:0}.section-head h2{font-size:26px}}
+@media(max-width:420px){.gamecard{padding:16px 12px}.bubble{font-size:16px;padding:13px 14px;min-height:0}.section-head h2{font-size:26px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* Music dock — compact, centered at the bottom in BOTH the classic and
@@ -421,6 +473,12 @@ body.grade-gate-open .wrap{z-index:95}
    scrolls if it ever gets taller than the screen. */
 .menu-panel{max-height:calc(100dvh - 84px);overflow-y:auto}
 .menu-grade-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:8px 11px 4px}
+/* MENU CLOSE — the ☰ Menu panel carries the same ✕ close control as
+   every other card and pop-up on the page: one tap on it (or tapping
+   outside, or Escape, as before) closes just the menu and returns
+   the learner to where they were. */
+.menu-close{border:2.5px solid var(--ink);background:#fff;color:var(--ink);border-radius:50%;width:30px;height:30px;flex:0 0 30px;font-weight:900;font-size:14px;line-height:1;display:grid;place-items:center;padding:0;align-self:center}
+.menu-close:active{transform:translateY(1px)}
 .menu-grade-head .mgh-title{font-family:'Fredoka';font-weight:700;font-size:17px;line-height:1.15}
 .menu-grade-head .mgh-now{font-family:'Nunito';font-weight:800;font-size:13px;color:var(--muted);white-space:nowrap}
 .menu-grade-list{display:grid;gap:4px;padding:4px 0 2px}
@@ -445,8 +503,20 @@ body.grade-gate-open .wrap{z-index:95}
 .hero-sfx{position:absolute;top:14px;right:16px;z-index:3;box-shadow:0 3px 0 var(--ink)}
 .hero-sfx:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
 .leo-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
-.hear-it-btn{border:3px solid var(--ink);background:var(--red);color:#fff;border-radius:999px;padding:12px 20px;font-family:'Fredoka';font-size:17px;font-weight:700;box-shadow:0 3px 0 var(--ink)}
-.hear-it-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+/* The replay control is the BARE speaking-head icon sitting plain in
+   the area (Michelle, Nov 8, 2026) — no pill, no bubble, no border, no
+   background, no shadow: just the icon itself, still a comfortable
+   tap target. The icon is Michelle's OWN picture — the speaking-head
+   silhouette (head in profile, mouth open, three sound arcs) taken
+   straight out of her uploaded image, background removed, the
+   silhouette itself recolored to Karter's brand red (#D92323) in
+   assets/speech-head.png — never redrawn. Tapping it replays the
+   coach's reading aloud (voice + captions). */
+.speak-head-img{width:28px;height:24px;object-fit:contain;display:block;pointer-events:none} /* scaled DOWN to the size the 💬 sat at — a normal replay-control size, proportionate with the words and controls around it, never big */
+.hear-it-btn{background:none;border:none;border-radius:0;box-shadow:none;color:inherit;padding:8px;font-family:'Fredoka';font-size:26px;font-weight:700;line-height:1;min-width:48px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.hear-it-btn:active{opacity:.6}
+.speak-btn{background:none;border:none;border-radius:0;box-shadow:none;color:inherit;font-size:26px;line-height:1;min-width:48px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;padding:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.speak-btn:active{opacity:.6}
 .home-btn{border:3px solid var(--ink);background:var(--gold);color:var(--ink);border-radius:999px;padding:12px 22px;font-family:'Fredoka';font-size:18px;font-weight:700;box-shadow:0 3px 0 var(--ink);white-space:nowrap}
 .home-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
 .home-row{margin-top:12px}
@@ -466,17 +536,40 @@ body.grade-gate-open .wrap{z-index:95}
 .hub-card span{font-size:13px;font-weight:800;color:var(--muted);line-height:1.35;display:block;margin-top:3px}
 .hub-player{background:linear-gradient(180deg,#FFF7ED,#fff)}
 .hub-emoji{font-size:34px;flex:0 0 auto}
-.scoreboard{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;margin-top:16px}
+.scoreboard{margin-top:16px}
+.sb-top{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sb-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch}
 .sb-team{border:3px solid var(--ink);border-radius:18px;padding:10px 12px;text-align:center;background:#fff}
 .sb-team.mine{background:var(--red);color:#fff}
 .sb-team.leo{background:#2B1608;color:#fff}
 .sb-team .sb-name{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.92}
 .sb-team .sb-score{font-family:'Fredoka';font-size:38px;line-height:1;font-weight:700}
-.sb-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:96px}
 .sb-target{font-weight:900;font-size:13px;background:var(--gold-l);border:2px solid #FDE68A;border-radius:999px;padding:5px 10px;text-align:center}
 .streak-pill{font-family:'Fredoka';font-weight:700;font-size:15px;border-radius:999px;padding:6px 12px;background:#fff;border:3px solid var(--ink);display:none}
 .streak-pill.show{display:block}
 .streak-pill.fire{background:#FF6B1A;color:#fff;border-color:#7C2D12;animation:firePulse .7s ease-in-out infinite alternate}
+/* ===== GAME VIEW — CLOSE BUTTON, HELPER TOOLS + HINT PANEL =====
+   The layout Michelle approved on Royce's page: the game view's own
+   ✕ Close sits at the right of its top row; under the answer area a
+   dashed divider line, then the "My Helper Tools — use them anytime!"
+   line as a real full-width BUTTON — the icon and sentence CENTERED on
+   the button — that drops down Work It Out / Show Me an Example /
+   Get a Hint. A picked tool opens full-screen over the game view and
+   closes right back to the same game and the same problem. */
+.game-close-btn{margin-left:auto}
+.tools-divider{border-top:3px dashed var(--line);margin-top:24px}
+.tools-head{font-family:'Fredoka';font-weight:700;color:#fff;font-size:16px}
+.tools-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:16px;background:var(--theme-primary);border:none;border-radius:999px;padding:14px 20px;cursor:pointer;text-align:center;box-shadow:0 4px 0 var(--theme-primary-dark)}
+.tools-btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--theme-primary-dark)}
+.tools-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.tools-arrow{font-size:13px;color:#fff}
+.tools-menu{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+.tools-menu .goldbtn,.tools-menu .ghost{width:100%;padding:14px 16px;font-size:15px}
+.hint-panel{background:var(--theme-primary-soft);border:none;border-radius:0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));margin:0;position:fixed;inset:0;z-index:72;overflow-y:auto}
+.hint-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hint-head b{font-family:'Fredoka';font-size:17px;color:var(--theme-primary-dark)}
+.hint-face{width:48px;height:48px;flex:0 0 48px}
+.hint-text{font-weight:800;line-height:1.55;font-size:16px;margin-top:10px;color:var(--ink)}
 @keyframes firePulse{from{transform:scale(1)}to{transform:scale(1.07)}}
 .champ-banner{display:none;margin-top:10px;background:var(--gold);border:3px solid var(--ink);border-radius:16px;padding:10px 14px;text-align:center;font-family:'Fredoka';font-size:19px;font-weight:700}
 .champ-banner.show{display:block}
@@ -558,6 +651,12 @@ body.grade-gate-open .wrap{z-index:95}
 .celebrate{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(43,22,8,.72)}
 .celebrate.open{display:flex}
 .celebrate-card{background:#fff;border-radius:28px;padding:24px;width:min(560px,100%);text-align:center;position:relative;overflow:hidden;max-height:90vh;overflow-y:auto}
+/* WIN CARD CLOSE — the celebration card carries the same ✕ close
+   control as every other card and pop-up: tapping it closes just
+   the celebration (closeWin(false)) and returns the learner to the
+   game they were playing. */
+.win-close{position:absolute;top:12px;right:12px;z-index:4;width:38px;height:38px;border-radius:50%;border:3px solid var(--ink);background:#fff;color:var(--ink);font-size:16px;font-weight:900;line-height:1;display:grid;place-items:center;padding:0;box-shadow:0 2px 0 var(--ink)}
+.win-close:active{transform:translateY(1px);box-shadow:0 1px 0 var(--ink)}
 .confetti-bit{position:absolute;top:-14px;width:10px;height:16px;border-radius:3px;pointer-events:none;animation:confFall linear forwards;z-index:2}
 @keyframes confFall{to{transform:translateY(110vh) rotate(720deg)}}
 .ex-note{background:var(--gold-l);border:2px solid #FDE68A;border-radius:14px;padding:10px 12px;font-weight:800;font-size:14px;line-height:1.45;margin-top:10px}
@@ -567,7 +666,7 @@ body.grade-gate-open .wrap{z-index:95}
 .group-dots{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
 .group-dots .gd{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px 10px;font-size:18px;letter-spacing:2px;line-height:1.5;max-width:150px}
 .ex-visual{display:flex;justify-content:center;margin:8px 0}
-@media(max-width:760px){.game-hub{grid-template-columns:1fr}.scoreboard{grid-template-columns:1fr 1fr}.sb-mid{grid-column:1/-1;order:3;flex-direction:row}.studio-layout{grid-template-columns:1fr}.studio-preview{position:relative;height:300px;max-width:250px;margin:0 auto;width:100%}.bonus-balls{grid-template-columns:repeat(3,1fr);gap:8px}.bonus-ball{font-size:22px}.court-player{width:104px;height:138px}.shot-ball{left:96px;bottom:54px}.court-stage{height:clamp(400px,66vh,520px);--drop:38px}}
+@media(max-width:760px){.game-hub{grid-template-columns:1fr}.studio-layout{grid-template-columns:1fr}.studio-preview{position:relative;height:300px;max-width:250px;margin:0 auto;width:100%}.bonus-balls{grid-template-columns:repeat(3,1fr);gap:8px}.bonus-ball{font-size:22px}.court-player{width:104px;height:138px}.shot-ball{left:96px;bottom:54px}.court-stage{height:clamp(400px,66vh,520px);--drop:38px}}
 
 .bounce{animation:b .5s ease}@keyframes b{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
 
@@ -713,62 +812,57 @@ body.playing .music-dock .genre-row{margin-bottom:4px}
 body.playing .music-dock .music-bar{padding:3px 5px}
 body.playing #practiceView{display:flex!important;flex:1 1 auto;min-height:0;flex-direction:column;gap:6px;overflow:hidden}
 .practice-head{flex:0 0 auto;display:flex;flex-direction:column;gap:6px}
-/* ===== CONTROL DECK: secondary controls live at the BOTTOM of the practice
-   view, spread into three groups with real breathing room between them —
-   the top of the card holds only the title and Leo, and the problem/answer
-   area stays clean. The deck is a fixed flex row of the playing layout, so
-   every control stays in view without scrolling at any width. ===== */
+/* ===== CONTROL DECK: the writing view's bottom bar keeps this style.
+   The GAME view no longer uses a deck — its secondary controls live in
+   the "My Helper Tools" drop-down inside the game card (Royce's
+   approved game-view layout), so the problem/answer area stays clean
+   and every tool opens full-screen over the game. ===== */
 .control-deck{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:12px 30px;align-items:center;justify-content:space-between;background:#fff;border:3px solid var(--line);border-radius:20px;padding:12px 16px;box-shadow:0 4px 0 #FFE1B8}
 .deck-group{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .control-deck .home-btn{padding:10px 18px;font-size:16px;box-shadow:0 2px 0 var(--ink)}
 .control-deck .goldbtn,.control-deck .ghost{padding:10px 16px;font-size:15px}
-.control-deck .hear-it-btn{padding:10px 16px;font-size:15px;box-shadow:0 2px 0 var(--ink)}
+.control-deck .hear-it-btn{padding:8px;font-size:24px}
 @media(max-width:680px){
   .control-deck{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}
   .deck-group{display:contents}
   .control-deck button{width:100%;text-align:center;font-size:14px!important;padding:9px 8px!important}
+  .control-deck .hear-it-btn{font-size:24px!important} /* the bare 💬 symbol stays full-size — it is a symbol, not a text label */
 }
 body.playing .p-top{margin:0;gap:8px;flex-wrap:nowrap}
 body.playing .p-top .home-btn{padding:8px 14px;font-size:15px;box-shadow:0 2px 0 var(--ink)}
-body.playing .p-top #pTitle{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 body.playing .p-top .stars-pill{padding:6px 10px;font-size:13px}
 .leo-compact{display:flex;align-items:center;gap:8px;min-width:0}
 .leo-compact .leo-face{width:44px;height:44px;flex:0 0 44px;border-width:3px}
 .leo-compact .bubble{flex:1 1 auto;min-width:0;min-height:0;max-height:54px;overflow-y:auto;font-size:13.5px;line-height:1.35;padding:8px 12px;border-radius:14px;border-width:2px}
 .leo-compact .bubble:before{display:none}
-.leo-compact .hear-it-btn{flex:0 0 auto;padding:9px 13px;font-size:14px;box-shadow:0 2px 0 var(--ink);white-space:nowrap}
-.play-stage{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);gap:10px;position:relative}
-.court-column{display:flex;flex-direction:column;gap:6px;min-height:0;min-width:0}
-body.playing .scoreboard{margin:0;gap:6px;flex:0 0 auto;grid-template-columns:1fr auto 1fr}
-body.playing .sb-mid{grid-column:auto;order:0}
+.leo-compact .hear-it-btn{flex:0 0 auto;padding:8px;font-size:22px;white-space:nowrap;min-width:48px;min-height:44px}
+/* The game view is ONE flat column in Royce's approved order — header,
+   Leo's instructions, scoreboard, stage, game card — all direct
+   children of the flex-column #practiceView above: the stage flexes to
+   fill the leftover height, and the GAME VIEW FIT block further down
+   sizes the card to show in full with no scrolling anywhere, so the
+   whole game is in view the moment it opens. */
+body.playing .scoreboard{margin:0;flex:0 0 auto}
+body.playing .sb-top{margin-bottom:6px;gap:6px}
+body.playing .sb-cards{gap:6px}
 body.playing .sb-team{padding:5px 8px;border-width:2px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px}
 body.playing .sb-team .sb-name{font-size:11px}
 body.playing .sb-team .sb-score{font-size:25px}
-body.playing .sb-mid{flex-direction:row;min-width:0;gap:6px;flex-wrap:wrap}
 body.playing .sb-target{font-size:11px;padding:4px 8px}
 body.playing .streak-pill{font-size:12px;padding:4px 9px;border-width:2px}
 body.playing .champ-banner{margin:0;padding:6px 10px;font-size:15px;border-width:2px;border-radius:12px}
-body.playing .court-stage{flex:1 1 auto;min-height:0;height:auto!important;max-width:none;width:100%;margin:0;border-width:2px;border-radius:18px;--drop:34px}
+body.playing .court-stage{flex:1 1 auto;min-height:180px;height:auto!important;max-width:none;width:100%;margin:0;border-width:2px;border-radius:18px;--drop:34px}
 body.playing .court-player{width:clamp(78px,22%,118px);height:auto;aspect-ratio:124/164;left:12px;bottom:8px}
 body.playing .shot-ball{width:30px;height:30px}
 body.playing .shot-msg{font-size:13.5px;padding:5px 11px;bottom:6px}
 body.playing .gamecard{margin:0;padding:12px 14px;border-radius:20px;box-shadow:0 4px 0 #FFE1B8;min-height:0;overflow-y:auto;overflow-x:hidden;position:relative;display:flex;flex-direction:column}
 body.playing .play-layout{display:block;height:auto}
-/* The open Work It Out layout GROWS to its full content height instead of
-   being clipped to the card's height: the game card is the ONE scroll
-   container for the whole layout (see the .work-panel note below), so
-   the panel's bottom — the Draw It Out canvas included — is always
-   reachable by scrolling the card, on wide screens exactly as on
-   narrow ones. flex:0 0 auto stops the card's flex column from
-   shrinking the layout back down to the card's visible height. */
-body.playing .play-layout.has-work{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;height:auto;min-height:0;align-items:start;flex:0 0 auto}
-body.playing .play-layout.has-work .play-main{min-width:0}
 body.playing .play-main{display:flex;flex-direction:column;min-height:0}
 body.playing .question{font-size:clamp(24px,3.1vw,38px);margin:6px 0;line-height:1.08}
 body.playing .clue{font-size:15px;line-height:1.4;padding:9px 10px;border-radius:12px}
 body.playing .visual{margin:4px 0}
 body.playing .visual svg{max-height:92px;width:auto;max-width:100%}
-body.playing .answer-row{margin-top:10px;gap:8px;flex-wrap:nowrap}
+body.playing .answer-row{margin-top:10px;gap:8px;flex-wrap:wrap}
 body.playing .answer-input{font-size:24px;padding:10px;width:min(210px,100%);border-width:3px;border-radius:14px;min-width:0;flex:1 1 auto}
 body.playing .check-btn{padding:11px 18px;font-size:17px;white-space:nowrap;flex:0 0 auto}
 body.playing .choices{gap:8px;margin-top:10px}
@@ -777,39 +871,24 @@ body.playing .feedback{margin-top:9px;padding:9px 12px;font-size:14px;line-heigh
 body.playing .actions{margin-top:9px;gap:6px}
 body.playing .actions .goldbtn,body.playing .actions .ghost{padding:8px 12px;font-size:13.5px;border-width:2px}
 body.playing .qlabel{font-size:11px}
-/* Work It Out sits BESIDE the math equation inside the prompt card — a
-   second column next to the question, the answer input and the Check
-   button. It never overlays or covers any of them, at any width: the
-   play layout becomes a two-column grid while the panel is open. The
-   panel itself carries NO height cap and NO scrollbar of its own: it
-   renders at its full natural height (step boxes, Pen / Eraser / Clear
-   row, the whole Draw It Out canvas and the note under it), and the
-   game card — the layout's single scroll container — scrolls to reach
-   its bottom. The panel used to be clipped to the card's height with
-   its own inner scrollbar; on the desktop Hockey game that left the
-   scratch-pad canvas below a fold no scroll could reach, because the
-   playing page itself never scrolls. */
-body.playing .work-panel{position:relative;inset:auto;width:auto;height:auto;max-height:none;overflow:visible;margin:0;padding:12px;border-radius:16px;box-shadow:0 5px 0 var(--gold)}
-body.playing .work-panel h3{font-size:21px}
-/* GAME FRAMING — phones and narrow windows: when Work It Out opens, the
-   panel stacks UNDER the question at the full width of the game card
-   (the card scrolls to reach it) instead of splitting the card into
-   two squeezed side-by-side columns. The side-by-side split above only
-   survives where the card is genuinely wide enough for two readable
-   columns, so on a phone neither the question text card nor the
-   scratch pad is ever crushed into a narrow strip, pushed off the
-   edge, or slid underneath the control deck. */
-@media(max-width:1200px){
-  body.playing .play-layout.has-work{display:flex;flex-direction:column;height:auto;min-height:0}
-  body.playing .play-layout.has-work .play-main{flex:0 0 auto;width:100%}
-  body.playing .play-layout.has-work .work-panel{flex:0 0 auto;width:auto;height:auto;max-height:none;overflow:visible}
-}
+/* Work It Out POPS OUT over the game as a centered sheet — the panel
+   lives in the #workModal overlay (same pattern as the Example Wizard),
+   NOT inside the game card. The modal's dim backdrop covers the court
+   and the card, and the panel itself is the sheet: full width up to
+   680px, bounded by the screen height, scrolling internally when its
+   content runs tall. The step boxes, the Pen / Eraser / Clear row and
+   the whole Draw It Out canvas are therefore always right in front of
+   the learner at full size, at desktop and phone widths alike — never
+   tucked behind the game, crushed into a column beside the question,
+   or slid below a fold no scroll can reach (the playing page itself
+   never scrolls, which is what buried the old in-card panel). */
+#workModal{align-items:center}
+#workModal .work-panel{width:min(680px,100%);max-height:calc(100dvh - 24px);overflow-y:auto;margin:0;padding:16px;border-radius:22px}
+#workModal .work-panel h3{font-size:24px}
 .work-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .work-close{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:6px 12px;font-weight:900;font-size:13px;white-space:nowrap}
 @media(max-width:900px){
-  .play-stage{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(168px,34%) minmax(0,1fr);gap:8px}
   body.playing .wrap{padding:6px 8px 8px}
-  body.playing .p-top #pTitle{font-size:16px}
   body.playing .court-player{width:clamp(64px,20%,92px)}
   body.playing .shot-ball{left:88px;bottom:46px;width:26px;height:26px}
   body.playing .gamecard{padding:10px 11px}
@@ -819,24 +898,81 @@ body.playing .work-panel h3{font-size:21px}
   body.playing .music-dock .genre-row{display:none}
   body.playing .topbar .lion-brand{width:36px;height:36px;flex-basis:36px}
   body.playing .topbar .brand{font-size:15px}
-  body.playing .topbar .brand small{display:none}
+  body.playing .topbar .brand small{font-size:10px;margin-top:2px}
   body.playing .sfx-btn{padding:6px 9px;font-size:12px;border-width:2px}
   body.playing .topbar .stars-pill{padding:6px 9px;font-size:12px;border-width:2px}
 }
 @media(max-width:560px){
   .leo-compact .bubble{font-size:12.5px;max-height:48px;padding:7px 9px}
   .leo-compact .leo-face{width:38px;height:38px;flex-basis:38px}
-  .leo-compact .hear-it-btn{font-size:12.5px;padding:8px 10px}
-  body.playing .p-top .stars-pill{display:none}
+  .leo-compact .hear-it-btn{font-size:17px;padding:7px 10px;min-width:44px;min-height:40px}
   body.playing .sb-team .sb-name{font-size:9.5px;letter-spacing:.03em}
   body.playing .sb-team .sb-score{font-size:21px}
-  body.playing .sb-target{display:none}
   body.playing .answer-input{font-size:21px;padding:9px}
   body.playing .check-btn{padding:10px 14px;font-size:16px}
 }
 @media(max-height:560px){
   .leo-compact .bubble{max-height:40px}
   body.playing .court-player{width:64px}
+}
+/* ===== GAME VIEW FIT — sizing and spacing ONLY, layout untouched =====
+   Michelle: "Don't change the layout, just the fit" — the same FIT-ONLY
+   treatment Royce's page got. The approved order stays exactly as
+   built — level + ✕ Close, Coach Leo's instructions / captions, the
+   scoreboard block ("First to 20 Wins", the two scorecards, the 🔥
+   streak), the court stage, the question card with the problem, the
+   answer box + Check It, the dashed line, and the centered Helper
+   Tools button. Nothing moves, nothing is added or removed. What
+   changes is only the fit: the game card no longer scrolls inside
+   itself — its old internal scroll (overflow-y:auto above) is what
+   hid the problem, the answer box and the Helper Tools button below
+   the card's own fold, worst on word problems. The card now always
+   shows in full at its natural height, and the COURT STAGE is the one
+   flexible piece: it grows or shrinks to whatever room is left in the
+   one-screen column. A short problem leaves a tall court; a long word
+   problem (or the feedback line after an answer, or the open Helper
+   Tools menu) takes its room and the court gives it up — the whole
+   stack, including everything under the game, is on the one screen
+   the moment the game opens, with zero scrolling anywhere, so he
+   watches his player make or miss the moment he taps Check It. The
+   fixed pieces are tightened a touch to buy that room, and the
+   short-screen steps below tighten a little further so short phones
+   keep the same one-screen fit. */
+body.playing #practiceView .gamecard{flex:0 1 auto;min-height:auto;overflow:visible}
+body.playing #practiceView .court-stage{min-height:120px}
+body.playing #practiceView .tools-divider{margin-top:12px}
+body.playing #practiceView .tools-btn{margin-top:10px;padding:11px 18px}
+body.playing #practiceView .tools-menu{margin-top:8px}
+body.playing #practiceView .tools-menu .goldbtn,body.playing #practiceView .tools-menu .ghost{padding:11px 14px}
+@media(max-height:740px){
+  body.playing #practiceView .court-stage{min-height:96px}
+  body.playing #practiceView .gamecard{padding:9px 12px}
+  body.playing #practiceView .question{font-size:clamp(21px,3vw,30px)}
+  body.playing #practiceView .visual svg{max-height:72px}
+  body.playing #practiceView .sb-team .sb-score{font-size:22px}
+  body.playing #practiceView .answer-input{font-size:21px;padding:8px}
+  body.playing #practiceView .check-btn{padding:9px 16px;font-size:16px}
+  body.playing #practiceView .tools-divider{margin-top:8px}
+  body.playing #practiceView .tools-btn{margin-top:8px;padding:9px 14px}
+}
+@media(max-height:600px){
+  body.playing #practiceView .court-stage{min-height:76px}
+  body.playing #practiceView .question{font-size:clamp(19px,2.8vw,26px);line-height:1.04}
+  body.playing #practiceView .visual{max-height:9vh;max-height:9dvh;overflow:hidden}
+  body.playing #practiceView .visual svg{max-height:56px}
+  body.playing #practiceView .clue{font-size:13.5px;padding:7px 9px}
+  body.playing #practiceView .sb-team .sb-score{font-size:20px}
+}
+@media(max-height:480px){
+  body.playing #practiceView .court-stage{min-height:52px}
+  body.playing #practiceView .gamecard{padding:7px 10px}
+  body.playing #practiceView .question{font-size:clamp(17px,2.6vw,22px)}
+  body.playing #practiceView .sb-team{padding:3px 6px}
+  body.playing #practiceView .sb-team .sb-score{font-size:18px}
+  body.playing #practiceView .visual svg{max-height:40px}
+  body.playing #practiceView .answer-input{font-size:19px;padding:6px}
+  body.playing #practiceView .check-btn{padding:7px 13px;font-size:15px}
+  body.playing #practiceView .tools-btn{padding:7px 12px}
 }
 /* ===== SPORT THEME SCENES — the whole stage becomes the picked sport =====
    When the customized world picks a sport other than basketball, the photo
@@ -1296,10 +1432,10 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
 <div id="worldBackdrop" aria-hidden="true"></div>
 <header class="topbar">
   <div class="brand">
-    <img class="lion-brand" src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/>
+    <span class="lion-brand karter-brand" role="img" aria-label="Karter"><img src="assets/karter-hero.webp" alt="" aria-hidden="true"/></span>
     <div><span id="brandWorldName">KARTER'S COURT</span><small id="brandWorldSub">K to 5th Grade</small></div>
   </div>
-  <div class="nav-actions"><button type="button" class="home-nav-btn" id="homeNavBtn" onclick="goHomeFromOverlay()" aria-label="Home — back to the home screen">🏠 Home</button><div class="stars-pill">⭐ <span id="totalStars">0</span> Stars</div><div class="menu-wrap"><button type="button" class="menu-btn" id="menuBtn" onclick="toggleMenu(event)" aria-haspopup="true" aria-expanded="false" aria-controls="menuPanel" aria-label="Menu — change grade or open the Progress Report">☰ Menu ▾</button><div class="menu-panel" id="menuPanel" role="menu" aria-label="Menu"><div class="menu-grade-head"><span class="mgh-title">🎒 Change Grade</span><span class="mgh-now" id="menuGradeNow">Now: 3rd Grade</span></div><div class="menu-grade-list" id="menuGradeList" role="group" aria-label="Choose your grade"></div><div class="menu-divider" aria-hidden="true"></div><button type="button" class="menu-item" role="menuitem" onclick="menuPick('report')"><span class="mi-emoji" aria-hidden="true">📋</span><span class="mi-text"><span class="mi-title">Progress Report</span></span></button><button type="button" class="menu-item" id="menuSetupItem" role="menuitem" style="display:none" onclick="menuPick('setup')"><span class="mi-emoji" aria-hidden="true">✨</span><span class="mi-text"><span class="mi-title">Make It Yours — Setup Wizard</span><span class="mi-sub">Rebuild your theme, step by step</span></span></button></div></div></div>
+  <div class="nav-actions"><button type="button" class="home-nav-btn" id="homeNavBtn" onclick="goHomeFromOverlay()" aria-label="Home — back to the home screen">🏠 Home</button><div class="stars-pill">⭐ <span id="totalStars">0</span> Stars</div><div class="menu-wrap"><button type="button" class="menu-btn" id="menuBtn" onclick="toggleMenu(event)" aria-haspopup="true" aria-expanded="false" aria-controls="menuPanel" aria-label="Menu — change grade or open the Progress Report">☰ Menu ▾</button><div class="menu-panel" id="menuPanel" role="menu" aria-label="Menu"><div class="menu-grade-head"><span class="mgh-title">🎒 Change Grade</span><span class="mgh-now" id="menuGradeNow">Now: 3rd Grade</span><button type="button" class="menu-close" onclick="closeMenu()" aria-label="Close the menu">✕</button></div><div class="menu-grade-list" id="menuGradeList" role="group" aria-label="Choose your grade"></div><div class="menu-divider" aria-hidden="true"></div><button type="button" class="menu-item" role="menuitem" onclick="menuPick('report')"><span class="mi-emoji" aria-hidden="true">📋</span><span class="mi-text"><span class="mi-title">Progress Report</span></span></button><button type="button" class="menu-item" id="menuSetupItem" role="menuitem" style="display:none" onclick="menuPick('setup')"><span class="mi-emoji" aria-hidden="true">✨</span><span class="mi-text"><span class="mi-title">Make It Yours — Setup Wizard</span><span class="mi-sub">Rebuild your theme, step by step</span></span></button></div></div></div>
 </header>
 
 <section class="hero" id="heroSection">
@@ -1308,7 +1444,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
   <div class="hero-inner">
     <div>
       <h1 id="heroHeadline">LEARN.<br><span>SHOOT &amp; WIN!</span></h1>
-      <p id="heroScript">Welcome <span id="heroLearnerName">Karter</span>! I'm Coach <span id="heroCoachName">Leo</span>. I'm here to help you practice until you get it right. Select a game below to get started. Let's WIN the Championship!</p>
+      <div class="hero-intro"><img class="hero-coach" src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/><p id="heroScript">Welcome <span id="heroLearnerName">Karter</span>! I'm Coach <span id="heroCoachName">Leo</span>. I'm here to help you practice until you get it right. Select a game below to get started. Let's WIN the Championship!</p></div>
       <div class="hero-stats">
         <div class="hstat"><b>One at a time</b><span>Just you &amp; Leo</span></div>
         <div class="hstat"><b>No rushing</b><span>Learn at your pace</span></div>
@@ -1316,9 +1452,8 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
       </div>
     </div>
     <div class="court-visual">
-      <img class="lion-hero-img" src="assets/coach-leo-cutout.png" data-coach-img="hero" alt="Coach Leo, a young man coach, in a red COACH LEO jacket with a whistle"/>
-      <span class="lion-coach-badge" id="heroCoachBadge">🏀 COACH LEO — HEAD COACH</span>
-      <p><span class="coach-first-name">Leo</span> says: “Mistakes help your brain grow. We try again together!”</p>
+      <img class="lion-hero-img" src="assets/karter-hero.webp" alt="Karter, an 8-year-old boy with a low haircut, in a red and gold jersey, holding a basketball on the court"/>
+      <p>Coach Leo says: "Mistakes help your brain grow. We try again, together!"</p>
     </div>
   </div>
 </section>
@@ -1373,7 +1508,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
         <div><h2 id="gradePopTitle">Pick Your Grade! 🎒</h2><p>Tap your grade to start playing!</p></div>
       </div>
       <div class="grade-grid" id="gradeGrid"></div>
-      <div class="grade-keep-row" id="gradeKeepRow"><button type="button" class="ghost" onclick="closeGradePicker()">← Keep My Grade</button></div>
+      <div class="grade-keep-row" id="gradeKeepRow"><button type="button" class="ghost" onclick="closeGradePicker()">✕ Close — Keep My Grade</button></div>
     </div>
   </div>
 
@@ -1450,22 +1585,39 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
 
   <!-- PRACTICE -->
   <div id="practiceView">
+    <!-- GAME VIEW — the layout Michelle approved on Royce's page, ported
+         exactly: at the very top only the level and this view's own
+         ✕ Close — no game name/title in here (he already picked the
+         game) — then Coach Leo's INSTRUCTIONS first, then the
+         SCOREBOARD block ("First to 20 Wins" at its top, the two
+         scorecards under it, and the 🔥 streak), then the visual game
+         itself, then the question card with the answer box + Check It,
+         so he sees his player succeed or retry without scrolling — the
+         dashed line under the answer area, and the "My Helper Tools"
+         line as a real BUTTON that opens a drop-down (Work It Out /
+         Show Me an Example / Get a Hint). A picked tool opens
+         FULL SCREEN over this view and closes right back to the same
+         game and the same problem. No sport-picker card lives in this
+         view, and no homepage information sits on top of it. Home stays
+         only in the top nav bar — this view's exit is the ✕ Close here,
+         which runs the same goHome() cleanup as every other close. -->
     <div class="practice-head">
       <div class="p-top">
-        <span class="fred" id="pTitle" style="font-size:22px"></span>
         <span class="stars-pill" id="pLevel"></span>
+        <button type="button" class="ghost game-close-btn" onclick="goHome()" aria-label="Close this game and go back to the home screen">✕ Close</button>
       </div>
       <div class="leo-compact">
         <div class="leo-face"><img src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/></div>
         <div class="bubble" id="leoBubble">Let's play!</div>
+        <button class="hear-it-btn" id="hearItBtn" onclick="hearCurrentTask()" aria-label="Hear it — Leo reads it aloud"><img class="speak-head-img" src="assets/speech-head.png" alt=""/></button>
       </div>
     </div>
-    <div class="play-stage">
-    <div class="court-column">
     <div class="scoreboard" aria-label="Game scoreboard">
-      <div class="sb-team mine"><div class="sb-name">⭐ Your Team</div><div class="sb-score" id="sbMine">0</div></div>
-      <div class="sb-mid"><span class="sb-target" id="sbTarget">First to 20 wins!</span><span class="streak-pill" id="streakPill">🔥 Streak: 0</span></div>
-      <div class="sb-team leo"><div class="sb-name" id="sbCoachTeam">🦁 Leo’s Lions</div><div class="sb-score" id="sbLeo">0</div></div>
+      <div class="sb-top"><span class="sb-target" id="sbTarget">First to 20 wins!</span><span class="streak-pill" id="streakPill">🔥 Streak: 0</span></div>
+      <div class="sb-cards">
+        <div class="sb-team mine"><div class="sb-name">⭐ Your Team</div><div class="sb-score" id="sbMine">0</div></div>
+        <div class="sb-team leo"><div class="sb-name" id="sbCoachTeam">🦁 Leo’s Lions</div><div class="sb-score" id="sbLeo">0</div></div>
+      </div>
     </div>
     <div class="champ-banner" id="champBanner">🏆 CHAMPIONSHIP GAME! Win this one for a Championship Trophy! 🏆</div>
     <div class="court-stage" id="courtStage" aria-label="Your player dribbling and shooting on Coach Leo's court">
@@ -1476,8 +1628,6 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
       <div class="court-player player-slot" id="courtPlayer"></div>
       <svg class="net-ripple" id="netRipple" viewBox="0 0 100 95" aria-hidden="true"><ellipse cx="50" cy="8" rx="46" ry="9" fill="none" stroke="#fff" stroke-width="6"/><g stroke="#fff" stroke-width="5" stroke-linecap="round"><line x1="10" y1="12" x2="24" y2="82"/><line x1="32" y1="15" x2="38" y2="88"/><line x1="55" y1="16" x2="52" y2="90"/><line x1="74" y1="15" x2="66" y2="88"/><line x1="92" y1="12" x2="80" y2="82"/><line x1="24" y1="52" x2="80" y2="52"/></g></svg>
       <div class="shot-ball" id="shotBall"></div>
-      <div class="shot-msg" id="shotMsg">Your player is ready — answer to shoot! 🏀</div>
-    </div>
     </div>
     <div class="gamecard" id="gameCard">
       <div class="play-layout" id="playLayout">
@@ -1490,37 +1640,17 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
           <div class="answer-row" id="inputRow">
             <input class="answer-input" id="answerInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type here"/>
             <button class="check-btn" onclick="checkAnswer()">✓ Check It!</button>
+            <button class="ghost" id="hearBtn" style="display:none" onclick="hearWord()">🔊 Hear the Word</button>
           </div>
           <div class="feedback" id="feedback"></div>
-        </div>
-        <aside class="work-panel" id="workPanel" style="display:none" aria-label="Work It Out">
-          <div class="work-head"><h3>✏️ Work It Out</h3><button type="button" class="work-close" onclick="toggleWorkPanel(false)">✕ Done</button></div>
-          <p class="work-help" id="workHelp">Work the problem here first — then type your final answer and tap Check It!</p>
-          <div id="columnArea"></div>
-          <div class="work-sec-title">🎨 Draw It Out — Scratch Pad</div>
-          <div class="pad-tools">
-            <button type="button" class="pad-btn on" id="padPenBtn" onclick="setPadTool('pen')">✏️ Pen</button>
-            <button type="button" class="pad-btn" id="padEraserBtn" onclick="setPadTool('eraser')">🧽 Eraser</button>
-            <button type="button" class="pad-clear" id="padClearBtn" onclick="clearPad()">🗑️ Clear — Start Over</button>
+          <div class="tools-divider" aria-hidden="true"></div>
+          <button type="button" class="tools-head tools-btn" id="toolsToggleBtn" onclick="toggleToolsMenu()" aria-expanded="false" aria-controls="toolsMenu">🛠️ My Helper Tools — use them anytime!<span class="tools-arrow" aria-hidden="true">▾</span></button>
+          <div class="tools-menu" id="toolsMenu" style="display:none">
+            <button class="goldbtn" id="workToggleBtn" style="display:none" onclick="closeToolsMenu(); toggleWorkPanel()">✏️ Work It Out</button>
+            <button class="goldbtn" onclick="closeToolsMenu(); openWizard(currentTopic)">✨ Show Me an Example</button>
+            <button class="ghost" onclick="closeToolsMenu(); leoHint()">💡 Get a Hint</button>
           </div>
-          <canvas id="scratchPad" aria-label="Drawing scratch pad — draw tally marks, circles, groups or a number line here"></canvas>
-          <p class="work-note">Draw tally marks, circles, groups, arrays or a number line — whatever helps YOUR brain. This pad is just for you; Leo only checks your final answer.</p>
-        </aside>
-      </div>
-    </div>
-    </div>
-    <!-- CONTROL DECK: every secondary control lives DOWN here, spread into
-         three spaced groups with breathing room — nothing is packed into
-         the top of the card, and the deck is always in view. -->
-    <div class="control-deck" aria-label="Game controls">
-      <div class="deck-group">
-        <button class="goldbtn" id="workToggleBtn" style="display:none" onclick="toggleWorkPanel()">✏️ Work It Out</button>
-        <button class="goldbtn" onclick="openWizard(currentTopic)">✨ Show Me an Example</button>
-      </div>
-      <div class="deck-group">
-        <button class="hear-it-btn" id="hearItBtn" onclick="hearCurrentTask()">🔊 Hear It — Leo Reads It!</button>
-        <button class="ghost" id="hearBtn" style="display:none" onclick="hearWord()">🔊 Hear the Word</button>
-        <button class="ghost" onclick="leoHint()">💡 Leo, Give Me a Hint</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1547,7 +1677,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
       <div class="leo-compact" style="margin-top:10px">
         <div class="leo-face"><img src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/></div>
         <div class="bubble" id="wLeoBubble">Let's write some letters, superstar!</div>
-        <button class="hear-it-btn" onclick="hearWriting()">🔊 Hear It</button>
+        <button class="hear-it-btn" onclick="hearWriting()" aria-label="Hear it — Leo reads it aloud"><img class="speak-head-img" src="assets/speech-head.png" alt=""/></button>
       </div>
     </div>
     <div class="gamecard" style="margin-top:14px">
@@ -1630,7 +1760,6 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
     <div class="report-actions" id="reportActions" style="display:none">
       <a class="check-btn" id="reportEmailBtn" href="#">✉️ Email</a>
       <button class="goldbtn" onclick="downloadReport()">⬇️ Download</button>
-      <button class="ghost" onclick="closeGrownUps()">🏠 Back to Games</button>
     </div>
   </div>
 </main>
@@ -1663,18 +1792,60 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
      song that is playing. -->
 <div class="audio-only" id="ytWrap" aria-hidden="true"><div id="ytPlayer"></div></div>
 
+<!-- WORK IT OUT MODAL — pops OUT over the game as its own sheet (same
+     pattern as the Example Wizard), so the whole work area — step boxes,
+     Pen / Eraser / Clear row and the Draw It Out scratch pad — is right
+     in front of the learner at full size, never tucked behind or inside
+     the game card. The sheet scrolls internally if it runs tall; the
+     ✕ Done button in its header closes it, same as every other panel. -->
+<div class="modal" id="workModal" role="dialog" aria-modal="true" aria-label="Work It Out">
+  <aside class="work-panel" id="workPanel" style="display:none" aria-label="Work It Out">
+    <div class="work-head"><h3>✏️ Work It Out</h3><button type="button" class="work-close" onclick="toggleWorkPanel(false)">✕ Done</button></div>
+    <p class="work-help" id="workHelp">Work the problem here first — then tap Done, type your final answer and tap Check It!</p>
+    <div id="columnArea"></div>
+    <div class="work-sec-title">🎨 Draw It Out — Scratch Pad</div>
+    <div class="pad-tools">
+      <button type="button" class="pad-btn on" id="padPenBtn" onclick="setPadTool('pen')">✏️ Pen</button>
+      <button type="button" class="pad-btn" id="padEraserBtn" onclick="setPadTool('eraser')">🧽 Eraser</button>
+      <button type="button" class="pad-clear" id="padClearBtn" onclick="clearPad()">🗑️ Clear — Start Over</button>
+    </div>
+    <canvas id="scratchPad" aria-label="Drawing scratch pad — draw tally marks, circles, groups or a number line here"></canvas>
+    <p class="work-note">Draw tally marks, circles, groups, arrays or a number line — whatever helps YOUR brain. This pad is just for you; Leo only checks your final answer.</p>
+  </aside>
+</div>
+
+<!-- HINT PANEL — opens FULL SCREEN over the game view when "Get a Hint"
+     is picked in the Helper Tools drop-down: Coach Leo's face (never
+     Karter's), the hint words, a 💬 speech symbol that replays his
+     reading it aloud, and its own ✕ Close that returns right back to
+     the same game and the same problem — the same close workflow as
+     every other opener on the page. It lives OUT HERE at body level,
+     with the other full-screen openers (Work It Out, Example Wizard),
+     NOT inside the game card: nested inside the card, the sticky top
+     bar painted over the panel's top row and hid its ✕ Close behind
+     the bar (verified in the probe, Nov 8, 2026). -->
+<div class="hint-panel" id="hintPanel" style="display:none">
+  <div class="hint-head">
+    <div class="leo-face hint-face"><img src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/></div>
+    <b>💡 Hint from Leo</b>
+    <span style="flex:1"></span>
+    <button type="button" class="hear-it-btn" onclick="replayHint()" aria-label="Hear the hint again"><img class="speak-head-img" src="assets/speech-head.png" alt=""/></button>
+    <button type="button" class="work-close" onclick="closeHintPanel()">✕ Close</button>
+  </div>
+  <div class="hint-text" id="hintText"></div>
+</div>
+
 <!-- WIZARD MODAL -->
 <div class="modal" id="wizardModal" role="dialog" aria-modal="true">
   <div class="sheet">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="display:flex;align-items:center;gap:10px"><img class="wiz-leo" src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/><span class="fred" style="color:var(--red);font-size:14px;letter-spacing:.1em">LEO'S EXAMPLE WIZARD</span></span><button class="ghost" onclick="closeWizard()">✕ Close</button></div>
-    <div class="home-row"><button class="home-btn" onclick="goHomeFromOverlay()">🏠 Home — Pick a Different Game</button></div>
     <h3 id="wizTitle">Watch me first!</h3>
     <div class="ex-note" id="wizNote">🦁 This is a <b>different problem just like yours</b> — Leo works it step by step so you can see HOW. Your problem stays right where you left it!</div>
     <div class="stepdots" id="wizDots"></div>
     <div class="stepbox" id="wizBody"></div>
     <div style="display:flex;gap:12px;margin-top:22px;flex-wrap:wrap;justify-content:space-between">
       <button class="ghost" id="wizBack" onclick="wizMove(-1)">← Back</button>
-      <button class="ghost" onclick="hearWizardStep()">🔊 Hear It</button>
+      <button class="speak-btn" onclick="hearWizardStep()" aria-label="Hear it — Leo reads this step aloud"><img class="speak-head-img" src="assets/speech-head.png" alt=""/></button>
       <button class="ghost" id="wizAuto" onclick="toggleWizAuto()">▶️ Watch It Play</button>
       <button class="check-btn" id="wizNext" onclick="wizMove(1)" style="flex:1">Next Step →</button>
     </div>
@@ -1685,7 +1856,6 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
 <div class="modal" id="studioModal" role="dialog" aria-modal="true">
   <div class="sheet" style="width:min(860px,100%)">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span class="fred" style="color:var(--red);font-size:15px;letter-spacing:.08em">🎨 MY PLAYER STUDIO</span><button class="ghost" onclick="closeStudio()">✕ Done!</button></div>
-    <div class="home-row"><button class="home-btn" onclick="goHomeFromOverlay()">🏠 Home — Pick a Different Game</button></div>
     <h3>Design &amp; dress YOUR player!</h3>
     <p style="font-weight:800;color:var(--muted);margin:4px 0 14px;line-height:1.45">Tap anything to change it — your player updates right away, saves on this device, and he is the one who plays in every game!</p>
     <div class="studio-layout">
@@ -1712,7 +1882,6 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
 <div class="modal" id="themeModal" role="dialog" aria-modal="true">
   <div class="sheet" style="width:min(860px,100%)">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span class="fred" style="color:var(--red);font-size:15px;letter-spacing:.08em">✨ MAKE IT YOURS — MY THEME STUDIO</span><button class="ghost" onclick="closeThemeStudio()">✕ Done!</button></div>
-    <div class="home-row"><button class="home-btn" onclick="goHomeFromOverlay()">🏠 Home — Pick a Different Game</button></div>
     <h3>Create a world that feels like YOURS!</h3>
     <p style="font-weight:800;color:var(--muted);margin:4px 0 14px;line-height:1.45">Answer three questions — what are your three colors (Primary, Secondary and Tertiary), your favorite sport, and your favorite animal? Then name your world after YOU — like John's Court. Tap to choose, and EVERYTHING changes right away: your buttons, your team mascot, and — when you pick a sport — the headline, your coach's title, the court itself and how every game is scored, all switch to that sport. Your theme saves on this device, so it is still yours next time you play. And your coach is YOURS too — he is always a boy coach here. Give him a name, build his face with skin tones and hair picks, and dress him in your favorite sport or your favorite animal!</p>
     <div class="studio-layout">
@@ -1740,7 +1909,6 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
 <div class="modal" id="trophyModal" role="dialog" aria-modal="true">
   <div class="sheet">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span class="fred" style="color:var(--red);font-size:15px;letter-spacing:.08em">🏆 TROPHY CASE</span><button class="ghost" onclick="closeModalId('trophyModal')">✕ Close</button></div>
-    <div class="home-row"><button class="home-btn" onclick="goHomeFromOverlay()">🏠 Home — Pick a Different Game</button></div>
     <h3>Your trophies &amp; gear</h3>
     <div id="trophyBody"></div>
   </div>
@@ -1749,7 +1917,6 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
 <div class="modal" id="bonusModal" role="dialog" aria-modal="true">
   <div class="sheet" style="width:min(720px,100%)">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span class="fred" style="color:var(--red);font-size:15px;letter-spacing:.08em">🎁 BONUS ROUND</span><button class="ghost" onclick="closeBonus()">✕ Close</button></div>
-    <div class="home-row"><button class="home-btn" onclick="goHomeFromOverlay()">🏠 Home — Pick a Different Game</button></div>
     <h3>Pick a bonus game!</h3>
     <div id="bonusBody"></div>
   </div>
@@ -1757,6 +1924,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
 <!-- WIN CELEBRATION -->
 <div class="celebrate" id="winModal" role="dialog" aria-modal="true">
   <div class="celebrate-card" id="winCard">
+    <button type="button" class="win-close" onclick="closeWin(false)" aria-label="Close — back to your game">✕</button>
     <div style="font-size:64px" id="winIcon">🏆</div>
     <h3 style="font-size:34px;margin:6px 0" id="winTitle">YOU WIN!</h3>
     <p style="font-weight:800;line-height:1.55;font-size:17px" id="winText"></p>
@@ -1764,19 +1932,19 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
     <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px;position:relative;z-index:3">
       <button class="check-btn" id="winNewGameBtn" onclick="closeWin(true)">🏀 Play a New Game!</button>
       <button class="goldbtn" onclick="closeWin(false);openBonus()">🎁 Bonus Round</button>
-      <button class="ghost" onclick="closeWin(false);goHome()">🏠 Home</button>
     </div>
   </div>
 </div>
 <!-- CLASSIC NAME POP-UP — classic link only. Opens right after a
      first-time learner picks a grade in the first-open grade pop-up
      (setGrade opens it — see the classic-name block beside setGrade).
-     One name field, one button: the typed name saves on this device
+     One name field and one main button, plus an ✕ Close in the
+     header that runs the same submit: the typed name saves on this device
      and replaces "Karter" in the hero script; a blank field keeps
      "Karter". The customized link never opens this pop-up. -->
 <div class="modal" id="classicNameModal" role="dialog" aria-modal="true" aria-labelledby="classicNameTitle">
   <div class="sheet">
-    <div style="display:flex;align-items:center;gap:10px"><img class="wiz-leo" src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/><span class="fred" style="color:var(--red);font-size:14px;letter-spacing:.1em">COACH LEO WANTS TO SAY HI!</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="display:flex;align-items:center;gap:10px"><img class="wiz-leo" src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/><span class="fred" style="color:var(--red);font-size:14px;letter-spacing:.1em">COACH LEO WANTS TO SAY HI!</span></span><button class="ghost" onclick="submitClassicName()">✕ Close</button></div>
     <h3 id="classicNameTitle">What's your name? 👋</h3>
     <p class="name-pop-note">Type your name and Coach Leo will greet <b>you</b> at the top of the page!</p>
     <label class="setup-field-label" for="classicNameInput">Your first name</label>
@@ -1847,7 +2015,17 @@ function setGrade(id){ /* FIRST-OPEN PICK? A grade card tapped while NO grade wa
    Leaving the field blank saves nothing and the hero keeps
    "Karter" — heroLearnerName falls back to it. */
 function openClassicNamePrompt(){ var m=document.getElementById('classicNameModal'); if(!m) return; var inp=document.getElementById('classicNameInput'); if(inp) inp.value=classicLearnerName||''; m.classList.add('open'); setTimeout(function(){ var i2=document.getElementById('classicNameInput'); if(i2){ try{ i2.focus(); }catch(e){} } },60); }
-function submitClassicName(){ var inp=document.getElementById('classicNameInput'); var val=inp? String(inp.value||'').trim().slice(0,24) : ''; classicLearnerName=val; try{ if(val) localStorage.setItem(CLASSIC_NAME_KEY,val); else localStorage.removeItem(CLASSIC_NAME_KEY); }catch(e){} var m=document.getElementById('classicNameModal'); if(m) m.classList.remove('open'); try{ renderHeroScript(); }catch(e){} toast(val? '👋 Welcome, '+val+'! Coach Leo is ready — pick a game!' : '👋 Welcome, Karter! Coach Leo is ready — pick a game!'); try{ sfx('open'); }catch(e){} }
+function submitClassicName(){ var inp=document.getElementById('classicNameInput'); var val=inp? String(inp.value||'').trim().slice(0,24) : ''; classicLearnerName=val; try{ if(val) localStorage.setItem(CLASSIC_NAME_KEY,val); else localStorage.removeItem(CLASSIC_NAME_KEY); }catch(e){} var m=document.getElementById('classicNameModal'); if(m) m.classList.remove('open'); try{ renderHeroScript(); }catch(e){} toast(val? '👋 Welcome, '+val+'! Coach Leo is ready — pick a game!' : '👋 Welcome, Karter! Coach Leo is ready — pick a game!'); try{ sfx('open'); }catch(e){} try{ readHeroWelcome(); }catch(e){} }
+/* HERO WELCOME READ (Michelle, Nov 8, 2026): the moment the first-visit
+   flow lands on the home page — grade picked AND name entered — Coach
+   Leo reads the hero welcome script ALOUD himself, in his voice: the
+   exact fixed script at the top of the page, with the name the learner
+   just entered filled in. It fires only from the end of that flow —
+   submitClassicName() above (every exit from the name pop-up goes
+   through it, ✕ Close included) and a FIRST-TIME finishSetup() on the
+   customized link — never before or during the pop-ups, and never on
+   later visits or ordinary page loads. */
+function readHeroWelcome(){ try{ try{ renderHeroScript(); }catch(e){} var hs=document.getElementById('heroScript'); var t=hs? plainSpeechText(hs.textContent||'') : ''; if(t) speakLeo(t,true); }catch(e){} }
 function openGradePicker(){ stopLeoSpeech(); renderGradeCards(); updateGradeBar(); var gv=document.getElementById('gradeView'); var ok=false; for(var i=0;i<GRADES.length;i++){ if(GRADES[i].id===currentGrade) ok=true; } var kr=document.getElementById('gradeKeepRow'); if(kr) kr.classList.toggle('show',ok); if(gv){ gv.style.display='block'; gv.scrollTop=0; } document.body.classList.add('grade-gate-open'); window.scrollTo({top:0}); }
 function closeGradePicker(){ var gv=document.getElementById('gradeView'); if(gv) gv.style.display='none'; document.body.classList.remove('grade-gate-open'); var hv=document.getElementById('homeView'); if(hv&&hv.style.display==='none') hv.style.display='block'; window.scrollTo({top:0}); }
 /* GRADE GATE — the grade pop-up is the FIRST thing a first-time learner
@@ -1968,7 +2146,7 @@ vowels:{title:'Vowel Sounds — Watch Me!',steps:[{h:'Example: “rain”',b:'Th
 plurals:{title:'Plurals — Watch Me!',steps:[{h:'Example: box → ?',b:'Most words just add <b>-s</b>: cat → cats. But <b>box</b> ends in x…'},{h:'The -es rule',b:'Words ending in <b>s, x, z, ch, sh</b> add <b>-es</b>: box → <b>boxes</b>, wish → wishes.'},{h:'The y rule',b:'Consonant + y? Change y to i and add -es: baby → <b>babies</b>. Vowel + y? Just add -s: boy → boys.'}]},
 compound:{title:'Compound Words — Watch Me!',steps:[{h:'Example: basket + ball',b:'Two whole words join together and keep <b>all</b> their letters.'},{h:'Answer!',b:'<div class="example-big">basket + ball = basketball</div>No spaces, no missing letters!'},{h:'Your turn!',b:'Leo gives you the two words (or a picture clue). Join them into one word.'}]},
 homophones:{title:'Homophones — Watch Me!',steps:[{h:'What are homophones?',b:'Words that <b>sound the same</b> but have different spellings and meanings.'},{h:'Example: to / too / two',b:'<b>two</b> = the number 2. <b>too</b> = also, or more than enough. <b>to</b> = all the other jobs (go to, to play).'},{h:'Your turn!',b:'Read the whole sentence. Ask: “What does this sentence <i>mean</i>?” — meaning picks the spelling!'}]},
-reading:{title:'Reading — Watch Me!',steps:[{h:'Reading means saying the sounds!',b:'Every word is made of <b>sounds</b>. Readers say each sound slowly, then blend them together fast.'},{h:'Example: c - a - t',b:'Say each sound: <b>c… a… t…</b> Now blend them together: <b>CAT!</b> That is blending!'},{h:'Your turn!',b:'Listen with 🔊 Hear It, say the sounds out loud, then tap your answer. Wrong? Leo keeps the <b>same one</b> until you read it right!'}]},
+reading:{title:'Reading — Watch Me!',steps:[{h:'Reading means saying the sounds!',b:'Every word is made of <b>sounds</b>. Readers say each sound slowly, then blend them together fast.'},{h:'Example: c - a - t',b:'Say each sound: <b>c… a… t…</b> Now blend them together: <b>CAT!</b> That is blending!'},{h:'Your turn!',b:'Listen with 🔊, say the sounds out loud, then tap your answer. Wrong? Leo keeps the <b>same one</b> until you read it right!'}]},
 meanings:{title:'Word Meanings — Watch Me!',steps:[{h:'What is a meaning?',b:'The <b>meaning</b> of a word tells what the word is or what it does. The word <b>“laugh”</b> means: to make sounds of joy when something is funny.'},{h:'How to play',b:'Leo shows and says a word from your spelling lists. Read the three meanings and tap the one that <b>matches the word</b> — the other two are meanings of different words!'},{h:'Your turn!',b:'Read carefully — some meanings sound close! Wrong? Leo explains the real meaning and you try the <b>same word</b> again.'}]},
 };
 var wizTopic='howto', wizStep=0, wizSteps=null, wizTitleStr='', wizAutoInt=null;
@@ -1993,7 +2171,7 @@ function openWizard(t){
   renderWiz(); document.getElementById('wizardModal').classList.add('open');
 }
 function closeWizard(){ stopWizAuto(); stopLeoSpeech(); document.getElementById('wizardModal').classList.remove('open'); var pv=document.getElementById('practiceView'); if(current&&pv&&pv.offsetParent!==null){ var b=document.getElementById('leoBubble'); if(b&&b.innerHTML) speakLeo(b.innerHTML); } }
-function renderWiz(){ if(!wizSteps) wizSteps=WIZARDS.howto.steps; document.getElementById('wizTitle').textContent=wizTitleStr||'Watch me first!'; var st=wizSteps[wizStep]; var dst={h:sportifyWizText(st.h),b:sportifyWizText(st.b)}; document.getElementById('wizBody').innerHTML='<div style="font-family:Fredoka;font-size:20px;margin-bottom:6px">'+dst.h+'</div>'+dst.b; document.getElementById('wizDots').innerHTML=wizSteps.map(function(_,i){return '<div class="dot'+(i===wizStep?' on':'')+'"></div>'}).join(''); document.getElementById('wizNext').textContent= wizStep===wizSteps.length-1 ? "✅ See How? Now You Try Yours! "+(activeSportId()==='basketball'?'🏀':effectiveSportObj().emoji) : 'Next Step →'; document.getElementById('wizBack').style.visibility= wizStep===0?'hidden':'visible'; if(st) speakLeo(dst.h+'. '+dst.b); }
+function renderWiz(){ if(!wizSteps) wizSteps=WIZARDS.howto.steps; document.getElementById('wizTitle').textContent=wizTitleStr||'Watch me first!'; var st=wizSteps[wizStep]; var dst={h:sportifyWizText(st.h),b:sportifyWizText(st.b)}; document.getElementById('wizBody').innerHTML='<div style="font-family:Fredoka;font-size:20px;margin-bottom:6px">'+dst.h+'</div>'+dst.b; document.getElementById('wizDots').innerHTML=wizSteps.map(function(_,i){return '<div class="dot'+(i===wizStep?' on':'')+'"></div>'}).join(''); document.getElementById('wizNext').textContent= wizStep===wizSteps.length-1 ? "✅ See How? Now You Try Yours! "+(activeSportId()==='basketball'?'🏀':effectiveSportObj().emoji) : 'Next Step →'; document.getElementById('wizBack').style.visibility= wizStep===0?'hidden':'visible'; if(st) speakLeo(wizardStepSpeechText(),true); }
 function wizMove(d){ stopWizAuto(); if(d>0 && wizSteps && wizStep===wizSteps.length-1){ closeWizard(); return; } wizStep=Math.max(0,Math.min((wizSteps?wizSteps.length:1)-1,wizStep+d)); renderWiz(); }
 
 /* ===== REAL WORKED EXAMPLES: a DIFFERENT problem of the same kind, worked step by step ===== */
@@ -2380,29 +2558,34 @@ function stackHTML(rows,op,showPlaces){
 function numsFromQ(){ var m=String(current.q).match(/\d+/g); return m?m.map(function(x){return parseInt(x,10)}):[]; }
 var fracDen=0;
 function toggleFrac(btn){ btn.classList.toggle('on'); var bar=document.getElementById('fracBar'); if(!bar) return; var on=bar.querySelectorAll('.frac-cell.on').length; var c=document.getElementById('fracCount'); if(c) c.textContent='Tap the parts to shade them. Shaded: '+on+' of '+fracDen; }
+/* HELPER TOOLS DROP-DOWN (Royce's approved game-view layout, ported):
+   the "My Helper Tools" button under the answer area opens and closes
+   the tools menu; picking a tool closes the menu first, then that tool
+   opens full-screen over the game and closes right back to it. */
+function toggleToolsMenu(){ var m=document.getElementById('toolsMenu'), b=document.getElementById('toolsToggleBtn'); if(!m) return; var open=m.style.display==='none'; m.style.display= open? 'grid':'none'; if(b) b.setAttribute('aria-expanded', open? 'true':'false'); if(typeof sfx==='function') sfx('pop'); }
+function closeToolsMenu(){ var m=document.getElementById('toolsMenu'), b=document.getElementById('toolsToggleBtn'); if(m) m.style.display='none'; if(b) b.setAttribute('aria-expanded','false'); }
 function toggleWorkPanel(force){
   var panel=document.getElementById('workPanel'); if(!panel) return;
-  var show=(typeof force==='boolean')?force:(panel.style.display==='none'||!panel.classList.contains('open'));
+  var modal=document.getElementById('workModal');
+  var show=(typeof force==='boolean')?force:!(modal&&modal.classList.contains('open'));
+  /* Work It Out POPS OUT over the game: the panel lives in the #workModal
+     overlay sheet, above the court and the game card, so opening it can
+     never tuck it behind the game or squeeze it into the card. ✕ Done
+     (or going Home) closes the sheet and the game is right where it was. */
+  if(modal) modal.classList.toggle('open',show);
   panel.style.display=show?'block':'none'; panel.classList.toggle('open',show);
   var btn=document.getElementById('workToggleBtn'); if(btn) btn.textContent=show?'✏️ Close Work It Out':'✏️ Work It Out';
-  var layout=document.getElementById('playLayout'); if(layout) layout.classList.toggle('has-work',show); /* has-work = the beside-the-equation two-column layout, never an overlay */
-  if(show){ setPadTool('pen'); setTimeout(function(){ fitPad(false); },60);
-    /* At every width the panel renders at full height inside the
-       scrolling game card (on phones / narrow windows it stacks under
-       the question) — bring its top (heading + Done) into the card's
-       visible frame the moment it opens, so none of the panel ever
-       sits hidden below the card's fold or under the control deck,
-       and the card's own scroll reaches the scratch pad below it. */
-    setTimeout(function(){ try{ panel.scrollIntoView({block:'start'}); }catch(e){} },80); }
+  if(show){ setPadTool('pen'); setTimeout(function(){ fitPad(false); },60); }
 }
 function setupWork(){
   var panel=document.getElementById('workPanel'); var layout=document.getElementById('playLayout');
   var toggleBtn=document.getElementById('workToggleBtn');
   if(!panel||!layout) return;
-  if(!currentTopic||currentTopic.cat!=='math'||!current){ panel.style.display='none'; panel.classList.remove('open'); layout.classList.remove('has-work'); if(toggleBtn) toggleBtn.style.display='none'; return; }
-  /* Work It Out stays available as a drawer inside the prompt card — closed by default
+  var modal=document.getElementById('workModal');
+  if(!currentTopic||currentTopic.cat!=='math'||!current){ panel.style.display='none'; panel.classList.remove('open'); if(modal) modal.classList.remove('open'); if(toggleBtn) toggleBtn.style.display='none'; return; }
+  /* Work It Out stays available as a pop-out sheet over the game — closed by default
      so it never pushes the court, scoreboard, prompt or answer controls out of view. */
-  panel.style.display='none'; panel.classList.remove('open'); layout.classList.remove('has-work');
+  panel.style.display='none'; panel.classList.remove('open'); if(modal) modal.classList.remove('open');
   if(toggleBtn){ toggleBtn.style.display='inline-block'; toggleBtn.textContent='✏️ Work It Out'; }
   var id=currentTopic.id;
   var help={addition:'Add the ones first! The small gold boxes on top are for your carry numbers.',subtraction:'Start with the ones! The small gold boxes on top are for your regroup (borrow) numbers.',multiplication:'Draw your equal groups or an array on the pad — and use the step boxes to work it in columns.',division:'Draw equal groups on the pad! Use the multiplication helper to test your guess.',placevalue:'Look at each digit, then write what that digit is really worth in the box under it.',money:'The coin amounts are stacked up like adding in columns. Add the biggest amount first!',time:'Look at the clock in the question. Write the hour and minutes you see in the work boxes, or count by 5s on the pad.',fractions:'This is your fraction work area — tap the bar to shade parts, then draw more on the pad if you want.',wordproblems:'Draw the story on the pad first, then work the numbers in the step boxes.'};
@@ -2504,6 +2687,19 @@ function padStroke(){ if(!padCtx) return; if(padTool==='eraser'){ padCtx.globalC
    3. Chrome/Android silently drop an utterance queued in the same instant as cancel() — after a cancel, Leo waits a beat before speaking.
    4. Chrome can leave speech stuck "paused" — a watchdog keeps calling resume() while Leo is talking.
    5. Long readings get cut off by some voices — long text is spoken in sentence-size chunks. */
+/* WHICH VOICE LEO IS (Michelle's pick, Nov 8, 2026): sample 3 of the coach
+   voice samples she listened to — avocado_v2:qvd_00494, a warm, mid-pitch
+   young man's voice at a moderate pace (the sample was rendered at the
+   speech tool's default speed, 100). Every line Leo speaks is composed
+   live from the game in front of Karter (each problem, hint, spelling
+   word and custom coach/learner name), so his lines are spoken at run
+   time by this engine; the settings below pin every utterance to sample
+   3's profile: the favorite-voice list leads with warm young adult male
+   voices, his pitch sits at the voice's natural mid pitch (1.0, never
+   the old lowered 0.9), and his pace is the sample's moderate 1.0 unless
+   a caller deliberately slows one line down (spelling a word out). */
+var LEO_PITCH=1.0; /* sample 3: mid-pitch — the picked voice's natural pitch */
+var LEO_RATE=1.0; /* sample 3: moderate pace — rendered at speed 100 */
 var leoUnlocked=false; /* speech only ever starts after Karter's first tap/keypress — never on page load */
 var leoVoices=[];
 function leoLoadVoices(){ try{ if('speechSynthesis' in window){ var vs=window.speechSynthesis.getVoices(); if(vs&&vs.length) leoVoices=vs; } }catch(e){} }
@@ -2528,7 +2724,10 @@ function pickLeoVoice(){
     var pool=en.length?en:vs;
     var local=pool.filter(function(v){ return v.localService; });
     var src=local.length?local:pool;
-    var fav=['daniel','arthur','brian','alex','fred','tom','aaron','microsoft guy','microsoft ryan','microsoft brandon','microsoft christopher','google uk english male','samantha','microsoft zira','microsoft aria','google us english'];
+    /* Sample 3's profile first: warm young adult American men, then other
+       men's voices as fallbacks. No women's voices in the list — Leo is a
+       young man, so a woman's voice is never a match for him. */
+    var fav=['microsoft ryan','microsoft brandon','microsoft christopher','aaron','microsoft guy','tom','alex','daniel','arthur','brian','fred','google uk english male'];
     for(var i=0;i<fav.length;i++){ for(var j=0;j<src.length;j++){ if(String(src[j].name).toLowerCase().indexOf(fav[i])>-1) return src[j]; } }
     for(var k=0;k<src.length;k++){ if(/male/i.test(src[k].name)) return src[k]; }
     return src[0]||pool[0];
@@ -2553,6 +2752,7 @@ function equationInWords(q){
   return numWords(parseInt(m[1],10))+' '+op+' '+numWords(parseInt(m[3],10))+' equals what?';
 }
 var leoSpeakTimer=null, leoWatchdog=null;
+var captionRunId=0, captionTimers=[]; /* instruction-caption sequencing state (see speakCaptions below) */
 function chunkSpeech(t){
   if(t.length<=170) return [t];
   var parts=t.match(/[^.!?]+[.!?]*\s*/g)||[t]; var out=[],cur='';
@@ -2566,6 +2766,7 @@ function leoWatchdogStart(){
 }
 function speakLeo(text,force,rate){
   try{
+    if(typeof stopCaptions==='function') stopCaptions(); /* any other Leo speech ends a caption read — the bubble is his again */
     if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance) return; /* no voice on this device — text-only, never an error */
     if(!leoUnlocked&&!force) return; /* Leo's voice wakes up with Karter's first tap — there is no on/off switch */
     var plain=plainSpeechText(text); if(!plain) return;
@@ -2582,7 +2783,7 @@ function speakLeo(text,force,rate){
         for(var ci=0;ci<chunks.length;ci++){
           var u=new SpeechSynthesisUtterance(chunks[ci]);
           if(v){ u.voice=v; try{ u.lang=v.lang||'en-US'; }catch(e){} }
-          u.rate=rate||0.95; u.pitch=0.9; u.volume=1;
+          u.rate=rate||LEO_RATE; u.pitch=LEO_PITCH; u.volume=1;
           synth.speak(u);
         }
         leoWatchdogStart();
@@ -2592,7 +2793,69 @@ function speakLeo(text,force,rate){
     if(wasBusy) leoSpeakTimer=setTimeout(speakAll,90); else speakAll();
   }catch(e){}
 }
-function stopLeoSpeech(){ if(leoSpeakTimer){ clearTimeout(leoSpeakTimer); leoSpeakTimer=null; } try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){} }
+function stopLeoSpeech(){ if(typeof stopCaptions==='function') stopCaptions(); if(leoSpeakTimer){ clearTimeout(leoSpeakTimer); leoSpeakTimer=null; } try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){} }
+/* ---------- INSTRUCTION CAPTIONS (Michelle, Nov 8, 2026) ----------
+   The game view carries NO static instructions card. When a game
+   opens, Coach Leo reads the instructions aloud automatically, and as
+   he reads, the words appear as CAPTIONS in his bubble — the
+   instructions space at the top of the game view — one sentence at a
+   time, every caption sentence in proper sentence structure: a
+   complete sentence, a capital letter to start, proper ending
+   punctuation. When the reading finishes, the FULL instruction text
+   stays sitting in the bubble so the learner can glance back at it.
+   The 💬 replay (hearCurrentTask) runs this same captioned reading,
+   so the voice and the captions always come together. */
+function captionSentences(text){
+  var plain=plainSpeechText(text||''); if(!plain) return [];
+  var parts=plain.match(/[^.!?]+[.!?]+["']*\s*|[^.!?]+$/g)||[];
+  var out=[];
+  for(var i=0;i<parts.length;i++){
+    var s=parts[i].replace(/^[^A-Za-z0-9"“”]+/,'').trim();
+    if(!/[A-Za-z0-9]/.test(s)) continue; /* symbol-only scraps are not sentences */
+    s=s.charAt(0).toUpperCase()+s.slice(1);
+    if(!/[.!?]["']?$/.test(s)) s+='.';
+    out.push(s);
+  }
+  return out;
+}
+function stopCaptions(){ captionRunId++; if(captionTimers.length){ captionTimers.forEach(function(t){ clearTimeout(t); }); captionTimers=[]; } }
+function speakCaptions(text){
+  var b=document.getElementById('leoBubble');
+  var sentences=captionSentences(text);
+  if(!b||!sentences.length){ if(text) speakLeo(text,true); return; }
+  var full=sentences.join(' ');
+  stopCaptions(); stopLeoSpeech();
+  var run=captionRunId;
+  b.classList.remove('bubble-pop'); void b.offsetWidth; b.classList.add('bubble-pop');
+  if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance){ b.textContent=full; return; } /* no voice on this device — the full text simply sits in the bubble */
+  b.textContent='';
+  var synth=window.speechSynthesis;
+  var v=pickLeoVoice();
+  var idx=0;
+  var showUpTo=function(n){ b.textContent=sentences.slice(0,n).join(' '); try{ b.scrollTop=b.scrollHeight; }catch(e){} };
+  var advance=function(){
+    if(run!==captionRunId) return;
+    if(idx>=sentences.length){ b.textContent=full; try{ b.scrollTop=b.scrollHeight; }catch(e){} return; }
+    var i=idx; idx++;
+    showUpTo(i+1); /* this sentence's caption lands as Leo starts saying it */
+    var said=false;
+    var next=function(){ if(said) return; said=true; advance(); };
+    /* Fallback advance on a reading-time estimate, in case a device
+       never fires the utterance's end event — captions never stall. */
+    var est=Math.min(9000,Math.max(1700,sentences[i].split(/\s+/).length*430+1000));
+    captionTimers.push(setTimeout(next,est));
+    try{
+      var u=new SpeechSynthesisUtterance(sentences[i]);
+      if(v){ u.voice=v; try{ u.lang=v.lang||'en-US'; }catch(e){} }
+      u.rate=LEO_RATE; u.pitch=LEO_PITCH; u.volume=1; /* Leo's picked sample-3 voice settings, same as speakLeo */
+      u.onend=next; u.onerror=next;
+      if(synth.paused) synth.resume();
+      synth.speak(u);
+    }catch(e){ next(); }
+  };
+  captionTimers.push(setTimeout(function(){ if(run===captionRunId) advance(); },90)); /* the same beat speakLeo leaves after a cancel */
+  leoWatchdogStart();
+}
 function spokenProblemText(){ if(!current) return ''; var eq=equationInWords(current.q); if(eq) return eq; return plainSpeechText(current.q); }
 /* What Leo says FIRST for every game — the instructions: what to do. Then he reads the actual prompt/problem. */
 var TASK_INSTRUCTIONS={
@@ -2613,15 +2876,26 @@ homophones:'Here is what to do: pick the right word for the sentence. These word
 reading:'Here is what to do: listen to the word or the sound, read with your eyes, say the sounds out loud, then tap your answer.',
 meanings:'Here is what to do: read the word and listen to Leo say it. Then read the three meanings and tap the meaning that truly matches the word.'
 };
-function buildTaskSpeech(){
+/* The game's spoken INSTRUCTIONS only — what to do in this game,
+   sport-matched and grade-true. This is the text the game-open
+   auto-read speaks (Michelle, Nov 8, 2026: when a game opens the coach
+   reads ONLY the instructions), and it is also the first part of the
+   fuller 💬 replay text buildTaskSpeech() builds below. */
+function taskInstructionText(){
   if(!current) return '';
-  var parts=[];
   var id=currentTopic?currentTopic.id:'';
   var instr=TASK_INSTRUCTIONS[id]||'';
   if(activeSportId()!=='basketball') instr=instr.replace(/basketballs/g,countObj().name);
   /* Grade-true spoken instructions: at Kindergarten the fractions game is shape SHARING in words (no fraction bar to count) and the vowels game is one missing letter sound in a short word. */
   if(gradeTier()===0&&id==='fractions') instr='Here is what to do: look at the shape. It is cut into 2 equal parts. If 1 part is red, that is a half. If both parts are red, that is the whole shape!';
   if(gradeTier()===0&&id==='vowels') instr='Here is what to do: listen to the short word, hear the sound in the middle, and spell the whole word with the right vowel letter.';
+  return instr;
+}
+function buildTaskSpeech(){
+  if(!current) return '';
+  var parts=[];
+  var id=currentTopic?currentTopic.id:'';
+  var instr=taskInstructionText();
   if(instr) parts.push(instr);
   var eq=equationInWords(current.q);
   if(eq){ parts.push('Here is your problem: '+eq); }
@@ -2636,8 +2910,16 @@ function buildTaskSpeech(){
   if(current.display==='choice'&&current.choices&&current.choices.length) parts.push('Your choices are: '+current.choices.join(', ')+'.');
   return parts.filter(function(p){return !!p;}).join(' ');
 }
-function hearCurrentTask(){ var t=buildTaskSpeech(); if(t) speakLeo(t,true); else toast('Pick a game first — then Leo can read it to you! 🦁'); }
-function hearWizardStep(){ if(!wizSteps||!wizSteps.length) return; var st=wizSteps[wizStep]; if(st) speakLeo(st.h+'. '+st.b,true); }
+function hearCurrentTask(){ var t=buildTaskSpeech(); if(t) speakCaptions(t); else toast('Pick a game first — then Leo can read it to you! 🦁'); } /* 💬 replays the voice AND the captions together (speakCaptions) */
+/* EXAMPLE READ-ALOUD (Michelle, Nov 8, 2026): opening an Example — and
+   moving to each new step of it — makes Coach Leo read that step ALOUD
+   himself, right away, in his picked sample-3 voice; no separate tap on
+   Hear It needed. wizardStepSpeechText() builds the ONE spoken version
+   of the step on screen (the same sport-matched words the learner sees),
+   renderWiz() force-speaks it the moment the step appears, and the
+   wizard's Hear It button below replays that exact same text on tap. */
+function wizardStepSpeechText(){ if(!wizSteps||!wizSteps.length) return ''; var st=wizSteps[wizStep]; if(!st) return ''; return sportifyWizText(st.h)+'. '+sportifyWizText(st.b); }
+function hearWizardStep(){ var txt=wizardStepSpeechText(); if(txt) speakLeo(txt,true); }
 
 /* ---------- GAME STATE ---------- */
 var currentTopic=null, current=null, attempts=0, timerInt=null, cat='math';
@@ -2663,17 +2945,44 @@ function writingKeypadBtnText(){ return gradeTier()===0?'⌨️ Letter Keypad':'
 function writingCardHTML(){ if(cat!=='spelling'||typeof writingAvailable!=='function'||!writingAvailable()) return ''; var wp=topicProg('writing'); var started=(wp.done||0)>0; return '<article class="tcard" aria-label="Writing practice"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">✏️</div><span class="meta">'+(started?'⭐ Keep Going!':'New Game')+'</span></div><h3>Writing Practice — Trace &amp; Type!</h3><p id="wCardDesc">'+writingCardDescText()+'</p><div class="w-card-btns"><button class="play-btn" id="wBtnTrace" onclick="startWriting(\'trace\')">'+writingTraceBtnText()+'</button><button class="goldbtn" id="wBtnKeypad" onclick="startWriting(\'keypad\')">'+writingKeypadBtnText()+'</button></div></article>'; }
 function renderGrid(){ var g=document.getElementById('topicGrid'); if(!g) return; g.innerHTML=TOPICS.filter(function(t){return t.cat===cat}).filter(function(t){return !isTopicGradeHidden(t)}).map(function(t){ var p=topicProg(t.id); var started=p.done>0; var finished=p.done>=240; if(isTopicLocked(t)){ return '<article class="tcard locked"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+topicIcon(t)+'</div><span class="lock-badge">🔒 Opens in 3rd Grade!</span></div><h3>'+topicTitle(t)+'</h3><p><b>'+topicTitle(t)+'</b> is a <b>3rd-grade skill</b> (Common Core 3.OA) — multiplication and division start in 3rd grade, so this game stays locked in '+gradeLabel()+'. 🦁 Leo says: try <b>Addition All-Stars</b> or <b>Subtraction '+sportInfo().subGame+'</b> — they fit your grade right now!</p><button class="play-btn locked-btn" onclick="lockedTopicTap(\''+t.id+'\')">🔒 Opens in 3rd Grade!</button></article>'; } return '<article class="tcard"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+topicIcon(t)+'</div><span class="meta">'+(finished?'🏆 Finished!':started?'⭐ Keep Going!':'New Game')+'</span></div><h3>'+topicTitle(t)+'</h3><p>'+topicDesc(t)+'</p><button class="play-btn" onclick="startTopic(\''+t.id+'\')">'+(started&&!finished?'▶ Keep Playing!':finished?'▶ Play Again!':'▶ Start Playing!')+'</button></article>'; }).join('')+writingCardHTML(); }
 function updateTotals(){ var ts=0; TOPICS.forEach(function(t){var p=topicProg(t.id); ts+=p.stars;}); var wp=progress[progKey('writing')]; if(wp) ts+=wp.stars||0; var el=document.getElementById('totalStars'); if(el) el.textContent=ts; var wc=document.getElementById('wStarCount'); if(wc) wc.textContent= wp?(wp.stars||0):0; }
-function leoSay(html){ var b=document.getElementById('leoBubble'); b.innerHTML=html; b.classList.remove('bubble-pop'); void b.offsetWidth; b.classList.add('bubble-pop'); speakLeo(html); }
-function startTopic(id){ var lt=TOPICS.find(function(t){return t.id===id}); if(isTopicLocked(lt)){ lockedTopicTap(id); return; } if(isTopicGradeHidden(lt)){ toast('🦁 Leo says: that game is for a different grade — it is not part of '+gradeLabel()+'!'); return; } currentTopic=lt; document.body.classList.add('playing'); document.getElementById('homeView').style.display='none'; document.getElementById('practiceView').style.display='block'; document.getElementById('pTitle').textContent=topicIcon(currentTopic)+' '+topicTitle(currentTopic); window.scrollTo({top:0}); clearInterval(timerInt); timerInt=setInterval(function(){ topicProg(id).sec+=5; if(topicProg(id).sec%30===0) saveP(progress); },5000); initGameSession(id); renderAllPlayers(); nextPrompt(true); }
-function goHome(){ stopLeoSpeech(); stopDribble(); if(typeof toggleWorkPanel==='function') toggleWorkPanel(false); document.body.classList.remove('playing'); clearInterval(timerInt); saveP(progress); document.getElementById('practiceView').style.display='none'; var wv=document.getElementById('writingView'); if(wv) wv.style.display='none'; var gv2=document.getElementById('grownView'); if(gv2) gv2.style.display='none'; var sv2=document.getElementById('setupView'); if(sv2) sv2.style.display='none'; var hero2=document.getElementById('heroSection'); if(hero2) hero2.style.display=''; var grv=document.getElementById('gradeView'); if(grv) grv.style.display='none'; document.body.classList.remove('grade-gate-open'); document.getElementById('homeView').style.display='block'; renderGrid(); updateTotals(); if(typeof updateWritingVisibility==='function') updateWritingVisibility(); renderAllPlayers(); window.scrollTo({top:0}); }
+function leoSay(html,force){ var b=document.getElementById('leoBubble'); b.innerHTML=html; b.classList.remove('bubble-pop'); void b.offsetWidth; b.classList.add('bubble-pop'); speakLeo(html,force); }
+function startTopic(id){ var lt=TOPICS.find(function(t){return t.id===id}); if(isTopicLocked(lt)){ lockedTopicTap(id); return; } if(isTopicGradeHidden(lt)){ toast('🦁 Leo says: that game is for a different grade — it is not part of '+gradeLabel()+'!'); return; } currentTopic=lt; document.body.classList.add('playing'); document.getElementById('homeView').style.display='none'; document.getElementById('practiceView').style.display='block'; window.scrollTo({top:0}); clearInterval(timerInt); timerInt=setInterval(function(){ topicProg(id).sec+=5; if(topicProg(id).sec%30===0) saveP(progress); },5000); initGameSession(id); renderAllPlayers(); nextPrompt(true); gameOpenReadAloud(); }
+/* GAME-OPEN READ-ALOUD (Michelle, Nov 8, 2026 — Karter's build carries the
+   same automatic-reading rule as Royce's): the moment a game opens,
+   Coach Leo AUTOMATICALLY reads aloud ONLY the instructions showing on
+   the game screen — the welcome line in his bubble plus what to do in
+   this game — in his picked sample-3 voice (speakLeo with pickLeoVoice,
+   LEO_PITCH and LEO_RATE), no tap needed. The reading is FORCED
+   (speakLeo's force flag), the same path the Hint / Example auto-reads
+   use, so it is never silently dropped just because this tap did not
+   happen to prime the device voice first. ONLY the instructions: the
+   problem is NOT read at open (the 💬 replay still reads instructions +
+   problem on tap), and no Example ever starts or pops out at game
+   open — an example or a hint is read aloud only when the learner
+   selects it. The reading is CAPTIONED (speakCaptions): as Leo reads,
+   the words appear sentence by sentence in his bubble — the
+   instructions space at the top of the game view — in proper sentence
+   structure, and the full instruction text stays there when he
+   finishes. */
+function gameOpenReadAloud(){
+  try{
+    var instr=taskInstructionText();
+    var sInfo=sportInfo();
+    var welcome='Welcome to '+topicTitle(currentTopic)+'! Watch my example with the ✨ button if you need it, then try this one. You\'ve got this, champ! '+(sInfo?sInfo.tokenEmoji:'');
+    var text=(welcome+' '+(instr||'')).trim();
+    if(text) speakCaptions(text); /* voice + sentence-by-sentence captions in the bubble, full text stays when he finishes */
+  }catch(e){}
+}
+function goHome(){ stopLeoSpeech(); stopDribble(); if(typeof closeHintPanel==='function') closeHintPanel(); if(typeof closeToolsMenu==='function') closeToolsMenu(); if(typeof toggleWorkPanel==='function') toggleWorkPanel(false); document.body.classList.remove('playing'); clearInterval(timerInt); saveP(progress); document.getElementById('practiceView').style.display='none'; var wv=document.getElementById('writingView'); if(wv) wv.style.display='none'; var gv2=document.getElementById('grownView'); if(gv2) gv2.style.display='none'; var sv2=document.getElementById('setupView'); if(sv2) sv2.style.display='none'; var hero2=document.getElementById('heroSection'); if(hero2) hero2.style.display=''; var grv=document.getElementById('gradeView'); if(grv) grv.style.display='none'; document.body.classList.remove('grade-gate-open'); document.getElementById('homeView').style.display='block'; renderGrid(); updateTotals(); if(typeof updateWritingVisibility==='function') updateWritingVisibility(); renderAllPlayers(); window.scrollTo({top:0}); }
 function goHomeFromOverlay(){
   stopWizAuto(); stopLeoSpeech(); stopFt();
-  ['wizardModal','studioModal','themeModal','trophyModal','bonusModal','winModal','sportModal'].forEach(function(mid){ var m=document.getElementById(mid); if(m) m.classList.remove('open'); });
+  ['wizardModal','workModal','studioModal','themeModal','trophyModal','bonusModal','winModal','sportModal'].forEach(function(mid){ var m=document.getElementById(mid); if(m) m.classList.remove('open'); });
   saveDesign(); /* keep any player design changes he just made */
   goHome();
 }
 function nextPrompt(first){
   stopLeoSpeech();
+  if(typeof closeHintPanel==='function') closeHintPanel(); if(typeof closeToolsMenu==='function') closeToolsMenu(); lastHintText='';
   var p=topicProg(currentTopic.id); var tier=gradeTier();
   current= currentTopic.cat==='math'? genMath(currentTopic.id,tier) : genSpelling(currentTopic.id,tier);
   attempts=0;
@@ -2689,14 +2998,35 @@ function nextPrompt(first){
   document.getElementById('feedback').className='feedback'; document.getElementById('feedback').textContent='';
   setupWork();
   var sInfo=sportInfo();
-  leoSay(first? 'Welcome to <b>'+topicTitle(currentTopic)+'</b>! Watch my example with the ✨ button if you need it, then try this one. You\'ve got this, champ! '+sInfo.tokenEmoji : pick(sInfo.promptPhrases));
+  if(first){
+    /* NO static welcome sits in the bubble: it starts empty, and
+       startTopic()'s gameOpenReadAloud() fills it with sentence-by-
+       sentence CAPTIONS as Leo reads the welcome + instructions aloud. */
+    var bb0=document.getElementById('leoBubble'); if(bb0) bb0.textContent='';
+  } else {
+    leoSay(pick(sInfo.promptPhrases));
+  }
   startDribble();
   setTimeout(function(){ if(current.display!=='choice') inp.focus(); },80);
 }
 var chosen=null;
 function pickChoice(btn,val){ chosen=val; document.querySelectorAll('.choice').forEach(function(b){b.style.background='#fff'}); btn.style.background='#FFF3C4'; checkAnswer(); }
 function hearWord(){ if(!current||!current.speak) return; speakLeo(current.speak,true,0.8); }
-function leoHint(){ leoSay('💡 <b>Leo\'s Hint:</b> '+current.hint); toast('Hint from Leo! Check his speech bubble 🦁'); }
+/* HINT (Michelle, Nov 8, 2026 — Royce's approved game-view layout,
+   ported): "Get a Hint" in the Helper Tools drop-down opens the hint
+   FULL SCREEN over the game — Coach Leo's face, the hint words, a 💬
+   speech symbol that replays the reading, and its own ✕ Close that
+   returns right back to the same game and the same problem. Leo also
+   reads the hint ALOUD himself the moment it opens — no separate tap
+   on Hear It needed. The reading is FORCED (speakLeo's force flag),
+   the same path the Hear It buttons use, so it is never silently dropped
+   just because this tap did not happen to prime the device voice first.
+   Leo speaks with his picked sample-3 voice settings (LEO_PITCH /
+   LEO_RATE in the voice engine above), exactly as everywhere else. */
+var lastHintText='';
+function leoHint(){ if(!current||!current.hint) return; lastHintText=current.hint; var ht=document.getElementById('hintText'); if(ht) ht.innerHTML=current.hint; var hp=document.getElementById('hintPanel'); if(hp) hp.style.display='block'; leoSay('💡 <b>Leo\'s Hint:</b> '+current.hint,true); }
+function closeHintPanel(){ var hp=document.getElementById('hintPanel'); if(hp) hp.style.display='none'; }
+function replayHint(){ if(lastHintText) speakLeo(lastHintText,true); }
 function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(function(){t.style.display='none'},2200); }
 function normalize(v){ return String(v).trim().toLowerCase().replace(/\s+/g,''); }
 function checkAnswer(){
@@ -2738,7 +3068,7 @@ document.getElementById('answerInput').addEventListener('keydown',function(e){ i
    box is swallowed before the browser can step the number, in every
    game in this world. */
 document.addEventListener('wheel',function(e){ var t=e.target; if(t&&t.tagName==='INPUT'&&t.type==='number'){ e.preventDefault(); } },{passive:false});
-document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeWizard(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closeWizard(); var wm=document.getElementById('workModal'); if(wm&&wm.classList.contains('open')) toggleWorkPanel(false); } });
 
 /* ---------- MUSIC (YouTube embed, off by default) ---------- */
 var ytPlayer=null, ytReady=false, ytLoading=false, musicPlaying=false, pendingPlay=false;
@@ -5506,6 +5836,7 @@ function setupMove(dir){
   renderSetup(); try{ sfx('step'); }catch(e){}
 }
 function finishSetup(){
+  var firstFinish=!isSetupDone(); /* a first-time finish lands on home with grade + name in — Leo reads the hero welcome (below); a wizard re-run from the Menu does not re-read it */
   setupReadNameInputs(); saveTheme(); markSetupDone(); applyTheme(); renderAllPlayers(); try{ renderGrid(); }catch(e){}
   var sv=document.getElementById('setupView'); if(sv) sv.style.display='none';
   var hero=document.getElementById('heroSection'); if(hero) hero.style.display='';
@@ -5520,6 +5851,7 @@ function finishSetup(){
   window.scrollTo({top:0});
   toast(ok? '🎉 Welcome to '+themeWorldName()+'! Let\u2019s play!' : '🎉 Welcome to '+themeWorldName()+'! Pick your grade to start playing!');
   try{ sfx('cheer'); }catch(e){}
+  if(ok&&firstFinish){ try{ readHeroWelcome(); }catch(e){} } /* home page open, grade + name in — Leo reads the hero welcome script aloud */
 }
 
 /* ----- TWO LINKS: PLAIN LINK vs CUSTOM LINK -----
@@ -6002,7 +6334,7 @@ function renderKeypadRound(){
     if(built){ built.style.display='flex'; }
     renderBuiltBoxes();
     kp.innerHTML='abcdefghijklmnopqrstuvwxyz'.split('').map(function(ch){ return '<button type="button" class="lkey" onclick="tapKeypadLetter(this,\''+ch+'\')" aria-label="Letter '+ch+'">'+ch+'</button>'; }).join('');
-    wLeoSay('⌨️ Type the word <b>'+wKeyWord+'</b>! Tap the letters <b>in order</b> — the first letter is “'+wKeyWord[0]+'”. Tap 🔊 Hear It and Leo will spell it out loud!');
+    wLeoSay('⌨️ Type the word <b>'+wKeyWord+'</b>! Tap the letters <b>in order</b> — the first letter is “'+wKeyWord[0]+'”. Tap the speech button and Leo will spell it out loud!');
     return;
   }
   var L=wKeyLetter; if(!L) return;
