@@ -1297,7 +1297,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
 <header class="topbar">
   <div class="brand">
     <img class="lion-brand" src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/>
-    <div><span id="brandWorldName">KARTER'S COURT</span><small id="brandWorldSub">Math • Spelling • Basketball Fun</small></div>
+    <div><span id="brandWorldName">KARTER'S COURT</span><small id="brandWorldSub">K to 5th Grade</small></div>
   </div>
   <div class="nav-actions"><button type="button" class="home-nav-btn" id="homeNavBtn" onclick="goHomeFromOverlay()" aria-label="Home — back to the home screen">🏠 Home</button><div class="stars-pill">⭐ <span id="totalStars">0</span> Stars</div><div class="menu-wrap"><button type="button" class="menu-btn" id="menuBtn" onclick="toggleMenu(event)" aria-haspopup="true" aria-expanded="false" aria-controls="menuPanel" aria-label="Menu — change grade or open the Progress Report">☰ Menu ▾</button><div class="menu-panel" id="menuPanel" role="menu" aria-label="Menu"><div class="menu-grade-head"><span class="mgh-title">🎒 Change Grade</span><span class="mgh-now" id="menuGradeNow">Now: 3rd Grade</span></div><div class="menu-grade-list" id="menuGradeList" role="group" aria-label="Choose your grade"></div><div class="menu-divider" aria-hidden="true"></div><button type="button" class="menu-item" role="menuitem" onclick="menuPick('report')"><span class="mi-emoji" aria-hidden="true">📋</span><span class="mi-text"><span class="mi-title">Progress Report</span></span></button><button type="button" class="menu-item" id="menuSetupItem" role="menuitem" style="display:none" onclick="menuPick('setup')"><span class="mi-emoji" aria-hidden="true">✨</span><span class="mi-text"><span class="mi-title">Make It Yours — Setup Wizard</span><span class="mi-sub">Rebuild your theme, step by step</span></span></button></div></div></div>
 </header>
@@ -4462,20 +4462,22 @@ function applyWorldTheme(){
   if(sum) sum.textContent='Your world right now: '+displayName+' — Primary '+c.name+' (hero and Play buttons), Secondary '+c2.name+' (stars, tabs, shiny buttons and frames) and Tertiary '+c3.name+' (card borders and the hero\u2019s edge), your favorite '+ds.name+' '+ds.emoji+' as your home sport, and a '+a.name+' '+a.emoji+' mascot, with your own player out there playing. The three colors dress your cards and your hero space, and your hero is always the solid Primary color with nothing showing through it; your sport\u2019s own scene sits behind the cards below the hero, never behind the hero. This is your world\u2019s theme, and it stays just like this. The sport bar only switches today\u2019s games and their words — it never changes your world. Want a new world? Rebuild it here or in the Make It Yours setup wizard — pick different colors, a different favorite sport or animal, or rename your world any time.';
   /* The name they gave their world becomes the world's name everywhere:
      the top bar and the page title. The plain version always keeps
-     the original Karter's Court name. One small TEXT label follows
-     the active sport, because it is language, not theme: the brand
-     sub-line ("… • Tennis Fun"). The world name itself never changes.
+     the original Karter's Court name. The world name itself never
+     changes. The brand sub-line under it is the fixed grades line
+     "K to 5th Grade" — the same words in the same spot and style as
+     Royce's page — and it never follows the active sport or theme,
+     so this only ever re-sets it to that same line.
      The hero has no eyebrow line — nothing here repaints one. */
   var brand=document.getElementById('brandWorldName');
   var brandSub=document.getElementById('brandWorldSub');
   if(lockedOut){
     if(brand) brand.textContent="KARTER'S COURT";
-    if(brandSub) brandSub.textContent='Math • Spelling • '+as.name+' Fun';
+    if(brandSub) brandSub.textContent='K to 5th Grade';
     document.title="Karter's Court";
   } else {
     var named= !!(String(myTheme.worldName||'').trim()||String(myTheme.childName||'').trim());
     if(brand) brand.textContent= named? displayName.toUpperCase() : "KARTER'S COURT";
-    if(brandSub) brandSub.textContent='Math • Spelling • '+as.name+' Fun';
+    if(brandSub) brandSub.textContent='K to 5th Grade';
     document.title= named? displayName+' — Karter\'s Court' : "Karter's Court";
   }
   updateSetupPreview();
@@ -5123,11 +5125,12 @@ function applyActiveSport(){
   var lockedOut=!isCustomUnlocked();
   var c=lockedOut?THEME_COLORS[0]:themeColor();
   applySportTheme(lockedOut,c,effectiveSportObj());
-  /* The one language label the world layer owns: the brand sub-line's
-     sport word follows the games. The hero has no eyebrow line —
-     nothing here repaints one. */
-  var as=effectiveSportObj();
-  var brandSub=document.getElementById('brandWorldSub'); if(brandSub) brandSub.textContent='Math • Spelling • '+as.name+' Fun';
+  /* The brand sub-line under the top-bar brand name is the fixed
+     grades line "K to 5th Grade" (the same words, spot and style as
+     Royce's page): a sport switch never changes it, so this only
+     ever re-sets it to that same line. The hero has no eyebrow
+     line — nothing here repaints one. */
+  var brandSub=document.getElementById('brandWorldSub'); if(brandSub) brandSub.textContent='K to 5th Grade';
   renderSportSwitcher();
   try{ renderGrid(); }catch(e){}
   try{ renderAllPlayers(); }catch(e){}
