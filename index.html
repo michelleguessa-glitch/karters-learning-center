@@ -1307,7 +1307,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
   <button class="sfx-btn hero-sfx" id="sfxBtn" onclick="toggleSfx()" aria-pressed="true">🔊 Sounds ON</button>
   <div class="hero-inner">
     <div>
-      <div class="fred" id="heroEyebrow" style="font-size:15px;letter-spacing:.14em;color:#FFD34D;margin-bottom:8px">🏀 KARTER'S COURT 🦁</div><h1 id="heroHeadline">SHOOT.<br><span>LEARN &amp; WIN!</span></h1>
+      <h1 id="heroHeadline">LEARN.<br><span>SHOOT &amp; WIN!</span></h1>
       <p id="heroScript">Welcome <span id="heroLearnerName">Karter</span>! I'm Coach <span id="heroCoachName">Leo</span>. I'm here to help you practice until you get it right. Select a game below to get started. Let's WIN the Championship!</p>
       <div class="hero-stats">
         <div class="hstat"><b>One at a time</b><span>Just you &amp; Leo</span></div>
@@ -3893,7 +3893,7 @@ var THEME_SPORTS=[
    Soccer and Tennis (see CLASSIC_FREE_SPORTS below); its other sports
    stay visible but locked behind the Upgrade to Unlock button. */
 var SPORT_INFO={
-basketball:{arena:'Court',venue:'basketball court',contest:'game',headline:'SHOOT.<br><span>LEARN &amp; WIN!</span>',tokenType:'ball',tokenEmoji:'🏀',countEmoji:'🏀',countName:'basketballs',subGame:'Slam Dunk',wpGame:'Playoffs',idleDrop:'46px',readyMsg:'Your player is ready — answer to shoot! 🏀',makeMsg:'🎉 SWISH! +PTS points for your team!',makeShort:'Your player scored',oppCheer:'keep shooting, champ!',missMsg:'Off the rim! Read Leo\u2019s tip and shoot again on this same one! 🏀',missShort:'Off the rim!',nextPhrase:'then we dribble all the way to the championship!',promptPhrases:['New one! Read it carefully, then shoot your answer! 🏀','Here we go — I know you can get this one!','Eyes on the ball… here\u2019s your next one!'],playerDesc:'He is the player who shoots in every game!',bonusDesc:'Free-throw tapping and tap-the-right-ball games!',bonusTapName:'Free-Throw Tap',bonusTapDesc:'Tap SHOOT when the ball marker is in the green SWISH ZONE!',zone:'SWISH ZONE',ballRoundName:'Tap the Right Ball',note:'Basketball: your player dribbles while he waits, shoots on your answer — swish scores, off the rim means try the same one again. This is the SHARED basketball logic for both worlds: girls\u2019 basketball follows it exactly the same way — dribble while waiting, shoot on the answer, a swish through the net scores, and a miss pops back up off the rim, falls beside the hoop, bounces on the floor and rolls back to the player for the retry on the same one.'},
+basketball:{arena:'Court',venue:'basketball court',contest:'game',headline:'LEARN.<br><span>SHOOT &amp; WIN!</span>',tokenType:'ball',tokenEmoji:'🏀',countEmoji:'🏀',countName:'basketballs',subGame:'Slam Dunk',wpGame:'Playoffs',idleDrop:'46px',readyMsg:'Your player is ready — answer to shoot! 🏀',makeMsg:'🎉 SWISH! +PTS points for your team!',makeShort:'Your player scored',oppCheer:'keep shooting, champ!',missMsg:'Off the rim! Read Leo\u2019s tip and shoot again on this same one! 🏀',missShort:'Off the rim!',nextPhrase:'then we dribble all the way to the championship!',promptPhrases:['New one! Read it carefully, then shoot your answer! 🏀','Here we go — I know you can get this one!','Eyes on the ball… here\u2019s your next one!'],playerDesc:'He is the player who shoots in every game!',bonusDesc:'Free-throw tapping and tap-the-right-ball games!',bonusTapName:'Free-Throw Tap',bonusTapDesc:'Tap SHOOT when the ball marker is in the green SWISH ZONE!',zone:'SWISH ZONE',ballRoundName:'Tap the Right Ball',note:'Basketball: your player dribbles while he waits, shoots on your answer — swish scores, off the rim means try the same one again. This is the SHARED basketball logic for both worlds: girls\u2019 basketball follows it exactly the same way — dribble while waiting, shoot on the answer, a swish through the net scores, and a miss pops back up off the rim, falls beside the hoop, bounces on the floor and rolls back to the player for the retry on the same one.'},
 tennis:{arena:'Tennis Court',venue:'tennis court',contest:'match',headline:'SERVE.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'🎾',countEmoji:'🎾',countName:'tennis balls',subGame:'Tiebreak',wpGame:'Match Point',idleDrop:'13px',stageBg:'linear-gradient(180deg,#3E7CC4 0 54%,#2F9E63 54% 100%)',readyMsg:'Your player is bouncing the ball on his racket — answer to serve! 🎾',makeMsg:'🎉 OVER THE NET! It lands on the other side! +PTS points!',makeShort:'Your player smashed it over the net and scored',oppCheer:'keep that rally going, champ!',missMsg:'The ball hit the net and landed on the ground on YOUR side — no point! Read Leo\u2019s tip and serve again on this same one! 🎾',missShort:'It hit the net — your side!',nextPhrase:'then we bounce the ball and rally all the way to the championship!',promptPhrases:['New one! Read it carefully, then serve your answer! 🎾','Here we go — bounce, focus… here\u2019s your next one!','Racket ready… here\u2019s your next one!'],playerDesc:'He is the player who serves and rallies in every game!',bonusDesc:'Rally tapping and tap-the-right-ball games!',bonusTapName:'Rally Tap',bonusTapDesc:'Tap HIT when the ball marker is in the green OVER-THE-NET ZONE!',zone:'OVER-THE-NET ZONE',ballRoundName:'Tap the Right Ball',note:'Tennis: there is ONE racket, in your player\u2019s hand, and he bounces the ball ON that racket while he waits. A right answer serves the ball up in a clear arc OVER the net so it lands on the other side — point! A wrong answer sends the ball INTO the net — it drops to the ground on YOUR side, no point, serve again.'},
 soccer:{arena:'Soccer Field',venue:'soccer field',contest:'match',headline:'KICK.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'⚽',countEmoji:'⚽',countName:'soccer balls',subGame:'Shootout',wpGame:'Cup Final',idleDrop:'2px',stageBg:'linear-gradient(180deg,#57B24A 0 100%)',readyMsg:'Your player has his foot on the ball, rolling it back and forth under his foot — answer to shoot at the goal! ⚽',makeMsg:'🎉 GOAL! Right into the net! +PTS points!',makeShort:'Your player kicked it into the goal and scored',oppCheer:'keep kicking for that goal, champ!',missMsg:'Off the post! No goal — read Leo\u2019s tip and kick again on this same one! ⚽',missShort:'Off the post!',nextPhrase:'then we dribble down the field all the way to the championship!',promptPhrases:['New one! Read it carefully, then kick your answer! ⚽','Here we go — eyes on the goal… here\u2019s your next one!','Boots ready… here\u2019s your next one!'],playerDesc:'He is the player who dribbles and shoots in every game!',bonusDesc:'Penalty-kick tapping and tap-the-right-ball games!',bonusTapName:'Penalty Tap',bonusTapDesc:'Tap KICK when the ball marker is in the green GOAL ZONE!',zone:'GOAL ZONE',ballRoundName:'Tap the Right Ball',note:'Soccer: your player waits with his foot on top of the ball, his foot rocking back and forth and rolling the ball under it on the ground — the ball is never bounced or juggled while he waits. A right answer kicks it into the goal — GOAL! A wrong answer hits the post — no goal, kick again.'},
 baseball:{arena:'Baseball Diamond',venue:'baseball diamond',contest:'game',headline:'SWING.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'⚾',countEmoji:'⚾',countName:'baseballs',subGame:'Strikeout',wpGame:'World Series',idleDrop:'18px',stageBg:'linear-gradient(180deg,#57B24A 0 62%,#C98B4B 62% 100%)',readyMsg:'Your player is at the plate taking practice swings, bouncing the ball in his glove — answer to swing for real! ⚾',makeMsg:'🎉 HOME RUN! Over the fence! +PTS points!',makeShort:'Your player hit a home run and scored',oppCheer:'keep swinging for the fences, champ!',missMsg:'Swing and a miss — strike! No run. Read Leo\u2019s tip and swing again on this same one! ⚾',missShort:'Swing and a miss — strike!',nextPhrase:'then we step back up to the plate all the way to the championship!',promptPhrases:['New one! Read it carefully, then swing at your answer! ⚾','Here we go — batter up… here\u2019s your next one!','Bat ready… here\u2019s your next one!'],playerDesc:'He is the player who bats in every game!',bonusDesc:'Home-run tapping and tap-the-right-ball games!',bonusTapName:'Home-Run Tap',bonusTapDesc:'Tap SWING when the ball marker is in the green HOME-RUN ZONE!',zone:'HOME-RUN ZONE',ballRoundName:'Tap the Right Ball',note:'Baseball: your player waits at the plate taking practice swings and bouncing the ball in his glove. A right answer is a hit — a home run over the fence scores! A wrong answer is a swing and a miss, a strike, no run — step back in and swing again.'},
@@ -4461,24 +4461,21 @@ function applyWorldTheme(){
   var sum=document.getElementById('themeSummary');
   if(sum) sum.textContent='Your world right now: '+displayName+' — Primary '+c.name+' (hero and Play buttons), Secondary '+c2.name+' (stars, tabs, shiny buttons and frames) and Tertiary '+c3.name+' (card borders and the hero\u2019s edge), your favorite '+ds.name+' '+ds.emoji+' as your home sport, and a '+a.name+' '+a.emoji+' mascot, with your own player out there playing. The three colors dress your cards and your hero space, and your hero is always the solid Primary color with nothing showing through it; your sport\u2019s own scene sits behind the cards below the hero, never behind the hero. This is your world\u2019s theme, and it stays just like this. The sport bar only switches today\u2019s games and their words — it never changes your world. Want a new world? Rebuild it here or in the Make It Yours setup wizard — pick different colors, a different favorite sport or animal, or rename your world any time.';
   /* The name they gave their world becomes the world's name everywhere:
-     the top bar, the hero banner and the page title. The plain version
-     always keeps the original Karter's Court name. Two small TEXT
-     labels follow the active sport, because they are language, not
-     theme: the brand sub-line ("… • Tennis Fun") and the sport emoji
-     opening the hero eyebrow. The world name itself never changes. */
+     the top bar and the page title. The plain version always keeps
+     the original Karter's Court name. One small TEXT label follows
+     the active sport, because it is language, not theme: the brand
+     sub-line ("… • Tennis Fun"). The world name itself never changes.
+     The hero has no eyebrow line — nothing here repaints one. */
   var brand=document.getElementById('brandWorldName');
   var brandSub=document.getElementById('brandWorldSub');
-  var eyebrow=document.getElementById('heroEyebrow');
   if(lockedOut){
     if(brand) brand.textContent="KARTER'S COURT";
     if(brandSub) brandSub.textContent='Math • Spelling • '+as.name+' Fun';
-    if(eyebrow) eyebrow.textContent=as.emoji+" KARTER'S COURT 🦁";
     document.title="Karter's Court";
   } else {
     var named= !!(String(myTheme.worldName||'').trim()||String(myTheme.childName||'').trim());
     if(brand) brand.textContent= named? displayName.toUpperCase() : "KARTER'S COURT";
     if(brandSub) brandSub.textContent='Math • Spelling • '+as.name+' Fun';
-    if(eyebrow) eyebrow.textContent= as.emoji+' '+(named? displayName.toUpperCase() : "KARTER'S COURT")+' '+a.emoji;
     document.title= named? displayName+' — Karter\'s Court' : "Karter's Court";
   }
   updateSetupPreview();
@@ -5126,16 +5123,11 @@ function applyActiveSport(){
   var lockedOut=!isCustomUnlocked();
   var c=lockedOut?THEME_COLORS[0]:themeColor();
   applySportTheme(lockedOut,c,effectiveSportObj());
-  /* The two language labels the world layer owns: the brand sub-line's
-     sport word and the hero eyebrow's sport emoji follow the games. */
+  /* The one language label the world layer owns: the brand sub-line's
+     sport word follows the games. The hero has no eyebrow line —
+     nothing here repaints one. */
   var as=effectiveSportObj();
   var brandSub=document.getElementById('brandWorldSub'); if(brandSub) brandSub.textContent='Math • Spelling • '+as.name+' Fun';
-  var eyebrow=document.getElementById('heroEyebrow');
-  if(eyebrow){
-    var a=lockedOut?THEME_ANIMALS[0]:themeAnimal();
-    var named=!lockedOut&&!!(String(myTheme.worldName||'').trim()||String(myTheme.childName||'').trim());
-    eyebrow.textContent= lockedOut? (as.emoji+" KARTER'S COURT 🦁") : (as.emoji+' '+(named? themeWorldName().toUpperCase() : "KARTER'S COURT")+' '+a.emoji);
-  }
   renderSportSwitcher();
   try{ renderGrid(); }catch(e){}
   try{ renderAllPlayers(); }catch(e){}
