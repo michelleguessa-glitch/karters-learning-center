@@ -345,6 +345,20 @@ body.custom-world[data-world-color="white"] .music-bar{color:var(--ink)}
 .grade-keep-row{display:none;margin-top:18px;text-align:center}
 .grade-keep-row.show{display:block}
 body.grade-gate-open{overflow:hidden}
+/* ===== CLASSIC NAME POP-UP — classic link only, right after the
+   first-open grade pick =====
+   A small modal in the same .modal / .sheet family as every other
+   pop-up on this page. It opens only on the CLASSIC link, only once,
+   immediately after a first-time learner taps a grade in the grade
+   pop-up: one name field and one big Let's Play button. The name
+   typed here is saved on the device (its own key, beside the saved
+   grade) and fills the hero script's learner-name slot; leaving the
+   field blank keeps "Karter" in that slot. The customized link never
+   opens it — its names already come from the setup wizard. */
+#classicNameModal{z-index:96}
+#classicNameModal .sheet{width:min(520px,100%)}
+.name-pop-note{font-weight:800;color:var(--muted);margin:4px 0 6px;line-height:1.5;font-size:16px}
+.name-pop-blank{font-weight:800;color:var(--muted);margin:9px 0 0;line-height:1.45;font-size:14px;text-align:center}
 /* While the grade pop-up is open it must cover EVERYTHING, top bar and
    music player included, so the wrapper that holds it rises above them
    and the fixed pop-up paints over the whole screen. */
@@ -1235,7 +1249,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
   <div class="hero-inner">
     <div>
       <div class="fred" id="heroEyebrow" style="font-size:15px;letter-spacing:.14em;color:#FFD34D;margin-bottom:8px">🏀 KARTER'S COURT 🦁</div><h1 id="heroHeadline">SHOOT.<br><span>LEARN &amp; WIN!</span></h1>
-      <p><span id="heroWelcome">Welcome to your basketball court!</span> I'm <span id="heroCoachIntro">Coach Leo</span>! Pick a game on <span id="heroVenue">my basketball court</span>. I'll show you an example first and help you fix mistakes until you get it right — <span id="heroNext">then we dribble all the way to the championship!</span></p>
+      <p id="heroScript">Welcome <span id="heroLearnerName">Karter</span>! I'm Coach <span id="heroCoachName">Leo</span>. I'm here to help you practice until you get it right. Select a game below to get started. Let's WIN the Championship!</p>
       <div class="hero-stats">
         <div class="hstat"><b>One at a time</b><span>Just you &amp; Leo</span></div>
         <div class="hstat"><b>No rushing</b><span>Learn at your pace</span></div>
@@ -1696,6 +1710,23 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
     </div>
   </div>
 </div>
+<!-- CLASSIC NAME POP-UP — classic link only. Opens right after a
+     first-time learner picks a grade in the first-open grade pop-up
+     (setGrade opens it — see the classic-name block beside setGrade).
+     One name field, one button: the typed name saves on this device
+     and replaces "Karter" in the hero script; a blank field keeps
+     "Karter". The customized link never opens this pop-up. -->
+<div class="modal" id="classicNameModal" role="dialog" aria-modal="true" aria-labelledby="classicNameTitle">
+  <div class="sheet">
+    <div style="display:flex;align-items:center;gap:10px"><img class="wiz-leo" src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/><span class="fred" style="color:var(--red);font-size:14px;letter-spacing:.1em">COACH LEO WANTS TO SAY HI!</span></div>
+    <h3 id="classicNameTitle">What's your name? 👋</h3>
+    <p class="name-pop-note">Type your name and Coach Leo will greet <b>you</b> at the top of the page!</p>
+    <label class="setup-field-label" for="classicNameInput">Your first name</label>
+    <input class="setup-input" id="classicNameInput" maxlength="24" autocomplete="off" placeholder="e.g. Karter" aria-label="Your first name" onkeydown="if(event.key==='Enter'){event.preventDefault();submitClassicName();}"/>
+    <button class="check-btn" onclick="submitClassicName()" style="width:100%;margin-top:16px">⭐ That's Me — Let's Play!</button>
+    <p class="name-pop-blank">No name? Leave it blank and Coach Leo will keep calling you Karter.</p>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1704,6 +1735,16 @@ function loadP(){ try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){
 function saveP(p){ localStorage.setItem(KEY, JSON.stringify(p)); }
 var progress=loadP();
 var GRADE_KEY='karter-grade-v1';
+/* CLASSIC LEARNER NAME — classic link only. The name a learner types
+   in the name pop-up that follows the first-open grade pick, saved on
+   this device under its own key right beside the saved grade, so the
+   hero script greets them by name on the next open too. An empty
+   saved name means the field was left blank — the hero keeps
+   "Karter". The customized link never reads or writes this key: its
+   learner name lives in the theme (myTheme.childName) from setup. */
+var CLASSIC_NAME_KEY='karter-classic-name-v1';
+var classicLearnerName='';
+try{ classicLearnerName=String(localStorage.getItem(CLASSIC_NAME_KEY)||'').trim().slice(0,24); }catch(e){}
 var GRADES=[
 {id:'K',name:'Kindergarten',big:'K',emoji:'🧸',blurb:'Counting to 20, letter sounds & first sight words'},
 {id:'1',name:'1st Grade',big:'1',emoji:'✏️',blurb:'Adding & taking away to 100, clocks & first vowel teams'},
@@ -1738,7 +1779,17 @@ function closeMenu(){ var p=document.getElementById('menuPanel'), b=document.get
 function menuPick(which){ closeMenu(); if(which==='grade') openGradePicker(); else if(which==='report') openGrownUps(); else if(which==='setup') openSetupWizard(); }
 document.addEventListener('click',function(e){ var w=document.querySelector('.menu-wrap'); if(w&&!w.contains(e.target)) closeMenu(); });
 document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeMenu(); });
-function setGrade(id){ currentGrade=id; try{ localStorage.setItem(GRADE_KEY,id); }catch(e){} var gv=document.getElementById('gradeView'), hv=document.getElementById('homeView'); if(gv) gv.style.display='none'; document.body.classList.remove('grade-gate-open'); if(hv) hv.style.display='block'; renderGradeCards(); updateGradeBar(); renderGrid(); updateTotals(); if(typeof updateWritingVisibility==='function') updateWritingVisibility(); try{ applyTheme(); }catch(e){} toast('🎒 '+gradeLabel()+' — Leo set every game to your grade level!'); window.scrollTo({top:0}); /* GRADE FIRST, WIZARD SECOND: on the customized link, a first-time family picks their grade in the pop-up before anything else; the moment the grade is picked, the Make It Yours setup wizard opens (first custom open only — after it is done, changing grade never reopens it). */ try{ if(isCustomUnlocked()&&!isSetupDone()) openSetupWizard(); }catch(e){} }
+function setGrade(id){ /* FIRST-OPEN PICK? A grade card tapped while NO grade was saved yet is the first-open pick — the only pick the classic name pop-up ever follows. Later grade changes (the ☰ Menu list, or re-opening this pop-up with a grade already saved) never ask for a name again. */ var isFirstGradePick=!currentGrade; currentGrade=id; try{ localStorage.setItem(GRADE_KEY,id); }catch(e){} var gv=document.getElementById('gradeView'), hv=document.getElementById('homeView'); if(gv) gv.style.display='none'; document.body.classList.remove('grade-gate-open'); if(hv) hv.style.display='block'; renderGradeCards(); updateGradeBar(); renderGrid(); updateTotals(); if(typeof updateWritingVisibility==='function') updateWritingVisibility(); try{ applyTheme(); }catch(e){} toast('🎒 '+gradeLabel()+' — Leo set every game to your grade level!'); window.scrollTo({top:0}); /* GRADE FIRST, WIZARD SECOND: on the customized link, a first-time family picks their grade in the pop-up before anything else; the moment the grade is picked, the Make It Yours setup wizard opens (first custom open only — after it is done, changing grade never reopens it). */ try{ if(isCustomUnlocked()&&!isSetupDone()) openSetupWizard(); }catch(e){} /* GRADE FIRST, NAME SECOND — CLASSIC LINK ONLY: right after that same first grade pick, the name pop-up asks the learner's name, and the typed name replaces "Karter" in the hero script. The customized link skips it entirely (its name comes from setup), and a classic device that already saved a name is never asked again. */ try{ if(isFirstGradePick&&!isCustomUnlocked()&&!classicLearnerName) openClassicNamePrompt(); }catch(e){} }
+/* ===== CLASSIC NAME POP-UP — classic link only =====
+   Opens once, from setGrade, immediately after the first-open grade
+   pick on the classic link. The typed name is trimmed, capped like
+   every other name field on this page (24 characters), saved on the
+   device under CLASSIC_NAME_KEY beside the saved grade, and put into
+   the hero script's learner-name slot right away (renderHeroScript).
+   Leaving the field blank saves nothing and the hero keeps
+   "Karter" — heroLearnerName falls back to it. */
+function openClassicNamePrompt(){ var m=document.getElementById('classicNameModal'); if(!m) return; var inp=document.getElementById('classicNameInput'); if(inp) inp.value=classicLearnerName||''; m.classList.add('open'); setTimeout(function(){ var i2=document.getElementById('classicNameInput'); if(i2){ try{ i2.focus(); }catch(e){} } },60); }
+function submitClassicName(){ var inp=document.getElementById('classicNameInput'); var val=inp? String(inp.value||'').trim().slice(0,24) : ''; classicLearnerName=val; try{ if(val) localStorage.setItem(CLASSIC_NAME_KEY,val); else localStorage.removeItem(CLASSIC_NAME_KEY); }catch(e){} var m=document.getElementById('classicNameModal'); if(m) m.classList.remove('open'); try{ renderHeroScript(); }catch(e){} toast(val? '👋 Welcome, '+val+'! Coach Leo is ready — pick a game!' : '👋 Welcome, Karter! Coach Leo is ready — pick a game!'); try{ sfx('open'); }catch(e){} }
 function openGradePicker(){ stopLeoSpeech(); renderGradeCards(); updateGradeBar(); var gv=document.getElementById('gradeView'); var ok=false; for(var i=0;i<GRADES.length;i++){ if(GRADES[i].id===currentGrade) ok=true; } var kr=document.getElementById('gradeKeepRow'); if(kr) kr.classList.toggle('show',ok); if(gv){ gv.style.display='block'; gv.scrollTop=0; } document.body.classList.add('grade-gate-open'); window.scrollTo({top:0}); }
 function closeGradePicker(){ var gv=document.getElementById('gradeView'); if(gv) gv.style.display='none'; document.body.classList.remove('grade-gate-open'); var hv=document.getElementById('homeView'); if(hv&&hv.style.display==='none') hv.style.display='block'; window.scrollTo({top:0}); }
 /* GRADE GATE — the grade pop-up is the FIRST thing a first-time learner
@@ -4152,6 +4203,19 @@ function coachAnimalObj(){ return myTheme.coachBase==='fav'? themeAnimal() : THE
 function coachAnimalName(){ return coachAnimalObj().name; }
 function coachName(){ var n=String(myTheme.coachName||'').trim(); return n||coachIdentity().defaultName; }
 function coachTitle(){ return 'Coach '+coachName(); }
+/* FIXED HERO SCRIPT — this exact wording never changes, no matter the
+   sport or the game. No sport name, no per-sport version, ever. Only
+   the two name slots fill from the page's own data: the learner's
+   name is the name the page holds (myTheme.childName on a custom
+   link, from setup; on the classic link, the name typed in the name
+   pop-up after the first-open grade pick and saved on the device —
+   classicLearnerName — with "Karter" kept when that field was left
+   blank), and the coach's name is the coach's current name (Leo, or
+   the renamed coach on a custom link). Rendered text, word for word:
+   "Welcome (learner)! I'm Coach (coach). I'm here to help you practice until you get it right. Select a game below to get started. Let's WIN the Championship!" */
+function heroLearnerName(lockedOut){ if(lockedOut){ var cn=String((typeof classicLearnerName!=='undefined'&&classicLearnerName)||'').trim(); return cn||'Karter'; } var n=String((typeof myTheme!=='undefined'&&myTheme&&myTheme.childName)||'').trim(); return n||'Karter'; }
+function heroCoachName(lockedOut){ return lockedOut? 'Leo' : coachName(); }
+function renderHeroScript(lockedOut){ var lo=(typeof lockedOut==='boolean')? lockedOut : (typeof customUnlocked!=='undefined'&&!customUnlocked); var ln=document.getElementById('heroLearnerName'); if(ln) ln.textContent=heroLearnerName(lo); var cn=document.getElementById('heroCoachName'); if(cn) cn.textContent=heroCoachName(lo); }
 /* The coach's FACE: Coach Leo is always a young MAN in BOTH builds —
    classic and customized. There is no lion face option for the coach;
    the lion stays the team mascot animal only. Any older save that
@@ -4190,17 +4254,12 @@ function applyCoachDisplay(lockedOut,sportObj){
     sub=coachOutfitEmoji(co)+' '+co.name+' • '+ci.pronouns;
     team= ca.emoji+' '+possessiveName(name)+' '+coachAnimalName()+'s';
   }
-  /* HERO PARAGRAPH RULE: the hero paragraph never changes when a
-     learner customizes their world — no custom coach name, no
-     ", your … coach" suffix, no colors, animal, world name or any
-     other custom-build detail goes into it. It always opens
-     "I'm Coach Leo!" exactly as written in the page; the only
-     parts of that paragraph that ever change are the sport's own
-     venue and closing phrase, set by applySportTheme from
-     SPORT_INFO. The coach's custom name still shows everywhere
-     OUTSIDE this paragraph (badge, style line, previews). */
-  var intro=document.getElementById('heroCoachIntro');
-  if(intro) intro.textContent='Coach Leo';
+  /* HERO SCRIPT RULE: the hero greeting is the FIXED script (see
+     renderHeroScript) — it never changes with the sport or the game.
+     Only its two name slots fill here: the learner's name the page
+     holds (Karter on the classic link) and the coach's current name
+     (Leo, or the renamed coach on a custom link). */
+  renderHeroScript(lockedOut);
   var badge=document.getElementById('heroCoachBadge'); if(badge) badge.textContent=(sportObj?sportObj.emoji:'🏀')+' '+title.toUpperCase()+' — HEAD COACH';
   var style=document.getElementById('heroCoachStyle'); if(style) style.textContent=sub;
   document.querySelectorAll('.coach-first-name').forEach(function(el){ el.textContent=name; });
@@ -4871,17 +4930,11 @@ function applyTheme(){
 function applySportTheme(lockedOut,c,s){
   var info=sportInfo();
   var headline=document.getElementById('heroHeadline'); if(headline) headline.innerHTML=info.headline;
-  var venue=document.getElementById('heroVenue'); if(venue) venue.textContent='my '+info.venue;
-  var hw=document.getElementById('heroWelcome'); if(hw) hw.textContent='Welcome to your '+(s.id==='baseball'?'baseball field':info.venue)+'!';
-  var nxt=document.getElementById('heroNext'); if(nxt) nxt.textContent=info.nextPhrase;
-  /* The badge on the hero follows the active sport. The hero
-     PARAGRAPH does not: per the hero paragraph rule in
-     applyCoachDisplay, its coach intro stays "Coach Leo" in every
-     world, classic or customized — only this function's venue and
-     nextPhrase updates above (the sport's own name and language)
-     change inside that paragraph. The setup / theme previews keep
-     the default world's coach line (set by applyWorldTheme). */
-  var cIntro=document.getElementById('heroCoachIntro'); if(cIntro) cIntro.textContent='Coach Leo';
+  /* The hero greeting is the FIXED script (see renderHeroScript):
+     switching sport or game NEVER rewrites it — no venue, no sport
+     phrase, no per-sport wording goes into it. Only its two name
+     slots refresh, from the page's own learner and coach names. */
+  renderHeroScript(lockedOut);
   var cBadge=document.getElementById('heroCoachBadge'); if(cBadge) cBadge.textContent=s.emoji+' '+coachTitle().toUpperCase()+' — HEAD COACH';
   var tabEm=document.querySelector('#tabMath .theme-sport-emoji'); if(tabEm) tabEm.textContent=s.emoji;
   var tm=document.getElementById('tabMathLabel'); if(tm) tm.textContent='MATH '+info.arena.toUpperCase();
