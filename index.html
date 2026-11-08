@@ -682,7 +682,14 @@ body.playing .shot-ball{width:30px;height:30px}
 body.playing .shot-msg{font-size:13.5px;padding:5px 11px;bottom:6px}
 body.playing .gamecard{margin:0;padding:12px 14px;border-radius:20px;box-shadow:0 4px 0 #FFE1B8;min-height:0;overflow-y:auto;overflow-x:hidden;position:relative;display:flex;flex-direction:column}
 body.playing .play-layout{display:block;height:auto}
-body.playing .play-layout.has-work{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;height:100%;min-height:0;align-items:stretch}
+/* The open Work It Out layout GROWS to its full content height instead of
+   being clipped to the card's height: the game card is the ONE scroll
+   container for the whole layout (see the .work-panel note below), so
+   the panel's bottom — the Draw It Out canvas included — is always
+   reachable by scrolling the card, on wide screens exactly as on
+   narrow ones. flex:0 0 auto stops the card's flex column from
+   shrinking the layout back down to the card's visible height. */
+body.playing .play-layout.has-work{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;height:auto;min-height:0;align-items:start;flex:0 0 auto}
 body.playing .play-layout.has-work .play-main{min-width:0}
 body.playing .play-main{display:flex;flex-direction:column;min-height:0}
 body.playing .question{font-size:clamp(24px,3.1vw,38px);margin:6px 0;line-height:1.08}
@@ -701,9 +708,16 @@ body.playing .qlabel{font-size:11px}
 /* Work It Out sits BESIDE the math equation inside the prompt card — a
    second column next to the question, the answer input and the Check
    button. It never overlays or covers any of them, at any width: the
-   play layout becomes a two-column grid while the panel is open, and
-   the panel scrolls inside its own column. */
-body.playing .work-panel{position:relative;inset:auto;width:auto;height:100%;max-height:100%;overflow-y:auto;overflow-x:hidden;margin:0;padding:12px;border-radius:16px;box-shadow:0 5px 0 var(--gold)}
+   play layout becomes a two-column grid while the panel is open. The
+   panel itself carries NO height cap and NO scrollbar of its own: it
+   renders at its full natural height (step boxes, Pen / Eraser / Clear
+   row, the whole Draw It Out canvas and the note under it), and the
+   game card — the layout's single scroll container — scrolls to reach
+   its bottom. The panel used to be clipped to the card's height with
+   its own inner scrollbar; on the desktop Hockey game that left the
+   scratch-pad canvas below a fold no scroll could reach, because the
+   playing page itself never scrolls. */
+body.playing .work-panel{position:relative;inset:auto;width:auto;height:auto;max-height:none;overflow:visible;margin:0;padding:12px;border-radius:16px;box-shadow:0 5px 0 var(--gold)}
 body.playing .work-panel h3{font-size:21px}
 /* GAME FRAMING — phones and narrow windows: when Work It Out opens, the
    panel stacks UNDER the question at the full width of the game card
@@ -716,7 +730,7 @@ body.playing .work-panel h3{font-size:21px}
 @media(max-width:1200px){
   body.playing .play-layout.has-work{display:flex;flex-direction:column;height:auto;min-height:0}
   body.playing .play-layout.has-work .play-main{flex:0 0 auto;width:100%}
-  body.playing .play-layout.has-work .work-panel{flex:0 0 auto;width:auto;height:auto;max-height:none}
+  body.playing .play-layout.has-work .work-panel{flex:0 0 auto;width:auto;height:auto;max-height:none;overflow:visible}
 }
 .work-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .work-close{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:6px 12px;font-weight:900;font-size:13px;white-space:nowrap}
@@ -2244,12 +2258,13 @@ function toggleWorkPanel(force){
   var btn=document.getElementById('workToggleBtn'); if(btn) btn.textContent=show?'✏️ Close Work It Out':'✏️ Work It Out';
   var layout=document.getElementById('playLayout'); if(layout) layout.classList.toggle('has-work',show); /* has-work = the beside-the-equation two-column layout, never an overlay */
   if(show){ setPadTool('pen'); setTimeout(function(){ fitPad(false); },60);
-    /* On phones / narrow windows the panel stacks under the question
-       inside the scrolling game card — bring its top (heading + Done)
-       into the card's visible frame the moment it opens, so none of
-       the panel ever sits hidden below the card's fold or under the
-       control deck. */
-    if(window.innerWidth<=1200){ setTimeout(function(){ try{ panel.scrollIntoView({block:'start'}); }catch(e){} },80); } }
+    /* At every width the panel renders at full height inside the
+       scrolling game card (on phones / narrow windows it stacks under
+       the question) — bring its top (heading + Done) into the card's
+       visible frame the moment it opens, so none of the panel ever
+       sits hidden below the card's fold or under the control deck,
+       and the card's own scroll reaches the scratch pad below it. */
+    setTimeout(function(){ try{ panel.scrollIntoView({block:'start'}); }catch(e){} },80); }
 }
 function setupWork(){
   var panel=document.getElementById('workPanel'); var layout=document.getElementById('playLayout');
