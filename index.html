@@ -11,7 +11,7 @@
 <title>Karter's Court</title>
 <style>
 :root{--red:#D92323;--red-d:#B91C1C;--orange:#FF6B1A;--gold:#FFB800;--gold-l:#FEF3C7;--cream:#FFF8EE;--ink:#2B1608;--muted:#7A5A44;--card:#fff;--line:#FFE1B8;--green:#16A34A;--green-bg:#DCFCE7;--radius:24px;--theme-primary:#D92323;--theme-primary-dark:#B91C1C;--theme-primary-soft:#FFF3C4;--theme-secondary:#B45309;--theme-secondary-bright:#FFB800;--theme-secondary-dark:#92400E;--theme-secondary-soft:#FEF3C7;--theme-tertiary:#FFE1B8;--theme-tertiary-dark:#FDBA74;--theme-tertiary-soft:#FFE1B8}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden;overflow-x:clip}
 h1,h2,h3,.fred{font-family:'Fredoka',sans-serif;letter-spacing:-.02em}
 button{font-family:inherit;cursor:pointer;color:inherit}
 /* NO BLUE TEXT ON ANY DEVICE — blue is not one of Karter's colors
@@ -27,7 +27,30 @@ a,a:visited{color:inherit}
 button,input,select,textarea{color:inherit}
 html{-webkit-tap-highlight-color:transparent}
 .tab,.back,.ghost,.goldbtn,.choice,.sfx-btn,.pad-btn,.fav-chip,.opt-chip,.grade-card,.hub-card,.sport-pick-card,.lkey,.w-mode-btn,.answer-input,.col-box,.frac-cell{color:var(--ink)}
+/* STICKY NAV — the top bar STAYS at the top of the screen while the
+   page scrolls: position:sticky with top:0 pins it in place and it
+   never scrolls away, matching Royce's bar. For that to work in every
+   browser the page must not hand the body a scroll box of its own:
+   overflow-x:hidden on body turns the body into a scroll container
+   on some phone browsers and silently breaks sticky, so the body
+   rule above follows it with overflow-x:clip — the same no-sideways-
+   scroll protection, but clip creates NO scroll container, so this
+   bar's stickiness holds everywhere. (Browsers too old for clip fall
+   back to the hidden declaration just before it.) The bar keeps its
+   white background and red bottom border so content scrolling under
+   it stays hidden behind it, and z-index keeps it above the page. */
 .topbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:4px solid var(--red);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* NAV SPREAD — the nav buttons (Home, Stars, Menu) spread evenly
+   across the bar: the button group grows to fill all the space
+   between the brand and the bar's right edge, and its items are laid
+   out with space-between, so Home, Stars and Menu sit evenly spread
+   with equal space between every pair. The 🔊 Sounds button is NOT in
+   this bar anymore — it lives in the hero section, at the hero's top
+   right (see .hero-sfx below), matching Royce's page. The 8px gap
+   stays as the minimum spacing so the pills never touch on a narrow
+   phone, where the group wraps under the brand and still spreads
+   across the full width. */
+.nav-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex:1 1 auto;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:10px;font-family:'Fredoka';font-weight:700;font-size:20px;line-height:1;color:var(--red-d)}
 .brand small{display:block;font-family:'Nunito';font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:3px}
 .stars-pill{background:var(--gold);color:#431407;padding:8px 14px;border-radius:999px;font-weight:900;font-size:15px;white-space:nowrap}
@@ -49,6 +72,20 @@ html{-webkit-tap-highlight-color:transparent}
 .menu-wrap{position:relative}
 .menu-btn{border:3px solid var(--ink);background:var(--gold);color:var(--ink);border-radius:999px;padding:8px 14px;font-family:'Fredoka';font-weight:700;font-size:15px;line-height:1.15;white-space:nowrap;box-shadow:0 3px 0 var(--ink)}
 .menu-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+/* STARS TRACKER — the ⭐ pill in the TOP BAR carries the ☰ Menu
+   pill's DESIGN: identical border, 999px shape, padding, Fredoka 700
+   type at the same size and line-height, and the same 0 3px 0 ink
+   shadow. Its COLORS are its OWN original ones, exactly as the base
+   .stars-pill rule above had them before this redesign — the gold
+   background and the #431407 text color — NOT the Menu pill's ink
+   text color. Only its content (⭐ count + "Stars") and its position
+   in the bar differ from the Menu pill besides that. This rule
+   is scoped to .topbar so the other .stars-pill labels inside the
+   practice and writing views keep their existing look, untouched.
+   The two responsive passes below mirror the Menu pill's own
+   shrink steps (640px and the compact playing layout) step for step,
+   so the two pills stay identical at every width. */
+.topbar .stars-pill{border:3px solid var(--ink);background:var(--gold);color:#431407;border-radius:999px;padding:8px 14px;font-family:'Fredoka';font-weight:700;font-size:15px;line-height:1.15;white-space:nowrap;box-shadow:0 3px 0 var(--ink)}
 .menu-panel{display:none;position:absolute;top:calc(100% + 10px);right:0;width:264px;max-width:calc(100vw - 20px);background:#fff;border:3px solid var(--ink);border-radius:18px;box-shadow:0 6px 0 var(--ink);padding:8px;z-index:60;text-align:left}
 .menu-panel.open{display:block}
 .menu-item{display:flex;align-items:center;gap:11px;width:100%;background:#fff;border:3px solid transparent;border-radius:13px;padding:10px 11px;text-align:left;color:var(--ink)}
@@ -70,8 +107,8 @@ html{-webkit-tap-highlight-color:transparent}
    it keeps BOTH the house icon and the word "Home" at every width. */
 .home-nav-btn{border:3px solid var(--ink);background:var(--red);color:#fff;border-radius:999px;padding:8px 16px;font-family:'Fredoka';font-weight:700;font-size:15px;line-height:1.15;white-space:nowrap;box-shadow:0 3px 0 var(--ink)}
 .home-nav-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
-@media(max-width:640px){.menu-btn{padding:7px 10px;font-size:13px;border-width:2.5px}.home-nav-btn{padding:7px 11px;font-size:13px;border-width:2.5px}.sfx-btn{padding:7px 10px;font-size:13px}}
-@media(max-width:900px){body.playing .topbar .menu-btn{padding:6px 9px;font-size:12px;border-width:2px}body.playing .topbar .home-nav-btn{padding:6px 10px;font-size:12px;border-width:2px}}
+@media(max-width:640px){.menu-btn{padding:7px 10px;font-size:13px;border-width:2.5px}.topbar .stars-pill{padding:7px 10px;font-size:13px;border-width:2.5px}.home-nav-btn{padding:7px 11px;font-size:13px;border-width:2.5px}.sfx-btn{padding:7px 10px;font-size:13px}}
+@media(max-width:900px){body.playing .topbar .menu-btn{padding:6px 9px;font-size:12px;border-width:2px}body.playing .topbar .stars-pill{padding:6px 9px;font-size:12px;border-width:2px}body.playing .topbar .home-nav-btn{padding:6px 10px;font-size:12px;border-width:2px}}
 /* Writing game card (inside the Spelling grid, same .tcard style as every
    other learning game): its two entry buttons stack full-width. */
 .tcard .w-card-btns{display:flex;flex-direction:column;gap:8px}
@@ -386,6 +423,14 @@ body.grade-gate-open .wrap{z-index:95}
 .menu-divider{height:3px;background:var(--line);border-radius:2px;margin:8px 4px}
 .sfx-btn{border:3px solid var(--ink);background:#fff;border-radius:999px;padding:8px 13px;font-weight:900;font-size:14px;white-space:nowrap}
 .sfx-btn.off{background:#FEE2E2;color:#7F1D1D}
+/* SOUNDS IN THE HERO — the 🔊 Sounds toggle lives in the HERO now, not
+   the top bar (matching Royce's page): the same button, same label,
+   same toggleSfx() behavior, pinned to the hero section's top-right
+   corner. The hero is position:relative, so the button anchors to the
+   hero itself and scrolls with it; z-index keeps it above the hero
+   pattern and content. Its white pill reads clearly on the red hero. */
+.hero-sfx{position:absolute;top:14px;right:16px;z-index:3;box-shadow:0 3px 0 var(--ink)}
+.hero-sfx:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
 .leo-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
 .hear-it-btn{border:3px solid var(--ink);background:var(--red);color:#fff;border-radius:999px;padding:12px 20px;font-family:'Fredoka';font-size:17px;font-weight:700;box-shadow:0 3px 0 var(--ink)}
 .hear-it-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
@@ -763,7 +808,7 @@ body.playing .work-panel h3{font-size:21px}
   body.playing .topbar .brand{font-size:15px}
   body.playing .topbar .brand small{display:none}
   body.playing .sfx-btn{padding:6px 9px;font-size:12px;border-width:2px}
-  body.playing .topbar .stars-pill{padding:6px 9px;font-size:12px}
+  body.playing .topbar .stars-pill{padding:6px 9px;font-size:12px;border-width:2px}
 }
 @media(max-width:560px){
   .leo-compact .bubble{font-size:12.5px;max-height:48px;padding:7px 9px}
@@ -1241,11 +1286,12 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
     <img class="lion-brand" src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/>
     <div><span id="brandWorldName">KARTER'S COURT</span><small id="brandWorldSub">Math • Spelling • Basketball Fun</small></div>
   </div>
-  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><button type="button" class="home-nav-btn" id="homeNavBtn" onclick="goHomeFromOverlay()" aria-label="Home — back to the home screen">🏠 Home</button><button class="sfx-btn" id="sfxBtn" onclick="toggleSfx()" aria-pressed="true">🔊 Sounds ON</button><div class="stars-pill">⭐ <span id="totalStars">0</span> Stars</div><div class="menu-wrap"><button type="button" class="menu-btn" id="menuBtn" onclick="toggleMenu(event)" aria-haspopup="true" aria-expanded="false" aria-controls="menuPanel" aria-label="Menu — change grade or open the Progress Report">☰ Menu ▾</button><div class="menu-panel" id="menuPanel" role="menu" aria-label="Menu"><div class="menu-grade-head"><span class="mgh-title">🎒 Change Grade</span><span class="mgh-now" id="menuGradeNow">Now: 3rd Grade</span></div><div class="menu-grade-list" id="menuGradeList" role="group" aria-label="Choose your grade"></div><div class="menu-divider" aria-hidden="true"></div><button type="button" class="menu-item" role="menuitem" onclick="menuPick('report')"><span class="mi-emoji" aria-hidden="true">📋</span><span class="mi-text"><span class="mi-title">Progress Report</span></span></button><button type="button" class="menu-item" id="menuSetupItem" role="menuitem" style="display:none" onclick="menuPick('setup')"><span class="mi-emoji" aria-hidden="true">✨</span><span class="mi-text"><span class="mi-title">Make It Yours — Setup Wizard</span><span class="mi-sub">Rebuild your theme, step by step</span></span></button></div></div></div>
+  <div class="nav-actions"><button type="button" class="home-nav-btn" id="homeNavBtn" onclick="goHomeFromOverlay()" aria-label="Home — back to the home screen">🏠 Home</button><div class="stars-pill">⭐ <span id="totalStars">0</span> Stars</div><div class="menu-wrap"><button type="button" class="menu-btn" id="menuBtn" onclick="toggleMenu(event)" aria-haspopup="true" aria-expanded="false" aria-controls="menuPanel" aria-label="Menu — change grade or open the Progress Report">☰ Menu ▾</button><div class="menu-panel" id="menuPanel" role="menu" aria-label="Menu"><div class="menu-grade-head"><span class="mgh-title">🎒 Change Grade</span><span class="mgh-now" id="menuGradeNow">Now: 3rd Grade</span></div><div class="menu-grade-list" id="menuGradeList" role="group" aria-label="Choose your grade"></div><div class="menu-divider" aria-hidden="true"></div><button type="button" class="menu-item" role="menuitem" onclick="menuPick('report')"><span class="mi-emoji" aria-hidden="true">📋</span><span class="mi-text"><span class="mi-title">Progress Report</span></span></button><button type="button" class="menu-item" id="menuSetupItem" role="menuitem" style="display:none" onclick="menuPick('setup')"><span class="mi-emoji" aria-hidden="true">✨</span><span class="mi-text"><span class="mi-title">Make It Yours — Setup Wizard</span><span class="mi-sub">Rebuild your theme, step by step</span></span></button></div></div></div>
 </header>
 
 <section class="hero" id="heroSection">
   <div class="hero-pattern" id="heroPattern" aria-hidden="true"></div>
+  <button class="sfx-btn hero-sfx" id="sfxBtn" onclick="toggleSfx()" aria-pressed="true">🔊 Sounds ON</button>
   <div class="hero-inner">
     <div>
       <div class="fred" id="heroEyebrow" style="font-size:15px;letter-spacing:.14em;color:#FFD34D;margin-bottom:8px">🏀 KARTER'S COURT 🦁</div><h1 id="heroHeadline">SHOOT.<br><span>LEARN &amp; WIN!</span></h1>
@@ -5137,10 +5183,13 @@ function renderThemeStudio(){
   h+='<div class="opt-group"><h4>🎨 1. Your three colors — Primary, Secondary &amp; Tertiary</h4>'+trioPickerHTML('setThemeColorSlot')+'<p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">Primary <b>'+themeColor().name+'</b> paints the hero and Play buttons, Secondary <b>'+themeColor2().name+'</b> shines on stars, tabs, shiny buttons and frames, and Tertiary <b>'+themeColor3().name+'</b> pops on card borders and the hero\u2019s edge. Your hero stays its solid Primary color with nothing showing through it — your sport\u2019s scene shows only behind the cards below the hero.</p></div>';
   h+='<div class="opt-group"><h4>🏅 2. What is your favorite sport?</h4>'+bgTemplateGridHTML('setThemePart')+'<p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">This is your <b>default</b> sport — the one your world is built around. Its field or court, with that sport\u2019s own tools in it (an ice rink with pucks and sticks, a football field with footballs, a gymnastics gym with a beam, rings, bars and gymnasts), becomes the background of your whole world. It sets your world\u2019s theme and the sport your games start with. Switching sport on the sport bar later changes only the games and their words — never your world\u2019s background. '+(SPORT_INFO[myTheme.sport]||SPORT_INFO.basketball).note+'</p></div>';
   h+='<div class="opt-group"><h4>🐾 3. What is your favorite animal?</h4><div class="opt-row">'+THEME_ANIMALS.map(function(a){ return '<button class="fav-chip'+(myTheme.animal===a.id?' on':'')+'" onclick="setThemePart(\'animal\',\''+a.id+'\')">'+a.emoji+' '+a.name+'</button>'; }).join('')+'</div><p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">Your '+themeAnimal().name+' '+themeAnimal().emoji+' is your team mascot — it cheers beside Coach Leo in your <b>'+themeWorldName()+'</b>.</p></div>';
+  /* The coach recap lines ("Boy Coach • He/Him" and the dressed-in
+     summary) live ONLY in the setup wizard (Steps 4 and 6) — the
+     Theme Studio shows the coach's name and the dressing picks
+     themselves, never those summary lines. */
   h+='<div class="opt-group" id="themeCoachSection"><h4>👦 4. Customize your coach</h4>'
-    +'<div class="coach-preview-card">'+coachAvatarHTML(coachOutfitEmoji())+'<span><b>'+setupEsc(coachTitle())+'</b><small>'+coachIdentity().label+' • '+coachIdentity().pronouns+' • '+coachOutfitEmoji()+' '+coachOutfit().name+'</small></span></div>'
+    +'<div class="coach-preview-card">'+coachAvatarHTML(coachOutfitEmoji())+'<span><b>'+setupEsc(coachTitle())+'</b></span></div>'
     +'<label class="setup-field-label" for="studioCoachName" style="margin-top:2px">Your coach\u2019s name</label><input class="setup-input" id="studioCoachName" maxlength="24" autocomplete="off" placeholder="e.g. Leo" value="'+String(myTheme.coachName||'').replace(/"/g,'&quot;')+'" onchange="setCoachNameField(this.value)"/>'
-    +'<p style="font-weight:800;color:var(--muted);margin:10px 0 6px;font-size:14px">Who is your coach?</p><div class="opt-row"><span class="fav-chip on" aria-label="Boy Coach, He/Him">👦 Boy Coach • He/Him</span></div>'
     +coachLookHTML('setCoachPart')+'<p style="font-weight:800;color:var(--muted);margin:10px 0 6px;font-size:14px">How is your coach dressed?</p><div class="opt-row">'+COACH_OUTFITS.map(function(o){ return '<button class="fav-chip'+(myTheme.coachOutfit===o.id?' on':'')+'" onclick="setCoachPart(\'outfit\',\''+o.id+'\')">'+coachOutfitEmoji(o)+' '+o.name+'</button>'; }).join('')+'</div>'
     +'<p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">'+coachOutfitDesc()+' Pick the sport jersey or the mascot suit and your coach\u2019s look follows the favorite sport and animal you picked above!</p></div>';
   h+='<div class="opt-group"><h4>✏️ 5. Name your world</h4><p style="font-weight:800;color:var(--muted);margin:0 0 8px;font-size:14px;line-height:1.45">Type your name and your world takes it — John becomes <b>John\u2019s Court</b>, Jamie becomes <b>Jamie\u2019s Court</b>. You can also type any world name you like in the second box.</p><label class="setup-field-label" for="studioChildName" style="margin-top:2px">Your first name</label><input class="setup-input" id="studioChildName" maxlength="24" autocomplete="off" placeholder="e.g. John" value="'+String(myTheme.childName||'').replace(/"/g,'&quot;')+'" onchange="setThemeNameField(\'childName\',this.value)"/><label class="setup-field-label" for="studioWorldName">Your world\u2019s name</label><input class="setup-input world" id="studioWorldName" maxlength="40" autocomplete="off" placeholder="e.g. John\u2019s Court" value="'+String(myTheme.worldName||'').replace(/"/g,'&quot;')+'" onchange="setThemeNameField(\'worldName\',this.value)"/><p style="font-weight:800;color:var(--muted);margin:7px 0 0;font-size:14px">Your world is called: <b>'+themeWorldName()+'</b></p></div>';
