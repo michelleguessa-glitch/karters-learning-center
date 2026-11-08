@@ -216,12 +216,17 @@ html{-webkit-tap-highlight-color:transparent}
 @media(max-width:420px){.brand small{display:none}.gamecard{padding:16px 12px}.bubble{font-size:16px;padding:13px 14px;min-height:0}.section-head h2{font-size:26px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-/* Music dock — compact, centered in page flow at the bottom in BOTH the
-   classic and the custom layouts (it is one shared dock under every view),
-   scrolls with the page. The dock itself is margin-auto centered, the bar
-   is a fit-content pill margin-auto centered inside it, and the song meta
-   does NOT stretch — so the player AND all its buttons sit in the middle
-   of the page as one centered group, never pushed to the left margin. */
+/* Music dock — compact, centered at the bottom in BOTH the classic and
+   the custom layouts (it is one shared dock under every view). In every
+   scrollable view it is PINNED to the bottom center of the screen (see
+   the sticky-player block at the end of this stylesheet): scrolling up
+   or down never moves it, resizes it or changes its presentation. In
+   the game view (body.playing) the screen itself never scrolls, so the
+   dock keeps its place at the foot of that fixed layout, untouched.
+   The bar is a fit-content pill centered inside the dock, and the song
+   meta does NOT stretch — so the player AND all its buttons sit in the
+   middle of the screen as one centered group, never pushed to the left
+   margin. */
 .music-dock{position:static;width:100%;max-width:600px;margin:24px auto 32px;margin-left:auto;margin-right:auto;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .music-bar{background:#B91C1C;color:#fff;border:2px solid #2B1608;border-radius:999px;box-shadow:0 3px 0 rgba(43,22,8,.35);padding:4px 6px;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:nowrap;width:fit-content;max-width:100%;margin:0 auto}
 .music-play{width:36px;height:36px;flex:0 0 36px;border-radius:50%;border:2px solid #2B1608;background:#FFB800;color:#2B1608;font-size:19px;line-height:1;display:grid;place-items:center;box-shadow:0 2px 0 #2B1608}
@@ -258,12 +263,14 @@ body.custom-world .music-ctl.on{background:var(--theme-tertiary-soft);box-shadow
 body.custom-world .music-vol input[type=range]{accent-color:var(--theme-secondary-bright)}
 body.custom-world .genre-btn.active{background:var(--theme-secondary-bright);box-shadow:0 2px 0 #2B1608,0 0 0 2px var(--theme-primary)}
 body.custom-world[data-world-color="white"] .music-bar{color:var(--ink)}
-/* The music player never sits on top of page content: every view keeps
-   clear space below its last card and the dock keeps clear space under
-   itself, on the home view, in games and on the Progress Report alike.
-   The play button itself stays gold in every color set (see the base
-   .music-play rule) — only the rest of the player skin follows the
-   picked colors. */
+/* The pinned music player floats above the page's bottom edge, so the
+   page keeps clear space at its end: every view keeps padding below its
+   last card, and the body itself gains bottom clearance (in the sticky-
+   player block at the end of this stylesheet) tall enough that the last
+   card on any view can always scroll fully clear of the player — the
+   player never hides content. The play button itself stays gold in
+   every color set (see the base .music-play rule) — only the rest of
+   the player skin follows the picked colors. */
 #homeView,#grownView,#setupView,#writingView{padding-bottom:26px}
 .music-dock{margin-bottom:44px}
 @media(max-width:680px){.music-dock{margin:20px auto 28px;margin-left:auto;margin-right:auto;max-width:calc(100% - 24px);align-items:center}.music-bar{gap:5px;padding:5px 6px;flex-wrap:wrap;border-radius:20px;justify-content:center;margin:0 auto}.music-play{width:38px;height:38px;flex-basis:38px;font-size:19px}.music-ctl{width:34px;height:34px;flex-basis:34px;font-size:13px}.music-meta b{font-size:13px}.music-meta span{font-size:11px}.music-vol{padding:4px 6px}.music-vol input[type=range]{width:56px}.music-meta{min-width:100px}.genre-row{max-width:260px}}
@@ -1101,6 +1108,48 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
 .report-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 .report-actions .check-btn,.report-actions .goldbtn{text-decoration:none;display:inline-block}
 @media(max-width:560px){.report-sheet{padding:20px 13px}.report-sheet h3{font-size:25px}.report-card{padding:13px 12px}}
+/* ===== STICKY MUSIC PLAYER — pinned to the bottom center of the screen =====
+   In every scrollable view the music dock is fixed in view: bottom
+   center of the screen, clear of the phone's home-indicator area, at
+   the exact same size and presentation at every scroll point — the
+   genre row, every control button and both text lines (song title and
+   status line) ride inside it, fully visible, exactly as they render
+   in flow. It floats above page content (z-index 40: under the grade
+   gate, modals, celebration and toast, which all covered it before
+   too), and the body gains bottom clearance taller than the dock, so
+   the last card of any view can always scroll fully clear of it.
+   body.playing is deliberately NOT matched: the game screen is a
+   fixed 100dvh no-scroll layout whose dock already sits pinned at its
+   foot, and it keeps that exact layout — the player never overlays
+   the game's control deck. */
+body:not(.playing) .music-dock{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:40;margin:0;width:100%;max-width:600px}
+body:not(.playing){padding-bottom:118px}
+@media(max-width:680px){body:not(.playing) .music-dock{max-width:calc(100% - 24px)}body:not(.playing){padding-bottom:164px}}
+/* ===== MUSIC NOTE BUTTON — the player now lives behind one small
+   round note (Michelle's call): the always-visible player bar covered
+   the page's sections, so the full player stays CLOSED until the note
+   is tapped. The note itself is fixed in the bottom-right corner of
+   the screen in every view — small enough to sit in the corner margin
+   without covering any section — and it never moves when scrolling.
+   Tapping it plays a short pleasant chime (openMusicPlayer) and opens
+   the full player (the same dock, same genre picks, controls, volume
+   and both text lines, same colors, big play button still gold),
+   pinned bottom-center exactly as the sticky player above rendered
+   it. The ✕ button inside the bar closes it back down to just the
+   note. Music playback is untouched: the dock's hidden YouTube frame
+   lives outside the collapsible bar, so closing the player never
+   stops a song. The body's bottom clearance shrinks to just what the
+   small note needs, so the last card can still scroll clear of it. */
+.music-dock{display:none}
+body .music-dock.open{display:flex;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:41;margin:0;width:100%;max-width:600px}
+@media(max-width:680px){body .music-dock.open{max-width:calc(100% - 24px)}}
+body:not(.playing){padding-bottom:88px}
+.music-note-btn{position:fixed;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:40;width:58px;height:58px;border-radius:50%;border:3px solid var(--ink);background:var(--gold);color:var(--ink);font-size:27px;line-height:1;display:grid;place-items:center;box-shadow:0 4px 0 var(--ink),0 8px 18px rgba(43,22,8,.28);padding:0;animation:noteBob 3.2s ease-in-out infinite}
+.music-note-btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--ink),0 6px 14px rgba(43,22,8,.28)}
+.music-note-btn.hidden{display:none}
+@keyframes noteBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.music-close{width:32px;height:32px;flex:0 0 32px;border-radius:50%;border:2px solid #2B1608;background:#fff;color:#B91C1C;font-size:15px;font-weight:900;line-height:1;display:grid;place-items:center;box-shadow:0 2px 0 #2B1608;padding:0}
+.music-close:active{transform:translateY(1px);box-shadow:0 1px 0 #2B1608}
 </style>
 </head>
 <body>
@@ -1446,7 +1495,13 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
 </main>
 
 
-<!-- MUSIC DOCK : OFF by default, lives outside learning views so music keeps playing prompt to prompt -->
+<!-- MUSIC NOTE BUTTON : the small round note stays fixed in the bottom
+     corner in every view; tapping it plays a pleasant chime and opens
+     the full music player below. The player itself stays closed so it
+     never covers the page's sections. -->
+<button type="button" class="music-note-btn" id="musicNoteBtn" onclick="openMusicPlayer()" aria-label="Open the music player" aria-haspopup="true" aria-expanded="false" aria-controls="musicDock">🎵</button>
+
+<!-- MUSIC DOCK : OFF by default, lives outside learning views so music keeps playing prompt to prompt. Hidden until the music note opens it; the ✕ in the bar closes it back down to just the note. -->
 <div class="music-dock" id="musicDock" aria-label="Music player">
   <div class="genre-row" role="group" aria-label="Music genre">
     <button class="genre-btn active" id="genrePop" onclick="setGenre('pop')" aria-pressed="true">Pop</button>
@@ -1459,9 +1514,13 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
     <button class="music-ctl" id="musicRepeat" onclick="toggleRepeat()" aria-label="Repeat this song" aria-pressed="false">🔁</button>
     <div class="music-meta"><b id="musicSong">🎵 Music</b><span id="musicStatus">Music is OFF — tap the big gold button to play!</span></div>
     <div class="music-vol"><label for="volRange">🔊 Volume</label><input type="range" id="volRange" min="0" max="100" value="70" oninput="setMusicVolume(this.value)"></div>
+    <button class="music-close" id="musicClose" onclick="closeMusicPlayer()" aria-label="Close the music player — back to just the music note" title="Close player">✕</button>
   </div>
-  <div class="audio-only" id="ytWrap" aria-hidden="true"><div id="ytPlayer"></div></div>
 </div>
+<!-- Hidden audio frame lives OUTSIDE the collapsible dock, so closing
+     the player down to the music note can never pause or unload a
+     song that is playing. -->
+<div class="audio-only" id="ytWrap" aria-hidden="true"><div id="ytPlayer"></div></div>
 
 <!-- WIZARD MODAL -->
 <div class="modal" id="wizardModal" role="dialog" aria-modal="true">
@@ -2638,6 +2697,24 @@ function pollTick(){
 }
 setInterval(pollTick,500);
 function musicStatus(txt){ var el=document.getElementById('musicStatus'); if(el) el.textContent=txt; }
+/* MUSIC NOTE OPEN/CLOSE — tapping the corner note plays a short
+   pleasant chime (a bright little arpeggio through the same WebAudio
+   tone() the game's sounds use, so the Sounds ON/OFF toggle governs
+   it like every other sound) and opens the full player; the ✕ in the
+   bar (or Escape) closes it back down to just the note. Only the
+   dock's visibility changes — playback, genre, volume and song state
+   are never touched, and the hidden audio frame lives outside the
+   bar, so a song keeps playing while the player is closed. */
+function openMusicPlayer(){
+  var dock=document.getElementById('musicDock'); if(dock) dock.classList.add('open');
+  var nb=document.getElementById('musicNoteBtn'); if(nb){ nb.classList.add('hidden'); nb.setAttribute('aria-expanded','true'); }
+  try{ [659,784,1046,1318].forEach(function(f,i){ tone(f,.16,'triangle',.12,i*.07); }); tone(1568,.24,'sine',.07,.30); }catch(e){ try{ sfx('open'); }catch(e2){} }
+}
+function closeMusicPlayer(){
+  var dock=document.getElementById('musicDock'); if(dock) dock.classList.remove('open');
+  var nb=document.getElementById('musicNoteBtn'); if(nb){ nb.classList.remove('hidden'); nb.setAttribute('aria-expanded','false'); }
+}
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ var dock=document.getElementById('musicDock'); if(dock&&dock.classList.contains('open')) closeMusicPlayer(); } });
 function loadYouTubeAPI(){
   if(ytLoading||ytReady) return; ytLoading=true; musicStatus('Loading your music… 🎵');
   var tag=document.createElement('script'); tag.src='https://www.youtube.com/iframe_api'; tag.onerror=function(){ fallbackEmbed(); };
