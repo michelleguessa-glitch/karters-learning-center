@@ -581,7 +581,7 @@ body.grade-gate-open .wrap{z-index:95}
 .net-ripple{position:absolute;z-index:3;opacity:0;pointer-events:none}
 .net-ripple.rippling{animation:netRippleAnim .7s ease}
 @keyframes netRippleAnim{0%{opacity:0;transform:rotate(0)}15%{opacity:.95}35%{transform:rotate(4deg)}55%{transform:rotate(-4deg)}75%{transform:rotate(2deg)}100%{opacity:0;transform:rotate(0)}}
-.shot-ball{position:absolute;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#FFC38F,#FF6B1A 58%,#E85D0C);border:3px solid #7C2D12;box-shadow:0 7px 9px rgba(43,22,8,.35),inset 0 -4px 6px rgba(124,45,18,.35);left:112px;bottom:64px;z-index:4;pointer-events:none}
+.shot-ball{position:absolute;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#FFC38F,#FF6B1A 58%,#E85D0C);border:3px solid #7C2D12;box-shadow:0 7px 9px rgba(43,22,8,.35),inset 0 -4px 6px rgba(124,45,18,.35);left:95px;bottom:64px;z-index:4;pointer-events:none} /* basketball spot: centered under his right palm (player 124px wide at left:16 — hand center ~112px across, ball center here is 95+17=112) */
 .court-stage:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 90% at 50% 38%,rgba(0,0,0,0) 55%,rgba(43,22,8,.20)),linear-gradient(180deg,rgba(255,255,255,.10),rgba(0,0,0,0) 30%,rgba(43,22,8,.14));border-radius:inherit}
 .court-stage.fire-glow{box-shadow:0 0 0 3px #FFB800,0 0 26px 6px rgba(255,140,0,.55);animation:fireGlowPulse .8s ease-in-out infinite alternate}
 @keyframes fireGlowPulse{from{box-shadow:0 0 0 3px #FFB800,0 0 18px 4px rgba(255,140,0,.45)}to{box-shadow:0 0 0 3px #FFB800,0 0 30px 9px rgba(255,140,0,.65)}}
@@ -615,7 +615,6 @@ body.grade-gate-open .wrap{z-index:95}
 .shot-ball:before,.shot-ball:after{content:"";position:absolute;background:#7C2D12}
 .shot-ball:before{width:3px;height:100%;left:50%;top:0}.shot-ball:after{width:100%;height:3px;top:50%;left:0}
 .shot-ball.fire{box-shadow:0 0 0 4px #FFB800,0 -10px 18px 6px rgba(255,107,26,.75);background:#FF8A00}
-.shot-msg{position:absolute;z-index:5;left:50%;transform:translateX(-50%);bottom:8px;background:#fff;border:3px solid var(--ink);border-radius:999px;padding:6px 14px;font-family:'Fredoka';font-weight:700;font-size:16px;white-space:normal;max-width:94%;overflow:visible;text-align:center;line-height:1.3}
 .swish-net{animation:netWiggle .5s ease}
 @keyframes netWiggle{0%,100%{transform:rotate(0)}30%{transform:rotate(4deg)}60%{transform:rotate(-4deg)}}
 /* Studio */
@@ -666,7 +665,7 @@ body.grade-gate-open .wrap{z-index:95}
 .group-dots{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
 .group-dots .gd{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px 10px;font-size:18px;letter-spacing:2px;line-height:1.5;max-width:150px}
 .ex-visual{display:flex;justify-content:center;margin:8px 0}
-@media(max-width:760px){.game-hub{grid-template-columns:1fr}.studio-layout{grid-template-columns:1fr}.studio-preview{position:relative;height:300px;max-width:250px;margin:0 auto;width:100%}.bonus-balls{grid-template-columns:repeat(3,1fr);gap:8px}.bonus-ball{font-size:22px}.court-player{width:104px;height:138px}.shot-ball{left:96px;bottom:54px}.court-stage{height:clamp(400px,66vh,520px);--drop:38px}}
+@media(max-width:760px){.game-hub{grid-template-columns:1fr}.studio-layout{grid-template-columns:1fr}.studio-preview{position:relative;height:300px;max-width:250px;margin:0 auto;width:100%}.bonus-balls{grid-template-columns:repeat(3,1fr);gap:8px}.bonus-ball{font-size:22px}.court-player{width:104px;height:138px}.shot-ball{left:80px;bottom:54px} /* centered under his palm at this size: hand center = 16 + 155×(104/200) ≈ 97, ball center = 80+17 = 97 */.court-stage{height:clamp(400px,66vh,520px);--drop:38px}}
 
 .bounce{animation:b .5s ease}@keyframes b{0%{transform:scale(1)}40%{transform:scale(1.06)}100%{transform:scale(1)}}
 
@@ -851,10 +850,11 @@ body.playing .sb-team .sb-score{font-size:25px}
 body.playing .sb-target{font-size:11px;padding:4px 8px}
 body.playing .streak-pill{font-size:12px;padding:4px 9px;border-width:2px}
 body.playing .champ-banner{margin:0;padding:6px 10px;font-size:15px;border-width:2px;border-radius:12px}
-body.playing .court-stage{flex:1 1 auto;min-height:180px;height:auto!important;max-width:none;width:100%;margin:0;border-width:2px;border-radius:18px;--drop:34px}
+body.playing .court-stage{flex:0 0 auto;max-width:none;width:100%;margin:0;border-width:2px;border-radius:18px;--drop:34px}
 body.playing .court-player{width:clamp(78px,22%,118px);height:auto;aspect-ratio:124/164;left:12px;bottom:8px}
-body.playing .shot-ball{width:30px;height:30px}
-body.playing .shot-msg{font-size:13.5px;padding:5px 11px;bottom:6px}
+body.playing .shot-ball{width:30px;height:30px;left:88px;bottom:58px} /* basketball spot at this size: centered under his right palm (player up to 118px wide at left:12 — hand center ~104px across); the sport-scoped rules below and above this one outrank it for their own balls */
+body.playing .court-stage.sport-baseball .shot-ball{left:24px;bottom:58px} /* at his glove (left) hand for the toss-and-catch */
+body.playing .court-stage.sport-running .shot-ball{left:76px;bottom:8px} /* down at his right shoe on the track */
 body.playing .gamecard{margin:0;padding:12px 14px;border-radius:20px;box-shadow:0 4px 0 #FFE1B8;min-height:0;overflow-y:auto;overflow-x:hidden;position:relative;display:flex;flex-direction:column}
 body.playing .play-layout{display:block;height:auto}
 body.playing .play-main{display:flex;flex-direction:column;min-height:0}
@@ -890,7 +890,14 @@ body.playing .qlabel{font-size:11px}
 @media(max-width:900px){
   body.playing .wrap{padding:6px 8px 8px}
   body.playing .court-player{width:clamp(64px,20%,92px)}
-  body.playing .shot-ball{left:88px;bottom:46px;width:26px;height:26px}
+  body.playing .shot-ball{left:52px;bottom:46px;width:26px;height:26px} /* basketball spot: centered under his right palm (player 68px wide at left:12 — his hand center works out to ~65px across, ~50px up), so the dribble bounces under his hand with NO gap beside it. This generic spot sat at left:88px, ~36px right of his palm. Sports whose own ball spot was tuned for the big player had the same trouble at this size — the hockey puck rested at left:114px, over 50px from his blade — so the sports that needed it carry ID-scoped spots in this same block, each resting exactly where that sport holds it. */
+  body.playing #practiceView .court-stage.sport-tennis .shot-ball{left:74px;bottom:23px} /* centered on his racket strings */
+  body.playing #practiceView .court-stage.sport-soccer .shot-ball{left:44px;bottom:4px} /* centered under his right shoe, on the ground */
+  body.playing #practiceView .court-stage.sport-hockey .shot-ball{left:60px;bottom:10px} /* on the ice at his stick blade */
+  body.playing #practiceView .court-stage.sport-baseball .shot-ball{left:14px;bottom:46px} /* at his glove (left) hand for the toss-and-catch */
+  body.playing #practiceView .court-stage.sport-gymnastics .shot-ball{left:100px;bottom:calc(20% + 15px)} /* on the beam beside him */
+  body.playing #practiceView .court-stage.sport-swimming .shot-ball{left:96px;bottom:30%} /* in the water beside him at the start */
+  body.playing #practiceView .court-stage.sport-running .shot-ball{left:44px;bottom:6px} /* down at his right shoe on the track */
   body.playing .gamecard{padding:10px 11px}
   body.playing .question{font-size:clamp(23px,6vw,30px)}
 }
@@ -1012,23 +1019,153 @@ body.playing #practiceView .play-layout{flex:1 1 auto;min-height:0;display:flex;
 body.playing #practiceView .play-main{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
 body.playing #practiceView .play-main>*{flex:0 0 auto}
 body.playing #practiceView .visual{flex:0 1 auto;min-height:0;overflow:hidden}
-body.playing #practiceView .court-stage{min-height:88px}
+body.playing #practiceView .court-stage{min-height:100px}
 @media(max-width:900px){
-  body.playing #practiceView .visual>div{font-size:36px!important;line-height:1.12!important}
   body.playing #practiceView .visual span:not(.gd){font-size:36px!important;line-height:1.12!important}
 }
 @media(max-height:740px){
-  body.playing #practiceView .court-stage{min-height:64px}
-  body.playing #practiceView .visual>div{font-size:32px!important}
+  body.playing #practiceView .court-stage{min-height:96px}
   body.playing #practiceView .visual span:not(.gd){font-size:32px!important}
 }
 @media(max-height:600px){
-  body.playing #practiceView .court-stage{min-height:48px}
-  body.playing #practiceView .visual>div{font-size:28px!important}
+  body.playing #practiceView .court-stage{min-height:88px}
   body.playing #practiceView .visual span:not(.gd){font-size:28px!important}
 }
 @media(max-height:480px){
-  body.playing #practiceView .court-stage{min-height:36px}
+  body.playing #practiceView .court-stage{min-height:80px}
+}
+/* ===== GAME VIEW FIT, PASS 3 — counting-display captions sit UNDER the
+   objects, at their own size (Michelle, Nov 8: "Verify all the games
+   that has the displays for counting and problem solving"). A live
+   check of the pass-2 build found the Kindergarten subtraction
+   counting display broken on a phone: #qVisual is a flex ROW, so the
+   red "crossed-out" caption div authored to sit under the balls was
+   laid out BESIDE them instead — the balls squeezed into a one-wide
+   column, the caption ballooned to 36px (the old .visual>div shrink
+   rule hit the caption div as well as the object rows) and ran off
+   the bottom of the picture area, clipped mid-sentence, hiding balls
+   he still had to count. The same two-child shape drives the
+   Kindergarten / 1st-grade take-away word-problem display. Pass 3,
+   fit only — layout order unchanged:
+   1. The picture row may wrap, and a .vis-caption child takes the
+      full row width (flex:0 0 100%), so the caption always lands
+      UNDER the counting objects, full width, exactly as authored.
+      Single-picture displays (clock, fraction bar, groups) and the
+      addition display's two groups + plus sign are untouched.
+   2. The pass-2 picture shrink now targets only the object spans
+      (.visual>div rules removed): the caption keeps its authored
+      16–17px and is never blown up or shrunk by the fit steps. */
+body.playing #practiceView .visual{flex-wrap:wrap}
+body.playing #practiceView .visual .vis-caption{flex:0 0 100%}
+/* ===== GAME VIEW FIT, PASS 3b — the court gives its room FIRST =====
+   Same live check, after a correct answer: the feedback line joins the
+   card, and the default flex shrink split the shortage between the
+   court and the picture — the court still had room above its floor,
+   yet the picture gave up height too and its caption lost its last
+   line to the clip. The court is the flexible piece by design, so it
+   now takes ~92% of any shortage (flex-shrink 10 against the
+   picture's 1) and only when the court is sitting on its floor does
+   the picture give anything. */
+body.playing #practiceView .court-stage{flex-shrink:0} /* Pass 4 supersedes the pass-3b shrink split: the stage is ONE SET SIZE and never shrinks — when room runs short the picture alone gives, from its bottom edge */
+body.playing #practiceView .visual{flex-shrink:1}
+/* ===== GAME VIEW FIT, PASS 3c — the player is never buried, and the
+   card buys its room back (Michelle, Nov 8, 2026: "Look at the
+   player" — the fit had squeezed Royce's stage into a thin strip and
+   the player was tiny and mostly hidden; the same bar holds here).
+   A live check of THIS page's tallest card (a 1st-grade word problem:
+   20 counting balls in 3 rows + a 3-line story) after a correct
+   answer found the same squeeze starting here: the court hit its old
+   88px floor while the player stands ~97px tall on a phone, so his
+   head clipped at the stage's top edge, and the picture lost two of
+   its three ball rows. Pass 3c, fit only:
+   1. The stage floors are raised at every height (100 / 96 / 88 /
+      80px above) so the stage can never become a sliver thinner
+      than the player standing in it, and on the shortest screens
+      the player himself steps down a size (68 / 60 / 54px wide) so
+      he stands FULLY inside his floor — head to shoes, at open and
+      after answering alike.
+   2. The room those floors cost is bought back inside the card and
+      the scoreboard at phone heights (the max-height:900px step
+      below): a touch less padding, one step smaller question and
+      feedback type, one step smaller counting objects. Nothing
+      moves, nothing is removed, and the fresh-problem view keeps
+      its tall court — the stage still flexes UP whenever the card
+      leaves it room. */
+@media(max-height:900px){
+  body.playing #practiceView{gap:5px}
+  body.playing #practiceView .gamecard{padding:9px 12px}
+  body.playing #practiceView .question{font-size:clamp(21px,3vw,30px);line-height:1.04}
+  body.playing #practiceView .visual{margin:2px 0}
+  body.playing #practiceView .visual>div{gap:2px 4px!important}
+  body.playing #practiceView .visual span:not(.gd){font-size:26px!important;line-height:1.08!important}
+  body.playing #practiceView .feedback{font-size:12px;line-height:1.18;padding:8px 11px;margin-top:6px}
+  body.playing #practiceView .feedback br+br{display:none} /* the wrong-answer feedback's blank paragraph lines are the one space the fit takes here — every word stays, in the same order; the set-size stage above never pays for feedback */
+  body.playing #practiceView .choices{gap:6px;margin-top:8px}
+  body.playing #practiceView .choice{padding:8px 11px} /* choice games (fractions) stack three tall buttons — this step keeps the Helper Tools button on screen after a choice is answered, buttons still big and tappable */
+  body.playing #practiceView .gamecard.answered .choices{gap:5px}
+  body.playing #practiceView .gamecard.answered .choice{padding:6px 11px;font-size:17px} /* answered step for the choice stack: the long score feedback joins the card, and the three full-width choice rows give a little height back so the tools button stays on screen — rows stay wide and easy to tap */
+  body.playing #practiceView .sb-team{padding:3px 8px}
+  body.playing #practiceView .sb-team .sb-score{font-size:23px}
+  body.playing #practiceView .question{margin:2px 0}
+  body.playing #practiceView .answer-input{padding:7px}
+  body.playing #practiceView .tools-divider{margin-top:5px}
+  body.playing #practiceView .tools-btn{padding:8px 16px}
+}
+@media(max-height:740px){
+  body.playing #practiceView .court-player{width:68px}
+}
+@media(max-height:600px){
+  body.playing #practiceView .court-player{width:60px}
+  body.playing #practiceView .visual span:not(.gd){font-size:28px!important}
+}
+@media(max-height:480px){
+  body.playing #practiceView .court-player{width:54px}
+}
+/* ===== GAME VIEW, PASS 4 — ONE SET STAGE SIZE; THE FIT COMES FROM
+   THE DISPLAY (Michelle, Nov 8, 2026: "The size of the video game
+   doesn't change — it should be set and consistent across every
+   game. Never a slim screen for the player video game window. For
+   example you adjust how the display images are structured. If it's
+   9 basketballs then 5 balls on top row and 4 balls bottom row. Not
+   9 balls in one row all the way across.") This SUPERSEDES the
+   flexing-court approach of passes 1–3: the stage no longer grows
+   or shrinks to make the fit — it is ONE SET SIZE on a given screen,
+   the same in every game, and the player always stands fully on it
+   at his proper size. The fit is made in the question card instead:
+   1. Counting objects now live in .cnt rows, capped at about five
+      objects per row (9 = 5 on top + 4 below) at every screen size —
+      never one long row across the card. The two-group addition and
+      word-problem displays keep their groups side by side, each
+      group wrapped into its own balanced rows.
+   2. The card's existing tightening steps stay, and once an answer
+      is checked the display steps its objects down one more size
+      (the .answered rules) so the feedback line joins the card
+      without pushing anything off the screen.
+   The old court floors stay in the file as history; the fixed
+   heights below are what the stage actually renders at. */
+body.playing #practiceView .court-stage{height:280px}
+body.playing #practiceView .gamecard{flex:1 1 auto}
+@media(max-width:900px){
+  body.playing #practiceView .court-stage{height:170px}
+}
+@media(max-height:740px){
+  body.playing #practiceView .court-stage{height:160px}
+}
+@media(max-height:600px){
+  body.playing #practiceView .court-stage{height:144px}
+}
+@media(max-height:480px){
+  body.playing #practiceView .court-stage{height:128px}
+}
+body.playing #practiceView .visual .cnt{max-width:260px}
+body.playing #practiceView .visual .group-dots{max-width:320px;margin-left:auto;margin-right:auto}
+@media(max-width:900px){
+  body.playing #practiceView .visual .cnt{max-width:168px}
+}
+@media(max-height:900px){
+  body.playing #practiceView .visual .cnt{max-width:168px}
+  body.playing #practiceView .gamecard.answered .visual span:not(.gd){font-size:18px!important} /* answered step sized so a two-row display (subtraction, addition) still shows COMPLETE beside the feedback under the set-size stage; only the very largest displays (20 objects, 4 rows) give rows here */
+  body.playing #practiceView .gamecard.answered .visual .vis-caption{font-size:14px!important;line-height:1.3}
 }
 /* ===== SPORT THEME SCENES — the whole stage becomes the picked sport =====
    When the customized world picks a sport other than basketball, the photo
@@ -1312,6 +1449,17 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
 .court-stage.sport-football.dribbling .court-player{animation:footballReady 1.25s ease-in-out infinite}
 @keyframes footballReady{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
 .court-stage.sport-football.dribbling .court-player .p-arm-r{animation:none}
+/* Football shooting: the TOUCHDOWN RUN — playSportShot drives the
+   player himself down the field with the ball in his hand, so the
+   generic basketball jump-shot body animation is OFF for football
+   (the run animation owns his transform). His right leg strides
+   while he runs; his right arm stays tucked still on the ball he
+   is carrying — player and ball ride the exact same path, so the
+   ball never leaves his hand and no gap ever opens. */
+.court-stage.sport-football.shooting .court-player{animation:none}
+.court-stage.sport-football.shooting .court-player .p-arm-r{animation:none}
+.court-stage.sport-football.shooting .court-player .p-leg-r{animation:footballStride .3s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0%}
+@keyframes footballStride{0%,100%{transform:rotate(17deg)}50%{transform:rotate(-17deg)}}
 /* Running waiting: the shoe token takes quick little steps in place
    along with his jog — small hops, no dribble squash. */
 .court-stage.sport-running.dribbling .shot-ball{animation:shoeSteps .36s ease-in-out infinite}
@@ -2369,7 +2517,7 @@ function genMath(id,tier){
     check=function(gv){ if(gv===ans-10||gv===ans+10) return 'Watch the <b>tens place</b> — you may have missed the carried ten from the ones!'; if(gv<ans) return 'Your answer is a little <b>too small</b>. Did you add BOTH numbers in every place?'; return 'Your answer is a little <b>too big</b>. Check the ones place first: '+(a%10)+' + '+(b%10)+' — did you regroup?'; };
     if(gr===0){ /* Kindergarten counting visual, sized for a 5–6-year-old: BIG balls in wrapping rows he can point to and count one by one. */
       var ballsK=function(n){ var s=''; for(var bi=0;bi<n;bi++) s+='<span style="display:inline-block">'+countObj().emoji+'</span>'; return s; };
-      var visK='<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;max-width:100%;font-size:46px;line-height:1.15">'+ballsK(a)+'</div><div style="text-align:center;font-size:30px;line-height:1.1">➕</div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;max-width:100%;font-size:46px;line-height:1.15">'+ballsK(b)+'</div>'; return {q:q,ans:String(ans),display:'number',hint:hint,check:check,visual:visK}; }
+      var visK='<div class="cnt2" style="display:flex;justify-content:center;align-items:flex-start;gap:4px;width:100%"><div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:46px;line-height:1.15">'+ballsK(a)+'</div><div style="text-align:center;font-size:30px;line-height:1.1">➕</div><div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:46px;line-height:1.15">'+ballsK(b)+'</div></div>'; return {q:q,ans:String(ans),display:'number',hint:hint,check:check,visual:visK}; }
   }
   else if(id==='subtraction'){
     if(gr===0){ a=R(3,10); b=R(1,a-1); hint='Start with '+a+' '+countObj().name+'. Take away '+b+' — count what is left!'; }
@@ -2385,7 +2533,7 @@ function genMath(id,tier){
     check=function(gv){ return 'Check the <b>ones place</b> first. Top ones = '+(a%10)+', bottom ones = '+(b%10)+'. If the top is smaller, borrow a ten, then subtract.'; };
     if(gr===0){ /* K.OA.A.1/A.2: Kindergarten subtraction is solved with objects or drawings — show ALL the starting basketballs BIG, with the b taken-away ones CROSSED OUT, so he counts only the balls that are left. The range stays a=R(3,10), b=R(1,a-1): within 10 is correct per K.OA.A.2 (10 − 4 stays; fluency within 5, K.OA.A.5, is a separate bar, not a cap). */
       var subBalls=''; for(var sb=0;sb<a;sb++){ var taken=sb>=(a-b); subBalls+='<span style="display:inline-block;font-size:46px;line-height:1.15;'+(taken?'opacity:.4;text-decoration:line-through;text-decoration-color:#B91C1C;text-decoration-thickness:7px;':'')+'">'+countObj().emoji+'</span>'; }
-      var visSub='<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;max-width:100%">'+subBalls+'</div><div style="font-size:17px;font-weight:900;color:#B91C1C;text-align:center;margin-top:4px">The crossed-out '+countObj().name+' were taken away — count the '+countObj().name+' that are left!</div>';
+      var visSub='<div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px">'+subBalls+'</div><div class="vis-caption" style="font-size:17px;font-weight:900;color:#B91C1C;text-align:center;margin-top:4px">The crossed-out '+countObj().name+' were taken away — count the '+countObj().name+' that are left!</div>';
       return {q:q,ans:String(ans),display:'number',hint:hint,check:function(gv){ return 'Look at the picture: count ONLY the '+countObj().name+' that are NOT crossed out — those are the ones left after taking away '+b+'!'; },visual:visSub};
     }
   }
@@ -2446,10 +2594,18 @@ function genMath(id,tier){
     else if(kind===2){ var gg=R(2,gr===2?6:9); var per=R(2,9); ans=gg*per; q='There are '+gg+' teams. Each team has '+per+' players. How many players in all?'; hint='Equal groups = <b>multiply</b>: '+gg+' × '+per+'.'; check=function(){return 'Equal groups is multiplication in disguise! '+gg+' groups of '+per+' means '+gg+' × '+per+'.';}; }
     else { var pk=R(2,6); var pp=R(3,9); var st=R(5,40); ans=st+pk*pp; q=nm+' had '+st+' '+o.n+'. '+nm+' bought '+pk+' packs with '+pp+' '+o.n+' in each pack. How many '+o.n+' does '+nm+' have in all now?'; hint='Two steps! First multiply the packs: '+pk+' × '+pp+'. Then add the '+st+' he already had.'; check=function(){return 'Step 1: '+pk+' packs × '+pp+' = '+(pk*pp)+'. Step 2: add the '+st+' he started with.';}; } }
   if(id==='wordproblems'&&gr<=1&&(typeof kind!=='undefined')&&(kind===0||kind===1)&&typeof o!=='undefined'&&o){ /* Kindergarten & 1st-grade stories get BIG counting objects (42px, wrapping rows): add stories show both groups; take-away stories show the starting objects with the given-away ones crossed out, so the story can be solved by counting. Grades 2–5 keep text-only stories. */
-    var wpSpans=''; var wi;
-    if(kind===0){ for(wi=0;wi<a;wi++) wpSpans+='<span style="display:inline-block">'+o.e+'</span>'; wpSpans+='<span style="display:inline-block;font-size:30px">➕</span>'; for(wi=0;wi<b;wi++) wpSpans+='<span style="display:inline-block">'+o.e+'</span>'; }
-    else { for(wi=0;wi<a;wi++){ var wTaken=wi>=(a-b); wpSpans+='<span style="display:inline-block;'+(wTaken?'opacity:.4;text-decoration:line-through;text-decoration-color:#B91C1C;text-decoration-thickness:6px;':'')+'">'+o.e+'</span>'; } }
-    var wpVis='<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;max-width:100%;font-size:42px;line-height:1.2">'+wpSpans+'</div>'+(kind===1?'<div style="font-size:16px;font-weight:900;color:#B91C1C;text-align:center;margin-top:4px">The crossed-out ones were given away — count what is left!</div>':'');
+    var wpSpansA='', wpSpansB=''; var wi;
+    if(kind===0){ for(wi=0;wi<a;wi++) wpSpansA+='<span style="display:inline-block">'+o.e+'</span>'; for(wi=0;wi<b;wi++) wpSpansB+='<span style="display:inline-block">'+o.e+'</span>'; }
+    else { for(wi=0;wi<a;wi++){ var wTaken=wi>=(a-b); wpSpansA+='<span style="display:inline-block;'+(wTaken?'opacity:.4;text-decoration:line-through;text-decoration-color:#B91C1C;text-decoration-thickness:6px;':'')+'">'+o.e+'</span>'; } }
+    /* The story objects are structured in balanced .cnt rows of about
+       five (Pass 4): add stories show the two groups side by side with
+       the plus between them — the same structure as the Kindergarten
+       addition display — and take-away stories show the one starting
+       group in rows of about five with the given-away ones crossed
+       out and the caption underneath. Never one long row across. */
+    var wpVis= kind===0
+      ? '<div class="cnt2" style="display:flex;justify-content:center;align-items:flex-start;gap:4px;width:100%"><div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:42px;line-height:1.2">'+wpSpansA+'</div><div style="text-align:center;font-size:30px;line-height:1.1">➕</div><div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:42px;line-height:1.2">'+wpSpansB+'</div></div>'
+      : '<div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:42px;line-height:1.2">'+wpSpansA+'</div><div class="vis-caption" style="font-size:16px;font-weight:900;color:#B91C1C;text-align:center;margin-top:4px">The crossed-out ones were given away — count what is left!</div>';
     return {q:q,ans:String(ans),display:'number',hint:hint,check:check,visual:wpVis};
   }
   return {q:q,ans:String(ans),display:'number',hint:hint,check:check};
@@ -2935,8 +3091,9 @@ meanings:'Here is what to do: read the word and listen to Leo say it. Then read 
 /* The game's spoken INSTRUCTIONS only — what to do in this game,
    sport-matched and grade-true. This is the text the game-open
    auto-read speaks (Michelle, Nov 8, 2026: when a game opens the coach
-   reads ONLY the instructions), and it is also the first part of the
-   fuller 💬 replay text buildTaskSpeech() builds below. */
+   reads ONLY the instructions), and it is also the whole 💬 replay
+   text buildTaskSpeech() returns below — the bubble never carries
+   the problem. */
 function taskInstructionText(){
   if(!current) return '';
   var id=currentTopic?currentTopic.id:'';
@@ -2947,24 +3104,19 @@ function taskInstructionText(){
   if(gradeTier()===0&&id==='vowels') instr='Here is what to do: listen to the short word, hear the sound in the middle, and spell the whole word with the right vowel letter.';
   return instr;
 }
+/* THE BUBBLE HOLDS ONLY HIS INSTRUCTIONS (Michelle, Nov 8, 2026):
+   "The coach's bubble holds ONLY his instructions — take the problem
+   out of the bubble, including any 'Here is your problem.' style
+   opener. The problem appears only in its own card under the game,
+   once." The 💬 replay therefore reads the INSTRUCTIONS ONLY — the
+   same text the game-open reading captions — and never the problem,
+   the story, the clue, the word or the choices. (A spelling word
+   itself is still heard from the card's own 🔊 Hear the Word button,
+   and a selected hint or example is still read when it is selected;
+   neither is the problem sitting in the bubble.) */
 function buildTaskSpeech(){
   if(!current) return '';
-  var parts=[];
-  var id=currentTopic?currentTopic.id:'';
-  var instr=taskInstructionText();
-  if(instr) parts.push(instr);
-  var eq=equationInWords(current.q);
-  if(eq){ parts.push('Here is your problem: '+eq); }
-  else if(id==='wordproblems'){ parts.push('Here is the story: '+plainSpeechText(current.q)); }
-  else if(currentTopic&&currentTopic.cat==='spelling'){
-    if(current.clue){ var ct=plainSpeechText(current.clue); if(ct&&parts.join(' ').indexOf(ct)===-1) parts.push(ct); }
-    if(current.speak) parts.push('The word is: '+current.speak+'.');
-  } else {
-    var qt=plainSpeechText(current.q); if(qt&&parts.join(' ').indexOf(qt)===-1) parts.push('Here is your question: '+qt);
-    if(current.clue){ var ct2=plainSpeechText(current.clue); if(ct2&&parts.join(' ').indexOf(ct2)===-1) parts.push(ct2); }
-  }
-  if(current.display==='choice'&&current.choices&&current.choices.length) parts.push('Your choices are: '+current.choices.join(', ')+'.');
-  return parts.filter(function(p){return !!p;}).join(' ');
+  return taskInstructionText();
 }
 function hearCurrentTask(){ var t=buildTaskSpeech(); if(t) speakCaptions(t); else toast('Pick a game first — then Leo can read it to you! 🦁'); } /* 💬 replays the voice AND the captions together (speakCaptions) */
 /* EXAMPLE READ-ALOUD (Michelle, Nov 8, 2026): opening an Example — and
@@ -3012,10 +3164,10 @@ function startTopic(id){ var lt=TOPICS.find(function(t){return t.id===id}); if(i
    (speakLeo's force flag), the same path the Hint / Example auto-reads
    use, so it is never silently dropped just because this tap did not
    happen to prime the device voice first. ONLY the instructions: the
-   problem is NOT read at open (the 💬 replay still reads instructions +
-   problem on tap), and no Example ever starts or pops out at game
-   open — an example or a hint is read aloud only when the learner
-   selects it. The reading is CAPTIONED (speakCaptions): as Leo reads,
+   problem is NOT read at open and never enters his bubble at all (the
+   💬 replay reads the same instructions again on tap), and no Example
+   ever starts or pops out at game open — an example or a hint is read
+   aloud only when the learner selects it. The reading is CAPTIONED (speakCaptions): as Leo reads,
    the words appear sentence by sentence in his bubble — the
    instructions space at the top of the game view — in proper sentence
    structure, and the full instruction text stays there when he
@@ -3052,6 +3204,7 @@ function nextPrompt(first){
   if(current.display==='choice'){ document.getElementById('inputRow').style.display='none'; ch.innerHTML='<div class="choices">'+current.choices.map(function(c){return '<button class="choice" onclick="pickChoice(this,\''+c.replace(/'/g,"\\'")+'\')">'+c+'</button>'}).join('')+'</div>'; }
   else { document.getElementById('inputRow').style.display='flex'; ch.innerHTML=''; }
   document.getElementById('feedback').className='feedback'; document.getElementById('feedback').textContent='';
+  document.getElementById('gameCard').classList.remove('answered');
   setupWork();
   var sInfo=sportInfo();
   if(first){
@@ -3089,6 +3242,7 @@ function checkAnswer(){
   if(typeof toggleWorkPanel==='function') toggleWorkPanel(false);
   var guess= current.display==='choice'? chosen : document.getElementById('answerInput').value;
   var fb=document.getElementById('feedback');
+  document.getElementById('gameCard').classList.add('answered'); /* Pass 4: with feedback joining the card, the counting display steps its objects down one size so the whole view still fits on the one screen */
   if(guess===null||guess===undefined||normalize(guess)===''){ fb.className='feedback bad'; fb.innerHTML='✏️ Type (or tap) an answer first, then check it!'; return; }
   var correct= normalize(guess)===normalize(current.ans);
   if(current.display==='number'||currentTopic.cat==='math'){ var gn=parseFloat(guess); if(!isNaN(gn) && String(current.ans).indexOf('/')===-1 && String(current.ans).indexOf(':')===-1) correct= gn===parseFloat(current.ans); if(String(current.ans).indexOf(':')>-1) correct= normalize(guess)===normalize(current.ans); }
@@ -3114,7 +3268,7 @@ function checkAnswer(){
     fb.className='feedback bad';
     var specific=''; try{ specific=current.check? current.check(normalize(guess)) : ''; }catch(e){ specific=''; }
     fb.innerHTML='🦁 <b>Not yet — let\'s fix it together!</b><br>'+pick(TRYAGAIN)+'<br><br><b>What to fix:</b> '+specific+'<br><br>💡 <b>Hint:</b> '+current.hint+'<br><br>Try the <b>same one again</b> — you don\'t move on until you nail it, and I\'m right here with you!';
-    leoSay('🦁 <b>Good effort!</b> '+specific+'<br>Try the <b>same question</b> again — I\'m cheering for you!');
+    leoSay('🦁 <b>Good effort!</b> Try the <b>same question</b> again — I\'m cheering for you!'); /* the fix-it specifics stay in the feedback card only — the problem and its coaching appear once, in the card, never repeated in his bubble */
     if(current.display!=='choice'){ var inp=document.getElementById('answerInput'); inp.select(); }
   }
 }
@@ -3582,7 +3736,6 @@ function initGameSession(id){
   if(tier>=1&&(prog.champTier===undefined||prog.champTier<tier)){ champ=true; prog.champTier=tier; saveP(progress); }
   gameSession={topicId:id,player:0,leo:0,target:champ?24:20,streak:0,onFire:false,championship:champ,over:false,pendingReward:''};
   updateScoreboard();
-  var msg=document.getElementById('shotMsg'); if(msg) msg.textContent= champ?'🏆 Championship game — your player is ready!':sportInfo().readyMsg;
 }
 function updateScoreboard(){
   var m=document.getElementById('sbMine'),l=document.getElementById('sbLeo'),t=document.getElementById('sbTarget'),sp=document.getElementById('streakPill'),cb=document.getElementById('champBanner');
@@ -3593,7 +3746,13 @@ function updateScoreboard(){
   var ball=document.getElementById('shotBall'); if(ball) ball.classList.toggle('fire',!!gameSession.onFire);
   var stg2=document.getElementById('courtStage'); if(stg2) stg2.classList.toggle('fire-glow',!!gameSession.onFire);
 }
-function setShotMsg(t){ var m=document.getElementById('shotMsg'); if(m) m.textContent=t; }
+/* NO STATUS TEXT ON THE STAGE (Michelle, Nov 8, 2026): "Games do not
+   get prompts on the actual game." The old shot-message bar that sat
+   across the bottom of the court — ready / made-shot / missed-shot
+   sentences — is GONE entirely, element, styles and writers alike.
+   The stage shows only the venue, the player, and the game's moving
+   object; everything Leo has to say lives in his bubble and in the
+   question card's feedback line, where it always also appeared. */
 /* ----- The photo court: dribble loop + shots aimed at the photo's own hoop ----- */
 /* Rim center of assets/court-game.jpg — the video-game court, rendered at the same 1120x2240 geometry as the court it replaces: rim center at 89% across / 16.8% down, wall/floor line at 53.6%. The cover math below mirrors .court-photo (object-fit:cover, object-position 50% 15%), so the ball lands on the game court's hoop at any stage size — the 15% anchor keeps the hoop in frame even on the short same-view mobile stage. The same rendered court stands behind Coach Leo in the hero (assets/coach-leo.jpg). The dribble itself is visual-only, so it can never fight his music. */
 var COURT_IMG={iw:1120,ih:2240,fx:0.89,fy:0.168,posX:0.5,posY:0.15};
@@ -3816,10 +3975,11 @@ function playSportShot(success){
   }
   /* Baseball plays the AT-BAT: a correct answer is a HOME RUN — the
      ball rockets off his bat, up and OVER the outfield fence (the
-     wall band at the top of the diamond scene) and out of the park;
-     it never lands on the infield and rolls back, because a
-     home-run ball is gone. His next ball fades in at his glove so
-     the glove-toss waiting loop can start again. A wrong answer is
+     wall band at the top of the diamond scene), lands on the far
+     side, bounces there, and hops back over into the field and
+     back to his glove — one continuous flight the whole way, fully
+     visible: the ball never fades out and no new ball ever fades
+     in (nothing teleports, per Michelle's rule). A wrong answer is
      a SWING AND A MISS: the pitch comes in, he whiffs, and the ball
      stays right at the plate with him — it never flies out to the
      field — so he steps back in and swings at the same one again. */
@@ -3831,14 +3991,16 @@ function playSportShot(success){
       var bAnim;
       if(success){
         var bDx=Math.round(bsr.width*0.52), bUp=-Math.round(bsr.height*0.80);
-        var bDur=2000;
+        var bDur=2300;
         bAnim=ball.animate([
           {transform:'translate(0,0) rotate(0deg) scale(1)',opacity:1,easing:'ease-out'},
-          {transform:'translate('+Math.round(bDx*0.3)+'px,'+Math.round(bUp*0.55)+'px) rotate(80deg) scale(.92)',offset:.3,easing:'ease-out'},
-          {transform:'translate('+bDx+'px,'+bUp+'px) rotate(150deg) scale(.6)',opacity:1,offset:.62,easing:'ease-in'},
-          {transform:'translate('+Math.round(bDx*1.12)+'px,'+Math.round(bUp*1.06)+'px) rotate(170deg) scale(.5)',opacity:0,offset:.74,easing:'ease-in'},
-          {transform:'translate(0,0) rotate(0deg) scale(1)',opacity:0,offset:.88,easing:'ease-in'},
-          {transform:'translate(0,0) rotate(0deg) scale(1)',opacity:1,offset:1}
+          {transform:'translate('+Math.round(bDx*0.3)+'px,'+Math.round(bUp*0.62)+'px) rotate(80deg) scale(.9)',offset:.26,easing:'ease-out'},
+          {transform:'translate('+bDx+'px,'+bUp+'px) rotate(150deg) scale(.6)',opacity:1,offset:.48,easing:'ease-in'},
+          {transform:'translate('+Math.round(bDx*1.08)+'px,'+Math.round(bUp*0.52)+'px) rotate(185deg) scale(.62)',offset:.6,easing:'ease-out'},
+          {transform:'translate('+Math.round(bDx*1.04)+'px,'+Math.round(bUp*0.36)+'px) rotate(205deg) scale(.64)',offset:.66,easing:'ease-in'},
+          {transform:'translate('+bDx+'px,'+Math.round(bUp*0.52)+'px) rotate(225deg) scale(.66)',offset:.72,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(bDx*0.45)+'px,'+Math.round(bUp*0.28)+'px) rotate(290deg) scale(.85)',offset:.86,easing:'ease-out'},
+          {transform:'translate(0,0) rotate(360deg) scale(1)',opacity:1,offset:1}
         ],{duration:bDur});
         if(bAnim) bAnim.onfinish=function(){ settleShot(mySeq,true); };
         setTimeout(function(){ settleShot(mySeq,true); },bDur+90);
@@ -3955,6 +4117,83 @@ function playSportShot(success){
         if(rAnim) rAnim.onfinish=function(){ settleShot(mySeq,false); };
         setTimeout(function(){ settleShot(mySeq,false); },sDur+90);
         setTimeout(function(){ if(mySeq===shotSeq) sfx('rim'); },Math.round(sDur*0.46));
+      }
+    }catch(e){ shotAnimActive=false; if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },900); }
+    return;
+  }
+  /* Football plays the TOUCHDOWN RUN: the ball never leaves his
+     hand — there is no throw and no pass. A correct answer sends
+     HIM down the field carrying the ball: player and ball ride
+     the exact same path, stride for stride (ground-level strides
+     with a running bob, feet on the ground the whole way), all
+     the way into the end zone, where he hops twice to celebrate
+     with the ball still in his hand, then jogs back the same way.
+     A wrong answer strides partway and STUMBLES — a dip and a
+     shake, ball still in his hand — gets back up, and jogs back
+     to run the same one again. One continuous trip out and back:
+     nothing flies, nothing fades, nothing teleports. */
+  var fbPlayer=document.getElementById('courtPlayer');
+  if(info===SPORT_INFO.football&&fbPlayer&&fbPlayer.animate){
+    stage.classList.add('shooting');
+    var fr2=stage.getBoundingClientRect(),fpr=fbPlayer.getBoundingClientRect();
+    var fStartCX=fpr.left-fr2.left+fpr.width/2;
+    var fLandCX=fr2.width*0.90, fDx=Math.round(fLandCX-fStartCX);
+    shotAnimActive=true;
+    try{ fbPlayer.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){}
+    try{
+      var fAnimP,fAnimB;
+      if(success){
+        var fDur=2350;
+        var fSteps=[[0,0,0],[.09,.14,-7],[.18,.27,0],[.27,.4,-7],[.36,.53,0],[.45,.66,-7],[.54,.79,0]];
+        var fFramesP=fSteps.map(function(st){ return {transform:'translate('+Math.round(fDx*st[1])+'px,'+st[2]+'px) rotate(2deg)',offset:st[0],easing:'ease-in-out'}; });
+        var fFramesB=fSteps.map(function(st){ return {transform:'translate('+Math.round(fDx*st[1])+'px,'+st[2]+'px)',offset:st[0],easing:'ease-in-out'}; });
+        /* In the end zone: two celebration hops, ball still in hand. */
+        fFramesP.push({transform:'translate('+fDx+'px,-16px) rotate(0deg)',offset:.62,easing:'ease-out'});
+        fFramesP.push({transform:'translate('+fDx+'px,0px) rotate(0deg)',offset:.68,easing:'ease-in'});
+        fFramesP.push({transform:'translate('+fDx+'px,-13px) rotate(0deg)',offset:.74,easing:'ease-out'});
+        fFramesP.push({transform:'translate('+fDx+'px,0px) rotate(0deg)',offset:.8,easing:'ease-in'});
+        fFramesB.push({transform:'translate('+fDx+'px,-16px)',offset:.62,easing:'ease-out'});
+        fFramesB.push({transform:'translate('+fDx+'px,0px)',offset:.68,easing:'ease-in'});
+        fFramesB.push({transform:'translate('+fDx+'px,-13px)',offset:.74,easing:'ease-out'});
+        fFramesB.push({transform:'translate('+fDx+'px,0px)',offset:.8,easing:'ease-in'});
+        /* Jog back the same way — one continuous trip home. */
+        fFramesP.push({transform:'translate('+Math.round(fDx*.5)+'px,-6px) rotate(2deg)',offset:.9,easing:'ease-in-out'});
+        fFramesP.push({transform:'translate(0,0) rotate(0deg)',offset:1});
+        fFramesB.push({transform:'translate('+Math.round(fDx*.5)+'px,-6px)',offset:.9,easing:'ease-in-out'});
+        fFramesB.push({transform:'translate(0,0)',offset:1});
+        fAnimP=fbPlayer.animate(fFramesP,{duration:fDur});
+        fAnimB=ball.animate(fFramesB,{duration:fDur});
+        if(fAnimP) fAnimP.onfinish=function(){ settleShot(mySeq,true); };
+        setTimeout(function(){ settleShot(mySeq,true); },fDur+90);
+        setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(Math.round(fLandCX),Math.round(fr2.height*0.72),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); sfx('sparkle'); } },Math.round(fDur*0.56));
+        setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(fDur*0.62));
+      } else {
+        var tDx=Math.round(fr2.width*0.34-fStartCX), tDur=1900;
+        fAnimP=fbPlayer.animate([
+          {transform:'translate(0,0) rotate(2deg)',opacity:1,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(tDx*.45)+'px,-6px) rotate(2deg)',offset:.18,easing:'ease-in-out'},
+          {transform:'translate('+tDx+'px,0px) rotate(2deg)',offset:.32,easing:'ease-in'},
+          {transform:'translate('+(tDx+7)+'px,11px) rotate(0deg)',offset:.44,easing:'ease-in'},
+          {transform:'translate('+(tDx+3)+'px,6px) rotate(0deg)',offset:.52,easing:'ease-in-out'},
+          {transform:'translate('+(tDx+6)+'px,9px) rotate(0deg)',offset:.6,easing:'ease-in'},
+          {transform:'translate('+tDx+'px,0px) rotate(2deg)',offset:.7,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(tDx*.5)+'px,-6px) rotate(2deg)',offset:.85,easing:'ease-in-out'},
+          {transform:'translate(0,0) rotate(0deg)',offset:1}
+        ],{duration:tDur});
+        fAnimB=ball.animate([
+          {transform:'translate(0,0)',opacity:1,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(tDx*.45)+'px,-6px)',offset:.18,easing:'ease-in-out'},
+          {transform:'translate('+tDx+'px,0px)',offset:.32,easing:'ease-in'},
+          {transform:'translate('+(tDx+7)+'px,11px)',offset:.44,easing:'ease-in'},
+          {transform:'translate('+(tDx+3)+'px,6px)',offset:.52,easing:'ease-in-out'},
+          {transform:'translate('+(tDx+6)+'px,9px)',offset:.6,easing:'ease-in'},
+          {transform:'translate('+tDx+'px,0px)',offset:.7,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(tDx*.5)+'px,-6px)',offset:.85,easing:'ease-in-out'},
+          {transform:'translate(0,0)',offset:1}
+        ],{duration:tDur});
+        if(fAnimP) fAnimP.onfinish=function(){ settleShot(mySeq,false); };
+        setTimeout(function(){ settleShot(mySeq,false); },tDur+90);
+        setTimeout(function(){ if(mySeq===shotSeq) sfx('rim'); },Math.round(tDur*0.44));
       }
     }catch(e){ shotAnimActive=false; if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },900); }
     return;
@@ -4105,14 +4344,11 @@ function onGameCorrect(){
   var pts=(Math.random()<0.25?3:2)+(gameSession.onFire?1:0);
   gameSession.player+=pts;
   playShot(true);
-  var mk=sportInfo().makeMsg.replace('PTS',pts);
-  setShotMsg(gameSession.onFire?('🔥 ON FIRE! '+mk):mk);
   var leoPts=0, won=gameSession.player>=gameSession.target;
   if(!won&&Math.random()<0.38){
     var amt=Math.random()<0.2?3:2;
     if(gameSession.leo+amt<=gameSession.target-5&&gameSession.leo+amt<=gameSession.player+6){ leoPts=amt; gameSession.leo+=amt; }
   }
-  if(leoPts){ setTimeout(function(){ setShotMsg('🦁 Leo\'s Lions scored +'+leoPts+' too — '+(sportInfo().oppCheer||'keep shooting, champ!')); },1500); }
   updateScoreboard();
   var sbT=document.getElementById('sbMine'); if(sbT&&sbT.parentElement){ var pt=sbT.parentElement; pt.classList.remove('pop'); void pt.offsetWidth; pt.classList.add('pop'); } /* scoreboard pop on every made shot */
   if(won&&!gameSession.over){ gameSession.over=true; awardWin(); }
@@ -4120,8 +4356,6 @@ function onGameCorrect(){
   return {pts:pts,fire:gameSession.onFire,leoPts:leoPts,won:gameSession.player>=gameSession.target};
 }
 function onGameWrong(){
-  if(gameSession.streak>=3) setShotMsg(sportInfo().missShort+' The fire is out — but nothing is lost. Try again! '+sportInfo().tokenEmoji);
-  else setShotMsg(sportInfo().missMsg);
   gameSession.streak=0; gameSession.onFire=false;
   playShot(false); updateScoreboard();
 }
@@ -4283,7 +4517,7 @@ basketball:{arena:'Court',venue:'basketball court',contest:'game',headline:'LEAR
 tennis:{arena:'Tennis Court',venue:'tennis court',contest:'match',headline:'SERVE.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'🎾',countEmoji:'🎾',countName:'tennis balls',subGame:'Tiebreak',wpGame:'Match Point',idleDrop:'13px',stageBg:'linear-gradient(180deg,#3E7CC4 0 54%,#2F9E63 54% 100%)',readyMsg:'Your player is bouncing the ball on his racket — answer to serve! 🎾',makeMsg:'🎉 OVER THE NET! It lands on the other side! +PTS points!',makeShort:'Your player smashed it over the net and scored',oppCheer:'keep that rally going, champ!',missMsg:'The ball hit the net and landed on the ground on YOUR side — no point! Read Leo\u2019s tip and serve again on this same one! 🎾',missShort:'It hit the net — your side!',nextPhrase:'then we bounce the ball and rally all the way to the championship!',promptPhrases:['New one! Read it carefully, then serve your answer! 🎾','Here we go — bounce, focus… here\u2019s your next one!','Racket ready… here\u2019s your next one!'],playerDesc:'He is the player who serves and rallies in every game!',bonusDesc:'Rally tapping and tap-the-right-ball games!',bonusTapName:'Rally Tap',bonusTapDesc:'Tap HIT when the ball marker is in the green OVER-THE-NET ZONE!',zone:'OVER-THE-NET ZONE',ballRoundName:'Tap the Right Ball',note:'Tennis: there is ONE racket, in your player\u2019s hand, and he bounces the ball ON that racket while he waits. A right answer serves the ball up in a clear arc OVER the net so it lands on the other side — point! A wrong answer sends the ball INTO the net — it drops to the ground on YOUR side, no point, serve again.'},
 soccer:{arena:'Soccer Field',venue:'soccer field',contest:'match',headline:'KICK.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'⚽',countEmoji:'⚽',countName:'soccer balls',subGame:'Shootout',wpGame:'Cup Final',idleDrop:'2px',stageBg:'linear-gradient(180deg,#57B24A 0 100%)',readyMsg:'Your player has his foot on the ball, rolling it back and forth under his foot — answer to shoot at the goal! ⚽',makeMsg:'🎉 GOAL! Right into the net! +PTS points!',makeShort:'Your player kicked it into the goal and scored',oppCheer:'keep kicking for that goal, champ!',missMsg:'Off the post! No goal — read Leo\u2019s tip and kick again on this same one! ⚽',missShort:'Off the post!',nextPhrase:'then we dribble down the field all the way to the championship!',promptPhrases:['New one! Read it carefully, then kick your answer! ⚽','Here we go — eyes on the goal… here\u2019s your next one!','Boots ready… here\u2019s your next one!'],playerDesc:'He is the player who dribbles and shoots in every game!',bonusDesc:'Penalty-kick tapping and tap-the-right-ball games!',bonusTapName:'Penalty Tap',bonusTapDesc:'Tap KICK when the ball marker is in the green GOAL ZONE!',zone:'GOAL ZONE',ballRoundName:'Tap the Right Ball',note:'Soccer: your player waits with his foot on top of the ball, his foot rocking back and forth and rolling the ball under it on the ground — the ball is never bounced or juggled while he waits. A right answer kicks it into the goal — GOAL! A wrong answer hits the post — no goal, kick again.'},
 baseball:{arena:'Baseball Diamond',venue:'baseball diamond',contest:'game',headline:'SWING.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'⚾',countEmoji:'⚾',countName:'baseballs',subGame:'Strikeout',wpGame:'World Series',idleDrop:'18px',stageBg:'linear-gradient(180deg,#57B24A 0 62%,#C98B4B 62% 100%)',readyMsg:'Your player is at the plate taking practice swings, bouncing the ball in his glove — answer to swing for real! ⚾',makeMsg:'🎉 HOME RUN! Over the fence! +PTS points!',makeShort:'Your player hit a home run and scored',oppCheer:'keep swinging for the fences, champ!',missMsg:'Swing and a miss — strike! No run. Read Leo\u2019s tip and swing again on this same one! ⚾',missShort:'Swing and a miss — strike!',nextPhrase:'then we step back up to the plate all the way to the championship!',promptPhrases:['New one! Read it carefully, then swing at your answer! ⚾','Here we go — batter up… here\u2019s your next one!','Bat ready… here\u2019s your next one!'],playerDesc:'He is the player who bats in every game!',bonusDesc:'Home-run tapping and tap-the-right-ball games!',bonusTapName:'Home-Run Tap',bonusTapDesc:'Tap SWING when the ball marker is in the green HOME-RUN ZONE!',zone:'HOME-RUN ZONE',ballRoundName:'Tap the Right Ball',note:'Baseball: your player waits at the plate taking practice swings and bouncing the ball in his glove. A right answer is a hit — a home run over the fence scores! A wrong answer is a swing and a miss, a strike, no run — step back in and swing again.'},
-football:{arena:'Football Field',venue:'football field',contest:'game',headline:'THROW.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'🏈',countEmoji:'🏈',countName:'footballs',subGame:'Touchdown',wpGame:'Bowl Game',idleDrop:'24px',stageBg:'linear-gradient(180deg,#4CA34A 0 100%)',readyMsg:'Your player is calling the play — answer to throw! 🏈',makeMsg:'🎉 TOUCHDOWN! Right into the end zone! +PTS points!',makeShort:'Your player threw a touchdown and scored',oppCheer:'keep throwing for the end zone, champ!',missMsg:'Incomplete — the pass fell short! Read Leo\u2019s tip and throw again on this same one! 🏈',missShort:'Incomplete pass!',nextPhrase:'then we huddle up and run all the way to the championship!',promptPhrases:['New one! Read it carefully, then throw your answer! 🏈','Here we go — hut, hut… here\u2019s your next one!','Arm ready… here\u2019s your next one!'],playerDesc:'He is the player who throws in every game!',bonusDesc:'Touchdown tapping and tap-the-right-ball games!',bonusTapName:'Touchdown Tap',bonusTapDesc:'Tap THROW when the ball marker is in the green TOUCHDOWN ZONE!',zone:'TOUCHDOWN ZONE',ballRoundName:'Tap the Right Ball',note:'Football: your player waits in the pocket. A right answer is a touchdown pass! A wrong answer falls incomplete — huddle up and throw again.'},
+football:{arena:'Football Field',venue:'football field',contest:'game',headline:'RUN.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'🏈',countEmoji:'🏈',countName:'footballs',subGame:'Touchdown',wpGame:'Bowl Game',idleDrop:'24px',stageBg:'linear-gradient(180deg,#4CA34A 0 100%)',readyMsg:'Your player has the ball tucked tight in his hand — answer to run it in! 🏈',makeMsg:'🎉 TOUCHDOWN! Right into the end zone! +PTS points!',makeShort:'Your player ran it in for a touchdown and scored',oppCheer:'keep running for the end zone, champ!',missMsg:'He stumbled on the run — no touchdown yet! Read Leo\u2019s tip and run it again on this same one! 🏈',missShort:'A stumble — run it again!',nextPhrase:'then we huddle up and run all the way to the championship!',promptPhrases:['New one! Read it carefully, then run it in! 🏈','Here we go — hut, hut… here\u2019s your next one!','Legs ready… here\u2019s your next one!'],playerDesc:'He is the player who runs the ball in every game!',bonusDesc:'Touchdown tapping and tap-the-right-ball games!',bonusTapName:'Touchdown Tap',bonusTapDesc:'Tap RUN when the ball marker is in the green TOUCHDOWN ZONE!',zone:'TOUCHDOWN ZONE',ballRoundName:'Tap the Right Ball',note:'Football: your player waits with the ball tucked in his hand. A right answer is a touchdown run — he carries the ball all the way into the end zone himself! A wrong answer is a stumble on the run — huddle up and run it again.'},
 cheer:{arena:'Cheer Mat',venue:'cheer mat',contest:'competition',headline:'CHEER.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'⭐',idleDrop:'20px',stageBg:'linear-gradient(180deg,#FFF3C4 0 55%,#FFE1B8 55% 100%)',readyMsg:'Your player is bouncing to the beat — answer to hit the routine! 📣',makeMsg:'🎉 NAILED IT! A perfect routine! +PTS points!',makeShort:'Your player nailed the routine and scored',oppCheer:'keep hitting that routine, champ!',missMsg:'A wobble in the routine — no points yet! Read Leo\u2019s tip and try the same move again! 📣',missShort:'A wobble — try that move again!',nextPhrase:'then we count in and hit the next routine!',promptPhrases:['New one! Read it carefully, then hit your move! 📣','Here we go — 5, 6, 7, 8… here\u2019s your next one!','Pom-poms ready… here\u2019s your next one!'],playerDesc:'He is the player who performs in every game!',bonusDesc:'Routine tapping and tap-the-right-star games!',bonusTapName:'Routine Tap',bonusTapDesc:'Tap HIT IT when the marker is in the green PERFECT ZONE!',zone:'PERFECT ZONE',ballRoundName:'Tap the Right Star',note:'Cheer & Dance: your player bounces to the beat while he waits. A right answer nails the routine! A wrong answer wobbles — run the same move again until it sticks.'},
 swimming:{arena:'Swimming Pool',venue:'swimming pool',contest:'meet',headline:'SWIM.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'🏊',countEmoji:'🏊',countName:'swimmers',subGame:'Splash',wpGame:'Swim Meet',idleDrop:'7px',stageBg:'linear-gradient(180deg,#7ED3F7 0 22%,#1E9BD8 22% 100%)',readyMsg:'Your swimmer is in the water, kicking his feet while he waits — answer to race! 🏊',makeMsg:'🎉 FIRST TO THE WALL! He swam all the way across! +PTS points!',makeShort:'Your swimmer touched the wall first and scored',oppCheer:'keep swimming strong, champ!',missMsg:'He sank under the water — no point! He pops back up at the start. Read Leo\u2019s tip and swim this same one again! 🏊',missShort:'He sank — back to the start!',nextPhrase:'then we push off the wall all the way to the championship!',promptPhrases:['New one! Read it carefully, then dive into your answer! 🏊','Here we go — on your mark… here\u2019s your next one!','Goggles on… here\u2019s your next one!'],playerDesc:'He is the swimmer who races in every game!',bonusDesc:'Finish-line tapping and tap-the-right-ball games!',bonusTapName:'Finish Tap',bonusTapDesc:'Tap FINISH when the marker is in the green WALL ZONE!',zone:'WALL ZONE',ballRoundName:'Tap the Right Ball',note:'Swimming: your swimmer waits IN the water, kicking his feet at the surface. A right answer races him all the way across the pool to touch the wall first! A wrong answer sinks him under — he pops back up at the start and tries the same one again.'},
 hockey:{arena:'Hockey Rink',venue:'hockey rink',contest:'game',headline:'SKATE.<br><span>LEARN &amp; WIN!</span>',tokenType:'puck',tokenEmoji:'🏒',countEmoji:'🏒',countName:'pucks',subGame:'Slap Shot',wpGame:'Hat Trick',idleDrop:'4px',stageBg:'linear-gradient(180deg,#EAF7FF 0 100%)',readyMsg:'Your player is skating in place, stick ready — answer to shoot the puck! 🏒',makeMsg:'🎉 HE SCORES! The puck is in the net! +PTS points!',makeShort:'Your player slapped the puck into the net and scored',oppCheer:'keep skating and shooting, champ!',missMsg:'The puck slid wide of the net — no goal! Read Leo\u2019s tip and shoot again on this same one! 🏒',missShort:'The puck slid wide!',nextPhrase:'then we skate back and line up all the way to the championship!',promptPhrases:['New one! Read it carefully, then shoot your answer! 🏒','Here we go — stick on the ice… here\u2019s your next one!','Skates ready… here\u2019s your next one!'],playerDesc:'He is the player who skates and shoots in every game!',bonusDesc:'Slap-shot tapping and tap-the-right-puck games!',bonusTapName:'Slap-Shot Tap',bonusTapDesc:'Tap SHOOT when the puck marker is in the green NET ZONE!',zone:'NET ZONE',ballRoundName:'Tap the Right Puck',note:'Hockey: your player skates in place while he waits, his stick IN his hands the whole time — the stick never leaves his hands; only the puck moves. The puck rests on the ice at his blade, stickhandled side to side while he waits. A right answer slaps the puck into the net — HE SCORES! A wrong answer slides the puck wide — line it up and shoot again.'},
@@ -5419,8 +5653,6 @@ function applySportTheme(lockedOut,c,s){
     tok.textContent= info.tokenType==='ball' ? '' : (info.tokenType==='puck' ? '' : info.tokenEmoji);
     if(info.tokenType==='ball') tok.style.background='radial-gradient(circle at 32% 28%,'+c.soft+','+c.primary+' 58%,'+c.dark+')';
   }
-  var msg=document.getElementById('shotMsg');
-  if(msg&&!document.body.classList.contains('playing')) msg.textContent=info.readyMsg;
   try{ updateCoachPortrait(s.id,(lockedOut?'Leo':coachName()),c.primary); }catch(e){} /* the coach's portrait is the same background-free cutout in every sport — it never swaps */
   try{ if(typeof updateScoreboard==='function'&&typeof gameSession!=='undefined'&&gameSession) updateScoreboard(); }catch(e){}
 }
