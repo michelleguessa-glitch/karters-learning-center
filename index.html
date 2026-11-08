@@ -1167,6 +1167,167 @@ body.playing #practiceView .visual .group-dots{max-width:320px;margin-left:auto;
   body.playing #practiceView .gamecard.answered .visual span:not(.gd){font-size:18px!important} /* answered step sized so a two-row display (subtraction, addition) still shows COMPLETE beside the feedback under the set-size stage; only the very largest displays (20 objects, 4 rows) give rows here */
   body.playing #practiceView .gamecard.answered .visual .vis-caption{font-size:14px!important;line-height:1.3}
 }
+/* ===== GAME VIEW, PASS 5 — ROWS OF FIVE BUILT INTO THE DISPLAY, AND
+   THE VENUE PILL OFF THE STAGE (Michelle, Nov 8, 2026: "All the video
+   games should clearly show the player and venue/field/rink/etc. —
+   no added floating images or text bars on it", on top of her rows
+   rule and her never-minimize-the-window rule). A live check of the
+   pass-4 build (desktop 1919×998, cache-busted) found the last
+   failures, all from one root: the counting groups still wrapped by
+   width — a group of 9 fell to rows of 4-4-1 and stood THREE rows
+   tall — and the picture area, the card's one compressible piece,
+   was crushed from the bottom whenever the card ran short: the 9th
+   ball half-clipped at OPEN, the second row clipped to slivers
+   after a CORRECT answer, and after a WRONG answer the pictures
+   crushed flat and the Helper Tools button pushed off the bottom
+   of the screen. Pass 5 — display structure and card spacing only;
+   the stage keeps its one set size in every game:
+   1. Every counting group is now BUILT in rows of five (cntRows()
+      in the generators): a .cnt group is a column of .crow rows of
+      at most five objects — 9 = 5 + 4, 10 = 5 + 5 — at every screen
+      size, so a group's height is exactly its row count and no
+      browser wrap can invent a third row or clip one mid-ball.
+   2. The objects are sized to their row: two-group displays (the
+      addition and add-story pictures) size so five fit across a
+      half-card group; single-group displays (subtraction, take-away
+      stories) size to the wider full-card group. The answered
+      step-down now applies at EVERY screen height — the tall
+      desktops the short-screen steps never reached included.
+   3. Once an answer is checked, the card buys its room from spacing
+      at every height (the tall-desktop step below, plus two margin
+      steps under the short-screen step): the structured picture
+      keeps its full height and the Helper Tools button stays fully
+      on screen in the open, correct and wrong states alike.
+   4. The venue-name pill (the little "🏈 Football Field" label that
+      floated at the top of non-basketball stages) is removed —
+      element, style and fill code — so the stage shows only the
+      venue, the player and the ball, clean. */
+.visual .cnt,.ex-visual .cnt{display:flex;flex-direction:column;align-items:center;gap:4px}
+.visual .cnt-wrap,.ex-visual .cnt-wrap{display:flex;flex-direction:column;align-items:center;width:100%} /* take-away displays wrap their group + caption in ONE child of the picture area, so the fit pass (Pass 6) measures and scales the whole display as a unit — the same single-child shape as Royce's page */
+.visual .crow,.ex-visual .crow{display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:4px}
+.ex-visual{flex-wrap:wrap}
+.ex-visual .vis-caption{flex:0 0 100%}
+body.playing #practiceView .visual .cnt-wrap>.cnt{max-width:340px}
+body.playing #practiceView .visual .cnt2 .cnt{max-width:290px}
+@media(max-width:900px){
+  body.playing #practiceView .visual .cnt-wrap>.cnt{max-width:320px}
+}
+body.playing #practiceView .visual .cnt2 .cnt span{font-size:40px!important;line-height:1.15!important}
+body.playing #practiceView .visual .cnt-wrap>.cnt span{font-size:44px!important;line-height:1.15!important}
+@media(max-height:900px){
+  body.playing #practiceView .visual .cnt2 .cnt span{font-size:30px!important}
+  body.playing #practiceView .visual .cnt-wrap>.cnt span{font-size:34px!important}
+}
+@media(max-width:900px){
+  body.playing #practiceView .visual .cnt2 .cnt span{font-size:21px!important}
+  body.playing #practiceView .visual .cnt-wrap>.cnt span{font-size:26px!important}
+}
+body.playing #practiceView .gamecard.answered .visual .cnt2 .cnt span{font-size:30px!important}
+body.playing #practiceView .gamecard.answered .visual .cnt-wrap>.cnt span{font-size:32px!important}
+@media(max-height:900px){
+  body.playing #practiceView .gamecard.answered .visual .cnt2 .cnt span{font-size:21px!important}
+  body.playing #practiceView .gamecard.answered .visual .cnt-wrap>.cnt span{font-size:21px!important}
+}
+@media(max-width:900px){
+  body.playing #practiceView .gamecard.answered .visual .cnt2 .cnt span{font-size:18px!important}
+  body.playing #practiceView .gamecard.answered .visual .cnt-wrap>.cnt span{font-size:18px!important}
+}
+@media(min-height:901px){
+  body.playing #practiceView .gamecard.answered .feedback{font-size:13px;line-height:1.32;padding:7px 10px;margin-top:6px}
+  body.playing #practiceView .gamecard.answered .question{margin:2px 0}
+  body.playing #practiceView .gamecard.answered .answer-row{margin-top:6px}
+  body.playing #practiceView .gamecard.answered .answer-input{padding:8px}
+  body.playing #practiceView .gamecard.answered .check-btn{padding:9px 16px}
+  body.playing #practiceView .gamecard.answered .tools-divider{margin-top:6px}
+  body.playing #practiceView .gamecard.answered .tools-btn{margin-top:6px;padding:9px 16px}
+}
+@media(max-height:900px){
+  body.playing #practiceView .gamecard.answered{padding-top:7px;padding-bottom:7px}
+  body.playing #practiceView .gamecard.answered .visual{margin:0}
+  body.playing #practiceView .gamecard.answered .feedback{padding:5px 10px;margin-top:4px;line-height:1.15}
+  body.playing #practiceView .gamecard.answered .answer-row{margin-top:4px}
+  body.playing #practiceView .gamecard.answered .answer-input{padding:6px}
+  body.playing #practiceView .gamecard.answered .check-btn{padding:8px 16px}
+  body.playing #practiceView .gamecard.answered .tools-divider{margin-top:3px}
+  body.playing #practiceView .gamecard.answered .tools-btn{margin-top:4px;padding:7px 16px}
+  body.playing #practiceView .gamecard.answered .qlabel{font-size:12px}
+  body.playing #practiceView .gamecard.answered .question{margin-top:0}
+  body.playing #practiceView .gamecard.answered .visual .vis-caption{margin-top:1px!important}
+  body.playing #practiceView:has(>.gamecard.answered){gap:3px}
+  body.playing #practiceView:has(>.gamecard.answered) .sb-team{padding:2px 8px}
+  body.playing #practiceView:has(>.gamecard.answered) .sb-team .sb-score{font-size:21px}
+}
+/* ===== GAME VIEW, PASS 6 — THE SAME FIT WIRING AS ROYCE'S PAGE =====
+   fitGameView() steps — sizing ONLY, layout untouched. When a tall
+   state (a long word problem, the full wrong-answer feedback, the
+   open tools menu) needs more room than the counting picture can
+   give, these classes step the type and spacing down a notch so the
+   whole view still ends on the one screen. They are added and
+   removed by fitGameView() alone, state by state — the same
+   mechanism as Royce's page, with his numbers. The stage height is
+   never touched by any step. */
+body.playing #practiceView.fit-tight .bubble{font-size:13px;line-height:1.3;padding:7px 10px}
+body.playing #practiceView.fit-tight .leo-face{width:40px;height:40px;flex-basis:40px}
+body.playing #practiceView.fit-tight .sb-score{font-size:23px}
+body.playing #practiceView.fit-tight .sb-team{padding:4px 7px}
+body.playing #practiceView.fit-tight .question{font-size:clamp(20px,3vw,26px);line-height:1.2}
+body.playing #practiceView.fit-tight .clue{font-size:13.5px;padding:7px 10px}
+body.playing #practiceView.fit-tight .gamecard .feedback{font-size:12.5px;line-height:1.3;padding:7px 10px}
+body.playing #practiceView.fit-tight .gamecard{padding:9px 11px}
+body.playing #practiceView.fit-tighter .bubble{font-size:12.5px;line-height:1.26;padding:6px 9px}
+body.playing #practiceView.fit-tighter .leo-face{width:36px;height:36px;flex-basis:36px}
+body.playing #practiceView.fit-tighter .sb-score{font-size:20px}
+body.playing #practiceView.fit-tighter .sb-name{font-size:10px}
+body.playing #practiceView.fit-tighter .sb-team{padding:3px 6px}
+body.playing #practiceView.fit-tighter .question{font-size:clamp(19px,2.8vw,24px);line-height:1.16}
+body.playing #practiceView.fit-tighter .clue{font-size:12.5px;padding:6px 9px}
+body.playing #practiceView.fit-tighter .gamecard .feedback{font-size:12px;line-height:1.22;padding:6px 9px}
+body.playing #practiceView.fit-tighter .answer-input{font-size:20px;padding:6px}
+body.playing #practiceView.fit-tighter .check-btn{font-size:16px;padding:7px 14px}
+body.playing #practiceView.fit-tighter .tools-divider{margin-top:5px}
+body.playing #practiceView.fit-tighter .tools-btn{margin-top:5px;padding:7px 14px}
+body.playing #practiceView.fit-tighter .gamecard{padding:8px 10px}
+body.playing #practiceView.fit-tighter .choice{padding:7px 11px;font-size:17px}
+/* Third step, reached only by the tallest state there is — the full
+   wrong-answer feedback under the set-size stage: every piece steps
+   to its readable minimum so the dashed line and the Helper Tools
+   button still land on the screen. The moment he retries and the
+   feedback clears, the view relaxes back to full size on its own. */
+body.playing #practiceView.fit-max .bubble{font-size:11.5px;line-height:1.2;padding:5px 8px}
+body.playing #practiceView.fit-max .leo-face{width:30px;height:30px;flex-basis:30px}
+body.playing #practiceView.fit-max .p-top .stars-pill{padding:4px 10px;font-size:12px}
+body.playing #practiceView.fit-max .game-close-btn{padding:5px 11px;font-size:12px}
+body.playing #practiceView.fit-max .sb-score{font-size:17px}
+body.playing #practiceView.fit-max .sb-name{font-size:9.5px}
+body.playing #practiceView.fit-max .sb-team{padding:2px 5px}
+body.playing #practiceView.fit-max .sb-target,body.playing #practiceView.fit-max .streak-pill{padding:3px 8px;font-size:10.5px}
+body.playing #practiceView.fit-max .qlabel{font-size:12px}
+body.playing #practiceView.fit-max .question{font-size:clamp(17px,2.6vw,21px);line-height:1.14}
+body.playing #practiceView.fit-max .gamecard .feedback{font-size:11.5px;line-height:1.15;padding:5px 8px}
+body.playing #practiceView.fit-max .answer-input{font-size:19px;padding:3px 10px}
+body.playing #practiceView.fit-max .check-btn{font-size:15px;padding:5px 13px}
+body.playing #practiceView.fit-max .tools-divider{margin-top:2px}
+body.playing #practiceView.fit-max .tools-btn{margin-top:2px;padding:5px 12px}
+body.playing #practiceView.fit-max .gamecard{padding:6px 8px}
+body.playing #practiceView.fit-max .choice{padding:6px 11px;font-size:16px}
+/* Fourth step, reached ONLY while the Helper Tools menu itself is
+   open on top of the tallest state (the full wrong-answer feedback):
+   the menu's own three buttons step down and every margin gives back
+   its last few pixels, so Work It Out / Show Me an Example / Get a
+   Hint all land on the same screen too — no scrolling to reach a
+   tool, ever. The stage height is still never touched. Closing the
+   menu relaxes the view back to its natural size on its own. */
+body.playing #practiceView.fit-menu .tools-menu{gap:6px;margin-top:6px}
+body.playing #practiceView.fit-menu .tools-menu .goldbtn,body.playing #practiceView.fit-menu .tools-menu .ghost{padding:6px 12px;font-size:14px}
+body.playing #practiceView.fit-menu .bubble{font-size:11px;line-height:1.14;padding:4px 7px}
+body.playing #practiceView.fit-menu .sb-score{font-size:15px}
+body.playing #practiceView.fit-menu .sb-team{padding:2px 4px}
+body.playing #practiceView.fit-menu .question{margin:1px 0}
+body.playing #practiceView.fit-menu .answer-row{margin-top:4px}
+body.playing #practiceView.fit-menu .gamecard .feedback{font-size:11px;line-height:1.1;margin-top:4px;padding:4px 7px}
+body.playing #practiceView.fit-menu .tools-divider{margin-top:0}
+body.playing #practiceView.fit-menu .tools-btn{margin-top:0;padding:4px 10px}
+body.playing #practiceView.fit-menu .gamecard{padding:5px 7px}
 /* ===== SPORT THEME SCENES — the whole stage becomes the picked sport =====
    When the customized world picks a sport other than basketball, the photo
    court hides and a drawn scene for that sport fills the stage: tennis
@@ -1176,7 +1337,7 @@ body.playing #practiceView .visual .group-dots{max-width:320px;margin-left:auto;
    becomes that sport's token (tennis ball, soccer ball, puck…) and the
    player's waiting move changes to that sport's idle move. */
 .sport-scene{position:absolute;inset:0;z-index:0;overflow:hidden;display:none}
-.sport-venue-label{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:2;background:rgba(255,255,255,.94);border:2.5px solid var(--ink);border-radius:999px;padding:4px 13px;font-family:'Fredoka';font-weight:700;font-size:13px;white-space:nowrap;display:none}
+/* The venue-name pill style is GONE (Pass 5, below): no floating label sits on the stage — the venue shows clean. */
 /* ===== WORLD BACKGROUND — the wizard sport builds the WHOLE backdrop =====
    The favorite sport picked in the setup wizard is not just the game
    stage: its field or court, plus that sport's own tools, become the
@@ -1828,7 +1989,6 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
       <img class="court-photo" id="courtPhoto" src="assets/court-game.jpg" alt=""/>
       <div class="sport-scene" id="sportScene" aria-hidden="true"></div>
       <div class="gym-beam" id="gymBeam" aria-hidden="true"><i class="l"></i><i class="r"></i></div>
-      <div class="sport-venue-label" id="sportVenueLabel"></div>
       <div class="court-player player-slot" id="courtPlayer"></div>
       <svg class="net-ripple" id="netRipple" viewBox="0 0 100 95" aria-hidden="true"><ellipse cx="50" cy="8" rx="46" ry="9" fill="none" stroke="#fff" stroke-width="6"/><g stroke="#fff" stroke-width="5" stroke-linecap="round"><line x1="10" y1="12" x2="24" y2="82"/><line x1="32" y1="15" x2="38" y2="88"/><line x1="55" y1="16" x2="52" y2="90"/><line x1="74" y1="15" x2="66" y2="88"/><line x1="92" y1="12" x2="80" y2="82"/><line x1="24" y1="52" x2="80" y2="52"/></g></svg>
       <div class="shot-ball" id="shotBall"></div>
@@ -2500,6 +2660,15 @@ function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(M
    so a basketball-only line can never leak into another sport's world. */
 var TRYAGAIN=['Good try — champions always try again!','So close! Let\'s fix one little thing together.','I believe in you! Read Leo\'s tip, then try the same one again.','Mistakes make your brain grow. One more try!'];
 
+/* Counting displays are BUILT in rows of five (Pass 5 — Michelle's
+   rows rule: "If it's 9 basketballs then 5 balls on top row and 4
+   balls bottom row. Not 9 balls in one row all the way across."):
+   cntRows() takes the group's object spans and deals them into .crow
+   row divs of at most five, so a group's height is exactly its row
+   count at every screen size — the rows never depend on how a
+   browser happens to wrap a long flex line. */
+function cntRows(spans){ var h=''; for(var ci=0;ci<spans.length;ci+=5){ h+='<div class="crow">'+spans.slice(ci,ci+5).join('')+'</div>'; } return h; }
+
 /* ---------- GENERATORS ---------- */
 function genMath(id,tier){
   /* tier here is the SELECTED GRADE index: 0=Kindergarten, 1=1st, 2=2nd, 3=3rd, 4=4th, 5=5th.
@@ -2515,9 +2684,9 @@ function genMath(id,tier){
     else { a=R(3456,19876); b=R(1234,9876); hint='Work column by column from the ones, regrouping as you go — ten-thousands too!'; }
     ans=a+b; q=a+' + '+b+' = ?';
     check=function(gv){ if(gv===ans-10||gv===ans+10) return 'Watch the <b>tens place</b> — you may have missed the carried ten from the ones!'; if(gv<ans) return 'Your answer is a little <b>too small</b>. Did you add BOTH numbers in every place?'; return 'Your answer is a little <b>too big</b>. Check the ones place first: '+(a%10)+' + '+(b%10)+' — did you regroup?'; };
-    if(gr===0){ /* Kindergarten counting visual, sized for a 5–6-year-old: BIG balls in wrapping rows he can point to and count one by one. */
-      var ballsK=function(n){ var s=''; for(var bi=0;bi<n;bi++) s+='<span style="display:inline-block">'+countObj().emoji+'</span>'; return s; };
-      var visK='<div class="cnt2" style="display:flex;justify-content:center;align-items:flex-start;gap:4px;width:100%"><div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:46px;line-height:1.15">'+ballsK(a)+'</div><div style="text-align:center;font-size:30px;line-height:1.1">➕</div><div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:46px;line-height:1.15">'+ballsK(b)+'</div></div>'; return {q:q,ans:String(ans),display:'number',hint:hint,check:check,visual:visK}; }
+    if(gr===0){ /* Kindergarten counting visual, sized for a 5–6-year-old: BIG balls in built rows of five (Pass 5: 9 = 5 on top + 4 below) he can point to and count one by one. */
+      var ballsK=function(n){ var arr=[]; for(var bi=0;bi<n;bi++) arr.push('<span style="display:inline-block">'+countObj().emoji+'</span>'); return arr; };
+      var visK='<div class="cnt2" style="display:flex;justify-content:center;align-items:flex-start;gap:4px;width:100%"><div class="cnt" style="font-size:46px;line-height:1.15">'+cntRows(ballsK(a))+'</div><div style="text-align:center;font-size:30px;line-height:1.1">➕</div><div class="cnt" style="font-size:46px;line-height:1.15">'+cntRows(ballsK(b))+'</div></div>'; return {q:q,ans:String(ans),display:'number',hint:hint,check:check,visual:visK}; }
   }
   else if(id==='subtraction'){
     if(gr===0){ a=R(3,10); b=R(1,a-1); hint='Start with '+a+' '+countObj().name+'. Take away '+b+' — count what is left!'; }
@@ -2532,8 +2701,8 @@ function genMath(id,tier){
     ans=a-b; q=a+' − '+b+' = ?';
     check=function(gv){ return 'Check the <b>ones place</b> first. Top ones = '+(a%10)+', bottom ones = '+(b%10)+'. If the top is smaller, borrow a ten, then subtract.'; };
     if(gr===0){ /* K.OA.A.1/A.2: Kindergarten subtraction is solved with objects or drawings — show ALL the starting basketballs BIG, with the b taken-away ones CROSSED OUT, so he counts only the balls that are left. The range stays a=R(3,10), b=R(1,a-1): within 10 is correct per K.OA.A.2 (10 − 4 stays; fluency within 5, K.OA.A.5, is a separate bar, not a cap). */
-      var subBalls=''; for(var sb=0;sb<a;sb++){ var taken=sb>=(a-b); subBalls+='<span style="display:inline-block;font-size:46px;line-height:1.15;'+(taken?'opacity:.4;text-decoration:line-through;text-decoration-color:#B91C1C;text-decoration-thickness:7px;':'')+'">'+countObj().emoji+'</span>'; }
-      var visSub='<div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px">'+subBalls+'</div><div class="vis-caption" style="font-size:17px;font-weight:900;color:#B91C1C;text-align:center;margin-top:4px">The crossed-out '+countObj().name+' were taken away — count the '+countObj().name+' that are left!</div>';
+      var subArr=[]; for(var sb=0;sb<a;sb++){ var taken=sb>=(a-b); subArr.push('<span style="display:inline-block;font-size:46px;line-height:1.15;'+(taken?'opacity:.4;text-decoration:line-through;text-decoration-color:#B91C1C;text-decoration-thickness:7px;':'')+'">'+countObj().emoji+'</span>'); }
+      var visSub='<div class="cnt-wrap"><div class="cnt">'+cntRows(subArr)+'</div><div class="vis-caption" style="font-size:17px;font-weight:900;color:#B91C1C;text-align:center;margin-top:4px">The crossed-out '+countObj().name+' were taken away — count the '+countObj().name+' that are left!</div></div>';
       return {q:q,ans:String(ans),display:'number',hint:hint,check:function(gv){ return 'Look at the picture: count ONLY the '+countObj().name+' that are NOT crossed out — those are the ones left after taking away '+b+'!'; },visual:visSub};
     }
   }
@@ -2594,9 +2763,9 @@ function genMath(id,tier){
     else if(kind===2){ var gg=R(2,gr===2?6:9); var per=R(2,9); ans=gg*per; q='There are '+gg+' teams. Each team has '+per+' players. How many players in all?'; hint='Equal groups = <b>multiply</b>: '+gg+' × '+per+'.'; check=function(){return 'Equal groups is multiplication in disguise! '+gg+' groups of '+per+' means '+gg+' × '+per+'.';}; }
     else { var pk=R(2,6); var pp=R(3,9); var st=R(5,40); ans=st+pk*pp; q=nm+' had '+st+' '+o.n+'. '+nm+' bought '+pk+' packs with '+pp+' '+o.n+' in each pack. How many '+o.n+' does '+nm+' have in all now?'; hint='Two steps! First multiply the packs: '+pk+' × '+pp+'. Then add the '+st+' he already had.'; check=function(){return 'Step 1: '+pk+' packs × '+pp+' = '+(pk*pp)+'. Step 2: add the '+st+' he started with.';}; } }
   if(id==='wordproblems'&&gr<=1&&(typeof kind!=='undefined')&&(kind===0||kind===1)&&typeof o!=='undefined'&&o){ /* Kindergarten & 1st-grade stories get BIG counting objects (42px, wrapping rows): add stories show both groups; take-away stories show the starting objects with the given-away ones crossed out, so the story can be solved by counting. Grades 2–5 keep text-only stories. */
-    var wpSpansA='', wpSpansB=''; var wi;
-    if(kind===0){ for(wi=0;wi<a;wi++) wpSpansA+='<span style="display:inline-block">'+o.e+'</span>'; for(wi=0;wi<b;wi++) wpSpansB+='<span style="display:inline-block">'+o.e+'</span>'; }
-    else { for(wi=0;wi<a;wi++){ var wTaken=wi>=(a-b); wpSpansA+='<span style="display:inline-block;'+(wTaken?'opacity:.4;text-decoration:line-through;text-decoration-color:#B91C1C;text-decoration-thickness:6px;':'')+'">'+o.e+'</span>'; } }
+    var wpArrA=[], wpArrB=[]; var wi;
+    if(kind===0){ for(wi=0;wi<a;wi++) wpArrA.push('<span style="display:inline-block">'+o.e+'</span>'); for(wi=0;wi<b;wi++) wpArrB.push('<span style="display:inline-block">'+o.e+'</span>'); }
+    else { for(wi=0;wi<a;wi++){ var wTaken=wi>=(a-b); wpArrA.push('<span style="display:inline-block;'+(wTaken?'opacity:.4;text-decoration:line-through;text-decoration-color:#B91C1C;text-decoration-thickness:6px;':'')+'">'+o.e+'</span>'); } }
     /* The story objects are structured in balanced .cnt rows of about
        five (Pass 4): add stories show the two groups side by side with
        the plus between them — the same structure as the Kindergarten
@@ -2604,8 +2773,8 @@ function genMath(id,tier){
        group in rows of about five with the given-away ones crossed
        out and the caption underneath. Never one long row across. */
     var wpVis= kind===0
-      ? '<div class="cnt2" style="display:flex;justify-content:center;align-items:flex-start;gap:4px;width:100%"><div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:42px;line-height:1.2">'+wpSpansA+'</div><div style="text-align:center;font-size:30px;line-height:1.1">➕</div><div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:42px;line-height:1.2">'+wpSpansB+'</div></div>'
-      : '<div class="cnt" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:42px;line-height:1.2">'+wpSpansA+'</div><div class="vis-caption" style="font-size:16px;font-weight:900;color:#B91C1C;text-align:center;margin-top:4px">The crossed-out ones were given away — count what is left!</div>';
+      ? '<div class="cnt2" style="display:flex;justify-content:center;align-items:flex-start;gap:4px;width:100%"><div class="cnt" style="font-size:42px;line-height:1.2">'+cntRows(wpArrA)+'</div><div style="text-align:center;font-size:30px;line-height:1.1">➕</div><div class="cnt" style="font-size:42px;line-height:1.2">'+cntRows(wpArrB)+'</div></div>'
+      : '<div class="cnt-wrap"><div class="cnt" style="font-size:42px;line-height:1.2">'+cntRows(wpArrA)+'</div><div class="vis-caption" style="font-size:16px;font-weight:900;color:#B91C1C;text-align:center;margin-top:4px">The crossed-out ones were given away — count what is left!</div></div>';
     return {q:q,ans:String(ans),display:'number',hint:hint,check:check,visual:wpVis};
   }
   return {q:q,ans:String(ans),display:'number',hint:hint,check:check};
@@ -2774,8 +2943,8 @@ function toggleFrac(btn){ btn.classList.toggle('on'); var bar=document.getElemen
    the "My Helper Tools" button under the answer area opens and closes
    the tools menu; picking a tool closes the menu first, then that tool
    opens full-screen over the game and closes right back to it. */
-function toggleToolsMenu(){ var m=document.getElementById('toolsMenu'), b=document.getElementById('toolsToggleBtn'); if(!m) return; var open=m.style.display==='none'; m.style.display= open? 'grid':'none'; if(b) b.setAttribute('aria-expanded', open? 'true':'false'); if(typeof sfx==='function') sfx('pop'); }
-function closeToolsMenu(){ var m=document.getElementById('toolsMenu'), b=document.getElementById('toolsToggleBtn'); if(m) m.style.display='none'; if(b) b.setAttribute('aria-expanded','false'); }
+function toggleToolsMenu(){ var m=document.getElementById('toolsMenu'), b=document.getElementById('toolsToggleBtn'); if(!m) return; var open=m.style.display==='none'; m.style.display= open? 'grid':'none'; if(b) b.setAttribute('aria-expanded', open? 'true':'false'); if(typeof sfx==='function') sfx('pop'); if(typeof fitGameView==='function') fitGameView(); }
+function closeToolsMenu(){ var m=document.getElementById('toolsMenu'), b=document.getElementById('toolsToggleBtn'); if(m) m.style.display='none'; if(b) b.setAttribute('aria-expanded','false'); if(typeof fitGameView==='function') fitGameView(); }
 function toggleWorkPanel(force){
   var panel=document.getElementById('workPanel'); if(!panel) return;
   var modal=document.getElementById('workModal');
@@ -3044,7 +3213,7 @@ function speakCaptions(text){
   var synth=window.speechSynthesis;
   var v=pickLeoVoice();
   var idx=0;
-  var showUpTo=function(n){ b.textContent=sentences.slice(0,n).join(' '); try{ b.scrollTop=b.scrollHeight; }catch(e){} };
+  var showUpTo=function(n){ b.textContent=sentences.slice(0,n).join(' '); try{ b.scrollTop=b.scrollHeight; }catch(e){} if(typeof fitGameView==='function') fitGameView(); };
   var advance=function(){
     if(run!==captionRunId) return;
     if(idx>=sentences.length){ b.textContent=full; try{ b.scrollTop=b.scrollHeight; }catch(e){} return; }
@@ -3153,7 +3322,7 @@ function writingKeypadBtnText(){ return gradeTier()===0?'⌨️ Letter Keypad':'
 function writingCardHTML(){ if(cat!=='spelling'||typeof writingAvailable!=='function'||!writingAvailable()) return ''; var wp=topicProg('writing'); var started=(wp.done||0)>0; return '<article class="tcard" aria-label="Writing practice"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">✏️</div><span class="meta">'+(started?'⭐ Keep Going!':'New Game')+'</span></div><h3>Writing Practice — Trace &amp; Type!</h3><p id="wCardDesc">'+writingCardDescText()+'</p><div class="w-card-btns"><button class="play-btn" id="wBtnTrace" onclick="startWriting(\'trace\')">'+writingTraceBtnText()+'</button><button class="goldbtn" id="wBtnKeypad" onclick="startWriting(\'keypad\')">'+writingKeypadBtnText()+'</button></div></article>'; }
 function renderGrid(){ var g=document.getElementById('topicGrid'); if(!g) return; g.innerHTML=TOPICS.filter(function(t){return t.cat===cat}).filter(function(t){return !isTopicGradeHidden(t)}).map(function(t){ var p=topicProg(t.id); var started=p.done>0; var finished=p.done>=240; if(isTopicLocked(t)){ return '<article class="tcard locked"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+topicIcon(t)+'</div><span class="lock-badge">🔒 Opens in 3rd Grade!</span></div><h3>'+topicTitle(t)+'</h3><p><b>'+topicTitle(t)+'</b> is a <b>3rd-grade skill</b> (Common Core 3.OA) — multiplication and division start in 3rd grade, so this game stays locked in '+gradeLabel()+'. 🦁 Leo says: try <b>Addition All-Stars</b> or <b>Subtraction '+sportInfo().subGame+'</b> — they fit your grade right now!</p><button class="play-btn locked-btn" onclick="lockedTopicTap(\''+t.id+'\')">🔒 Opens in 3rd Grade!</button></article>'; } return '<article class="tcard"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+topicIcon(t)+'</div><span class="meta">'+(finished?'🏆 Finished!':started?'⭐ Keep Going!':'New Game')+'</span></div><h3>'+topicTitle(t)+'</h3><p>'+topicDesc(t)+'</p><button class="play-btn" onclick="startTopic(\''+t.id+'\')">'+(started&&!finished?'▶ Keep Playing!':finished?'▶ Play Again!':'▶ Start Playing!')+'</button></article>'; }).join('')+writingCardHTML(); }
 function updateTotals(){ var ts=0; TOPICS.forEach(function(t){var p=topicProg(t.id); ts+=p.stars;}); var wp=progress[progKey('writing')]; if(wp) ts+=wp.stars||0; var el=document.getElementById('totalStars'); if(el) el.textContent=ts; var wc=document.getElementById('wStarCount'); if(wc) wc.textContent= wp?(wp.stars||0):0; }
-function leoSay(html,force){ var b=document.getElementById('leoBubble'); b.innerHTML=html; b.classList.remove('bubble-pop'); void b.offsetWidth; b.classList.add('bubble-pop'); speakLeo(html,force); }
+function leoSay(html,force){ var b=document.getElementById('leoBubble'); b.innerHTML=html; b.classList.remove('bubble-pop'); void b.offsetWidth; b.classList.add('bubble-pop'); speakLeo(html,force); if(typeof fitGameView==='function') fitGameView(); }
 function startTopic(id){ var lt=TOPICS.find(function(t){return t.id===id}); if(isTopicLocked(lt)){ lockedTopicTap(id); return; } if(isTopicGradeHidden(lt)){ toast('🦁 Leo says: that game is for a different grade — it is not part of '+gradeLabel()+'!'); return; } currentTopic=lt; document.body.classList.add('playing'); document.getElementById('homeView').style.display='none'; document.getElementById('practiceView').style.display='block'; window.scrollTo({top:0}); clearInterval(timerInt); timerInt=setInterval(function(){ topicProg(id).sec+=5; if(topicProg(id).sec%30===0) saveP(progress); },5000); initGameSession(id); renderAllPlayers(); nextPrompt(true); gameOpenReadAloud(); }
 /* GAME-OPEN READ-ALOUD (Michelle, Nov 8, 2026 — Karter's build carries the
    same automatic-reading rule as Royce's): the moment a game opens,
@@ -3188,6 +3357,70 @@ function goHomeFromOverlay(){
   saveDesign(); /* keep any player design changes he just made */
   goHome();
 }
+/* ===== GAME VIEW FIT PASS — THE SAME WIRING AS ROYCE'S PAGE =====
+   Michelle (Nov 8, 2026): "Does his games automations work right
+   now? If hers does are you applying the same wiring???" — yes: this
+   is the same fit automation Royce's page runs, with his numbers.
+   The game window (stage) is ONE SET SIZE in every game: it never
+   flexes, never goes slim, and his player is always fully visible on
+   it at his proper size. The fit comes from the DISPLAY: counting
+   objects are generated in balanced rows of about five, and this
+   pass — run whenever the view's contents change (game open,
+   captions landing, an answer's feedback, the tools menu opening) —
+   measures the view against the actually-visible screen (the Helper
+   Tools button's real on-screen position) and, only if a tall state
+   still needs room, steps the type down a notch via fit-tight /
+   fit-tighter FIRST, then scales the counting/problem picture down
+   WHOLE — never below half size — so every ball and object stays
+   visible and nothing is ever clipped. The bar, every game, every
+   state: problem / display, answer box, Check It, the dashed line
+   and the Helper Tools button all on the one screen, no scrolling —
+   at open and again after answering, with the feedback showing. */
+function fitGameView(){
+  var pv=document.getElementById('practiceView');
+  if(!pv||!document.body.classList.contains('playing')) return;
+  var vis=document.getElementById('qVisual');
+  var inner=vis?vis.firstElementChild:null;
+  pv.classList.remove('fit-tight'); pv.classList.remove('fit-tighter'); pv.classList.remove('fit-max'); pv.classList.remove('fit-menu');
+  if(vis){ vis.style.height=''; vis.style.maxHeight=''; vis.style.flex=''; }
+  if(inner){ inner.style.transform=''; inner.style.transformOrigin=''; inner.style.maxHeight=''; }
+  var natH=0;
+  if(inner){ vis.style.maxHeight='none'; vis.style.flex='0 0 auto'; inner.style.maxHeight='none'; natH=inner.getBoundingClientRect().height; }
+  function over(){
+    /* Measure what is ACTUALLY on screen: how far the last thing that
+       must stay visible (the Helper Tools button, or the open tools
+       menu under it) hangs past the bottom of the game column. His
+       column ends at the practice view's own bottom edge — the music
+       note button keeps its own row beneath it — so that edge is the
+       line the button has to end above. The old flex crush measured
+       the picture as the only give and crushed it to a sliver even
+       when the view nearly fit. */
+    var tm=document.getElementById('toolsMenu');
+    var el=(tm&&tm.style.display!=='none')? tm : document.getElementById('toolsToggleBtn');
+    if(!el) return 0;
+    return Math.max(0, Math.round(el.getBoundingClientRect().bottom - pv.getBoundingClientRect().bottom + 6));
+  }
+  function visScale(){
+    if(!inner||natH<=0||ov<=0) return;
+    var s=(natH-ov)/natH;
+    if(s>=1) return;
+    if(s<0.5) s=0.5; /* the counting picture scales down WHOLE but never below half size — every object stays big enough to count, and the box is sized to the scaled picture so nothing is ever clipped */
+    inner.style.transformOrigin='center top';
+    inner.style.transform='scale('+s+')';
+    vis.style.height=Math.round(natH*s+6)+'px';
+    ov=over();
+  }
+  var ov=over();
+  if(ov<=0) return;
+  /* Type steps FIRST — they are the cheap room. The picture scales
+     only by whatever overflow is left after them, exactly once. */
+  pv.classList.add('fit-tight'); ov=over();
+  if(ov>0){ pv.classList.add('fit-tighter'); ov=over(); }
+  if(ov>0){ visScale(); }
+  if(ov>0){ pv.classList.add('fit-max'); ov=over(); }
+  if(ov>0){ var tm2=document.getElementById('toolsMenu'); if(tm2&&tm2.style.display!=='none'){ pv.classList.add('fit-menu'); ov=over(); } }
+}
+window.addEventListener('resize',function(){ fitGameView(); });
 function nextPrompt(first){
   stopLeoSpeech();
   if(typeof closeHintPanel==='function') closeHintPanel(); if(typeof closeToolsMenu==='function') closeToolsMenu(); lastHintText='';
@@ -3216,6 +3449,7 @@ function nextPrompt(first){
     leoSay(pick(sInfo.promptPhrases));
   }
   startDribble();
+  fitGameView();
   setTimeout(function(){ if(current.display!=='choice') inp.focus(); },80);
 }
 var chosen=null;
@@ -3243,7 +3477,7 @@ function checkAnswer(){
   var guess= current.display==='choice'? chosen : document.getElementById('answerInput').value;
   var fb=document.getElementById('feedback');
   document.getElementById('gameCard').classList.add('answered'); /* Pass 4: with feedback joining the card, the counting display steps its objects down one size so the whole view still fits on the one screen */
-  if(guess===null||guess===undefined||normalize(guess)===''){ fb.className='feedback bad'; fb.innerHTML='✏️ Type (or tap) an answer first, then check it!'; return; }
+  if(guess===null||guess===undefined||normalize(guess)===''){ fb.className='feedback bad'; fb.innerHTML='✏️ Type (or tap) an answer first, then check it!'; fitGameView(); return; }
   var correct= normalize(guess)===normalize(current.ans);
   if(current.display==='number'||currentTopic.cat==='math'){ var gn=parseFloat(guess); if(!isNaN(gn) && String(current.ans).indexOf('/')===-1 && String(current.ans).indexOf(':')===-1) correct= gn===parseFloat(current.ans); if(String(current.ans).indexOf(':')>-1) correct= normalize(guess)===normalize(current.ans); }
   attempts++;
@@ -3271,6 +3505,7 @@ function checkAnswer(){
     leoSay('🦁 <b>Good effort!</b> Try the <b>same question</b> again — I\'m cheering for you!'); /* the fix-it specifics stay in the feedback card only — the problem and its coaching appear once, in the card, never repeated in his bubble */
     if(current.display!=='choice'){ var inp=document.getElementById('answerInput'); inp.select(); }
   }
+  fitGameView(); /* whatever the feedback added, the whole view — dashed line and Helper Tools button included — stays on the one screen */
 }
 document.getElementById('answerInput').addEventListener('keydown',function(e){ if(e.key==='Enter') checkAnswer(); });
 /* ANSWER-BOX SCROLL GUARD: scrolling with the pointer over a number
@@ -5272,8 +5507,10 @@ function renderStageBackdrop(c,s){
       scene.innerHTML=gameSceneHTML(s.id,c.primary);
     }
   }
-  var vlabel=document.getElementById('sportVenueLabel');
-  if(vlabel){ if(s.id==='basketball'){ vlabel.style.display='none'; vlabel.textContent=''; } else { vlabel.style.display='block'; vlabel.textContent=s.emoji+' '+info.arena; } }
+  /* NO venue-name pill is painted on the stage (Pass 5): Michelle's
+     rule — the game shows the player and the venue clean, with no
+     added floating images or text bars on it. The label element, its
+     style and this fill code are all removed. */
 }
 /* Kept for the world layer's call in applyWorldTheme: the stage is no
    longer painted from the default world — it is painted from the
