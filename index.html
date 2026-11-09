@@ -574,7 +574,8 @@ body.grade-gate-open .wrap{z-index:95}
 .champ-banner{display:none;margin-top:10px;background:var(--gold);border:3px solid var(--ink);border-radius:16px;padding:10px 14px;text-align:center;font-family:'Fredoka';font-size:19px;font-weight:700}
 .champ-banner.show{display:block}
 .court-stage{position:relative;margin:16px auto 0;max-width:560px;width:100%;height:clamp(430px,72vh,620px);background:#E8933A;border:3px solid var(--ink);border-radius:22px;overflow:hidden;--drop:46px}
-.court-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;display:block;z-index:0}
+.court-photo{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+.court-photo svg{width:100%;height:100%;display:block}
 .court-player{position:absolute;left:16px;bottom:10px;width:124px;height:164px;z-index:2;filter:drop-shadow(0 6px 6px rgba(43,22,8,.35))}
 .court-player svg,.mini-player svg,.studio-preview svg,.bonus-player svg{width:100%;height:100%;display:block}
 .mini-player{width:76px;height:110px;flex:0 0 76px}
@@ -701,6 +702,8 @@ body.grade-gate-open .wrap{z-index:95}
    gold his other selected chips use). */
 .setup-kicker{font-family:'Fredoka';font-weight:600;color:var(--red-d);font-size:14px;letter-spacing:.08em}
 .setup-q{font-family:'Fredoka';font-weight:700;font-size:clamp(24px,4vw,30px);color:var(--red-d);margin:4px 0 6px;line-height:1.15}
+.coach-name-input{width:100%;font-family:'Fredoka';font-size:22px;font-weight:600;padding:12px 14px;border:3px solid var(--line);border-radius:14px;color:var(--ink);background:#FFFDFE}
+.coach-name-input:focus{outline:none;border-color:var(--red-d)}
 .scene-preview{position:relative;border-radius:16px;overflow:hidden;border:3px solid var(--line);margin-top:12px;background:var(--cream)}
 .scene-preview svg{width:100%;height:150px;display:block}
 .scene-preview-cap{padding:9px 12px;font-weight:900;font-size:14px;line-height:1.45;color:var(--red-d);background:rgba(255,255,255,.92)}
@@ -805,6 +808,15 @@ body[data-world-color="white"] .lion-coach-badge{color:var(--ink)}
 /* While playing, the page becomes a single-screen app: hero hidden, no page scroll,
    so the shot animation is always visible at the moment of answering. */
 body.playing{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+/* PLAY-SIZE LOCK (Michelle, Nov 9, 2026): the moment a game opens, its
+   size is locked for the whole play session (--gvh, set in px by
+   lockPlaySize below). Scrolling on a phone shows and hides the
+   browser's top and bottom bars, and plain 100dvh breathes with
+   them — so the game column used to shrink a little on one scroll
+   and expand on the next. The locked pixel height does not breathe:
+   the game view holds the true size it opened at, fixed, for the
+   whole session. */
+body.playing.play-locked{height:var(--gvh,100dvh)}
 body.playing .hero{display:none}
 /* The world background template belongs to the home world only. While a
    game is open it must NOT sit behind the game itself: the backdrop
@@ -853,6 +865,32 @@ body.playing .p-top .stars-pill{padding:6px 10px;font-size:13px}
    the text stays plain, exactly as it already is.) */
 #practiceView .leo-compact .bubble{background:transparent;border:none;box-shadow:none;border-radius:0;padding:0}
 #practiceView .leo-compact .bubble:empty{height:0;max-height:0;overflow:hidden}
+/* CAPTION SPACE IS RESERVED — THE PAGE NEVER SHIFTS FOR SPEECH
+   (Michelle, Nov 9, 2026): in the game view the coach's caption row
+   holds ONE fixed height at every screen size, whether a sentence
+   is showing, changing, or cleared. The old :empty collapse above
+   (height:0 when no sentence is showing) is overridden here for
+   the playing view only: an empty caption leaves its reserved
+   space standing — still plain text on the page, still no card,
+   no bubble, no box, nothing visible left behind — so a sentence
+   appearing, changing or clearing never pushes, expands or
+   shrinks anything on the page. Together with the play-size lock
+   the game view stays fixed while the coach speaks. The writing
+   view's caption row is not the game view and keeps its own
+   sizing, untouched. */
+body.playing #practiceView .leo-compact{height:58px;flex:0 0 auto}
+body.playing #practiceView .leo-compact .bubble{height:58px;max-height:58px}
+body.playing #practiceView .leo-compact .bubble:empty{height:58px;max-height:58px;overflow:hidden}
+@media(max-width:560px){
+  body.playing #practiceView .leo-compact{height:50px}
+  body.playing #practiceView .leo-compact .bubble{height:50px;max-height:50px}
+  body.playing #practiceView .leo-compact .bubble:empty{height:50px;max-height:50px}
+}
+@media(max-height:560px){
+  body.playing #practiceView .leo-compact{height:44px}
+  body.playing #practiceView .leo-compact .bubble{height:44px;max-height:44px}
+  body.playing #practiceView .leo-compact .bubble:empty{height:44px;max-height:44px}
+}
 .leo-compact .hear-it-btn{flex:0 0 auto;padding:8px;font-size:22px;white-space:nowrap;min-width:48px;min-height:44px}
 /* The game view is ONE flat column in Royce's approved order — header,
    Leo's instructions, scoreboard, stage, game card — all direct
@@ -2076,7 +2114,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
     </div>
     <div class="champ-banner" id="champBanner">🏆 CHAMPIONSHIP GAME! Win this one for a Championship Trophy! 🏆</div>
     <div class="court-stage" id="courtStage" aria-label="Your player dribbling and shooting on Coach Leo's court">
-      <img class="court-photo" id="courtPhoto" src="assets/court-game.jpg" alt=""/>
+      <div class="court-photo" id="courtPhoto" aria-hidden="true"><svg viewBox="0 0 2640 864" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="bbBlush" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF0EA"/><stop offset="1" stop-color="#F3D9CF"/></linearGradient><linearGradient id="bbWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EAA862"/><stop offset=".55" stop-color="#DA842C"/><stop offset="1" stop-color="#C06A1B"/></linearGradient><linearGradient id="bbBoard" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCE9F2"/></linearGradient></defs><rect width="2640" height="864" fill="url(#bbBlush)"/><ellipse cx="1320" cy="850" rx="1200" ry="42" fill="rgba(120,60,30,.16)"/><polygon points="150,318 2490,318 2640,864 0,864" fill="url(#bbWood)"/><g stroke="rgba(120,60,10,.16)" stroke-width="3"><line x1="1320" y1="318" x2="-160" y2="864"/><line x1="1320" y1="318" x2="140" y2="864"/><line x1="1320" y1="318" x2="440" y2="864"/><line x1="1320" y1="318" x2="740" y2="864"/><line x1="1320" y1="318" x2="1040" y2="864"/><line x1="1320" y1="318" x2="1340" y2="864"/><line x1="1320" y1="318" x2="1640" y2="864"/><line x1="1320" y1="318" x2="1940" y2="864"/><line x1="1320" y1="318" x2="2240" y2="864"/><line x1="1320" y1="318" x2="2540" y2="864"/><line x1="1320" y1="318" x2="2800" y2="864"/></g><g stroke="rgba(120,60,10,.13)" stroke-width="3"><line x1="92" y1="436" x2="2548" y2="436"/><line x1="48" y1="580" x2="2592" y2="580"/><line x1="8" y1="730" x2="2632" y2="730"/></g><polygon points="1810,318 2170,318 2300,760 1690,760" fill="#2563EB" opacity=".88"/><polygon points="1810,318 2170,318 2300,760 1690,760" fill="none" stroke="#FFFFFF" stroke-width="7"/><ellipse cx="1992" cy="760" rx="152" ry="34" fill="none" stroke="#FFFFFF" stroke-width="6"/><ellipse cx="1020" cy="596" rx="205" ry="50" fill="rgba(255,255,255,.07)" stroke="#FFFFFF" stroke-width="6"/><path d="M1752 330 Q1990 660 2228 330" fill="none" stroke="#FFFFFF" stroke-width="6"/><polygon points="520,318 1180,318 720,864 0,864" fill="#FFFFFF" opacity=".06"/><line x1="150" y1="318" x2="2490" y2="318" stroke="rgba(120,60,10,.35)" stroke-width="4"/><rect x="2134" y="58" width="36" height="262" fill="#374151"/><rect x="2052" y="94" width="100" height="24" fill="#374151"/><rect x="2118" y="176" width="68" height="144" rx="10" fill="#B91C1C"/><rect x="1898" y="108" width="180" height="112" rx="8" fill="url(#bbBoard)" stroke="#9DB8CC" stroke-width="4"/><rect x="1948" y="148" width="80" height="52" fill="none" stroke="#E5484D" stroke-width="5"/><polygon points="1906,112 1986,112 1936,216 1906,216" fill="#FFFFFF" opacity=".35"/><g stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity=".95"><line x1="1954" y1="246" x2="1967" y2="316"/><line x1="1988" y1="250" x2="1988" y2="322"/><line x1="2022" y1="246" x2="2009" y2="316"/><line x1="1961" y1="284" x2="2015" y2="284"/></g><ellipse cx="1988" cy="320" rx="22" ry="6" fill="none" stroke="#FFFFFF" stroke-width="4"/><ellipse cx="1988" cy="236" rx="47" ry="12" fill="none" stroke="#E85D04" stroke-width="9"/></svg></div>
       <div class="sport-scene" id="sportScene" aria-hidden="true"></div>
       <div class="gym-beam" id="gymBeam" aria-hidden="true"><i class="l"></i><i class="r"></i></div>
       <div class="court-player player-slot" id="courtPlayer"></div>
@@ -3448,7 +3486,7 @@ function writingCardHTML(){ if(cat!=='spelling'||typeof writingAvailable!=='func
 function renderGrid(){ var g=document.getElementById('topicGrid'); if(!g) return; g.innerHTML=TOPICS.filter(function(t){return t.cat===cat}).filter(function(t){return !isTopicGradeHidden(t)}).map(function(t){ var p=topicProg(t.id); var started=p.done>0; var finished=p.done>=240; if(isTopicLocked(t)){ return '<article class="tcard locked"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+topicIcon(t)+'</div><span class="lock-badge">🔒 Opens in 3rd Grade!</span></div><h3>'+topicTitle(t)+'</h3><p><b>'+topicTitle(t)+'</b> is a <b>3rd-grade skill</b> (Common Core 3.OA) — multiplication and division start in 3rd grade, so this game stays locked in '+gradeLabel()+'. 🦁 Leo says: try <b>Addition All-Stars</b> or <b>Subtraction '+sportInfo().subGame+'</b> — they fit your grade right now!</p><button class="play-btn locked-btn" onclick="lockedTopicTap(\''+t.id+'\')">🔒 Opens in 3rd Grade!</button></article>'; } return '<article class="tcard"><div style="display:flex;justify-content:space-between;align-items:start"><div class="ticon">'+topicIcon(t)+'</div><span class="meta">'+(finished?'🏆 Finished!':started?'⭐ Keep Going!':'New Game')+'</span></div><h3>'+topicTitle(t)+'</h3><p>'+topicDesc(t)+'</p><button class="play-btn" onclick="startTopic(\''+t.id+'\')">'+(started&&!finished?'▶ Keep Playing!':finished?'▶ Play Again!':'▶ Start Playing!')+'</button></article>'; }).join('')+writingCardHTML(); }
 function updateTotals(){ var ts=0; TOPICS.forEach(function(t){var p=topicProg(t.id); ts+=p.stars;}); var wp=progress[progKey('writing')]; if(wp) ts+=wp.stars||0; var el=document.getElementById('totalStars'); if(el) el.textContent=ts; var wc=document.getElementById('wStarCount'); if(wc) wc.textContent= wp?(wp.stars||0):0; }
 function leoSay(html,force){ var b=document.getElementById('leoBubble'); b.innerHTML=html; b.classList.remove('bubble-pop'); void b.offsetWidth; b.classList.add('bubble-pop'); speakLeo(html,force); if(typeof fitGameView==='function') fitGameView(); }
-function startTopic(id){ var lt=TOPICS.find(function(t){return t.id===id}); if(isTopicLocked(lt)){ lockedTopicTap(id); return; } if(isTopicGradeHidden(lt)){ toast('🦁 Leo says: that game is for a different grade — it is not part of '+gradeLabel()+'!'); return; } currentTopic=lt; document.body.classList.add('playing'); document.getElementById('homeView').style.display='none'; document.getElementById('practiceView').style.display='block'; window.scrollTo({top:0}); clearInterval(timerInt); timerInt=setInterval(function(){ topicProg(id).sec+=5; if(topicProg(id).sec%30===0) saveP(progress); },5000); initGameSession(id); renderAllPlayers(); nextPrompt(true); gameOpenReadAloud(); }
+function startTopic(id){ var lt=TOPICS.find(function(t){return t.id===id}); if(isTopicLocked(lt)){ lockedTopicTap(id); return; } if(isTopicGradeHidden(lt)){ toast('🦁 Leo says: that game is for a different grade — it is not part of '+gradeLabel()+'!'); return; } currentTopic=lt; document.body.classList.add('playing'); lockPlaySize(); document.getElementById('homeView').style.display='none'; document.getElementById('practiceView').style.display='block'; window.scrollTo({top:0}); clearInterval(timerInt); timerInt=setInterval(function(){ topicProg(id).sec+=5; if(topicProg(id).sec%30===0) saveP(progress); },5000); initGameSession(id); renderAllPlayers(); nextPrompt(true); gameOpenReadAloud(); }
 /* GAME-OPEN READ-ALOUD (Michelle, Nov 8, 2026 — Karter's build carries the
    same automatic-reading rule as Royce's): the moment a game opens,
    Coach Leo AUTOMATICALLY reads aloud ONLY the instructions showing on
@@ -3476,7 +3514,7 @@ function gameOpenReadAloud(){
     if(text) speakCaptions(text); /* voice + true video captions in the bubble: only the current sentence shows, and the bubble clears when he finishes */
   }catch(e){}
 }
-function goHome(){ stopLeoSpeech(); stopDribble(); if(typeof closeHintPanel==='function') closeHintPanel(); if(typeof closeToolsMenu==='function') closeToolsMenu(); if(typeof toggleWorkPanel==='function') toggleWorkPanel(false); document.body.classList.remove('playing'); clearInterval(timerInt); saveP(progress); document.getElementById('practiceView').style.display='none'; var wv=document.getElementById('writingView'); if(wv) wv.style.display='none'; var gv2=document.getElementById('grownView'); if(gv2) gv2.style.display='none'; var sv2=document.getElementById('setupView'); if(sv2) sv2.style.display='none'; var hero2=document.getElementById('heroSection'); if(hero2) hero2.style.display=''; var grv=document.getElementById('gradeView'); if(grv) grv.style.display='none'; document.body.classList.remove('grade-gate-open'); document.getElementById('homeView').style.display='block'; renderGrid(); updateTotals(); if(typeof updateWritingVisibility==='function') updateWritingVisibility(); renderAllPlayers(); window.scrollTo({top:0}); }
+function goHome(){ stopLeoSpeech(); stopDribble(); if(typeof closeHintPanel==='function') closeHintPanel(); if(typeof closeToolsMenu==='function') closeToolsMenu(); if(typeof toggleWorkPanel==='function') toggleWorkPanel(false); document.body.classList.remove('playing'); unlockPlaySize(); clearInterval(timerInt); saveP(progress); document.getElementById('practiceView').style.display='none'; var wv=document.getElementById('writingView'); if(wv) wv.style.display='none'; var gv2=document.getElementById('grownView'); if(gv2) gv2.style.display='none'; var sv2=document.getElementById('setupView'); if(sv2) sv2.style.display='none'; var hero2=document.getElementById('heroSection'); if(hero2) hero2.style.display=''; var grv=document.getElementById('gradeView'); if(grv) grv.style.display='none'; document.body.classList.remove('grade-gate-open'); document.getElementById('homeView').style.display='block'; renderGrid(); updateTotals(); if(typeof updateWritingVisibility==='function') updateWritingVisibility(); renderAllPlayers(); window.scrollTo({top:0}); }
 function goHomeFromOverlay(){
   stopWizAuto(); stopLeoSpeech(); stopFt();
   ['wizardModal','workModal','studioModal','themeModal','trophyModal','bonusModal','winModal','sportModal'].forEach(function(mid){ var m=document.getElementById(mid); if(m) m.classList.remove('open'); });
@@ -3502,6 +3540,33 @@ function goHomeFromOverlay(){
    state: problem / display, answer box, Check It, the dashed line
    and the Helper Tools button all on the one screen, no scrolling —
    at open and again after answering, with the feedback showing. */
+/* ===== PLAY-SIZE LOCK (Michelle, Nov 9, 2026) =====
+   "When I go into the games the pages jump — they don't stay fixed
+   on the proper size. If I scroll up the page jumps and it shrinks,
+   if I scroll down it expands a little. It should stay fixed at the
+   true size." The jump is the phone browser's own behavior:
+   scrolling shows/hides its top and bottom bars, the visible height
+   changes, and the fit pass re-measured and rescaled the game to
+   match. The fix: when a game opens, lock the play size (width +
+   height, in px) for the whole session. The shell height uses the
+   locked px (see body.playing.play-locked), fitGameView measures
+   against the locked height, and the resize listener ignores
+   height-only changes while playing — no refit on scroll, ever.
+   The fit still applies when a game opens and when the view
+   genuinely changes (a width change: rotation, a real window
+   resize), exactly as before. The set stage sizes and the
+   no-scroll fit design are unchanged. */
+var playLock={on:false,w:0,h:0};
+function lockPlaySize(){
+  playLock={on:true,w:window.innerWidth,h:window.innerHeight};
+  document.documentElement.style.setProperty('--gvh',playLock.h+'px');
+  document.body.classList.add('play-locked');
+}
+function unlockPlaySize(){
+  playLock={on:false,w:0,h:0};
+  document.body.classList.remove('play-locked');
+  document.documentElement.style.removeProperty('--gvh');
+}
 function fitGameView(){
   var pv=document.getElementById('practiceView');
   if(!pv||!document.body.classList.contains('playing')) return;
@@ -3533,7 +3598,7 @@ function fitGameView(){
        the visible screen too means opening the menu always steps the
        view down until Work It Out / Show Me an Example / Get a Hint
        are ALL fully in view. */
-    var edge=Math.min(pv.getBoundingClientRect().bottom, window.innerHeight);
+    var edge=Math.min(pv.getBoundingClientRect().bottom, playLock.on? playLock.h : window.innerHeight); /* while the play size is locked, fit decisions measure against the LOCKED height — the size the game opened at — never the breathing browser-bar height */
     return Math.max(0, Math.round(el.getBoundingClientRect().bottom - edge + 6));
   }
   function visScale(){
@@ -3556,7 +3621,18 @@ function fitGameView(){
   if(ov>0){ pv.classList.add('fit-max'); ov=over(); }
   if(ov>0){ var tm2=document.getElementById('toolsMenu'); if(tm2&&tm2.style.display!=='none'){ pv.classList.add('fit-menu'); ov=over(); } }
 }
-window.addEventListener('resize',function(){ fitGameView(); });
+window.addEventListener('resize',function(){
+  if(playLock.on&&document.body.classList.contains('playing')){
+    /* Height-only changes while playing are the phone browser's bars
+       showing/hiding on scroll — the play size is locked, so they
+       are ignored completely: no refit, no jump, no shrink, no
+       expand. A WIDTH change is a genuine view change (rotation, a
+       real window resize): re-lock at the new size and refit once. */
+    if(window.innerWidth!==playLock.w){ lockPlaySize(); fitGameView(); }
+    return;
+  }
+  fitGameView();
+});
 function nextPrompt(first){
   stopLeoSpeech();
   if(typeof closeHintPanel==='function') closeHintPanel(); if(typeof closeToolsMenu==='function') closeToolsMenu(); lastHintText='';
@@ -3850,7 +3926,7 @@ var GEAR_DEFS=[
  {id:'star-headband',icon:'⭐',name:'Star Headband',how:'Win a Championship game!'},
  {id:'lion-wristbands',icon:'🦁',name:'Lion Wristbands',how:'Win 3 games!'}
 ];
-function defaultDesign(){ return {skin:4,hair:'twists',hairColor:'#17120B',jersey:'#D92323',jerseySpecial:'',number:7,shorts:'#2B1608',shoes:'#FFFFFF',shoeSpecial:'',headband:false,headbandSpecial:'',wristbands:false,sleeve:false}; }
+function defaultDesign(){ return {skin:4,hair:'twists',hairColor:'#17120B',jersey:'#D92323',jerseySpecial:'',number:7,shorts:'#2B1608',shoes:'#FFFFFF',shoeSpecial:'',headband:false,headbandSpecial:'',wristbands:false,sleeve:false,outfits:{}}; }
 function loadDesign(){ try{ var d=JSON.parse(localStorage.getItem(PLAYER_KEY)); if(d&&typeof d==='object'){ var base=defaultDesign(); for(var k in base){ if(d[k]!==undefined) base[k]=d[k]; } return base; } }catch(e){} return defaultDesign(); }
 var playerDesign=loadDesign();
 /* Boys' world lock: no pink or purple anywhere — a jersey saved in one of
@@ -3871,8 +3947,49 @@ function unlockGear(id){ if(hasGear(id)) return null; collection.gear.push(id); 
 
 /* ----- Player SVG (layered, his exact design everywhere) ----- */
 function jerseyTextColor(c){ return (c==='#FFFFFF'||c==='#FFB800')?'#B91C1C':'#FFFFFF'; }
-function renderPlayerSVG(d){
-  var skin=SKINS[d.skin]||SKINS[4], hc=d.hairColor, jersey=d.jerseySpecial==='gold'?'#FFB800':d.jersey, shoes=d.shoeSpecial==='fire'?'#FF6B1A':d.shoes;
+/* ===== SPORT OUTFITS (Michelle, Nov 9, 2026) =====
+   His clothes change to match the sport, logically — a basketball
+   uniform in the swimming pool does not make sense. AUTOMATIC in
+   both editions: every game dresses him in that sport's proper
+   outfit by default (swimsuit in Swimming, gymnastics attire in
+   Gymnastics, each sport's own uniform/kit in the others) — same
+   face, same skin, same hair in every outfit, so it is always the
+   same child, dressed right for the game. In the CLASSIC edition
+   that is all that happens: the outfit changes with the sport, no
+   picking. CUSTOM edition only: the Player Studio (Step 5) lets
+   the learner pick each sport's outfit colors; each sport's pick
+   saves with that sport (playerDesign.outfits[sportId]) and comes
+   up again when they switch to that game. With no per-sport pick,
+   an outfit uses his jersey/shorts colors. */
+var SPORT_OUTFIT_STYLE={basketball:'jersey',soccer:'kit',tennis:'polo',baseball:'uniform',football:'pads',hockey:'hockey',running:'singlet',gymnastics:'leotard',swimming:'swimsuit'};
+var studioOutfitSport=null;
+function outfitFor(d,sportId){
+  var style=SPORT_OUTFIT_STYLE[sportId]||'jersey';
+  var o=(d&&d.outfits&&sportId)?d.outfits[sportId]:null;
+  return {style:style, top:(o&&o.top)||(d?d.jersey:'#D92323'), bottom:(o&&o.bottom)||(d?d.shorts:'#2B1608')};
+}
+function renderPlayerSVG(d,sportId){
+  var outfit=outfitFor(d,sportId), ostyle=outfit.style;
+  var skin=SKINS[d.skin]||SKINS[4], hc=d.hairColor, jersey=d.jerseySpecial==='gold'?'#FFB800':outfit.top, shoes=d.shoeSpecial==='fire'?'#FF6B1A':d.shoes;
+  var shortsFill= ostyle==='leotard'? jersey : outfit.bottom;
+  var shoeFill= ostyle==='leotard'? skin : shoes;
+  /* What the outfit puts on his legs, per sport: baseball pants,
+     football's padded pants, hockey pants, soccer's long socks —
+     the basketball/tennis/running/gymnastics legs stay as built. */
+  var legWear='';
+  if(ostyle==='uniform'||ostyle==='pads'){ legWear='<rect x="64" y="198" width="17" height="38" rx="7" fill="'+outfit.bottom+'"/><rect x="119" y="198" width="17" height="38" rx="7" fill="'+outfit.bottom+'"/>'+(ostyle==='pads'?'<ellipse cx="72" cy="214" rx="11" ry="9" fill="'+outfit.bottom+'" stroke="rgba(43,22,8,.25)" stroke-width="1.5"/><ellipse cx="128" cy="214" rx="11" ry="9" fill="'+outfit.bottom+'" stroke="rgba(43,22,8,.25)" stroke-width="1.5"/>':''); }
+  else if(ostyle==='hockey'){ legWear='<rect x="64" y="198" width="17" height="31" rx="7" fill="'+outfit.bottom+'"/><rect x="119" y="198" width="17" height="31" rx="7" fill="'+outfit.bottom+'"/>'; }
+  else if(ostyle==='kit'){ legWear='<rect x="64" y="215" width="17" height="21" rx="6" fill="'+outfit.bottom+'"/><rect x="119" y="215" width="17" height="21" rx="6" fill="'+outfit.bottom+'"/><rect x="64" y="215" width="17" height="5" fill="#fff"/><rect x="119" y="215" width="17" height="5" fill="#fff"/>'; }
+  /* Hockey's long sleeves, worn under the same arm groups so the
+     sleeves move with every swing exactly like the arms do. */
+  var sleeveWearR= ostyle==='hockey'? '<rect x="140" y="94" width="24" height="42" rx="10" fill="'+jersey+'"/>':'';
+  var sleeveWearL= ostyle==='hockey'? '<rect x="36" y="94" width="24" height="42" rx="10" fill="'+jersey+'"/>':'';
+  var collarWear= ostyle==='polo'? '<polygon points="85,88 115,88 100,104" fill="#FFFFFF" stroke="rgba(43,22,8,.2)" stroke-width="1.5"/>':'';
+  /* Hockey skates instead of shoes; gymnastics slippers are his
+     own skin tone (shoeFill above), the way gymnasts go barefoot. */
+  var shoeWear= ostyle==='hockey'
+   ? '<rect x="48" y="226" width="38" height="15" rx="6" fill="#374151" stroke="#2B1608" stroke-width="2.5"/><rect x="44" y="243" width="46" height="4" rx="2" fill="#C9CED6"/><rect class="p-shoe-r" x="114" y="226" width="38" height="15" rx="6" fill="#374151" stroke="#2B1608" stroke-width="2.5"/><rect x="110" y="243" width="46" height="4" rx="2" fill="#C9CED6"/>'
+   : '<rect x="48" y="234" width="38" height="14" rx="7" fill="'+shoeFill+'" stroke="#2B1608" stroke-width="2.5"/><rect class="p-shoe-r" x="114" y="234" width="38" height="14" rx="7" fill="'+shoeFill+'" stroke="#2B1608" stroke-width="2.5"/>';
   var hair='';
   if(d.hair==='afro'){ hair='<circle cx="100" cy="46" r="33" fill="'+hc+'"/><circle cx="74" cy="56" r="15" fill="'+hc+'"/><circle cx="126" cy="56" r="15" fill="'+hc+'"/>'; }
   else if(d.hair==='short'){ hair='<path d="M73 68 Q71 34 100 33 Q129 34 127 68 Q115 49 100 49 Q85 49 73 68Z" fill="'+hc+'"/>'; }
@@ -3899,7 +4016,7 @@ function renderPlayerSVG(d){
      equipment is tuned to it), and because arm, cap and equipment all
      live in the same .p-arm-r group, the shoulder stays joined at
      every moment of every swing, pump, stroke and stride. */
-  + '<g class="p-arm-r"><circle cx="147" cy="100" r="12" fill="'+skin+'"/><rect x="140" y="94" width="24" height="62" rx="10" fill="'+skin+'"/>'+wristR
+  + '<g class="p-arm-r"><circle cx="147" cy="100" r="12" fill="'+skin+'"/><rect x="140" y="94" width="24" height="62" rx="10" fill="'+skin+'"/>'+sleeveWearR+wristR
   /* THE tennis racket — the only one in the build — gripped IN his
      right hand: the handle runs through his hand (his hand circle is
      drawn last, on top of the handle, so he is visibly holding it) and
@@ -3932,22 +4049,24 @@ function renderPlayerSVG(d){
      never leaves his hands. Only the puck ever flies. Only shown in
      the hockey world (see .p-stick CSS). */
   + '<g class="p-stick" aria-hidden="true"><line x1="156" y1="138" x2="190" y2="228" stroke="#8A5A2B" stroke-width="6.5" stroke-linecap="round"/><line x1="156" y1="138" x2="165" y2="160" stroke="#17110B" stroke-width="7" stroke-linecap="round"/><path d="M190 228 L167 241" stroke="#17110B" stroke-width="7.5" stroke-linecap="round" fill="none"/><circle cx="155" cy="150" r="7.5" fill="'+skin+'"/></g></g>'
-  + '<g class="p-arm-l"><circle cx="53" cy="100" r="12" fill="'+skin+'"/><rect x="36" y="94" width="24" height="62" rx="10" fill="'+skin+'"/>'+sleeve+wristL+'</g>'
+  + '<g class="p-arm-l"><circle cx="53" cy="100" r="12" fill="'+skin+'"/><rect x="36" y="94" width="24" height="62" rx="10" fill="'+skin+'"/>'+sleeveWearL+sleeve+wristL+'</g>'
   + '<rect class="p-leg-l" x="64" y="200" width="17" height="36" rx="7" fill="'+skin+'"/><rect class="p-leg-r" x="119" y="200" width="17" height="36" rx="7" fill="'+skin+'"/>'
-  + '<path d="M56 164 L144 164 L150 204 L106 204 L100 184 L94 204 L50 204Z" fill="'+d.shorts+'" stroke="#2B1608" stroke-width="2.5"/>'
+  + legWear
+  + '<path d="M56 164 L144 164 L150 204 L106 204 L100 184 L94 204 L50 204Z" fill="'+shortsFill+'" stroke="#2B1608" stroke-width="2.5"/>'
   /* Neck bridge: a short neck under the head, drawn before the torso
      and the head, so head, neck and body overlap into one connected
      figure — no gap at the neck in any pose. */
   + '<rect x="90" y="72" width="20" height="22" rx="6" fill="'+skin+'"/>'
   + '<path d="M62 94 Q100 82 138 94 L147 168 Q100 179 53 168Z" fill="'+jersey+'" stroke="#2B1608" stroke-width="2.5"/>'
-  + '<path d="M62 94 Q100 82 138 94 L140 106 Q100 94 60 106Z" fill="#FFB800" opacity=".85"/>'
+  + '<path d="M62 94 Q100 82 138 94 L140 106 Q100 94 60 106Z" fill="'+(ostyle==='singlet'?'#FFFFFF':'#FFB800')+'" opacity=".85"/>'
+  + collarWear
   + (d.jerseySpecial==='gold'?'<text x="100" y="112" text-anchor="middle" font-size="13">👑</text>':'')
   + '<text x="100" y="152" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="38" fill="'+jerseyTextColor(jersey)+'" stroke="rgba(0,0,0,.28)" stroke-width="1">'+d.number+'</text>'
   + '<circle cx="100" cy="62" r="27" fill="'+skin+'" stroke="#2B1608" stroke-width="2"/>'
   + (d.hair!=='afro'?hair:'')+band
   + '<circle cx="90" cy="62" r="3" fill="#2B1608"/><circle cx="110" cy="62" r="3" fill="#2B1608"/><path d="M91 74 Q100 81 109 74" stroke="#2B1608" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
   + flames
-  + '<rect x="48" y="234" width="38" height="14" rx="7" fill="'+shoes+'" stroke="#2B1608" stroke-width="2.5"/><rect class="p-shoe-r" x="114" y="234" width="38" height="14" rx="7" fill="'+shoes+'" stroke="#2B1608" stroke-width="2.5"/>'
+  + shoeWear
   + '</svg>';
 }
 /* ===== THE HORIZONTAL SWIMMER (Michelle, Nov 8–9, 2026) =====
@@ -3956,8 +4075,8 @@ function renderPlayerSVG(d){
    at the front (right, toward the far wall), freestyle arms stroking
    around their shoulders and legs flutter-kicking behind him — the
    same swimmer-in-the-water design as Royce's swimming, with ONLY the
-   player different: his skin, his hair, his jersey and number, his
-   shorts. He is built from the same design object as renderPlayerSVG,
+   player different: his skin, his hair, and his swimsuit — the
+   swimming outfit (see SPORT OUTFITS above). He is built from the same design object as renderPlayerSVG,
    so a design made in the Player Studio is the swimmer in the pool.
    His body is one connected figure: shoulder caps sit on the arm
    roots, a neck circle joins head to torso, and the shorts cover the
@@ -3966,7 +4085,10 @@ function renderPlayerSVG(d){
    ring — he is simply in the pool water, with Royce's stage-wide
    swim-water layer in front of his lower body. */
 function renderSwimPlayerSVG(d){
-  var skin=SKINS[d.skin]||SKINS[4], hc=d.hairColor, jersey=d.jerseySpecial==='gold'?'#FFB800':d.jersey;
+  /* In the pool he wears his SWIMSUIT (Michelle, Nov 9, 2026) —
+     the swimming outfit's colors, no jersey, no number: a suit
+     top and swim trunks. Same skin, same hair, same face. */
+  var skin=SKINS[d.skin]||SKINS[4], hc=d.hairColor, suit=outfitFor(d,'swimming');
   var hairBack='', hairCap='';
   if(d.hair==='afro'){ hairBack='<circle cx="199" cy="25" r="10" fill="'+hc+'"/><circle cx="214" cy="16" r="12" fill="'+hc+'"/><circle cx="231" cy="23" r="10" fill="'+hc+'"/>'; }
   else if(d.hair==='short'){ hairCap='<path d="M198 36 Q199 19 217 19 Q235 19 236 36 Q227 25 217 25 Q207 25 198 36Z" fill="'+hc+'"/>'; }
@@ -3982,11 +4104,10 @@ function renderSwimPlayerSVG(d){
   + '<g class="p-arm-l" opacity=".88"><line x1="184" y1="48" x2="148" y2="78" stroke="'+skin+'" stroke-width="12" stroke-linecap="round"/>'+wristL+'<circle cx="146" cy="80" r="6" fill="'+skin+'"/></g>'
   + '<g class="p-leg-r"><line x1="102" y1="47" x2="34" y2="36" stroke="'+skin+'" stroke-width="13" stroke-linecap="round"/><ellipse cx="26" cy="35" rx="7.5" ry="4.5" fill="'+skin+'"/></g>'
   + '<g class="p-arm-r"><line x1="190" y1="44" x2="238" y2="15" stroke="'+skin+'" stroke-width="12.5" stroke-linecap="round"/>'+wristR+'<circle cx="240" cy="14" r="6.5" fill="'+skin+'"/></g>'
-  + '<rect x="82" y="33" width="64" height="37" rx="12" fill="'+d.shorts+'" stroke="#2B1608" stroke-width="2.5"/>'
-  + '<rect x="140" y="31" width="62" height="38" rx="13" fill="'+jersey+'" stroke="#2B1608" stroke-width="2.5"/>'
-  + '<rect x="189" y="33" width="11" height="34" rx="5" fill="#FFB800" opacity=".85"/>'
-  + '<circle cx="184" cy="47" r="8" fill="'+jersey+'"/><circle cx="190" cy="45" r="10" fill="'+jersey+'"/>'
-  + '<text x="166" y="60" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="25" fill="'+jerseyTextColor(jersey)+'" stroke="rgba(0,0,0,.28)" stroke-width=".8">'+d.number+'</text>'
+  + '<rect x="82" y="33" width="64" height="37" rx="12" fill="'+suit.bottom+'" stroke="#2B1608" stroke-width="2.5"/>'
+  + '<rect x="140" y="31" width="62" height="38" rx="13" fill="'+suit.top+'" stroke="#2B1608" stroke-width="2.5"/>'
+  + '<rect x="189" y="33" width="11" height="34" rx="5" fill="#FFFFFF" opacity=".35"/>'
+  + '<circle cx="184" cy="47" r="8" fill="'+suit.top+'"/><circle cx="190" cy="45" r="10" fill="'+suit.top+'"/>'
   + '<circle cx="201" cy="43" r="8" fill="'+skin+'"/>'
   + hairBack
   + '<circle cx="217" cy="41" r="21" fill="'+skin+'" stroke="#2B1608" stroke-width="2"/>'
@@ -4005,14 +4126,18 @@ function syncSwimFigure(){
   var swim=!!(st&&st.classList.contains('sport-swimming'));
   var d=activePlayerDesign();
   if(swim){ cp.classList.add('is-swim'); cp.innerHTML=renderSwimPlayerSVG(d); }
-  else if(cp.classList.contains('is-swim')){ cp.classList.remove('is-swim'); cp.innerHTML=renderPlayerSVG(d); }
+  else if(cp.classList.contains('is-swim')){ cp.classList.remove('is-swim'); cp.innerHTML=renderPlayerSVG(d,stageSportId()); }
 }
 /* Which player the world actually SHOWS. Custom link: the child's own
    saved design from the Player Studio. Classic link: ALWAYS the plain
    default player — a design saved on this device while it was unlocked
    must never leak into the classic build, where there is no studio. */
 function activePlayerDesign(){ var unlocked=(typeof isCustomUnlocked==='function')?isCustomUnlocked():false; return unlocked? playerDesign : defaultDesign(); }
-function renderAllPlayers(){ var shown=activePlayerDesign(); document.querySelectorAll('.player-slot').forEach(function(el){ el.innerHTML=renderPlayerSVG(shown); }); syncSwimFigure(); var sp=document.getElementById('studioPreview'); if(sp){ sp.innerHTML=renderPlayerSVG(playerDesign); } var sn=document.getElementById('studioName'); if(sn) sn.textContent='#'+playerDesign.number+' — Your Player ⭐'; var ball=document.getElementById('shotBall'); if(ball&&gameSession) ball.classList.toggle('fire',!!gameSession.onFire); }
+/* The sport the STAGE is showing (set by renderStageBackdrop) —
+   the stage player wears that game's outfit; every other player
+   slot wears the active sport's outfit. */
+function stageSportId(){ var st=document.getElementById('courtStage'); var id=st?st.getAttribute('data-stage-sport'):null; return id||activeSportId(); }
+function renderAllPlayers(){ var shown=activePlayerDesign(); document.querySelectorAll('.player-slot').forEach(function(el){ el.innerHTML=renderPlayerSVG(shown, el.id==='courtPlayer'? stageSportId() : activeSportId()); }); syncSwimFigure(); var sp=document.getElementById('studioPreview'); if(sp){ sp.innerHTML= studioOutfitSport==='swimming'? renderSwimPlayerSVG(playerDesign) : renderPlayerSVG(playerDesign, studioOutfitSport||activeSportId()); } var sn=document.getElementById('studioName'); if(sn) sn.textContent='#'+playerDesign.number+' — Your Player ⭐'; var ball=document.getElementById('shotBall'); if(ball&&gameSession) ball.classList.toggle('fire',!!gameSession.onFire); }
 
 /* ----- Sound effects (WebAudio, separate from music) ----- */
 var audioCtx=null, sfxMuted=false;
@@ -4184,9 +4309,13 @@ function updateScoreboard(){
    The stage shows only the venue, the player, and the game's moving
    object; everything Leo has to say lives in his bubble and in the
    question card's feedback line, where it always also appeared. */
-/* ----- The photo court: dribble loop + shots aimed at the photo's own hoop ----- */
-/* Rim center of assets/court-game.jpg — the video-game court, rendered at the same 1120x2240 geometry as the court it replaces: rim center at 89% across / 16.8% down, wall/floor line at 53.6%. The cover math below mirrors .court-photo (object-fit:cover, object-position 50% 15%), so the ball lands on the game court's hoop at any stage size — the 15% anchor keeps the hoop in frame even on the short same-view mobile stage. The same rendered court stands behind Coach Leo in the hero (assets/coach-leo.jpg). The dribble itself is visual-only, so it can never fight his music. */
-var COURT_IMG={iw:1120,ih:2240,fx:0.89,fy:0.168,posX:0.5,posY:0.15};
+/* ----- The built court: dribble loop + shots aimed at the built hoop ----- */
+/* The basketball venue is a TRUE 3D BUILD drawn in the page (the
+   courtPhoto SVG, viewBox 2640x864, xMidYMid slice): its rim sits at
+   fx .753 / fy .273 of that canvas, and the cover math below uses
+   the centered position (.5/.5) that slice rendering uses, so the
+   shot logic's hoop center is the built rim's center at any size. */
+var COURT_IMG={iw:2640,ih:864,fx:0.753,fy:0.273,posX:0.5,posY:0.5};
 var shotSeq=0;
 var shotAnimActive=false, dribblePending=false;
 function startDribble(){ if(shotAnimActive){ dribblePending=true; return; } var st=document.getElementById('courtStage'); if(st) st.classList.add('dribbling'); }
@@ -4210,7 +4339,7 @@ function sparkleBurst(cx,cy,n,big){
      the crowd SOUNDS. Nothing appears floating on the stage. */
   return;
 }
-function rippleNet(cx,cy,dw){ var net=document.getElementById('netRipple'); if(!net) return; var w=Math.max(30,Math.round(dw*0.105)); net.style.width=w+'px'; net.style.height=Math.round(w*0.95)+'px'; net.style.left=Math.round(cx-w/2)+'px'; net.style.top=Math.round(cy-2)+'px'; net.classList.remove('rippling'); void net.offsetWidth; net.classList.add('rippling'); }
+function rippleNet(cx,cy,dw){ var net=document.getElementById('netRipple'); if(!net) return; var w=Math.max(30,Math.round(dw*0.036)); /* the built rim spans ~3.6% of the built court's rendered width */ net.style.width=w+'px'; net.style.height=Math.round(w*0.95)+'px'; net.style.left=Math.round(cx-w/2)+'px'; net.style.top=Math.round(cy-2)+'px'; net.classList.remove('rippling'); void net.offsetWidth; net.classList.add('rippling'); }
 /* When a shot sequence (flight + floor landing + roll-back) finishes, the ball is
    back at the player's spot: resume dribbling if the game asked for it while the
    ball was still rolling (made shot — the next prompt starts on Leo's usual timing,
@@ -4996,7 +5125,7 @@ var WORLD_SCENE_META={
  soccer:{name:'Soccer Field'},
  baseball:{name:'Baseball Diamond'},
  football:{name:'Football Field'},
- gymnastics:{name:'Gymnastics Gym'},
+ gymnastics:{name:'Gymnastics'},
  tennis:{name:'Tennis Court'},
  swimming:{name:'Swimming Pool'},
  hockey:{name:'Hockey Rink'},
@@ -5092,6 +5221,25 @@ function sportInfo(){
   var id=effectiveSportId();
   return SPORT_INFO[id]||SPORT_INFO.basketball;
 }
+/* ===== BACKGROUND TEMPLATE ARTWORK + IN-GAME 3D VENUE BUILDS
+   (Michelle, Nov 9, 2026 — TWO SEPARATE THINGS, never mixed) =====
+   BG_FRONT_ART: the STRAIGHT-DOWN (front) glossy artwork for the
+   eight sports' BACKGROUND TEMPLATES — page backgrounds only,
+   presented full-bleed exactly the way the Gymnastics artwork
+   template works (sportSceneHTML + worldBackdropSVG).
+   THE IN-GAME VENUES are NOT pictures: each game's court, field,
+   rink, track, diamond and pool is a TRUE 3D BUILD constructed in
+   the page (gameSceneHTML below, plus Basketball's built court in
+   its stage element) in the same glossy 3D quality as the approved
+   samples — the samples are the design/quality reference only.
+   Each built venue sits proper in the game's own geometry: its
+   hoop / goal / net / lanes are built exactly where the game's
+   existing logic already plays, so every make and miss follows
+   the built logic against the built venue. The venues are still;
+   the only motion in any venue is the Swimming pool's water (the
+   stage's animated swim-water layer over the built pool). */
+var BG_FRONT_ART={basketball:'bg-basketball-front',soccer:'bg-soccer-front',baseball:'bg-baseball-front',football:'bg-football-front',tennis:'bg-tennis-front',swimming:'bg-swimming-front',hockey:'bg-hockey-front',running:'bg-running-front'};
+function artSVG(map,id){ return '<svg viewBox="0 0 2640 864" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><image href="assets/'+map[id]+'.webp" x="0" y="0" width="2640" height="864" preserveAspectRatio="xMidYMid slice"/></svg>'; }
 /* Drawn scene for each sport's home — a full detailed venue, the way the
    basketball court photo is detailed: a tennis court with doubles and
    singles lines, service boxes and a real net; a soccer pitch with mow
@@ -5120,73 +5268,11 @@ function sportSceneHTML(id,accent){
      lamps in a dark housing on a pole, trimmed in a trio color.
      The lamps stay natural white. */
   var floodS=function(x,y,s,tilt,trim){ var dots=''; for(var r=0;r<4;r++){ for(var col=0;col<6;col++){ dots+='<circle cx="'+(16+col*19)+'" cy="'+(18+r*20)+'" r="7.6" fill="#FFFFFF"/>'; } } return '<g transform="translate('+x+','+y+') rotate('+tilt+') scale('+s+')"><rect x="53" y="98" width="15" height="92" fill="#3D6076"/><rect x="0" y="0" width="122" height="100" rx="11" fill="#2E4E63" stroke="'+trim+'" stroke-width="5"/>'+dots+'</g>'; };
-  /* Boy gymnast (Karter's Gymnastics scene): a flat-style BOY gymnast
-     in a tank top + long gymnast pants, drawn in the named pose —
-     the two featured still-rings holds from Michelle's pictures
-     (ringsHang: arms out on the rings, body hanging straight down,
-     legs together; ringsLift: arms out on the rings with both legs
-     raised up together in front of him) plus a floor split, a
-     handstand, a straddle jump and a stuck-landing salute. Skin and
-     hair stay natural; only the tank and pants take trio colors. */
-  var gymBoy=function(pose,x,y,s,tank,pants,skin,hair,style){
-    /* Clean flat-design BOY gymnast (Michelle's reference style):
-       smooth solid shapes only — a round head with one smooth hair
-       shape (cap, sweep, curls, fade or top puff, picked per boy), a
-       rounded tank torso, and limbs as single thick rounded strokes
-       — never segmented sticks with joint dots or seam lines. Skin
-       tone, hair and outfit are passed per boy, so the scatter is a
-       real mix of boys in different clothes. */
-    var L=function(x1,y1,x2,y2,c,w){ return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+c+'" stroke-width="'+(w||11)+'" stroke-linecap="round"/>'; };
-    var HD=function(cx,cy,r){
-      var h='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+skin+'"/>';
-      if(style==='fade'){ h+='<path d="M'+(cx-r)+' '+(cy-1)+' A'+r+' '+(r*.6)+' 0 0 1 '+(cx+r)+' '+(cy-1)+' Z" fill="'+hair+'"/>'; }
-      else{
-        h+='<path d="M'+(cx-r)+' '+cy+' A'+r+' '+r+' 0 0 1 '+(cx+r)+' '+cy+' Z" fill="'+hair+'"/>';
-        if(style==='curls') h+='<circle cx="'+(cx-r*.6)+'" cy="'+(cy-r*.8)+'" r="'+(r*.36)+'" fill="'+hair+'"/><circle cx="'+(cx-r*.16)+'" cy="'+(cy-r*.98)+'" r="'+(r*.38)+'" fill="'+hair+'"/><circle cx="'+(cx+r*.3)+'" cy="'+(cy-r*.92)+'" r="'+(r*.35)+'" fill="'+hair+'"/><circle cx="'+(cx+r*.68)+'" cy="'+(cy-r*.6)+'" r="'+(r*.3)+'" fill="'+hair+'"/>';
-        else if(style==='puff') h+='<circle cx="'+cx+'" cy="'+(cy-r-1)+'" r="'+(r*.46)+'" fill="'+hair+'"/>';
-        else if(style==='sweep') h+='<circle cx="'+(cx+r*.58)+'" cy="'+(cy-r*.5)+'" r="'+(r*.52)+'" fill="'+hair+'"/>';
-      }
-      return h;
-    };
-    var torso=function(cx,cy,rot){ return '<g transform="translate('+cx+' '+cy+') rotate('+(rot||0)+')"><path d="M-14.5 0 Q0 -7.5 14.5 0 L10.5 50 Q0 56.5 -10.5 50 Z" fill="'+tank+'"/></g>'; };
-    var foot=function(cx,cy){ return '<circle cx="'+cx+'" cy="'+cy+'" r="5.5" fill="'+skin+'"/>'; };
-    var ring=function(cx,cy){ return '<line x1="'+cx+'" y1="-74" x2="'+cx+'" y2="'+(cy-13)+'" stroke="#8A97A5" stroke-width="5"/><circle cx="'+cx+'" cy="'+cy+'" r="11.5" fill="none" stroke="#4B5563" stroke-width="5"/>'; };
-    var inner='';
-    if(pose==='ringsHang'){
-      inner=ring(-56,40)+ring(56,40)
-      +L(-2,32,-52,38,skin,10.5)+L(2,32,52,38,skin,10.5)
-      +torso(0,24,0)+HD(0,10,13)
-      +L(-4,76,-6,162,pants,13)+L(4,76,7,162,pants,13)+foot(-6,168)+foot(7,168);
-    } else if(pose==='ringsLift'){
-      inner=ring(-58,34)+ring(58,34)
-      +L(-2,32,-54,32,skin,10.5)+L(2,32,54,32,skin,10.5)
-      +torso(0,24,0)+HD(0,10,13)
-      +L(0,78,50,30,pants,15)+foot(56,26);
-    } else if(pose==='cartwheel'){
-      inner=L(-22,90,-36,143,skin,10.5)+L(-2,86,14,142,skin,10.5)
-      +'<path d="M-24 92 Q0 60 32 72" stroke="'+tank+'" stroke-width="17.5" fill="none" stroke-linecap="round"/>'
-      +HD(-37,79,12.5)
-      +L(32,72,76,22,pants,13)+L(32,72,88,84,pants,13)+foot(80,18)+foot(92,87);
-    } else if(pose==='split'){
-      inner=L(-3,82,-64,95,pants,14)+L(3,82,64,95,pants,14)+foot(-70,96)+foot(70,96)
-      +torso(0,28,0)+HD(0,14,13)
-      +L(-2,36,-42,2,skin,10.5)+L(2,36,44,22,skin,10.5);
-    } else if(pose==='handstand'){
-      inner=L(-5,92,-11,160,skin,10.5)+L(5,92,11,160,skin,10.5)
-      +torso(0,92,180)+'<g transform="rotate(180 0 105)">'+HD(0,105,12.5)+'</g>'
-      +L(-3,44,-7,-26,pants,13)+L(3,44,7,-26,pants,13)+foot(-7,-31)+foot(7,-31);
-    } else if(pose==='jump'){
-      inner=L(-3,78,-54,114,pants,13)+L(3,78,54,114,pants,13)+foot(-59,117)+foot(59,117)
-      +torso(0,24,0)+HD(0,10,13)
-      +L(-2,32,-48,-10,skin,10.5)+L(2,32,48,-10,skin,10.5);
-    } else {
-      inner=L(-4,78,-7,162,pants,13)+L(4,78,8,162,pants,13)+foot(-7,168)+foot(8,168)
-      +torso(0,24,0)+HD(0,10,13)
-      +L(-2,32,-44,14,skin,10.5)+L(2,32,42,-18,skin,10.5);
-    }
-    return '<g transform="translate('+x+','+y+') scale('+s+')">'+inner+'</g>';
-  };
   var fballS=function(x,y,r,rot){ return '<g transform="translate('+x+','+y+') rotate('+rot+')"><ellipse rx="'+r+'" ry="'+(r*.62)+'" fill="#8A4B21" stroke="#5B2D10" stroke-width="4"/><path d="M'+(-r*.4)+' 0H'+(r*.4)+'" stroke="#fff" stroke-width="5"/><path d="M-10 -7V7M0 -8V8M10 -7V7" stroke="#fff" stroke-width="4"/></g>'; };
+  /* The eight sports' templates are the glossy STRAIGHT-DOWN artwork
+     (BG_FRONT_ART), full-bleed, like Gymnastics — their drawn scenes
+     below no longer paint (Dance and Cheer keep theirs). */
+  if(BG_FRONT_ART[id]) return artSVG(BG_FRONT_ART,id);
   if(id==='tennis') return wrap(
     '<rect width="800" height="560" fill="#2F9E63"/>'
     +'<rect x="55" y="55" width="690" height="450" fill="'+T3+'" stroke="'+W+'" stroke-width="6"/><rect x="55" y="55" width="690" height="12" fill="'+accent+'"/><rect x="55" y="493" width="690" height="12" fill="'+B2+'"/>'
@@ -5295,35 +5381,29 @@ function sportSceneHTML(id,accent){
     /* Footballs resting on the field around the play. */
     +fballS(150,486,34,-24)+fballS(330,120,26,18)+fballS(560,492,30,38)+fballS(668,96,22,-12));
   if(id==='running') return wrap(
-    '<rect width="800" height="560" fill="#B4552D"/><rect width="800" height="58" fill="#57B24A"/><rect y="58" width="267" height="9" fill="'+accent+'"/><rect x="267" y="58" width="267" height="9" fill="'+B2+'"/><rect x="534" y="58" width="266" height="9" fill="'+T3+'"/>'
-    +[170,290,410].map(function(y){ return '<line x1="0" y1="'+y+'" x2="800" y2="'+y+'" stroke="'+W+'" stroke-width="5"/>'; }).join('')
-    +'<line x1="60" y1="58" x2="60" y2="560" stroke="'+W+'" stroke-width="5"/>'
-    +[['1',105],['2',225],['3',345],['4',465]].map(function(n){ return '<text x="26" y="'+n[1]+'" font-family="Fredoka" font-size="34" font-weight="700" fill="rgba(255,255,255,.8)">'+n[0]+'</text>'; }).join('')
-    +'<rect x="676" y="58" width="26" height="502" fill="url(#checker)"/>'
+    /* A real OVAL running track (Michelle), matching the page
+       template: a loop with two straights and curved ends, lane
+       lines that follow the oval, a grass infield, and a checkered
+       finish line across the track on the home straight. The old
+       flat straight track is gone. */
+    '<rect width="800" height="560" fill="#57B24A"/><rect y="58" width="267" height="9" fill="'+accent+'"/><rect x="267" y="58" width="267" height="9" fill="'+B2+'"/><rect x="534" y="58" width="266" height="9" fill="'+T3+'"/>'
+    +'<rect x="40" y="110" width="720" height="400" rx="200" fill="#B4552D" stroke="'+W+'" stroke-width="6"/>'
+    +'<rect x="76" y="146" width="648" height="328" rx="164" fill="none" stroke="'+W+'" stroke-width="5"/>'
+    +'<rect x="112" y="182" width="576" height="256" rx="128" fill="none" stroke="'+W+'" stroke-width="5"/>'
+    +'<rect x="148" y="218" width="504" height="184" rx="92" fill="none" stroke="'+W+'" stroke-width="5"/>'
+    +'<rect x="184" y="254" width="432" height="112" rx="56" fill="#57B24A" stroke="'+W+'" stroke-width="6"/>'
+    +[['1',504],['2',468],['3',432],['4',396]].map(function(n){ return '<text x="265" y="'+n[1]+'" font-family="Fredoka" font-size="26" font-weight="700" fill="rgba(255,255,255,.85)">'+n[0]+'</text>'; }).join('')
+    +'<rect x="520" y="366" width="24" height="144" fill="url(#checker)" stroke="#2B1608" stroke-width="2"/>'
     +netMesh);
-  if(id==='gymnastics') return wrap(
-    /* Michelle's boys' gymnastics scene, clean flat style: a
-       scatter of BOY gymnasts drawn as smooth flat figures — the
-       still-rings holds across the top, a cartwheel over the
-       balance beam at center (her reference pose), and a floor
-       split, stuck-landing salute, straddle jump and handstand
-       along the mat. Skin tones are a real mix, hair differs boy
-       to boy (cap, sweep, curls, fade, top puff), and outfits
-       take the world's trio in different mixes. Boys only. */
-    '<rect width="800" height="560" fill="#FDE8C8"/>'
-    +'<rect width="800" height="150" fill="'+SCENE_TRIO.ts+'"/><rect y="150" width="800" height="8" fill="'+B2+'"/><rect y="158" width="800" height="5" fill="'+T3+'"/>'
-    +'<rect y="430" width="800" height="130" fill="#C98B4B"/>'
-    +[470,510].map(function(y){ return '<line x1="0" y1="'+y+'" x2="800" y2="'+y+'" stroke="rgba(255,255,255,.45)" stroke-width="4"/>'; }).join('')
-    +[200,400,600].map(function(x){ return '<line x1="'+x+'" y1="430" x2="'+x+'" y2="560" stroke="rgba(255,255,255,.45)" stroke-width="4"/>'; }).join('')
-    +'<rect x="298" y="424" width="204" height="22" rx="9" fill="'+B2+'" stroke="#2B1608" stroke-width="3"/>'
-    +gymBoy('ringsLift',138,128,.92,B2,accent,'#C68863','#17110B','curls')
-    +gymBoy('ringsHang',400,112,1.18,accent,T3,'#F6C79A','#4A2F1D','sweep')
-    +gymBoy('ringsHang',656,120,.88,B2,accent,'#8D5A3B','#17110B','fade')
-    +gymBoy('cartwheel',400,279,.98,accent,B2,'#E8B088','#7A4A21','puff')
-    +gymBoy('split',128,318,.95,accent,B2,'#F6C79A','#7A4A21','cap')
-    +gymBoy('salute',252,302,.92,B2,accent,'#6B4226','#17110B','curls')
-    +gymBoy('jump',552,324,.9,B2,T3,'#F6C79A','#17110B','fade')
-    +gymBoy('handstand',700,298,.95,accent,T3,'#C68863','#4A2F1D','sweep'));
+  if(id==='gymnastics') return '<svg viewBox="0 0 2640 864" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><image href="assets/gymnastics-boys-bg.webp" x="0" y="0" width="2640" height="864" preserveAspectRatio="xMidYMid slice"/></svg>';
+    /* GYMNASTICS TEMPLATE = the glossy 3D boy-gymnasts artwork
+       (assets/gymnastics-boys-bg.webp), full-bleed — the SAME
+       artwork worldBackdropSVG paints as the page background and
+       in the wizard's Background step. The old drawn flat
+       stick-figure gymnastics scene is REMOVED from this template
+       path entirely: no drawn gymnast figure is painted here
+       anymore. (The gymnastics GAME keeps its own venue in
+       gameSceneHTML, untouched.) */
   if(id==='basketball') return wrap(
     '<rect width="800" height="560" fill="#E8933A"/>'
     +[70,150,230,310,390,470].map(function(y){ return '<line x1="0" y1="'+y+'" x2="800" y2="'+y+'" stroke="rgba(124,45,18,.28)" stroke-width="4"/>'; }).join('')
@@ -5425,10 +5505,11 @@ function coachHairColorHex(){ return HAIR_COLORS.some(function(x){return x[0]===
 function coachDesignObj(){ return {skin:coachSkinIdx(),hair:coachHairId(),hairColor:coachHairColorHex(),jersey:'#D92323',jerseySpecial:'',number:7,shorts:'#2B1608',shoes:'#FFFFFF',shoeSpecial:'',headband:false,headbandSpecial:'',wristbands:false,sleeve:false}; }
 function renderCoachFaceSVG(){ return renderPlayerSVG(coachDesignObj()).replace('viewBox="0 0 200 262"','viewBox="55 8 90 88"').replace('aria-label="Your player"','aria-label="Your coach\u2019s face"'); }
 function coachAvatarHTML(badgeEmoji){ var inner= '<span class="coach-face-art">'+renderCoachFaceSVG()+'</span>'; return '<span class="coach-avatar">'+inner+'<span class="coach-avatar-badge">'+badgeEmoji+'</span></span>'; }
-function coachLookHTML(handler){
+function coachLookHTML(handler,chipClass){
+  var chip=chipClass||'fav-chip';
   var h='';
   h+='<div class="opt-group"><h4>🖐️ Skin Tone</h4><div class="opt-row">'+SKINS.map(function(hex,i){ return '<button class="swatch'+(coachSkinIdx()===i?' on':'')+'" style="background:'+hex+'" onclick="'+handler+'(\'skin\','+i+')" aria-label="Coach skin tone '+(i+1)+'" title="Skin tone '+(i+1)+'"></button>'; }).join('')+'</div></div>';
-  h+='<div class="opt-group"><h4>💇 Hair Style</h4><div class="opt-row">'+HAIR_STYLES.map(function(s){ return '<button class="fav-chip'+(coachHairId()===s[0]?' on':'')+'" onclick="'+handler+'(\'hair\',\''+s[0]+'\')">'+s[1]+'</button>'; }).join('')+'</div></div>';
+  h+='<div class="opt-group"><h4>💇 Hair Style</h4><div class="opt-row">'+HAIR_STYLES.map(function(s){ return '<button class="'+chip+(coachHairId()===s[0]?' on':'')+'" onclick="'+handler+'(\'hair\',\''+s[0]+'\')">'+s[1]+'</button>'; }).join('')+'</div></div>';
   h+='<div class="opt-group"><h4>🎨 Hair Color</h4><div class="opt-row">'+HAIR_COLORS.map(function(c){ return '<button class="swatch'+(coachHairColorHex()===c[0]?' on':'')+'" style="background:'+c[0]+'" onclick="'+handler+'(\'hairColor\',\''+c[0]+'\')" aria-label="Coach hair color '+c[1]+'" title="'+c[1]+'"></button>'; }).join('')+'</div></div>';
   return h;
 }
@@ -5627,12 +5708,56 @@ function applyWorldTheme(){
    and running finish line at the right, the swimming touchpad on
    the far wall, the baseball outfield wall under the home-run
    flight, the gymnastics beam at the star's walking height.
-   Basketball keeps its photo court — that photo IS its game scene. */
+   Every venue below is a TRUE 3D BUILD (Michelle, Nov 9, 2026):
+   constructed glossy 3D scenes in the page — blush diorama
+   backdrop, perspective slabs with real thickness and soft
+   shadows, glossed surfaces, and goals / nets / hoops built as
+   3D objects — at the approved samples' quality, sitting proper
+   in the game's own geometry: each target is built exactly where
+   the game's existing logic already plays (the same coordinates
+   the tuned scenes have always used), so makes read as makes and
+   misses as misses against the built venue. Basketball's built
+   court lives in its stage element (COURT_IMG rim math). The
+   venues are still — the only venue motion anywhere is the
+   Swimming pool's water (the stage's animated swim-water layer
+   over the built pool, with the swimmer in it). Gymnastics keeps
+   its own beam venue exactly as built. */
 function gameSceneHTML(id,accent){
   var B2=SCENE_TRIO.sb, SS=SCENE_TRIO.ss, T3=SCENE_TRIO.t, T3S=SCENE_TRIO.ts;
   var W='rgba(255,255,255,.92)';
   function wrap(inner){ return '<svg viewBox="0 0 800 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'+inner+'</svg>'; }
-  var defs='<defs><pattern id="gamenet" width="11" height="11" patternUnits="userSpaceOnUse"><path d="M0 0H11M0 0V11" stroke="rgba(255,255,255,.8)" stroke-width="1.6" fill="none"/></pattern><pattern id="gamechecker" width="26" height="26" patternUnits="userSpaceOnUse"><rect width="26" height="26" fill="#fff"/><rect width="13" height="13" fill="#2B1608"/><rect x="13" y="13" width="13" height="13" fill="#2B1608"/></pattern><linearGradient id="gamewater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3FB9F2"/><stop offset="1" stop-color="#1B8FD0"/></linearGradient></defs>';
+  var defs='<defs><pattern id="gamenet" width="11" height="11" patternUnits="userSpaceOnUse"><path d="M0 0H11M0 0V11" stroke="rgba(255,255,255,.8)" stroke-width="1.6" fill="none"/></pattern><pattern id="gamenetdark" width="11" height="11" patternUnits="userSpaceOnUse"><path d="M0 0H11M0 0V11" stroke="rgba(190,215,235,.55)" stroke-width="1.6" fill="none"/></pattern><pattern id="gamechecker" width="26" height="26" patternUnits="userSpaceOnUse"><rect width="26" height="26" fill="#fff"/><rect width="13" height="13" fill="#2B1608"/><rect x="13" y="13" width="13" height="13" fill="#2B1608"/></pattern><linearGradient id="gamewater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4FC3F7"/><stop offset=".5" stop-color="#29A9E8"/><stop offset="1" stop-color="#0288D1"/></linearGradient>'
+  +'<linearGradient id="gameblush" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF0EA"/><stop offset="1" stop-color="#F3D9CF"/></linearGradient>'
+  +'<linearGradient id="gamepitch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6FC95E"/><stop offset="1" stop-color="#3E9240"/></linearGradient>'
+  +'<linearGradient id="gamecourtblue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3E8FD2"/><stop offset="1" stop-color="#1D5FA8"/></linearGradient>'
+  +'<linearGradient id="gamegreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E9E63"/><stop offset="1" stop-color="#1E7A46"/></linearGradient>'
+  +'<linearGradient id="gameice" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4FBFF"/><stop offset="1" stop-color="#CDE9FA"/></linearGradient>'
+  +'<linearGradient id="gametrack" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C96A3D"/><stop offset="1" stop-color="#A34A24"/></linearGradient>'
+  +'<linearGradient id="gamedirt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D69A58"/><stop offset="1" stop-color="#B57A3E"/></linearGradient>'
+  +'<linearGradient id="gamestand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A617A"/><stop offset="1" stop-color="#24404F"/></linearGradient>'
+  +'<linearGradient id="gameglass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(210,240,255,.75)"/><stop offset="1" stop-color="rgba(160,210,240,.35)"/></linearGradient>'
+  +'<linearGradient id="gamegold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFD94D"/><stop offset=".5" stop-color="#F5C518"/><stop offset="1" stop-color="#D9A406"/></linearGradient>'
+  +'<linearGradient id="gamepost" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".55" stop-color="#EDF2F7"/><stop offset="1" stop-color="#C9CED6"/></linearGradient></defs>';
+  /* Shared 3D-build pieces: the pale blush diorama backdrop the
+     approved samples sit on, and a soft shadow helper. Every venue
+     below is composed as a wide panorama in the SAME manner as
+     Basketball's built court (2640x864 photo-court): a backdrop
+     band across the top, a perspective playing surface whose far
+     edge sits at the panorama's horizon and whose near edge runs
+     off the bottom of the stage, painted markings laid on that
+     surface in perspective, a gloss sheen raking across it, and
+     the scoring target built as a real 3D object (front frame,
+     depth roof, side panel, mesh) standing on the surface exactly
+     where the game's shot logic plays — the fractions in the
+     comments are the stage fractions playSportShot already uses,
+     and the wide 800x560 frame is width-matched to the stage at
+     every playing size, so a fraction in the scene is that same
+     fraction on the stage, phone and desktop alike. The vertical
+     composition keeps every target's mouth inside the panorama's
+     middle band, which is the part of the scene the stage shows
+     at every size. */
+  function blush(){ return '<rect width="800" height="560" fill="url(#gameblush)"/>'; }
+  function slabShadow(cx,cy,rx){ return '<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="16" fill="rgba(120,60,30,.16)"/>'; }
   /* NO crowd figures in any game venue: the stands stay as plain
      venue structure (bands/boards) with no dotted people, figures
      or other decorative graphics painted on them — every venue
@@ -5641,89 +5766,219 @@ function gameSceneHTML(id,accent){
      now paints nothing.) */
   function crowd(y,cols){ return ''; }
   function rope(y){ var s=''; for(var x=44;x<=752;x+=24){ s+='<circle cx="'+x+'" cy="'+y+'" r="7.5" fill="'+(((x/24)%2)?'#E5484D':'#FFFFFF')+'" stroke="rgba(43,22,8,.18)" stroke-width="1"/>'; } return s; }
-  if(id==='tennis') return wrap(defs
-    +'<rect width="800" height="300" fill="#BFE0EE"/>'
-    +'<rect y="96" width="800" height="118" fill="#2E5E4E"/>'+crowd(128)
-    +'<rect y="214" width="800" height="88" fill="#1F7A4D"/>'
-    +'<rect y="302" width="800" height="258" fill="#2F9E63"/>'
-    +'<polygon points="70,344 730,344 792,560 8,560" fill="#2E7FC4"/>'
-    +'<polygon points="70,344 730,344 792,560 8,560" fill="none" stroke="'+W+'" stroke-width="5"/>'
-    +'<line x1="612" y1="344" x2="660" y2="560" stroke="'+W+'" stroke-width="5"/>'
-    +'<line x1="188" y1="344" x2="140" y2="560" stroke="'+W+'" stroke-width="5"/>'
-    +'<rect x="390" y="272" width="20" height="182" fill="url(#gamenet)" stroke="#2B1608" stroke-width="2"/>'
-    +'<rect x="384" y="264" width="32" height="11" fill="#fff" stroke="#2B1608" stroke-width="2"/>'
-    +'<rect x="385" y="272" width="6" height="186" fill="#374151"/><rect x="409" y="272" width="6" height="186" fill="#374151"/>'
-    +'<ellipse cx="400" cy="460" rx="34" ry="7" fill="rgba(43,22,8,.18)"/>');
-  if(id==='soccer') return wrap(defs
-    +'<rect width="800" height="238" fill="#BEE3F5"/>'
-    +'<rect y="104" width="800" height="14" fill="#24404F"/><rect y="118" width="800" height="112" fill="#33566E"/>'+crowd(146)
-    +'<rect y="230" width="800" height="8" fill="'+accent+'"/>'
-    +'<rect y="238" width="800" height="322" fill="#57B24A"/>'
-    +'<rect y="302" width="800" height="44" fill="#4DA843"/><rect y="392" width="800" height="44" fill="#4DA843"/><rect y="482" width="800" height="44" fill="#4DA843"/>'
-    +'<line x1="524" y1="402" x2="498" y2="560" stroke="'+W+'" stroke-width="5"/>'
-    +'<circle cx="630" cy="494" r="6" fill="'+W+'"/>'
-    +'<polygon points="700,252 795,238 795,458 700,452" fill="url(#gamenet)" stroke="rgba(255,255,255,.85)" stroke-width="3"/>'
-    +'<rect x="690" y="240" width="105" height="13" fill="#fff" stroke="#C9CED6" stroke-width="2"/>'
-    +'<rect x="690" y="240" width="11" height="228" fill="#fff" stroke="#C9CED6" stroke-width="2"/>'
-    +'<rect x="786" y="238" width="9" height="220" fill="#fff" stroke="#C9CED6" stroke-width="2"/>');
-  if(id==='hockey') return wrap(defs
+  /* TENNIS — built 3D court: tiered stand band behind, green
+     surround slab, blue playing court laid in perspective inside
+     it (baselines fanning toward the viewer, service lines and
+     the center line painted on the surface), and the net built
+     as a real 3D object — two posts, a straight white tape and a
+     mesh face standing SQUARE across the WHOLE court at the
+     mid-court line (x66-722, the court's full width at that
+     depth): a make arcs over the tape (its top sits at y296,
+     below the serve's crossing height on phone and desktop
+     alike) and lands on the far court at 82%; a miss runs into
+     the mesh face (which spans y311-430 at the contact spot,
+     stage 50%) and drops on his side. */
+  if(id==='tennis') return wrap(defs+blush()
+    +slabShadow(400,548,385)
+    +'<rect y="88" width="800" height="116" fill="#2E5E4E"/>'
+    +'<line x1="0" y1="126" x2="800" y2="126" stroke="rgba(255,255,255,.14)" stroke-width="4"/><line x1="0" y1="164" x2="800" y2="164" stroke="rgba(255,255,255,.14)" stroke-width="4"/>'
+    +'<rect y="88" width="800" height="10" fill="rgba(255,255,255,.18)"/>'
+    +'<rect y="204" width="800" height="9" fill="'+accent+'"/>'
+    +'<polygon points="0,213 800,213 800,546 0,546" fill="url(#gamegreen)"/>'
+    +'<polygon points="100,232 692,232 752,520 32,520" fill="url(#gamecourtblue)"/>'
+    +'<polygon points="100,232 692,232 752,520 32,520" fill="none" stroke="'+W+'" stroke-width="5"/>'
+    +'<line x1="89" y1="284" x2="703" y2="284" stroke="'+W+'" stroke-width="4"/>'
+    +'<line x1="44" y1="468" x2="740" y2="468" stroke="'+W+'" stroke-width="4"/>'
+    +'<line x1="289" y1="232" x2="262" y2="520" stroke="'+W+'" stroke-width="4"/>'
+    +'<line x1="503" y1="232" x2="522" y2="520" stroke="'+W+'" stroke-width="4"/>'
+    +'<line x1="276" y1="376" x2="513" y2="376" stroke="'+W+'" stroke-width="4"/>'
+    +'<polygon points="150,213 430,213 260,546 0,546" fill="#FFFFFF" opacity=".07"/>'
+    +'<polygon points="0,546 800,546 800,560 0,560" fill="#14532D"/>'
+    +'<ellipse cx="392" cy="446" rx="58" ry="8" fill="rgba(43,22,8,.20)"/>'
+    +'<ellipse cx="394" cy="434" rx="330" ry="7" fill="rgba(43,22,8,.13)"/>'
+    +'<rect x="66" y="311" width="656" height="119" fill="rgba(13,38,58,.22)"/>'
+    +'<rect x="66" y="311" width="656" height="119" fill="url(#gamenet)"/>'
+    +'<rect x="66" y="311" width="656" height="119" fill="none" stroke="rgba(43,22,8,.45)" stroke-width="2"/>'
+    +'<rect x="390" y="310" width="8" height="120" fill="rgba(255,255,255,.55)"/>'
+    +'<rect x="62" y="296" width="660" height="14" fill="url(#gamepost)" stroke="#2B1608" stroke-width="2"/>'
+    +'<rect x="58" y="290" width="11" height="146" rx="3" fill="#374151"/>'
+    +'<rect x="719" y="290" width="11" height="146" rx="3" fill="#374151"/>');
+  /* SOCCER — built 3D pitch: tiered stand band behind, striped
+     grass slab in perspective with the penalty box and spot
+     painted on it, and the goal built as a real 3D box (front
+     frame, depth roof and side netting, mesh front). The mouth
+     spans x 678-790: the make spot (stage 90%, x720) lands inside
+     it and the miss spot (86%, x688) strikes its left post (x672-
+     684), exactly where the built kick already plays. The mouth
+     spans y232-462, so the ball — which lands low on the surface
+     on phone and desktop alike — enters it at both sizes. */
+  if(id==='soccer') return wrap(defs+blush()
+    +slabShadow(400,550,390)
+    +'<rect y="100" width="800" height="118" fill="url(#gamestand)"/>'+crowd(146)
+    +'<line x1="0" y1="138" x2="800" y2="138" stroke="rgba(255,255,255,.12)" stroke-width="4"/><line x1="0" y1="176" x2="800" y2="176" stroke="rgba(255,255,255,.12)" stroke-width="4"/>'
+    +'<rect y="100" width="800" height="9" fill="rgba(255,255,255,.16)"/>'
+    +'<rect y="218" width="800" height="9" fill="'+accent+'"/>'
+    +'<polygon points="0,227 800,227 800,546 0,546" fill="url(#gamepitch)"/>'
+    +'<polygon points="0,290 800,290 800,330 0,330" fill="rgba(255,255,255,.07)"/><polygon points="0,380 800,380 800,420 0,420" fill="rgba(255,255,255,.07)"/><polygon points="0,470 800,470 800,510 0,510" fill="rgba(255,255,255,.07)"/>'
+    +'<line x1="64" y1="227" x2="10" y2="546" stroke="'+W+'" stroke-width="5"/>'
+    +'<line x1="630" y1="300" x2="630" y2="540" stroke="'+W+'" stroke-width="5"/><line x1="630" y1="300" x2="800" y2="300" stroke="'+W+'" stroke-width="5"/><line x1="630" y1="540" x2="800" y2="540" stroke="'+W+'" stroke-width="5"/>'
+    +'<line x1="520" y1="398" x2="492" y2="546" stroke="'+W+'" stroke-width="5"/>'
+    +'<ellipse cx="624" cy="492" rx="8" ry="4" fill="'+W+'"/>'
+    +'<polygon points="150,227 430,227 260,546 0,546" fill="#FFFFFF" opacity=".06"/>'
+    +'<polygon points="0,546 800,546 800,560 0,560" fill="#256B2E"/>'
+    +'<ellipse cx="736" cy="470" rx="66" ry="9" fill="rgba(43,22,8,.18)"/>'
+    +'<polygon points="678,232 694,216 806,216 790,232" fill="url(#gamenetdark)"/>'
+    +'<polygon points="790,232 806,216 806,436 790,462" fill="url(#gamenetdark)"/>'
+    +'<polygon points="684,240 784,240 784,454 684,454" fill="url(#gamenet)" stroke="rgba(255,255,255,.85)" stroke-width="3"/>'
+    +'<rect x="672" y="224" width="124" height="13" rx="4" fill="url(#gamepost)" stroke="#C9CED6" stroke-width="2"/>'
+    +'<rect x="672" y="224" width="12" height="244" rx="4" fill="url(#gamepost)" stroke="#C9CED6" stroke-width="2"/>'
+    +'<rect x="784" y="222" width="11" height="240" rx="4" fill="url(#gamepost)" stroke="#C9CED6" stroke-width="2"/>');
+  /* HOCKEY — built 3D rink: arena band, glass over white boards
+     with the red kick plate, glossed ice slab with the blue line,
+     the goal line, a faceoff circle and the crease painted on it,
+     and the net built as a real 3D box (red frame, depth roof and
+     side, mesh front) at x 592-800. The puck slides on the ice
+     into the mouth on a make (stage 80%, x640 — inside the posts
+     at 592 and 774) and wide on a miss (64%, x512 — well left of
+     the near post). The mouth spans y252-460, so the puck, riding
+     low on the ice on phone and desktop alike, enters it at both
+     sizes. */
+  if(id==='hockey') return wrap(defs+blush()
+    +slabShadow(400,550,390)
     +'<rect width="800" height="150" fill="#14273D"/>'
-    +'<rect y="150" width="800" height="86" fill="#20394F"/>'+crowd(172)
-    +'<rect y="236" width="800" height="94" fill="rgba(190,225,245,.32)"/><line x1="0" y1="236" x2="800" y2="236" stroke="rgba(255,255,255,.65)" stroke-width="3"/><line x1="0" y1="330" x2="800" y2="330" stroke="rgba(255,255,255,.65)" stroke-width="3"/>'
-    +'<rect y="330" width="800" height="68" fill="#F8FAFC"/><rect y="330" width="800" height="11" fill="'+B2+'"/><rect y="386" width="800" height="12" fill="#E5484D"/>'
-    +'<rect y="398" width="800" height="162" fill="#EAF7FF"/><ellipse cx="330" cy="520" rx="330" ry="34" fill="#DCEEFF" opacity=".7"/>'
-    +'<rect x="470" y="398" width="22" height="162" fill="#5B9BD5" opacity=".8"/>'
-    +'<ellipse cx="272" cy="486" rx="92" ry="25" fill="none" stroke="#E5484D" stroke-width="5" opacity=".55"/><circle cx="272" cy="486" r="5" fill="#E5484D" opacity=".55"/>'
-    +'<polygon points="622,306 782,306 782,452 622,462" fill="url(#gamenet)" stroke="#9DB8CC" stroke-width="3"/>'
-    +'<rect x="612" y="296" width="180" height="11" fill="#D92323"/>'
-    +'<rect x="612" y="296" width="11" height="168" fill="#D92323"/>'
-    +'<rect x="782" y="300" width="10" height="152" fill="#D92323"/>'
-    +'<rect x="604" y="398" width="7" height="162" fill="#E5484D" opacity=".85"/>');
-  if(id==='football') return wrap(defs
-    +'<rect width="800" height="212" fill="#BEE3F5"/>'
-    +'<rect y="92" width="800" height="13" fill="#24404F"/><rect y="105" width="800" height="100" fill="#33566E"/>'+crowd(130)
-    +'<rect y="205" width="800" height="8" fill="'+accent+'"/>'
-    +'<rect y="213" width="800" height="347" fill="#4CA34A"/>'
-    +'<rect y="298" width="800" height="40" fill="#449244"/><rect y="416" width="800" height="40" fill="#449244"/>'
-    +'<rect x="655" y="213" width="145" height="347" fill="'+accent+'"/>'
-    +'<line x1="655" y1="213" x2="655" y2="560" stroke="#fff" stroke-width="6"/>'
-    +'<text x="730" y="392" font-family="Fredoka" font-weight="700" font-size="33" fill="#fff" text-anchor="middle" transform="rotate(90 730 392)" letter-spacing="3">END ZONE</text>'
-    +'<line x1="300" y1="420" x2="288" y2="560" stroke="'+W+'" stroke-width="5"/><line x1="428" y1="420" x2="424" y2="560" stroke="'+W+'" stroke-width="5"/><line x1="556" y1="420" x2="562" y2="560" stroke="'+W+'" stroke-width="5"/>'
-    +'<rect x="738" y="298" width="10" height="172" fill="#F5C518"/><rect x="684" y="298" width="118" height="10" fill="#F5C518"/>'
-    +'<rect x="684" y="172" width="10" height="126" fill="#F5C518"/><rect x="792" y="172" width="10" height="126" fill="#F5C518"/>');
-  if(id==='baseball') return wrap(defs
-    +'<rect width="800" height="200" fill="#BEE3F5"/>'
-    +'<rect y="80" width="800" height="12" fill="#24404F"/><rect y="92" width="800" height="104" fill="#33566E"/>'+crowd(116)
-    +'<rect y="196" width="800" height="10" fill="'+B2+'"/>'
-    +'<rect y="206" width="800" height="88" fill="#1E6B3C"/>'
-    +'<circle cx="650" cy="248" r="21" fill="#fff"/><text x="650" y="254" font-family="Fredoka" font-weight="700" font-size="16" fill="#1E6B3C" text-anchor="middle">375</text>'
-    +'<rect y="294" width="800" height="30" fill="#A9743F"/>'
-    +'<rect y="324" width="800" height="236" fill="#57B24A"/>'
-    +'<path d="M-20 560 A 420 150 0 0 1 820 470" fill="none" stroke="#4DA843" stroke-width="26" opacity=".7"/>'
-    +'<polygon points="0,466 302,466 384,560 0,560" fill="#C98B4B"/>'
-    +'<line x1="132" y1="524" x2="706" y2="300" stroke="'+W+'" stroke-width="4" opacity=".9"/>'
-    +'<rect x="52" y="500" width="150" height="52" fill="none" stroke="'+W+'" stroke-width="4"/>'
-    +'<polygon points="106,514 138,514 138,529 122,543 106,529" fill="#fff" stroke="#C9CED6" stroke-width="2"/>');
-  if(id==='running') return wrap(defs
-    +'<rect width="800" height="182" fill="#BEE3F5"/>'
-    +'<rect y="80" width="800" height="12" fill="#24404F"/><rect y="92" width="800" height="98" fill="#33566E"/>'+crowd(114)
-    +'<rect y="190" width="800" height="28" fill="#57B24A"/>'
-    +'<rect y="218" width="800" height="342" fill="#B4552D"/>'
+    +'<rect y="150" width="800" height="58" fill="#20394F"/>'+crowd(172)
+    +'<line x1="0" y1="179" x2="800" y2="179" stroke="rgba(255,255,255,.10)" stroke-width="4"/>'
+    +'<rect y="208" width="800" height="82" fill="url(#gameglass)"/><line x1="0" y1="208" x2="800" y2="208" stroke="rgba(255,255,255,.65)" stroke-width="3"/><line x1="0" y1="290" x2="800" y2="290" stroke="rgba(255,255,255,.65)" stroke-width="3"/>'
+    +'<polygon points="60,214 190,214 110,284 0,284" fill="#FFFFFF" opacity=".20"/><polygon points="330,214 410,214 350,284 280,284" fill="#FFFFFF" opacity=".14"/>'
+    +'<rect y="290" width="800" height="52" fill="#F8FAFC"/><rect y="290" width="800" height="10" fill="'+B2+'"/><rect y="330" width="800" height="12" fill="#E5484D"/>'
+    +'<polygon points="0,342 800,342 800,546 0,546" fill="url(#gameice)"/>'
+    +'<ellipse cx="330" cy="520" rx="330" ry="30" fill="#DCEEFF" opacity=".65"/>'
+    +'<polygon points="90,342 330,342 210,546 0,546" fill="#FFFFFF" opacity=".35"/>'
+    +'<g stroke="rgba(120,170,210,.35)" stroke-width="2"><line x1="120" y1="440" x2="220" y2="436"/><line x1="180" y1="500" x2="300" y2="496"/><line x1="420" y1="452" x2="520" y2="449"/></g>'
+    +'<rect x="468" y="342" width="22" height="204" fill="#5B9BD5" opacity=".8"/>'
+    +'<ellipse cx="272" cy="478" rx="92" ry="25" fill="none" stroke="#E5484D" stroke-width="5" opacity=".55"/><circle cx="272" cy="478" r="5" fill="#E5484D" opacity=".55"/>'
+    +'<ellipse cx="662" cy="452" rx="88" ry="17" fill="#BFE3F7" opacity=".9"/>'
+    +'<rect x="596" y="342" width="7" height="204" fill="#E5484D" opacity=".85"/>'
+    +'<polygon points="0,546 800,546 800,560 0,560" fill="#B9D9EE"/>'
+    +'<ellipse cx="694" cy="468" rx="108" ry="10" fill="rgba(70,120,160,.18)"/>'
+    +'<polygon points="600,252 626,234 800,234 782,252" fill="url(#gamenetdark)"/>'
+    +'<polygon points="782,252 800,234 800,428 782,460" fill="url(#gamenetdark)"/>'
+    +'<polygon points="608,260 774,260 774,452 608,452" fill="url(#gamenet)" stroke="#9DB8CC" stroke-width="3"/>'
+    +'<rect x="592" y="244" width="198" height="11" fill="#D92323"/>'
+    +'<rect x="592" y="244" width="11" height="216" fill="#D92323"/>'
+    +'<rect x="774" y="248" width="10" height="212" fill="#D92323"/>');
+  /* FOOTBALL — built 3D field: tiered stand band behind, grass
+     slab with mow bands and yard lines in perspective, and the
+     end zone built at the right (goal line x=655, stage 82%) with
+     its gold goalpost standing in it on a padded base. He carries
+     the ball in his hand and RUNS it in: the touchdown spot
+     (stage 90%, x720) is deep in this end zone, under the
+     crossbar (y307) between the uprights (x692 and x790). */
+  if(id==='football') return wrap(defs+blush()
+    +slabShadow(400,550,390)
+    +'<rect y="88" width="800" height="108" fill="url(#gamestand)"/>'+crowd(130)
+    +'<line x1="0" y1="124" x2="800" y2="124" stroke="rgba(255,255,255,.12)" stroke-width="4"/><line x1="0" y1="160" x2="800" y2="160" stroke="rgba(255,255,255,.12)" stroke-width="4"/>'
+    +'<rect y="88" width="800" height="9" fill="rgba(255,255,255,.16)"/>'
+    +'<rect y="196" width="800" height="8" fill="'+accent+'"/>'
+    +'<polygon points="0,204 800,204 800,546 0,546" fill="url(#gamepitch)"/>'
+    +'<polygon points="0,282 655,282 655,320 0,320" fill="rgba(255,255,255,.07)"/><polygon points="0,398 655,398 655,436 0,436" fill="rgba(255,255,255,.07)"/>'
+    +'<polygon points="655,204 800,204 800,546 655,546" fill="'+accent+'"/>'
+    +'<polygon points="655,204 800,204 800,546 655,546" fill="rgba(0,0,0,.14)"/>'
+    +'<line x1="655" y1="204" x2="655" y2="546" stroke="#fff" stroke-width="6"/>'
+    +'<text x="730" y="375" font-family="Fredoka" font-weight="700" font-size="33" fill="#fff" text-anchor="middle" transform="rotate(90 730 375)" letter-spacing="3">END ZONE</text>'
+    +'<line x1="186" y1="204" x2="172" y2="546" stroke="'+W+'" stroke-width="5"/><line x1="352" y1="204" x2="344" y2="546" stroke="'+W+'" stroke-width="5"/><line x1="518" y1="204" x2="516" y2="546" stroke="'+W+'" stroke-width="5"/>'
+    +'<line x1="300" y1="420" x2="288" y2="546" stroke="'+W+'" stroke-width="5"/><line x1="428" y1="420" x2="424" y2="546" stroke="'+W+'" stroke-width="5"/><line x1="556" y1="420" x2="562" y2="546" stroke="'+W+'" stroke-width="5"/>'
+    +'<polygon points="120,204 400,204 250,546 0,546" fill="#FFFFFF" opacity=".06"/>'
+    +'<polygon points="0,546 800,546 800,560 0,560" fill="#256B2E"/>'
+    +'<ellipse cx="744" cy="494" rx="40" ry="7" fill="rgba(43,22,8,.18)"/>'
+    +'<rect x="726" y="448" width="36" height="44" rx="6" fill="'+accent+'" stroke="rgba(43,22,8,.35)" stroke-width="2"/>'
+    +'<rect x="726" y="448" width="36" height="10" rx="5" fill="rgba(255,255,255,.35)"/>'
+    +'<rect x="739" y="315" width="10" height="140" fill="url(#gamegold)"/>'
+    +'<rect x="692" y="307" width="108" height="10" fill="url(#gamegold)"/>'
+    +'<rect x="692" y="215" width="10" height="100" fill="url(#gamegold)"/><rect x="790" y="215" width="10" height="100" fill="url(#gamegold)"/>');
+  /* BASEBALL — built 3D diamond: tiered stand band behind, the
+     padded green outfield wall (yellow top line, 375 marker)
+     under the home-run flight, warning track, grass sweeping
+     down to the dirt around home plate at the left where the
+     batter stands — plate at x 102-130, y 426-452, beside his
+     glove and bat, exactly where his swing and the toss-and-
+     catch already play. A home run rises over the wall band
+     (y196-262) and comes down behind it; a swing and a miss
+     never leaves the plate. */
+  if(id==='baseball') return wrap(defs+blush()
+    +slabShadow(400,550,390)
+    +'<rect y="84" width="800" height="104" fill="url(#gamestand)"/>'+crowd(116)
+    +'<line x1="0" y1="118" x2="800" y2="118" stroke="rgba(255,255,255,.12)" stroke-width="4"/><line x1="0" y1="152" x2="800" y2="152" stroke="rgba(255,255,255,.12)" stroke-width="4"/>'
+    +'<rect y="84" width="800" height="9" fill="rgba(255,255,255,.16)"/>'
+    +'<rect y="188" width="800" height="8" fill="'+B2+'"/>'
+    +'<rect y="196" width="800" height="66" fill="url(#gamegreen)"/>'
+    +'<rect y="196" width="800" height="7" fill="#F5C518"/>'
+    +'<g stroke="rgba(0,0,0,.12)" stroke-width="3"><line x1="133" y1="203" x2="133" y2="262"/><line x1="266" y1="203" x2="266" y2="262"/><line x1="399" y1="203" x2="399" y2="262"/><line x1="532" y1="203" x2="532" y2="262"/><line x1="665" y1="203" x2="665" y2="262"/></g>'
+    +'<circle cx="650" cy="229" r="17" fill="#fff"/><text x="650" y="235" font-family="Fredoka" font-weight="700" font-size="14" fill="#14532D" text-anchor="middle">375</text>'
+    +'<rect y="262" width="800" height="26" fill="#B07B4F"/>'
+    +'<polygon points="0,288 800,288 800,546 0,546" fill="url(#gamepitch)"/>'
+    +'<path d="M-20 560 A 420 150 0 0 1 820 470" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="26"/>'
+    +'<polygon points="120,288 420,288 260,546 0,546" fill="#FFFFFF" opacity=".06"/>'
+    +'<polygon points="0,546 800,546 800,560 0,560" fill="#256B2E"/>'
+    +'<polygon points="0,330 300,330 390,546 0,546" fill="url(#gamedirt)"/>'
+    +'<polygon points="0,330 300,330 390,546 0,546" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="2"/>'
+    +'<line x1="122" y1="438" x2="748" y2="282" stroke="'+W+'" stroke-width="4" opacity=".9"/>'
+    +'<rect x="44" y="406" width="164" height="54" fill="none" stroke="'+W+'" stroke-width="4"/>'
+    +'<polygon points="102,426 130,426 130,440 116,452 102,440" fill="url(#gamepost)" stroke="#C9CED6" stroke-width="2"/>');
+  /* RUNNING — built 3D track: tiered stand band behind a grass
+     strip, a clay-red slab with glossed lanes running the length
+     of the stage, and the checkered finish column painted across
+     the lanes at x 688-725 — his crossing spot (stage 90%, x720)
+     lands inside it, exactly where the built run already ends.
+     His stumble spot (34%) stays far behind the line, on the
+     open track. */
+  if(id==='running') return wrap(defs+blush()
+    +slabShadow(400,550,390)
+    +'<rect y="84" width="800" height="100" fill="url(#gamestand)"/>'+crowd(114)
+    +'<line x1="0" y1="116" x2="800" y2="116" stroke="rgba(255,255,255,.12)" stroke-width="4"/><line x1="0" y1="148" x2="800" y2="148" stroke="rgba(255,255,255,.12)" stroke-width="4"/>'
+    +'<rect y="84" width="800" height="9" fill="rgba(255,255,255,.16)"/>'
+    +'<rect y="184" width="800" height="30" fill="url(#gamegreen)"/>'
+    +'<polygon points="0,214 800,214 800,546 0,546" fill="url(#gametrack)"/>'
+    +'<g stroke="rgba(90,35,10,.25)" stroke-width="2"><line x1="60" y1="262" x2="300" y2="258"/><line x1="420" y1="352" x2="640" y2="349"/><line x1="90" y1="442" x2="330" y2="439"/></g>'
+    +'<line x1="0" y1="214" x2="800" y2="214" stroke="rgba(255,255,255,.5)" stroke-width="3"/>'
     +'<line x1="0" y1="330" x2="800" y2="330" stroke="'+W+'" stroke-width="5"/><line x1="0" y1="405" x2="800" y2="405" stroke="'+W+'" stroke-width="5"/><line x1="0" y1="480" x2="800" y2="480" stroke="'+W+'" stroke-width="5"/>'
-    +'<rect x="690" y="218" width="37" height="342" fill="url(#gamechecker)"/>');
-  if(id==='swimming') return wrap(defs
+    +'<polygon points="130,214 430,214 260,546 0,546" fill="#FFFFFF" opacity=".07"/>'
+    +'<polygon points="0,546 800,546 800,560 0,560" fill="#6E3418"/>'
+    +'<rect x="684" y="214" width="4" height="332" fill="rgba(43,22,8,.25)"/>'
+    +'<rect x="688" y="214" width="37" height="332" fill="url(#gamechecker)"/>'
+    +'<rect x="688" y="214" width="10" height="332" fill="#FFFFFF" opacity=".25"/>');
+  /* SWIMMING — built 3D pool: tiled far wall with windows, the
+     starting block built as a 3D wedge at the left edge, lane
+     ropes floating on glossed water with light dancing on it,
+     and the touch pad built on the far wall at x 746-772. The
+     pool build itself is still; the water's MOTION is the
+     stage's animated swim-water layer that runs over this scene
+     (and over the swimmer in it) continuously — the one moving
+     venue, as directed. His lane runs between the ropes (y292
+     and y438) to the far wall: his head reaches ~97% of the
+     stage, into the pad (which spans y232-402, his head's band
+     on phone and desktop alike). */
+  if(id==='swimming') return wrap(defs+blush()
+    +slabShadow(400,550,390)
     +'<rect width="800" height="120" fill="#DFF2FA"/>'
     +[0,1,2,3].map(function(i){ return '<rect x="'+(36+i*150)+'" y="24" width="112" height="62" rx="8" fill="'+T3S+'" stroke="#fff" stroke-width="5"/>'; }).join('')
+    +'<polygon points="40,28 90,28 62,82 40,82" fill="#FFFFFF" opacity=".45"/>'
     +'<rect y="96" width="800" height="22" fill="'+B2+'"/>'
-    +'<rect y="118" width="800" height="442" fill="url(#gamewater)"/>'
+    +'<polygon points="0,118 758,118 758,546 0,546" fill="url(#gamewater)"/>'
     +'<line x1="0" y1="118" x2="758" y2="118" stroke="#fff" stroke-width="4" stroke-dasharray="16 12" opacity=".9"/>'
-    +'<path d="M40 190 q30 -12 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="5"/>'
-    +'<path d="M16 356 q30 -12 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="5"/>'
-    +rope(292)+rope(438)
-    +'<rect x="758" y="106" width="42" height="454" fill="#CFE8F5"/>'
-    +'<rect x="748" y="230" width="24" height="178" rx="4" fill="'+accent+'" stroke="#2B1608" stroke-width="3"/>'
+    +'<polygon points="60,118 330,118 180,546 0,546" fill="#FFFFFF" opacity=".10"/>'
+    +'<g stroke="rgba(255,255,255,.20)" stroke-width="4" fill="none"><path d="M30 500 q40 -10 80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0 t80 0"/><path d="M60 392 q40 -10 80 0 t80 0 t80 0 t80 0 t80 0 t80 0"/></g>'
+    +'<line x1="0" y1="246" x2="758" y2="232" stroke="rgba(2,80,130,.20)" stroke-width="6"/>'
+    +rope(292)
+    +'<line x1="0" y1="454" x2="758" y2="442" stroke="rgba(2,80,130,.20)" stroke-width="6"/>'
+    +rope(438)
+    +'<polygon points="758,118 800,118 800,546 758,546" fill="#CFE8F5"/>'
+    +'<polygon points="758,118 800,118 800,546 758,546" fill="none" stroke="rgba(90,140,170,.35)" stroke-width="2"/>'
+    +'<rect x="746" y="232" width="24" height="170" rx="4" fill="'+accent+'" stroke="#2B1608" stroke-width="3"/>'
+    +'<rect x="746" y="232" width="8" height="170" rx="4" fill="rgba(255,255,255,.35)"/>'
     +'<line x1="754" y1="274" x2="766" y2="274" stroke="rgba(43,22,8,.4)" stroke-width="3"/><line x1="754" y1="318" x2="766" y2="318" stroke="rgba(43,22,8,.4)" stroke-width="3"/><line x1="754" y1="362" x2="766" y2="362" stroke="rgba(43,22,8,.4)" stroke-width="3"/>'
-    +'<polygon points="6,118 88,118 74,84 20,84" fill="'+accent+'"/><rect x="26" y="118" width="12" height="26" fill="#5B7A8C"/><rect x="58" y="118" width="12" height="26" fill="#5B7A8C"/>');
+    +'<polygon points="0,546 800,546 800,560 0,560" fill="#9CC8DE"/>'
+    +'<polygon points="6,118 88,118 74,84 20,84" fill="'+accent+'"/><polygon points="20,84 74,84 88,118 6,118" fill="rgba(255,255,255,.28)"/><polygon points="88,118 97,110 83,78 74,84" fill="rgba(43,22,8,.22)"/>');
   /* Gymnastics GAME venue — ONLY what the game was told to have:
      the gym wall and windows, the still rings hanging, and the mat
      floor. No medals, no gymnast figures, no stacked mats, no chalk
@@ -5755,7 +6010,7 @@ function gameSceneHTML(id,accent){
    tennis net — never on the basketball court in front of the
    basketball hoop; a soccer game is played on a soccer pitch in front
    of the soccer goal; a hockey game on the ice rink, and so on. Only
-   basketball uses the photo court (with its hoop and rim). This is
+   basketball uses its built court (with its hoop and rim). This is
    the playing surface of the game itself, NOT the world's page
    background: the page-wide backdrop behind the cards
    (renderWorldBackground) still belongs to the DEFAULT world and
@@ -5820,6 +6075,10 @@ function worldBackdropSVG(id,c){
      lamps in a dark housing on a pole, trimmed in a trio color.
      The lamps stay natural white. */
   function floodW(x,y,s,tilt,trim){ var dots=''; for(var r=0;r<4;r++){ for(var col=0;col<6;col++){ dots+='<circle cx="'+(16+col*19)+'" cy="'+(18+r*20)+'" r="7.6" fill="#FFFFFF"/>'; } } return '<g transform="translate('+x+','+y+') rotate('+tilt+') scale('+s+')"><rect x="53" y="98" width="15" height="92" fill="#3D6076"/><rect x="0" y="0" width="122" height="100" rx="11" fill="#2E4E63" stroke="'+trim+'" stroke-width="5"/>'+dots+'</g>'; }
+  /* The eight sports' page templates are the glossy STRAIGHT-DOWN
+     artwork (BG_FRONT_ART), full-bleed, like Gymnastics — their drawn
+     scenes below no longer paint (Dance and Cheer keep theirs). */
+  if(BG_FRONT_ART[id]) return artSVG(BG_FRONT_ART,id);
   if(id==='hockey') return wrap(
     /* Michelle's hockey scene (from her rink picture), page-wide:
        dark arena bowl, rows of trio-colored seats behind curved
@@ -5892,75 +6151,22 @@ function worldBackdropSVG(id,c){
     +[270,470,670].map(function(y){ return '<line x1="0" y1="'+y+'" x2="1440" y2="'+y+'" stroke="#fff" stroke-width="12" stroke-dasharray="26 20"/><line x1="0" y1="'+y+'" x2="1440" y2="'+y+'" stroke="'+P+'" stroke-width="12" stroke-dasharray="26 20" stroke-dashoffset="23"/><line x1="0" y1="'+y+'" x2="1440" y2="'+y+'" stroke="'+T3+'" stroke-width="12" stroke-dasharray="6 40" stroke-dashoffset="10"/>'; }).join('')
     +'<rect width="480" height="14" fill="'+P+'"/><rect x="480" width="480" height="14" fill="'+B2+'"/><rect x="960" width="480" height="14" fill="'+T3+'"/>'
     +'<path d="M0 210 Q80 196 160 210 T320 210 T480 210 T640 210 T800 210 T960 210 T1120 210 T1280 210 T1440 210" stroke="rgba(255,255,255,.35)" stroke-width="7" fill="none"/><path d="M0 830 Q80 816 160 830 T320 830 T480 830 T640 830 T800 830 T960 830 T1120 830 T1280 830 T1440 830" stroke="rgba(255,255,255,.28)" stroke-width="7" fill="none"/>'
-    +'<text x="220" y="420" font-size="72">🏊</text><text x="1080" y="620" font-size="60">💦</text><text x="620" y="240" font-size="48">💦</text>');
+    +'<text x="220" y="420" font-size="72">🏊</text>');
   if(id==='running') return wrap(
-    '<rect width="1440" height="900" fill="#B4552D"/><rect width="1440" height="110" fill="#57B24A"/><rect y="110" width="480" height="12" fill="'+P+'"/><rect x="480" y="110" width="480" height="12" fill="'+B2+'"/><rect x="960" y="110" width="480" height="12" fill="'+T3+'"/>'
-    +[290,470,650].map(function(y){ return '<line x1="0" y1="'+y+'" x2="1440" y2="'+y+'" stroke="'+W+'" stroke-width="7"/>'; }).join('')
-    +[['1',215],['2',395],['3',575],['4',755]].map(function(n){ return '<text x="34" y="'+n[1]+'" font-family="Fredoka" font-size="52" font-weight="700" fill="rgba(255,255,255,.85)">'+n[0]+'</text>'; }).join('')
-    +[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19].map(function(i){ return '<rect x="1240" y="'+(110+i*40)+'" width="40" height="40" fill="'+(i%2?'#2B1608':'#fff')+'"/><rect x="1280" y="'+(110+i*40)+'" width="40" height="40" fill="'+(i%2?'#fff':'#2B1608')+'"/>'; }).join('')
-    +'<text x="240" y="700" font-size="64">👟</text><text x="1020" y="330" font-size="54">👟</text>');
-  /* Boy gymnast — same flat-style boy as the game-stage scene: tank
-     top + long gymnast pants in trio colors, natural skin and hair,
-     in the named pose (two featured still-rings holds plus floor
-     poses). Boys only — never a girl gymnast in Karter's world. */
-  var gymBoy=function(pose,x,y,s,tank,pants,skin,hair,style){
-    /* Clean flat-design BOY gymnast (Michelle's reference style):
-       smooth solid shapes only — a round head with one smooth hair
-       shape (cap, sweep, curls, fade or top puff, picked per boy), a
-       rounded tank torso, and limbs as single thick rounded strokes
-       — never segmented sticks with joint dots or seam lines. Skin
-       tone, hair and outfit are passed per boy, so the scatter is a
-       real mix of boys in different clothes. */
-    var L=function(x1,y1,x2,y2,c,w){ return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+c+'" stroke-width="'+(w||11)+'" stroke-linecap="round"/>'; };
-    var HD=function(cx,cy,r){
-      var h='<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+skin+'"/>';
-      if(style==='fade'){ h+='<path d="M'+(cx-r)+' '+(cy-1)+' A'+r+' '+(r*.6)+' 0 0 1 '+(cx+r)+' '+(cy-1)+' Z" fill="'+hair+'"/>'; }
-      else{
-        h+='<path d="M'+(cx-r)+' '+cy+' A'+r+' '+r+' 0 0 1 '+(cx+r)+' '+cy+' Z" fill="'+hair+'"/>';
-        if(style==='curls') h+='<circle cx="'+(cx-r*.6)+'" cy="'+(cy-r*.8)+'" r="'+(r*.36)+'" fill="'+hair+'"/><circle cx="'+(cx-r*.16)+'" cy="'+(cy-r*.98)+'" r="'+(r*.38)+'" fill="'+hair+'"/><circle cx="'+(cx+r*.3)+'" cy="'+(cy-r*.92)+'" r="'+(r*.35)+'" fill="'+hair+'"/><circle cx="'+(cx+r*.68)+'" cy="'+(cy-r*.6)+'" r="'+(r*.3)+'" fill="'+hair+'"/>';
-        else if(style==='puff') h+='<circle cx="'+cx+'" cy="'+(cy-r-1)+'" r="'+(r*.46)+'" fill="'+hair+'"/>';
-        else if(style==='sweep') h+='<circle cx="'+(cx+r*.58)+'" cy="'+(cy-r*.5)+'" r="'+(r*.52)+'" fill="'+hair+'"/>';
-      }
-      return h;
-    };
-    var torso=function(cx,cy,rot){ return '<g transform="translate('+cx+' '+cy+') rotate('+(rot||0)+')"><path d="M-14.5 0 Q0 -7.5 14.5 0 L10.5 50 Q0 56.5 -10.5 50 Z" fill="'+tank+'"/></g>'; };
-    var foot=function(cx,cy){ return '<circle cx="'+cx+'" cy="'+cy+'" r="5.5" fill="'+skin+'"/>'; };
-    var ring=function(cx,cy){ return '<line x1="'+cx+'" y1="-74" x2="'+cx+'" y2="'+(cy-13)+'" stroke="#8A97A5" stroke-width="5"/><circle cx="'+cx+'" cy="'+cy+'" r="11.5" fill="none" stroke="#4B5563" stroke-width="5"/>'; };
-    var inner='';
-    if(pose==='ringsHang'){
-      inner=ring(-56,40)+ring(56,40)
-      +L(-2,32,-52,38,skin,10.5)+L(2,32,52,38,skin,10.5)
-      +torso(0,24,0)+HD(0,10,13)
-      +L(-4,76,-6,162,pants,13)+L(4,76,7,162,pants,13)+foot(-6,168)+foot(7,168);
-    } else if(pose==='ringsLift'){
-      inner=ring(-58,34)+ring(58,34)
-      +L(-2,32,-54,32,skin,10.5)+L(2,32,54,32,skin,10.5)
-      +torso(0,24,0)+HD(0,10,13)
-      +L(0,78,50,30,pants,15)+foot(56,26);
-    } else if(pose==='cartwheel'){
-      inner=L(-22,90,-36,143,skin,10.5)+L(-2,86,14,142,skin,10.5)
-      +'<path d="M-24 92 Q0 60 32 72" stroke="'+tank+'" stroke-width="17.5" fill="none" stroke-linecap="round"/>'
-      +HD(-37,79,12.5)
-      +L(32,72,76,22,pants,13)+L(32,72,88,84,pants,13)+foot(80,18)+foot(92,87);
-    } else if(pose==='split'){
-      inner=L(-3,82,-64,95,pants,14)+L(3,82,64,95,pants,14)+foot(-70,96)+foot(70,96)
-      +torso(0,28,0)+HD(0,14,13)
-      +L(-2,36,-42,2,skin,10.5)+L(2,36,44,22,skin,10.5);
-    } else if(pose==='handstand'){
-      inner=L(-5,92,-11,160,skin,10.5)+L(5,92,11,160,skin,10.5)
-      +torso(0,92,180)+'<g transform="rotate(180 0 105)">'+HD(0,105,12.5)+'</g>'
-      +L(-3,44,-7,-26,pants,13)+L(3,44,7,-26,pants,13)+foot(-7,-31)+foot(7,-31);
-    } else if(pose==='jump'){
-      inner=L(-3,78,-54,114,pants,13)+L(3,78,54,114,pants,13)+foot(-59,117)+foot(59,117)
-      +torso(0,24,0)+HD(0,10,13)
-      +L(-2,32,-48,-10,skin,10.5)+L(2,32,48,-10,skin,10.5);
-    } else {
-      inner=L(-4,78,-7,162,pants,13)+L(4,78,8,162,pants,13)+foot(-7,168)+foot(8,168)
-      +torso(0,24,0)+HD(0,10,13)
-      +L(-2,32,-44,14,skin,10.5)+L(2,32,42,-18,skin,10.5);
-    }
-    return '<g transform="translate('+x+','+y+') scale('+s+')">'+inner+'</g>';
-  };
+    /* A real OVAL running track (Michelle): a loop with two straights
+       and curved ends, lane lines that follow the oval all the way
+       around, a grass infield, and a checkered finish line across
+       the track on the home straight. No shoes anywhere — the old
+       flat straight track and its pair of floating 👟 are gone. */
+    '<rect width="1440" height="900" fill="#57B24A"/><rect y="110" width="480" height="12" fill="'+P+'"/><rect x="480" y="110" width="480" height="12" fill="'+B2+'"/><rect x="960" y="110" width="480" height="12" fill="'+T3+'"/>'
+    +'<defs><pattern id="wbcheck" width="22" height="22" patternUnits="userSpaceOnUse"><rect width="22" height="22" fill="#fff"/><rect width="11" height="11" fill="#2B1608"/><rect x="11" y="11" width="11" height="11" fill="#2B1608"/></pattern></defs>'
+    +'<rect x="70" y="190" width="1300" height="560" rx="280" fill="#B4552D" stroke="'+W+'" stroke-width="8"/>'
+    +'<rect x="115" y="235" width="1210" height="470" rx="235" fill="none" stroke="'+W+'" stroke-width="6"/>'
+    +'<rect x="160" y="280" width="1120" height="380" rx="190" fill="none" stroke="'+W+'" stroke-width="6"/>'
+    +'<rect x="205" y="325" width="1030" height="290" rx="145" fill="none" stroke="'+W+'" stroke-width="6"/>'
+    +'<rect x="250" y="370" width="940" height="200" rx="100" fill="#57B24A" stroke="'+W+'" stroke-width="7"/>'
+    +[['1',745],['2',700],['3',655],['4',610]].map(function(n){ return '<text x="392" y="'+n[1]+'" font-family="Fredoka" font-size="44" font-weight="700" fill="rgba(255,255,255,.85)">'+n[0]+'</text>'; }).join('')
+    +'<rect x="1000" y="570" width="44" height="180" fill="url(#wbcheck)" stroke="#2B1608" stroke-width="3"/>');
   /* GYMNASTICS — the Gymnastics template is glossy 3D artwork
      (assets/gymnastics-boys-bg.webp), made in the SAME manner and
      design as Royce's Gymnastics background artwork (her glossy 3D
@@ -6038,38 +6244,16 @@ function worldBackdropSVG(id,c){
     +'<ellipse cx="1276" cy="204" rx="56" ry="11" fill="#E85D0C" stroke="#B23C05" stroke-width="4"/>'
     +'<path d="M1228 212 L1244 262 M1252 214 L1260 266 M1276 215 L1276 268 M1300 214 L1292 266 M1324 212 L1308 262 M1244 240 L1308 240 M1256 262 L1296 262" stroke="#FFFFFF" stroke-width="5" fill="none" stroke-linecap="round"/></g>');
 }
-/* PAGE-BACKDROP OVERLAY — the hockey stick + puck at full strength.
-   The template cards render worldBackdropSVG on its own and the
-   stick + puck read exactly right there: black puck, wood-brown
-   shaft at center ice, puck beside the blade. The full-PAGE backdrop
-   is that same scene PLUS the cream .wb-veil laid over it to soften
-   the page, and the veil washes the low rink hardest — the black
-   puck came out flat grey, the brown shaft went pale, and only the
-   red blade kept its color, so the live page read as a grey puck
-   and a red stick at the left of the rink. On the page path only
-   (renderWorldBackground), the identical stick + puck — same
-   coordinates, same colors as in the scene — is drawn once more
-   ABOVE the veil in its own same-viewBox slice SVG, so it aligns
-   with the scene pixel for pixel and keeps its true colors. The
-   cards never use this overlay; they have no veil to undo. */
+/* PAGE-BACKDROP OVERLAY — RETIRED (Nov 9, 2026). This used to redraw
+   the drawn hockey scene's stick, puck and goal net above the page
+   veil at full strength. The hockey page template is now the glossy
+   straight-down artwork (BG_FRONT_ART in worldBackdropSVG), not the
+   drawn rink those pieces belonged to — painting them over the
+   artwork would put a drawn stick and net where they do not belong.
+   The overlay now paints nothing for any sport; the function stays
+   so renderWorldBackground keeps its call shape. */
 function worldBackdropOverlaySVG(id){
-  if(id!=='hockey') return '';
-  return '<svg class="wb-overlay" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'
-    /* The goal net at full strength, same coordinates as in the scene:
-       dark contrasted frame and mesh, above the veil, so the net reads
-       clearly on the full page exactly as it does on the template card. */
-    +'<polygon points="192,542 118,634 192,720" fill="rgba(228,242,250,.92)" stroke="#16222E" stroke-width="13" stroke-linejoin="round"/>'
-    +'<path d="M118 634 L192 584 M118 634 L192 634 M118 634 L192 684 M192 542 L134 634 L192 720" fill="none" stroke="#3E5F7A" stroke-width="5"/>'
-    +'<rect x="192" y="530" width="226" height="206" rx="6" fill="rgba(232,244,251,.88)" stroke="#16222E" stroke-width="16"/>'
-    +'<path d="M192 582 L418 686 M192 634 L418 736 M418 582 L192 686 M418 634 L192 736 M305 530 L192 634 M305 530 L418 634 M305 736 L192 634 M305 736 L418 634" stroke="#3E5F7A" stroke-width="5" fill="none"/>'
-    /* The wood-brown stick at full strength: dark edge under a clear
-       wood-brown shaft, black taped end, red blade, black puck beside it. */
-    +'<line x1="596" y1="656" x2="930" y2="656" stroke="#4A2F14" stroke-width="23" stroke-linecap="round"/>'
-    +'<line x1="596" y1="656" x2="852" y2="656" stroke="#A06A2C" stroke-width="16" stroke-linecap="round"/>'
-    +'<line x1="846" y1="656" x2="930" y2="656" stroke="#1F2937" stroke-width="17" stroke-linecap="round"/>'
-    +'<path d="M606 668 C570 668 560 626 572 596 C578 580 600 578 606 594 C612 610 608 634 618 650 Z" fill="#D92323" stroke="#8F1414" stroke-width="3"/>'
-    +'<g transform="translate(556,700)"><ellipse rx="30" ry="10" cy="7" fill="#000000"/><rect x="-30" y="-7" width="60" height="14" fill="#000000"/><ellipse rx="30" ry="10" cy="-7" fill="#0A0A0A"/></g>'
-    +'</svg>';
+  return '';
 }
 /* NO FLOATING OBJECTS ANYWHERE (Michelle, Nov 8–9, 2026 — she checked
    the rest of the games: no mysterious items or objects floating on
@@ -6611,12 +6795,22 @@ function renderSetup(){
   } else if(setupStep===2){
     h+='<h3>🐾 Step 3 of 6 — Pick your favorite animal!</h3><p class="setup-lead">Your animal becomes your team mascot, cheering right beside Coach Leo.</p><div class="opt-group"><div class="opt-row">'+THEME_ANIMALS.map(function(a){ return '<button class="fav-chip'+(myTheme.animal===a.id?' on':'')+'" onclick="setupPick(\'animal\',\''+a.id+'\')">'+a.emoji+' '+a.name+'</button>'; }).join('')+'</div></div>';
   } else if(setupStep===3){
-    var cAv=coachAnimalObj(), cOf=coachOutfit(), cId=coachIdentity();
-    h+='<h3>👦 Step 4 of 6 — Customize your coach!</h3><p class="setup-lead">This coach is YOUR coach — give him a name, build his face your way, and dress him your way. He is a young man!</p>'
-      +'<div class="coach-preview-card">'+coachAvatarHTML(coachOutfitEmoji(cOf))+'<span><b>'+setupEsc(coachTitle())+'</b><small>'+cId.label+' • '+cId.pronouns+' • '+coachOutfitEmoji(cOf)+' '+cOf.name+'</small></span></div>'
-      +'<label class="setup-field-label" for="setupCoachName">Your coach\u2019s name</label>'
-      +'<input class="setup-input" id="setupCoachName" maxlength="24" autocomplete="off" placeholder="e.g. Leo" aria-label="Your coach\u2019s name" value="'+setupEsc(myTheme.coachName)+'" oninput="setupCoachNameInput(this)"/>'
-      +coachLookHTML('setupPickCoach')+'<div class="opt-group"><h4>👕 How is your coach dressed?</h4><div class="opt-row">'+COACH_OUTFITS.map(function(o){ return '<button class="fav-chip'+(myTheme.coachOutfit===o.id?' on':'')+'" onclick="setupPickCoach(\'outfit\',\''+o.id+'\')">'+coachOutfitEmoji(o)+' '+o.name+'</button>'; }).join('')+'</div><p style="font-weight:800;color:var(--muted);margin:8px 0 0;font-size:15px">'+coachOutfitDesc(cOf)+'</p></div>';
+    /* STEP 4 — COACH, exactly like Royce's step 4 (Michelle, Nov 9,
+       2026): same step design, layout, presentation and pick
+       behavior — kicker + question heading, then ONLY the picker
+       opt-groups (name, skin tone, hair style, hair color, outfit
+       style) — with HIS coach content only: Coach Leo, the male
+       coach, his name field and his boy-coach pickers. Nothing of
+       hers (Belle, girl-coach content) is in this step. The summary
+       text Michelle removed from Royce's step 4 is removed here
+       too (her matching-removal rule): no coach-so-far summary, no
+       dressed-in line, no favorites heading or favorite prop /
+       animal chips, and no coach identity pills or outfit summary
+       lines anywhere in this step. */
+    h+='<div class="setup-kicker">STEP 4 OF 6 — YOUR COACH</div><div class="setup-q">Make your coach yours! 🏆</div>'
+      +'<div class="opt-group"><h4>✏️ Coach\u2019s Name</h4><input class="coach-name-input" id="setupCoachName" type="text" maxlength="24" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="Leo" aria-label="Coach\u2019s name" value="'+setupEsc(myTheme.coachName)+'" oninput="setupCoachNameInput(this)"/></div>'
+      +coachLookHTML('setupPickCoach','opt-chip')
+      +'<div class="opt-group"><h4>👕 Outfit Style — How He\u2019s Dressed</h4><div class="opt-row">'+COACH_OUTFITS.map(function(o){ return '<button class="big-chip'+(myTheme.coachOutfit===o.id?' on':'')+'" onclick="setupPickCoach(\'outfit\',\''+o.id+'\')"><span class="bce">'+coachOutfitEmoji(o)+'</span>'+o.name+'</button>'; }).join('')+'</div></div>';
   } else if(setupStep===5){
     if(!setupLastSug) setupLastSug=suggestedWorldName();
     h+='<h3>✏️ Step 6 of 6 — Enter your first name!</h3>'
@@ -6629,10 +6823,11 @@ function renderSetup(){
        them exactly as they filled the old homepage modal — the studio's
        contents did not change, only where it lives. renderSetup calls
        renderStudio() right after this HTML lands. */
-    h+='<h3>🎨 Step 5 of 6 — My Player Studio!</h3><p class="setup-lead">Tap anything to change it — your player updates right away, saves on this device, and he is the one who plays in every game!</p>'
+    h+='<div class="setup-kicker">STEP 5 OF 6 — MY PLAYER STUDIO</div><div class="setup-q">Design Your Player! 🎨</div><p class="setup-lead">Tap anything to change it — your player updates right away, saves on this device, and he is the one who plays in every game!</p>'
       +'<div class="studio-layout"><div class="studio-preview"><div id="studioPreview" style="height:248px"></div><div class="pname" id="studioName">#7 — Your Player ⭐</div></div><div id="studioOptions"></div></div>';
   }
   body.innerHTML=h;
+  if(setupStep===3){ var cinp=document.getElementById('setupCoachName'); if(cinp){ cinp.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); setupMove(1); } }); } } /* Enter in the coach name field advances, like Royce's step 4 */
   if(setupStep===4&&typeof renderStudio==='function') renderStudio(); /* step 5 IS the Player Design Studio — fill its studio containers */
   lockControlsIn(body); /* toggle ON = this step's picks are locked */
   if(setupStep===4){ body.classList.remove('locked'); body.querySelectorAll('button,input').forEach(function(el){ el.disabled=false; }); } /* the Player Studio is not part of the keep-original lock — the player is not theme, background, colors or coach */
@@ -6784,11 +6979,26 @@ function renderStudio(){
     +'<button class="opt-chip'+(d.wristbands?' on':'')+'" onclick="toggleDesign(\'wristbands\')">Wristbands</button>'
     +'<button class="opt-chip'+(d.sleeve?' on':'')+'" onclick="toggleDesign(\'sleeve\')">Arm Sleeve</button>'
     +'</div></div>';
+  var osid=studioOutfitSport||activeSportId(); var oout=outfitFor(d,osid);
+  h+='<div class="opt-group"><h4>🏅 Outfits for Each Sport</h4><p style="font-weight:800;color:var(--muted);margin:0 0 8px;font-size:14px;line-height:1.45">He always wears the right outfit for the game — a swimsuit in the pool, his gymnastics outfit in Gymnastics, each sport\u2019s own uniform. Pick a sport, then pick its outfit colors — the pick saves with that sport. His face, skin and hair never change.</p>'
+    +'<div class="opt-row">'+['basketball','soccer','tennis','baseball','football','hockey','swimming','running','gymnastics'].map(function(sid){ var nm=(SPORT_INFO[sid]||{}).name||sid; return '<button class="opt-chip'+(osid===sid?' on':'')+'" onclick="setOutfitSport(\''+sid+'\')">'+nm+'</button>'; }).join('')+'</div>'
+    +'<p style="font-weight:800;margin:10px 0 4px;font-size:14px">'+((SPORT_INFO[osid]||{}).name||osid)+' outfit — top</p>'+outfitSwatchRow('top',JERSEY_COLORS,oout.top)
+    +'<p style="font-weight:800;margin:10px 0 4px;font-size:14px">'+((SPORT_INFO[osid]||{}).name||osid)+' outfit — bottom</p>'+outfitSwatchRow('bottom',SHORTS_COLORS,oout.bottom)+'</div>';
   o.innerHTML=h;
-  var sp=document.getElementById('studioPreview'); if(sp) sp.innerHTML=renderPlayerSVG(d);
+  var sp=document.getElementById('studioPreview'); if(sp) sp.innerHTML= osid==='swimming'? renderSwimPlayerSVG(d) : renderPlayerSVG(d,osid);
   var sn=document.getElementById('studioName'); if(sn) sn.textContent='#'+d.number+' — Your Player ⭐';
 }
 function setHair(v){ setDesign('hair',v); }
+/* Per-sport outfit picking (CUSTOM edition — the Player Studio
+   only exists there): pick a sport, then its outfit colors; the
+   pick saves with THAT sport and comes up when its game does.
+   Kept as one simple group inside the existing Player Studio
+   step — no new step. */
+function setOutfitSport(id){ studioOutfitSport=id; renderStudio(); try{ sfx('pick'); }catch(e){} }
+function setOutfit(part,val){ var id=studioOutfitSport||activeSportId(); if(!playerDesign.outfits) playerDesign.outfits={}; if(!playerDesign.outfits[id]) playerDesign.outfits[id]={}; playerDesign.outfits[id][part]=val; saveDesign(); renderStudio(); renderAllPlayers(); try{ sfx('pick'); }catch(e){} }
+function outfitSwatchRow(part,colors,current){
+  return '<div class="opt-row">'+colors.map(function(c){ return '<button class="swatch'+(current===c[0]?' on':'')+'" style="background:'+c[0]+'" onclick="setOutfit(\''+part+'\',\''+c[0]+'\')" aria-label="'+c[1]+'" title="'+c[1]+'"></button>'; }).join('')+'</div>';
+}
 function toggleSpecial(key,val){ playerDesign[key]= playerDesign[key]===val?'':val; if(key==='headbandSpecial'&&playerDesign[key]) playerDesign.headband=false; saveDesign(); renderStudio(); renderAllPlayers(); sfx('bounce'); }
 
 /* ----- Bonus rounds ----- */
@@ -6799,7 +7009,7 @@ function stopFt(){ if(ftInt){ clearInterval(ftInt); ftInt=null; } }
 function renderBonusHome(){
   var b=document.getElementById('bonusBody'); if(!b) return;
   var bi=sportInfo();
-  b.innerHTML='<div style="display:flex;gap:12px;align-items:center;background:#FFF7ED;border:2px solid var(--line);border-radius:16px;padding:10px"><div class="bonus-player" style="width:70px;height:96px;flex:0 0 70px">'+renderPlayerSVG(activePlayerDesign())+'</div><p style="font-weight:800;line-height:1.5;margin:0">Your player is warmed up! Bonus games earn ⭐ bonus stars for your Trophy Case.</p></div>'
+  b.innerHTML='<div style="display:flex;gap:12px;align-items:center;background:#FFF7ED;border:2px solid var(--line);border-radius:16px;padding:10px"><div class="bonus-player" style="width:70px;height:96px;flex:0 0 70px">'+renderPlayerSVG(activePlayerDesign(),activeSportId())+'</div><p style="font-weight:800;line-height:1.5;margin:0">Your player is warmed up! Bonus games earn ⭐ bonus stars for your Trophy Case.</p></div>'
   +'<div class="trophy-grid"><button class="hub-card" onclick="startFreeThrow()"><span class="hub-emoji">🎯</span><span><b>'+bi.bonusTapName+'</b><span>'+bi.bonusTapDesc+'</span></span></button>'
   +'<button class="hub-card" onclick="startBallRound()"><span class="hub-emoji">'+bi.tokenEmoji+'</span><span><b>'+bi.ballRoundName+'</b><span>A real math problem — tap the one with the right answer!</span></span></button></div><div id="bonusPlay"></div>';
 }
@@ -7374,7 +7584,7 @@ function renderGrownUps(){
 function openGrownUps(){
   stopLeoSpeech();
   ['homeView','practiceView','writingView','gradeView','setupView'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
-  document.body.classList.remove('playing');
+  document.body.classList.remove('playing'); unlockPlaySize();
   renderGrownUps();
   var gv=document.getElementById('grownView'); if(gv) gv.style.display='block';
   window.scrollTo({top:0});
