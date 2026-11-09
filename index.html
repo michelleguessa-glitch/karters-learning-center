@@ -574,7 +574,21 @@ body.grade-gate-open .wrap{z-index:95}
 .champ-banner{display:none;margin-top:10px;background:var(--gold);border:3px solid var(--ink);border-radius:16px;padding:10px 14px;text-align:center;font-family:'Fredoka';font-size:19px;font-weight:700}
 .champ-banner.show{display:block}
 .court-stage{position:relative;margin:16px auto 0;max-width:560px;width:100%;height:clamp(430px,72vh,620px);background:#E8933A;border:3px solid var(--ink);border-radius:22px;overflow:hidden;--drop:46px}
-.court-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;display:block;z-index:0}
+.court-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 50%;display:block;z-index:0}
+/* WIDE COURT GROUND (LIVE-CHECK FIX, Nov 9, 2026): the game court is
+   the recomposed WIDE scene (assets/court-wide.webp — the built
+   court's walls, hoop, chevron stripe and hardwood floor re-laid as
+   one wide picture). The sharp picture is CONTAIN-fitted, so the
+   FULL scene — floor, red key, chevrons, paneled walls, glass
+   backboard/hoop upper right — is visible inside the stage at every
+   stage size. Behind it the stage itself wears the court's own
+   bands (arena navy, gold, cream wall, red stripe, cream wall,
+   hardwood — sampled from the scene, at the scene's own heights),
+   so wherever the wide stage is wider than the picture, the court
+   reads as extending across the whole stage instead of ending in
+   flat bars. Basketball only: every other sport's stage is
+   untouched. */
+.court-stage.sport-basketball{background-image:linear-gradient(180deg,#1B223F 0,#1B223F 5.6%,#E9A821 5.6%,#E9A821 8.9%,#F3DDB0 8.9%,#F3DDB0 37.9%,#C6102E 37.9%,#C6102E 49.1%,#F0D4A0 49.1%,#F0D4A0 65.1%,#E59E4F 65.1%,#D17F36 100%)}
 .court-player{position:absolute;left:16px;bottom:10px;width:124px;height:164px;z-index:2;filter:drop-shadow(0 6px 6px rgba(43,22,8,.35))}
 .court-player svg,.mini-player svg,.studio-preview svg,.bonus-player svg{width:100%;height:100%;display:block}
 .mini-player{width:76px;height:110px;flex:0 0 76px}
@@ -1691,6 +1705,15 @@ body.world-tennis .p-racket,.court-stage.sport-tennis .court-player .p-racket{di
 @media(max-width:760px){.stage-mascot{width:46px;height:69px}}
 @media(max-width:900px){.court-stage.sport-soccer .stage-mascot{left:132px}.court-stage.sport-hockey .stage-mascot{left:150px}}
 .court-stage.sport-gymnastics .court-player{bottom:calc(20% + 15px);transform-origin:50% 100%}
+/* ON THE BEAM, NOT BESIDE IT (LIVE-CHECK FIX, Nov 9, 2026): the beam
+   spans the stage from 9% to 91%, but the shared player spot
+   (left:16px / left:12px) put his whole box LEFT of the beam's left
+   end on a wide stage — he waited standing beside the beam, over
+   the mat, at beam height. His spot in this world is now 11% from
+   the left, over the beam itself at every stage width, so his
+   planted feet stand ON TOP of the beam (the stage render locks
+   the same spot inline — see renderStageBackdrop). */
+.court-stage.sport-gymnastics .court-player{left:11%}
 body.playing .court-stage.sport-gymnastics .court-player{bottom:calc(20% + 15px)}
 @media(max-width:760px){.court-stage.sport-gymnastics .court-player{bottom:calc(20% + 15px)}.gym-beam i{height:34px}}
 .court-stage.sport-gymnastics .shot-ball{left:148px;bottom:calc(20% + 15px)}
@@ -2235,7 +2258,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
     </div>
     <div class="champ-banner" id="champBanner">🏆 CHAMPIONSHIP GAME! Win this one for a Championship Trophy! 🏆</div>
     <div class="court-stage" id="courtStage" aria-label="Your player dribbling and shooting on Coach Leo's court">
-      <img class="court-photo" id="courtPhoto" src="assets/court-3d.webp" alt=""/>
+      <img class="court-photo" id="courtPhoto" src="assets/court-wide.webp" alt=""/>
       <div class="sport-scene" id="sportScene" aria-hidden="true"></div>
       <div class="gym-beam" id="gymBeam" aria-hidden="true"><i class="l"></i><i class="r"></i></div>
       <div class="court-player player-slot" id="courtPlayer"></div>
@@ -4500,8 +4523,23 @@ function updateScoreboard(){
    object; everything Leo has to say lives in his bubble and in the
    question card's feedback line, where it always also appeared. */
 /* ----- The photo court: dribble loop + shots aimed at the photo's own hoop ----- */
-/* Rim center of the CONSTRUCTED 3D court (assets/court-3d.webp — Michelle, Nov 9, 2026: the game court is BUILT, not the flat hero picture: cream paneled walls, red stripe with gold chevrons, arena lights, glossy perspective hardwood, red painted key, single glass backboard/hoop upper right — drawn at the same 1120x2240 geometry as the photo court it replaces in the game; his basketball PAGE BACKGROUND and wizard template keep the restored original picture): rim center at 89% across / 16.8% down, wall/floor line at 53.6%. The stage loads the court as a WEBP raster of the built court (same 1120x2240 geometry): the earlier SVG reference did not resolve on the published page — the stage fell back to its flat orange with a broken-image icon — while the raster loads everywhere the game's other images do. The cover math below mirrors .court-photo (object-fit:cover, object-position 50% 15%), so the ball lands on the game court's hoop at any stage size — the 15% anchor keeps the hoop in frame even on the short same-view mobile stage. The same rendered court stands behind Coach Leo in the hero (assets/coach-leo.jpg). The dribble itself is visual-only, so it can never fight his music. */
-var COURT_IMG={iw:1120,ih:2240,fx:0.89,fy:0.168,posX:0.5,posY:0.15};
+/* Rim center of the CONSTRUCTED 3D court, as recomposed for the wide
+   stage (assets/court-wide.webp — LIVE-CHECK FIX, Nov 9, 2026: the tall
+   1120x2240 court picture could only show its top slice in the wide
+   stage, cropping the hardwood floor, red key and chevrons out of
+   view, so the SAME built court — arena lights, cream paneled walls,
+   red stripe with gold chevrons, glossy hardwood, red painted key,
+   single glass backboard/hoop upper right — was re-laid as ONE WIDE
+   1760x880 scene and the stage CONTAIN-fits it, over a stage ground
+   painted in the court's own bands: the full court
+   is visible at every stage size. His basketball PAGE BACKGROUND and
+   wizard template keep the restored original picture, untouched):
+   rim center at 89% across / 22.2% down of the wide scene. The shot
+   math in playShot mirrors .court-photo (object-fit:contain,
+   object-position 50% 50%), so the ball lands on the wide scene's
+   hoop at any stage size. The dribble itself is visual-only, so it
+   can never fight his music. */
+var COURT_IMG={iw:1760,ih:880,fx:0.89,fy:0.222,posX:0.5,posY:0.5};
 var shotSeq=0;
 var shotAnimActive=false, dribblePending=false;
 /* BASEBALL ONLY: the question object a correct answer has already
@@ -4513,8 +4551,43 @@ var shotAnimActive=false, dribblePending=false;
    prompt is a fresh object, so the lock releases itself the moment
    the next question lands. No other sport reads this. */
 var bbAnsweredQ=null;
-function startDribble(){ if(shotAnimActive){ dribblePending=true; return; } var st=document.getElementById('courtStage'); if(st) st.classList.add('dribbling'); }
-function stopDribble(){ shotAnimActive=false; dribblePending=false; var st=document.getElementById('courtStage'); if(st) st.classList.remove('dribbling','shooting','celebrating','hr-flight','ball-live'); var b=document.getElementById('shotBall'); if(b&&b.getAnimations){ try{ b.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){} } }
+function startDribble(){ if(shotAnimActive){ dribblePending=true; return; } var st=document.getElementById('courtStage'); if(st) st.classList.add('dribbling'); startSoccerWaitRoll(); }
+function stopDribble(){ shotAnimActive=false; dribblePending=false; stopSoccerWaitRoll(); var st=document.getElementById('courtStage'); if(st) st.classList.remove('dribbling','shooting','celebrating','hr-flight','ball-live'); var b=document.getElementById('shotBall'); if(b&&b.getAnimations){ try{ b.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){} } }
+/* SOCCER WAITING ROLL — WAAPI-DRIVEN (LIVE-CHECK FIX, Nov 9, 2026):
+   the waiting roll used to live ONLY in the stylesheet (the
+   soccerFootRoll CSS loop keyed off the stage's .dribbling class).
+   On the published page the waiting ball sat parked under his foot,
+   perfectly still across seconds of frame samples, even though the
+   CSS loop exists — a cascade / reduced-motion kill of the CSS loop
+   leaves NOTHING moving, because the motion had no second driver.
+   The roll is now driven by the game flow itself: startDribble —
+   the one function EVERY branch funnels through when a question
+   loads (counting, addition, subtraction, word problems, spelling —
+   they all reach nextPrompt -> startDribble) — starts a WAAPI roll
+   on the ball, with his shoe and leg rocking in the same lockstep,
+   on the player nodes as they stand at that moment (so a player
+   re-render can never orphan it: the next question re-creates it).
+   WAAPI runs on the document timeline, independent of the CSS
+   cascade, so the ball visibly rolls back and forth under his
+   planted foot the whole waiting time in every branch. The CSS
+   loop stays as the no-WAAPI fallback. stopDribble (called at
+   every shot and on goHome) cancels the roll before the kick, so
+   the kick's own leg swing is never overridden by it. */
+var soccerWaitAnims=[];
+function stopSoccerWaitRoll(){ soccerWaitAnims.forEach(function(a){ try{ a.cancel(); }catch(e){} }); soccerWaitAnims=[]; }
+function startSoccerWaitRoll(){
+  stopSoccerWaitRoll();
+  var st=document.getElementById('courtStage'); if(!st||stageSportId()!=='soccer') return;
+  var ball=document.getElementById('shotBall'); if(!ball||!ball.animate) return;
+  try{
+    var roll=ball.animate([{transform:'translateX(-8px) rotate(-26deg)',easing:'ease-in-out'},{transform:'translateX(8px) rotate(26deg)',easing:'ease-in-out'}],{duration:800,iterations:Infinity,direction:'alternate'});
+    if(roll) soccerWaitAnims.push(roll);
+    var cp=document.getElementById('courtPlayer');
+    var shoe=cp?cp.querySelector('.p-shoe-r'):null, leg=cp?cp.querySelector('.p-leg-r'):null;
+    if(shoe&&shoe.animate){ shoe.style.transformBox='fill-box'; shoe.style.transformOrigin='50% 100%'; var sa=shoe.animate([{transform:'translateX(-13px) rotate(-6deg)',easing:'ease-in-out'},{transform:'translateX(13px) rotate(6deg)',easing:'ease-in-out'}],{duration:800,iterations:Infinity,direction:'alternate'}); if(sa) soccerWaitAnims.push(sa); }
+    if(leg&&leg.animate){ leg.style.transformBox='fill-box'; leg.style.transformOrigin='50% 0%'; var la=leg.animate([{transform:'rotate(-4deg)',easing:'ease-in-out'},{transform:'rotate(4deg)',easing:'ease-in-out'}],{duration:800,iterations:Infinity,direction:'alternate'}); if(la) soccerWaitAnims.push(la); }
+  }catch(e){}
+}
 /* Layered celebration: a burst of sparkles at the hoop on a made shot. Each
    sparkle flies out, hangs, then falls with gravity and fades — WAAPI-driven,
    capped at ~20 tiny elements and removed when done, so a child's tablet
@@ -5157,7 +5230,30 @@ function playSportShot(success){
          upright's center is scene (357,239). */
       var fGoalX=null,fPostX=null,fGoalY=null;
       var fSvg=stage.querySelector('.sport-scene svg');
-      if(fSvg&&fSvg.getScreenCTM){
+      /* AIM FROM THE RENDERED POST ITSELF (LIVE-CHECK FIX, Nov 9,
+         2026): the kick used to be aimed by mapping an assumed
+         scene point through the SVG's screen CTM — on the published
+         page the kicks landed well LEFT of the uprights, so the
+         assumed-point mapping does not describe the post as
+         actually rendered there. The uprights now carry ids
+         (fbPostL / fbPostR in the football scene), and the aim is
+         measured from their RENDERED rectangles — the center
+         between the two uprights at mid-upright height, and the
+         left upright's own center for the miss — the same
+         measure-the-rendered-target approach baseball uses for
+         its wall. The CTM mapping below stays as the fallback. */
+      var fPL=stage.querySelector('#fbPostL'), fPR=stage.querySelector('#fbPostR');
+      if(fPL&&fPR&&fPL.getBoundingClientRect){
+        try{
+          var fLr=fPL.getBoundingClientRect(), fRr=fPR.getBoundingClientRect();
+          if(fLr.width>0&&fRr.width>0&&fLr.height>0){
+            fGoalX=(fLr.left+fLr.width/2+fRr.left+fRr.width/2)/2-fr2.left;
+            fPostX=fLr.left+fLr.width/2-fr2.left;
+            fGoalY=(fLr.top-fr2.top)+fLr.height/2;
+          }
+        }catch(e){ fGoalX=null; fPostX=null; fGoalY=null; }
+      }
+      if((fGoalX===null||fPostX===null||fGoalY===null)&&fSvg&&fSvg.getScreenCTM){
         try{
           var fCtm=fSvg.getScreenCTM(), fPt=fSvg.createSVGPoint();
           if(fCtm){
@@ -5282,7 +5378,7 @@ function playShot(success){
   if(!stage||!ball||!ball.animate){ if(success){ setTimeout(function(){ sfx('swish'); },300); } else { setTimeout(function(){ sfx('rim'); },300); setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },1500); } return; }
   stage.classList.add('shooting'); /* his player crouches, jumps and releases with the shot */
   var sr=stage.getBoundingClientRect(),br=ball.getBoundingClientRect();
-  var sc=Math.max(sr.width/COURT_IMG.iw,sr.height/COURT_IMG.ih);
+  var sc=Math.min(sr.width/COURT_IMG.iw,sr.height/COURT_IMG.ih); /* CONTAIN fit (LIVE-CHECK FIX, Nov 9, 2026): mirrors .court-photo's object-fit:contain on the wide court, so the ball lands on the wide scene's hoop at any stage size */
   var dw=COURT_IMG.iw*sc, dh=COURT_IMG.ih*sc;
   var ox=(sr.width-dw)*COURT_IMG.posX, oy=(sr.height-dh)*COURT_IMG.posY;
   var hoopCX=ox+COURT_IMG.fx*dw, hoopCY=oy+COURT_IMG.fy*dh;
@@ -6389,8 +6485,8 @@ function gameSceneHTML(id,accent){
     +'<rect y="546" width="800" height="14" fill="rgba(20,60,25,.35)"/>'
     +'<ellipse cx="400" cy="302" rx="26" ry="4.5" fill="rgba(20,60,25,.25)"/>'
     +'<rect x="396" y="282" width="8" height="20" fill="url(#gamegold)"/><rect x="402" y="282" width="2.5" height="20" fill="rgba(0,0,0,.18)"/>'
-    +'<rect x="352" y="196" width="9" height="86" rx="3" fill="url(#gamegold)"/><rect x="358" y="196" width="3" height="86" fill="rgba(0,0,0,.15)"/>'
-    +'<rect x="439" y="196" width="9" height="86" rx="3" fill="url(#gamegold)"/><rect x="445" y="196" width="3" height="86" fill="rgba(0,0,0,.15)"/>'
+    +'<rect id="fbPostL" x="352" y="196" width="9" height="86" rx="3" fill="url(#gamegold)"/><rect x="358" y="196" width="3" height="86" fill="rgba(0,0,0,.15)"/>'
+    +'<rect id="fbPostR" x="439" y="196" width="9" height="86" rx="3" fill="url(#gamegold)"/><rect x="445" y="196" width="3" height="86" fill="rgba(0,0,0,.15)"/>'
     +'<rect x="348" y="282" width="104" height="9" rx="3" fill="url(#gamegold)"/><rect x="348" y="282" width="104" height="3" fill="rgba(255,255,255,.35)"/>');
   /* BASEBALL — built 3D diamond: tiered stand band behind, the
      padded green outfield wall (yellow top line, 375 marker)
@@ -6648,6 +6744,11 @@ function renderStageBackdrop(c,s){
      own floor spots are stylesheet business as before. */
   var cpEl=document.getElementById('courtPlayer');
   if(cpEl) cpEl.style.bottom= s.id==='gymnastics' ? 'calc(20% + 15px)' : '';
+  /* Same lock for his spot ALONG the beam (LIVE-CHECK FIX, Nov 9,
+     2026): at 11% from the left he stands over the beam itself
+     (the beam spans 9%-91%) at every stage width — never beside
+     its left end on the mat. Cleared for every other sport. */
+  if(cpEl) cpEl.style.left= s.id==='gymnastics' ? '11%' : '';
   /* NO venue-name pill is painted on the stage (Pass 5): Michelle's
      rule — the game shows the player and the venue clean, with no
      added floating images or text bars on it. The label element, its
