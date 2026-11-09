@@ -1424,13 +1424,36 @@ body.playing #practiceView.fit-menu .gamecard{padding:5px 7px}
 .shot-ball.puck-token:before,.shot-ball.puck-token:after{display:none}
 .court-stage.sport-swimming.dribbling .court-player{animation:swimSway 2s ease-in-out infinite}
 .court-stage.sport-swimming:not(.dribbling):not(.shooting):not(.celebrating) .court-player{animation:swimSway 2.6s ease-in-out infinite}
-@keyframes swimSway{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(5px) rotate(3deg)}}
-/* Swimming: the player is IN the water. His legs sit below a translucent
-   water overlay with a rippling surface line, and while he waits he is
-   simply in the water kicking his feet — nothing floating beside him. */
-.court-stage.sport-swimming .court-player{bottom:24%}
-.court-stage.sport-swimming .court-player:after{content:"";position:absolute;left:-8px;right:-8px;bottom:-5px;height:37%;z-index:3;background:linear-gradient(180deg,rgba(126,211,247,.5),rgba(23,132,196,.82));border-top:3px solid rgba(255,255,255,.9);border-radius:50% 50% 0 0/13px;animation:waterLine 1.7s ease-in-out infinite;pointer-events:none}
-@keyframes waterLine{0%,100%{transform:translateY(0)}50%{transform:translateY(2.5px)}}
+@keyframes swimSway{0%,100%{transform:translateY(0) rotate(-1.6deg)}50%{transform:translateY(4px) rotate(1.6deg)}}
+/* ===== SWIMMING REDESIGN — LIKE ROYCE'S (Michelle, Nov 8–9, 2026) =====
+   His swimmer is ACTUALLY SWIMMING, the same design as Royce's
+   swimming: body HORIZONTAL in the water (a dedicated horizontal
+   figure — renderSwimPlayerSVG — swaps into the stage slot only in
+   this world; he is never the upright player standing in the pool),
+   freestyle arm strokes and a flutter kick while he waits and the
+   whole way across, and a real WATER LAYER that spans the WHOLE pool
+   in front of his lower body (Royce's .swim-water, same waves, same
+   sliding motion) so he reads as IN the pool.
+   NO WATER BUBBLE: the old per-player translucent pale oval that sat
+   around/under him at water level (the .court-player:after overlay
+   with its white surface line and rounded top) is DELETED entirely —
+   no oval, bubble, platform, halo or shape around the player in any
+   state: not waiting, not swimming across, not dipping/returning,
+   not celebrating. The only water in front of him is the stage-wide
+   layer below, which belongs to the whole pool, never to him. */
+body.playing #practiceView .court-stage.sport-swimming .court-player{width:clamp(150px,38%,204px);height:auto;aspect-ratio:260/110;left:10px;bottom:20%}
+.court-stage.sport-swimming .court-player{width:clamp(150px,38%,204px);height:auto;aspect-ratio:260/110;bottom:20%}
+/* Royce's swim-water layer, same design: two translucent wave bands
+   sliding in opposite directions across the full width of the pool,
+   in front of the swimmer's lower body (z-index 5, above the player
+   at z-index 2), shown only in the swimming world. */
+.swim-water{display:none;position:absolute;left:0;right:0;bottom:0;height:36%;z-index:5;pointer-events:none;overflow:hidden}
+.court-stage.sport-swimming .swim-water{display:block}
+.swim-water svg{position:absolute;left:0;bottom:0;width:100%;height:100%}
+.swim-water .sw-wave{will-change:transform}
+.sw-wave-back{animation:swimWaveSlide 5s linear infinite}
+.sw-wave-front{animation:swimWaveSlide 3.2s linear infinite reverse}
+@keyframes swimWaveSlide{from{transform:translateX(0)}to{transform:translateX(-200px)}}
 /* NO SWIMMER TOKEN (Michelle, Nov 8–9, 2026 — the last floater from the
    no-mysterious-objects sweep): a small 🏊 swimmer emoji used to sit in
    the water immediately to the player's right while he waited — a second,
@@ -1671,6 +1694,22 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
 .court-stage.sport-swimming.shooting .court-player .p-leg-r,.court-stage.sport-swimming.dribbling .court-player .p-leg-r{animation:swimKick .38s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0%}
 .court-stage.sport-swimming.shooting .court-player .p-leg-l,.court-stage.sport-swimming.dribbling .court-player .p-leg-l{animation:swimKick .38s ease-in-out -.19s infinite;transform-box:fill-box;transform-origin:50% 0%}
 @keyframes swimKick{0%,100%{transform:rotate(13deg)}50%{transform:rotate(-13deg)}}
+/* The HORIZONTAL swimmer's own limb pivots (his figure is a wide
+   260x110 view-box, not the upright 200x262): shoulders sit at about
+   73%/71% across and 41% down, hips at about 39% across and 47%
+   down. These rules outrank the upright pivots above whenever the
+   swim figure is in the slot (.is-swim). He strokes and kicks in
+   EVERY state, like Royce's swim-idle: while he waits (treading
+   water at the surface), while he crosses on a make, and while he
+   dips and swims back on a miss — his limbs never go still while
+   his body moves, so he never glides. */
+.court-stage.sport-swimming .court-player.is-swim .p-arm-r{animation:swimStroke 1.4s linear infinite;transform-box:view-box;transform-origin:73% 41%}
+.court-stage.sport-swimming .court-player.is-swim .p-arm-l{animation:swimStroke 1.4s linear -.7s infinite;transform-box:view-box;transform-origin:71% 42%}
+.court-stage.sport-swimming .court-player.is-swim .p-leg-r{animation:swimKick .38s ease-in-out infinite;transform-box:view-box;transform-origin:39% 47%}
+.court-stage.sport-swimming .court-player.is-swim .p-leg-l{animation:swimKick .38s ease-in-out -.19s infinite;transform-box:view-box;transform-origin:39% 47%}
+.court-stage.sport-swimming.shooting .court-player.is-swim .p-arm-r{animation:swimStroke 1.15s linear infinite;transform-box:view-box;transform-origin:73% 41%}
+.court-stage.sport-swimming.shooting .court-player.is-swim .p-arm-l{animation:swimStroke 1.15s linear -.575s infinite;transform-box:view-box;transform-origin:71% 42%}
+.court-stage.sport-swimming.shooting .court-player.is-swim .p-leg-r,.court-stage.sport-swimming.shooting .court-player.is-swim .p-leg-l{transform-box:view-box;transform-origin:39% 47%}
 /* Gymnastics shooting: HE walks the beam — careful steps, legs
    swinging in opposite phase the whole way across and back. */
 .court-stage.sport-gymnastics.shooting .court-player{animation:none}
@@ -2027,6 +2066,10 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
       <div class="sport-scene" id="sportScene" aria-hidden="true"></div>
       <div class="gym-beam" id="gymBeam" aria-hidden="true"><i class="l"></i><i class="r"></i></div>
       <div class="court-player player-slot" id="courtPlayer"></div>
+      <!-- Royce's swim-water layer (same design as hers): a stage-wide
+           water layer in front of the swimmer's lower body, shown only
+           in the swimming world — never a bubble around the player. -->
+      <div class="swim-water" id="swimWater" aria-hidden="true"><svg viewBox="0 0 800 120" preserveAspectRatio="none" aria-hidden="true"><path class="sw-wave sw-wave-back" d="M0 22 Q50 8 100 22 T200 22 T300 22 T400 22 T500 22 T600 22 T700 22 T800 22 T900 22 T1000 22 T1100 22 T1200 22 T1300 22 T1400 22 T1500 22 T1600 22 L1600 120 L0 120 Z" fill="#38BDF8" opacity=".45"/><path class="sw-wave sw-wave-front" d="M0 34 Q50 18 100 34 T200 34 T300 34 T400 34 T500 34 T600 34 T700 34 T800 34 T900 34 T1000 34 T1100 34 T1200 34 T1300 34 T1400 34 T1500 34 T1600 34 L1600 120 L0 120 Z" fill="#0284C7" opacity=".5"/></svg></div>
       <svg class="net-ripple" id="netRipple" viewBox="0 0 100 95" aria-hidden="true"><ellipse cx="50" cy="8" rx="46" ry="9" fill="none" stroke="#fff" stroke-width="6"/><g stroke="#fff" stroke-width="5" stroke-linecap="round"><line x1="10" y1="12" x2="24" y2="82"/><line x1="32" y1="15" x2="38" y2="88"/><line x1="55" y1="16" x2="52" y2="90"/><line x1="74" y1="15" x2="66" y2="88"/><line x1="92" y1="12" x2="80" y2="82"/><line x1="24" y1="52" x2="80" y2="52"/></g></svg>
       <div class="shot-ball" id="shotBall"></div>
     </div>
@@ -3893,12 +3936,69 @@ function renderPlayerSVG(d){
   + '<rect x="48" y="234" width="38" height="14" rx="7" fill="'+shoes+'" stroke="#2B1608" stroke-width="2.5"/><rect class="p-shoe-r" x="114" y="234" width="38" height="14" rx="7" fill="'+shoes+'" stroke="#2B1608" stroke-width="2.5"/>'
   + '</svg>';
 }
+/* ===== THE HORIZONTAL SWIMMER (Michelle, Nov 8–9, 2026) =====
+   In the Swimming world ONLY, the stage slot holds THIS figure instead
+   of the upright player: his body lies HORIZONTAL in the water, head
+   at the front (right, toward the far wall), freestyle arms stroking
+   around their shoulders and legs flutter-kicking behind him — the
+   same swimmer-in-the-water design as Royce's swimming, with ONLY the
+   player different: his skin, his hair, his jersey and number, his
+   shorts. He is built from the same design object as renderPlayerSVG,
+   so a design made in the Player Studio is the swimmer in the pool.
+   His body is one connected figure: shoulder caps sit on the arm
+   roots, a neck circle joins head to torso, and the shorts cover the
+   leg roots — no gaps, no detached pieces, in any frame. There is NO
+   shape of any kind drawn around him: no bubble, no oval, no splash
+   ring — he is simply in the pool water, with Royce's stage-wide
+   swim-water layer in front of his lower body. */
+function renderSwimPlayerSVG(d){
+  var skin=SKINS[d.skin]||SKINS[4], hc=d.hairColor, jersey=d.jerseySpecial==='gold'?'#FFB800':d.jersey;
+  var hairBack='', hairCap='';
+  if(d.hair==='afro'){ hairBack='<circle cx="199" cy="25" r="10" fill="'+hc+'"/><circle cx="214" cy="16" r="12" fill="'+hc+'"/><circle cx="231" cy="23" r="10" fill="'+hc+'"/>'; }
+  else if(d.hair==='short'){ hairCap='<path d="M198 36 Q199 19 217 19 Q235 19 236 36 Q227 25 217 25 Q207 25 198 36Z" fill="'+hc+'"/>'; }
+  else if(d.hair==='fade'){ hairCap='<path d="M199 33 Q201 21 217 21 Q233 21 235 33 Q226 26 217 26 Q208 26 199 33Z" fill="'+hc+'"/>'; }
+  else if(d.hair==='twists'){ hairCap='<path d="M198 36 Q199 19 217 19 Q235 19 236 36 Q227 25 217 25 Q207 25 198 36Z" fill="'+hc+'"/><rect x="193" y="28" width="6" height="15" rx="3" fill="'+hc+'" transform="rotate(12 196 30)"/><rect x="199" y="21" width="6" height="13" rx="3" fill="'+hc+'" transform="rotate(4 202 23)"/>'; }
+  else if(d.hair==='bald'){ hairCap='<ellipse cx="208" cy="29" rx="7" ry="3.5" fill="#fff" opacity=".35"/>'; }
+  var band='';
+  if(d.headband||d.headbandSpecial){ band='<path d="M199 31 Q217 21 235 31" stroke="#FFB800" stroke-width="6" fill="none" stroke-linecap="round"/>'; }
+  var wristR= d.wristbands? '<g transform="rotate(-32 228 21)"><rect x="220" y="16" width="15" height="8" rx="4" fill="#FFB800" stroke="#2B1608" stroke-width="1.5"/></g>':'';
+  var wristL= d.wristbands? '<g transform="rotate(38 157 72)"><rect x="149" y="67" width="15" height="8" rx="4" fill="#FFB800" stroke="#2B1608" stroke-width="1.5"/></g>':'';
+  return '<svg viewBox="0 0 260 110" role="img" aria-label="Your player swimming">'
+  + '<g class="p-leg-l" opacity=".88"><line x1="102" y1="57" x2="36" y2="66" stroke="'+skin+'" stroke-width="13" stroke-linecap="round"/><ellipse cx="28" cy="67" rx="7.5" ry="4.5" fill="'+skin+'"/></g>'
+  + '<g class="p-arm-l" opacity=".88"><line x1="184" y1="48" x2="148" y2="78" stroke="'+skin+'" stroke-width="12" stroke-linecap="round"/>'+wristL+'<circle cx="146" cy="80" r="6" fill="'+skin+'"/></g>'
+  + '<g class="p-leg-r"><line x1="102" y1="47" x2="34" y2="36" stroke="'+skin+'" stroke-width="13" stroke-linecap="round"/><ellipse cx="26" cy="35" rx="7.5" ry="4.5" fill="'+skin+'"/></g>'
+  + '<g class="p-arm-r"><line x1="190" y1="44" x2="238" y2="15" stroke="'+skin+'" stroke-width="12.5" stroke-linecap="round"/>'+wristR+'<circle cx="240" cy="14" r="6.5" fill="'+skin+'"/></g>'
+  + '<rect x="82" y="33" width="64" height="37" rx="12" fill="'+d.shorts+'" stroke="#2B1608" stroke-width="2.5"/>'
+  + '<rect x="140" y="31" width="62" height="38" rx="13" fill="'+jersey+'" stroke="#2B1608" stroke-width="2.5"/>'
+  + '<rect x="189" y="33" width="11" height="34" rx="5" fill="#FFB800" opacity=".85"/>'
+  + '<circle cx="184" cy="47" r="8" fill="'+jersey+'"/><circle cx="190" cy="45" r="10" fill="'+jersey+'"/>'
+  + '<text x="166" y="60" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="25" fill="'+jerseyTextColor(jersey)+'" stroke="rgba(0,0,0,.28)" stroke-width=".8">'+d.number+'</text>'
+  + '<circle cx="201" cy="43" r="8" fill="'+skin+'"/>'
+  + hairBack
+  + '<circle cx="217" cy="41" r="21" fill="'+skin+'" stroke="#2B1608" stroke-width="2"/>'
+  + hairCap+band
+  + '<circle cx="223" cy="39" r="2.7" fill="#2B1608"/><circle cx="233" cy="41" r="2.7" fill="#2B1608"/><path d="M221 51 Q228 56 235 50" stroke="#2B1608" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
+  + '</svg>';
+}
+/* Keep the stage slot honest about which figure it holds: the
+   horizontal swimmer in the Swimming world, the upright player in
+   every other world. Called whenever players re-render and whenever
+   the sport theme is applied (which is what sets the stage's sport
+   class), so the swap can never be missed or leak into another game. */
+function syncSwimFigure(){
+  var cp=document.getElementById('courtPlayer'); if(!cp) return;
+  var st=document.getElementById('courtStage');
+  var swim=!!(st&&st.classList.contains('sport-swimming'));
+  var d=activePlayerDesign();
+  if(swim){ cp.classList.add('is-swim'); cp.innerHTML=renderSwimPlayerSVG(d); }
+  else if(cp.classList.contains('is-swim')){ cp.classList.remove('is-swim'); cp.innerHTML=renderPlayerSVG(d); }
+}
 /* Which player the world actually SHOWS. Custom link: the child's own
    saved design from the Player Studio. Classic link: ALWAYS the plain
    default player — a design saved on this device while it was unlocked
    must never leak into the classic build, where there is no studio. */
 function activePlayerDesign(){ var unlocked=(typeof isCustomUnlocked==='function')?isCustomUnlocked():false; return unlocked? playerDesign : defaultDesign(); }
-function renderAllPlayers(){ var shown=activePlayerDesign(); document.querySelectorAll('.player-slot').forEach(function(el){ el.innerHTML=renderPlayerSVG(shown); }); var sp=document.getElementById('studioPreview'); if(sp){ sp.innerHTML=renderPlayerSVG(playerDesign); } var sn=document.getElementById('studioName'); if(sn) sn.textContent='#'+playerDesign.number+' — Your Player ⭐'; var ball=document.getElementById('shotBall'); if(ball&&gameSession) ball.classList.toggle('fire',!!gameSession.onFire); }
+function renderAllPlayers(){ var shown=activePlayerDesign(); document.querySelectorAll('.player-slot').forEach(function(el){ el.innerHTML=renderPlayerSVG(shown); }); syncSwimFigure(); var sp=document.getElementById('studioPreview'); if(sp){ sp.innerHTML=renderPlayerSVG(playerDesign); } var sn=document.getElementById('studioName'); if(sn) sn.textContent='#'+playerDesign.number+' — Your Player ⭐'; var ball=document.getElementById('shotBall'); if(ball&&gameSession) ball.classList.toggle('fire',!!gameSession.onFire); }
 
 /* ----- Sound effects (WebAudio, separate from music) ----- */
 var audioCtx=null, sfxMuted=false;
@@ -4142,7 +4242,11 @@ function playSportShot(success){
     var ssr=stage.getBoundingClientRect(),spr=swimmer?swimmer.getBoundingClientRect():null;
     if(!swimmer||!spr||!swimmer.animate){ setTimeout(function(){ sfx(success?'cheer':'rim'); },300); if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },1200); return; }
     var sStartCX=spr.left-ssr.left+spr.width/2;
-    var sLandCX=ssr.width*0.88, sDx=Math.round(sLandCX-sStartCX);
+    /* His figure is horizontal now, head at his front edge: the trip
+       target is his CENTER at 78% of the stage, which puts his head
+       right at the far wall (about 97% across) — he touches the wall
+       with his reaching hand/head instead of clipping through it. */
+    var sLandCX=ssr.width*0.78, sDx=Math.round(sLandCX-sStartCX);
     shotAnimActive=true;
     try{ swimmer.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){}
     try{
@@ -6040,6 +6144,7 @@ function applySportTheme(lockedOut,c,s){
   }
   try{ updateCoachPortrait(s.id,(lockedOut?'Leo':coachName()),c.primary); }catch(e){} /* the coach's portrait is the same background-free cutout in every sport — it never swaps */
   try{ if(typeof updateScoreboard==='function'&&typeof gameSession!=='undefined'&&gameSession) updateScoreboard(); }catch(e){}
+  try{ syncSwimFigure(); }catch(e){} /* the stage's sport class is set above — swap in the horizontal swimmer for Swimming, back to the upright player for every other sport */
 }
 function setThemePart(key,val){ if(typeof setupLocked==='function'&&setupLocked()){ if(key==='sport'&&val!==defaultTheme().sport){ setSetupKeepFlag(false); } else return; } myTheme[key]=val; if(key==='sport') setActiveSportId(val); saveTheme(); applyTheme(); try{ renderGrid(); }catch(e){} renderThemeStudio(); renderAllPlayers(); try{ sfx('pick'); }catch(e){} }
 /* ===== SPORT SWITCHER — games and language only, never the theme =====
