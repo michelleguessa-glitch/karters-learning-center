@@ -692,6 +692,21 @@ body.grade-gate-open .wrap{z-index:95}
    and its sport becomes the favorite / home sport the games and
    language follow. There is no separate favorite-sport pick beside
    it, and the templates are shown nowhere else on the page. */
+/* SETUP STEP 1 — ROYCE'S STEP DESIGN: the wizard's Background step
+   carries the same step components as Royce's step 1 — a small
+   tracked kicker line, a big Fredoka question, a live scene preview
+   with its caption strip, and a wrapping row of big emoji chips —
+   drawn in Karter's own palette (her pink shades become his reds,
+   her purple selected chip becomes his gold selected chip, the same
+   gold his other selected chips use). */
+.setup-kicker{font-family:'Fredoka';font-weight:600;color:var(--red-d);font-size:14px;letter-spacing:.08em}
+.setup-q{font-family:'Fredoka';font-weight:700;font-size:clamp(24px,4vw,30px);color:var(--red-d);margin:4px 0 6px;line-height:1.15}
+.scene-preview{position:relative;border-radius:16px;overflow:hidden;border:3px solid var(--line);margin-top:12px;background:var(--cream)}
+.scene-preview svg{width:100%;height:150px;display:block}
+.scene-preview-cap{padding:9px 12px;font-weight:900;font-size:14px;line-height:1.45;color:var(--red-d);background:rgba(255,255,255,.92)}
+.big-chip{background:#fff;border:2px solid var(--line);border-radius:16px;padding:10px 13px;font-weight:900;font-size:15px;color:var(--ink);display:inline-flex;align-items:center;gap:7px}
+.big-chip .bce{font-size:24px;line-height:1}
+.big-chip.on{background:var(--gold);color:var(--ink);border-color:var(--ink)}
 .bg-template-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
 .bg-template-card{border:3px solid var(--ink);background:#fff;border-radius:18px;padding:0;overflow:hidden;box-shadow:0 4px 0 var(--ink);display:flex;flex-direction:column;text-align:center;font-family:inherit;cursor:pointer}
 .bg-template-card:active{transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
@@ -1922,9 +1937,9 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
           <span class="sdt-label" id="setupDefaultLabel">Keep the original design</span>
           <span class="sdt-right"><span class="sdt-state" id="setupKeepState">On</span><button type="button" class="sdt-switch on" id="setupKeepBtn" role="switch" aria-checked="true" aria-labelledby="setupDefaultLabel" onclick="setupToggleKeepOriginal()"><span class="sdt-knob" aria-hidden="true"></span></button></span>
         </div>
-        <div class="setup-progress" id="setupProgress" role="progressbar" aria-label="Setup progress" aria-valuemin="1" aria-valuemax="7" aria-valuenow="1">
-          <div class="setup-progress-top"><span id="setupProgressLabel">Step 1 of 7</span><span class="sp-pct" id="setupProgressPct">14%</span></div>
-          <div class="setup-progress-track"><div class="setup-progress-fill" id="setupProgressFill" style="width:14%"></div></div>
+        <div class="setup-progress" id="setupProgress" role="progressbar" aria-label="Setup progress" aria-valuemin="1" aria-valuemax="6" aria-valuenow="1">
+          <div class="setup-progress-top"><span id="setupProgressLabel">Step 1 of 6</span><span class="sp-pct" id="setupProgressPct">17%</span></div>
+          <div class="setup-progress-track"><div class="setup-progress-fill" id="setupProgressFill" style="width:17%"></div></div>
         </div>
         <div class="stepdots" id="setupDots" style="margin:0 0 8px"></div>
         <div class="setup-body" id="setupBody"></div>
@@ -1985,8 +2000,8 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
          you're in, then — underneath the courts — the row of cards
          across (Trophy Case and Bonus Round in BOTH builds — there
          are no studio cards on the homepage; the Player Design
-         Studio and the Coach Design Studio live inside the setup
-         wizard as steps 6 and 7, customized link only), then — BELOW those cards —
+         Studio lives inside the setup
+         wizard as step 5, customized link only), then — BELOW those cards —
          the chosen section's title (e.g. "Math Tennis Court — Pick
          Your Game!"), and directly underneath that title the game
          cards grid for that category. Every block keeps real space
@@ -1996,9 +2011,8 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
          first time a family opens the page and walks them through
          building their theme one step at a time — background (favorite
          sport — one pick, never asked twice), the three colors,
-         favorite animal, the child's first name (and the world's
-         name), coach, the Player Design Studio, the Coach Design
-         Studio — seven steps in all,
+         favorite animal, coach, the Player Design Studio, the
+         child's first name (and the world's name) — six steps in all,
          with a progress bar, like an intake form. After that first run,
          the same wizard is re-opened from the ☰ Menu ("Make It Yours —
          Setup Wizard", customized link only). The classic link never
@@ -2010,8 +2024,8 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
     <div class="game-hub" id="gameHub" aria-label="Your game stuff">
       <!-- NO STUDIO CARDS ON THE HOMEPAGE — in BOTH builds the hub row
            carries just Trophy Case and Bonus Round (the .no-player
-           grid). The Player Design Studio and the Coach Design Studio
-           live INSIDE the setup wizard as its steps 6 and 7 (customized
+           grid). The Player Design Studio
+           lives INSIDE the setup wizard as its step 5 (customized
            link only); the classic build has no studios and no wizard. -->
       <button class="hub-card" onclick="openTrophies()"><span class="hub-emoji">🏆</span><span><b>Trophy Case</b><span>See every trophy and piece of gear you have won.</span></span></button>
       <button class="hub-card" onclick="openBonus()"><span class="hub-emoji">🎁</span><span><b>Bonus Round</b><span id="bonusHubDesc">Free-throw tapping and tap-the-right-ball games!</span></span></button>
@@ -2297,7 +2311,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
 </div>
 
 <!-- PLAYER STUDIO — no modal anymore: the Player Design Studio lives
-     INSIDE the setup wizard as its step 6 (the studioPreview /
+     INSIDE the setup wizard as its step 5 (the studioPreview /
      studioName / studioOptions containers are rendered there by
      renderSetup, and renderStudio fills them exactly as before). -->
 <!-- MAKE IT YOURS — THEME STUDIO -->
@@ -4972,6 +4986,22 @@ var THEME_SPORTS=[
  {id:'hockey',name:'Hockey',emoji:'🏒'},
  {id:'running',name:'Running',emoji:'👟'}
 ];
+/* Scene names for the wizard's Background step — the full venue name
+   each sport's background template carries in the step's preview
+   caption and on its pick chip (the same role WORLD_SCENE_META plays
+   in Royce's wizard). HIS nine sports only — none of her games
+   (Cheer, Dance, Jump Rope) exists in his wizard. */
+var WORLD_SCENE_META={
+ basketball:{name:'Basketball Court'},
+ soccer:{name:'Soccer Field'},
+ baseball:{name:'Baseball Diamond'},
+ football:{name:'Football Field'},
+ gymnastics:{name:'Gymnastics Gym'},
+ tennis:{name:'Tennis Court'},
+ swimming:{name:'Swimming Pool'},
+ hockey:{name:'Hockey Rink'},
+ running:{name:'Running Track'}
+};
 /* ===== SPORT ENGINE — the back-end layer that holds every sport =====
    This table drives the LANGUAGE and the GAMES for whichever sport is
    ACTIVE (see "DEFAULT WORLD vs ACTIVE SPORT" below): the favorite
@@ -6296,7 +6326,7 @@ function renderThemeStudio(){
   h+='<div class="opt-group"><h4>🏅 2. What is your favorite sport?</h4>'+bgTemplateGridHTML('setThemePart')+'<p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">This is your <b>default</b> sport — the one your world is built around. Its field or court, with that sport\u2019s own tools in it (an ice rink with pucks and sticks, a football field with footballs, a gymnastics gym with a beam, rings, bars and gymnasts), becomes the background of your whole world. It sets your world\u2019s theme and the sport your games start with. Switching sport on the sport bar later changes only the games and their words — never your world\u2019s background. '+(SPORT_INFO[myTheme.sport]||SPORT_INFO.basketball).note+'</p></div>';
   h+='<div class="opt-group"><h4>🐾 3. What is your favorite animal?</h4><div class="opt-row">'+THEME_ANIMALS.map(function(a){ return '<button class="fav-chip'+(myTheme.animal===a.id?' on':'')+'" onclick="setThemePart(\'animal\',\''+a.id+'\')">'+a.emoji+' '+a.name+'</button>'; }).join('')+'</div><p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">Your '+themeAnimal().name+' '+themeAnimal().emoji+' is your team mascot — it cheers beside Coach Leo in your <b>'+themeWorldName()+'</b>.</p></div>';
   /* The coach recap lines ("Boy Coach • He/Him" and the dressed-in
-     summary) live ONLY in the setup wizard (Step 5) — the
+     summary) live ONLY in the setup wizard (Step 4) — the
      Theme Studio shows the coach's name and the dressing picks
      themselves, never those summary lines. */
   h+='<div class="opt-group" id="themeCoachSection"><h4>👦 4. Customize your coach</h4>'
@@ -6331,12 +6361,11 @@ function closeThemeStudio(){ document.getElementById('themeModal').classList.rem
    home, named by its actual sport, so this one pick is also the
    favorite / default sport — there is deliberately no separate
    favorite-sport step and no Theme step in the wizard) → Step 2 pick
-   your three colors → Step 3 favorite animal → Step 4 enter the
-   child's first name (and name the world) → Step 5 customize your
+   your three colors → Step 3 favorite animal → Step 4 customize your
    coach (name, face, outfit — the coach is always a boy coach in this
    boys' world, and the sport and mascot outfits follow the favorite
-   sport & animal picks) → Step 6 My Player Studio → Step 7 My Coach
-   Studio. Finishing the wizard
+   sport & animal picks) → Step 5 My Player Studio → Step 6 enter the
+   child's first name (and name the world). Finishing the wizard
    hands straight over to the existing Pick Your Grade card, and picking
    a grade drops the child into their world (the existing grade flow).
    The plain link never sees any of this. Finishing is remembered on the
@@ -6555,68 +6584,68 @@ function gradeIsSaved(){ for(var i=0;i<GRADES.length;i++){ if(GRADES[i].id===cur
 function renderSetup(){
   var body=document.getElementById('setupBody'); if(!body) return;
   var dots=document.getElementById('setupDots');
-  if(dots) dots.innerHTML=[0,1,2,3,4,5,6].map(function(i){ return '<div class="dot'+(i===setupStep?' on':'')+'"></div>'; }).join('');
-  var pct=Math.round(((setupStep+1)/7)*100);
+  if(dots) dots.innerHTML=[0,1,2,3,4,5].map(function(i){ return '<div class="dot'+(i===setupStep?' on':'')+'"></div>'; }).join('');
+  var pct=Math.round(((setupStep+1)/6)*100);
   var pFill=document.getElementById('setupProgressFill'); if(pFill) pFill.style.width=pct+'%';
-  var pLab=document.getElementById('setupProgressLabel'); if(pLab) pLab.textContent='Step '+(setupStep+1)+' of 7';
+  var pLab=document.getElementById('setupProgressLabel'); if(pLab) pLab.textContent='Step '+(setupStep+1)+' of 6';
   var pPct=document.getElementById('setupProgressPct'); if(pPct) pPct.textContent=pct+'%';
   var pBar=document.getElementById('setupProgress'); if(pBar) pBar.setAttribute('aria-valuenow', String(setupStep+1));
   var back=document.getElementById('setupBack'), next=document.getElementById('setupNext');
   if(back) back.style.visibility= setupStep===0?'hidden':'visible';
-  if(next) next.textContent= setupStep===6? (gradeIsSaved()? '🎉 Step Into My World →' : '🎒 Pick My Grade →') : 'Next Step →';
+  if(next) next.textContent= setupStep===5? (gradeIsSaved()? '🎉 Step Into My World →' : '🎒 Pick My Grade →') : 'Next Step →';
   var h='';
   if(setupStep===1){
-    h+='<h3>🎨 Step 2 of 7 — Pick your THREE colors!</h3><div class="opt-group">'+trioPickerHTML('setupPickColor',true)+'</div>';
+    h+='<h3>🎨 Step 2 of 6 — Pick your THREE colors!</h3><div class="opt-group">'+trioPickerHTML('setupPickColor',true)+'</div>';
   } else if(setupStep===0){
-    h+='<h3>🖼️ Step 1 of 7 — Pick your background!</h3><p class="setup-lead">Your favorite sport is your DEFAULT sport — together with your color and your animal, it builds your world\u2019s theme and background, and it is the sport your games start with! That sport\u2019s own field or court becomes the background of your WHOLE world, with that sport\u2019s tools in it: a soccer field with goals and balls, an ice rink with pucks and sticks, a football field with footballs resting on it, a tennis court with its net, a swimming pool with lanes — and a gymnastics gym filled with a balance beam, still rings, a pommel horse, parallel bars, a vault and gymnasts mid-move! Later, the sport bar can switch the games and their words for today — but your world\u2019s background never changes. It stays the world you build here!</p><div class="opt-group">'+bgTemplateGridHTML('setupPick')+'<p style="font-weight:800;color:var(--muted);margin:8px 0 0;font-size:15px">'+(SPORT_INFO[myTheme.sport]||SPORT_INFO.basketball).note+'</p></div>';
+    /* STEP 1 — BACKGROUND, presented exactly like Royce's step 1:
+       the same kicker + question, the same live scene preview with
+       its caption, and the same big-chip pick row under it. The ONE
+       difference is the choices: only Karter's nine sports are
+       offered (his THEME_SPORTS) — none of Royce's games (no Cheer,
+       no Dance, no Jump Rope) exists in his wizard. A chip tap is
+       his sport pick (setupPick), so the preview scene, its caption
+       and the highlighted chip all update on the tap, like hers,
+       and the pick stays live under the keep-original lock, like
+       hers — it is the way out of the lock. */
+    var bmeta=WORLD_SCENE_META[myTheme.sport]||WORLD_SCENE_META.basketball;
+    h+='<div class="setup-kicker">STEP 1 OF 6 — YOUR BACKGROUND</div><div class="setup-q">Your background is built! 🖼️</div>';
+    h+='<div class="scene-preview" style="margin:0 0 12px">'+worldBackdropSVG(myTheme.sport,themeColor())+'<div class="scene-preview-cap">🖼️ Your background: '+bmeta.name+'</div></div>';
+    h+='<div class="opt-row">'+THEME_SPORTS.map(function(x){ var m=WORLD_SCENE_META[x.id]||WORLD_SCENE_META.basketball; return '<button class="big-chip'+(myTheme.sport===x.id?' on':'')+'" onclick="setupPick(\'sport\',\''+x.id+'\')"><span class="bce">'+x.emoji+'</span>'+m.name+'</button>'; }).join('')+'</div>';
   } else if(setupStep===2){
-    h+='<h3>🐾 Step 3 of 7 — Pick your favorite animal!</h3><p class="setup-lead">Your animal becomes your team mascot, cheering right beside Coach Leo.</p><div class="opt-group"><div class="opt-row">'+THEME_ANIMALS.map(function(a){ return '<button class="fav-chip'+(myTheme.animal===a.id?' on':'')+'" onclick="setupPick(\'animal\',\''+a.id+'\')">'+a.emoji+' '+a.name+'</button>'; }).join('')+'</div></div>';
-  } else if(setupStep===4){
+    h+='<h3>🐾 Step 3 of 6 — Pick your favorite animal!</h3><p class="setup-lead">Your animal becomes your team mascot, cheering right beside Coach Leo.</p><div class="opt-group"><div class="opt-row">'+THEME_ANIMALS.map(function(a){ return '<button class="fav-chip'+(myTheme.animal===a.id?' on':'')+'" onclick="setupPick(\'animal\',\''+a.id+'\')">'+a.emoji+' '+a.name+'</button>'; }).join('')+'</div></div>';
+  } else if(setupStep===3){
     var cAv=coachAnimalObj(), cOf=coachOutfit(), cId=coachIdentity();
-    h+='<h3>👦 Step 5 of 7 — Customize your coach!</h3><p class="setup-lead">This coach is YOUR coach — give him a name, build his face your way, and dress him your way. He is a young man!</p>'
+    h+='<h3>👦 Step 4 of 6 — Customize your coach!</h3><p class="setup-lead">This coach is YOUR coach — give him a name, build his face your way, and dress him your way. He is a young man!</p>'
       +'<div class="coach-preview-card">'+coachAvatarHTML(coachOutfitEmoji(cOf))+'<span><b>'+setupEsc(coachTitle())+'</b><small>'+cId.label+' • '+cId.pronouns+' • '+coachOutfitEmoji(cOf)+' '+cOf.name+'</small></span></div>'
       +'<label class="setup-field-label" for="setupCoachName">Your coach\u2019s name</label>'
       +'<input class="setup-input" id="setupCoachName" maxlength="24" autocomplete="off" placeholder="e.g. Leo" aria-label="Your coach\u2019s name" value="'+setupEsc(myTheme.coachName)+'" oninput="setupCoachNameInput(this)"/>'
       +coachLookHTML('setupPickCoach')+'<div class="opt-group"><h4>👕 How is your coach dressed?</h4><div class="opt-row">'+COACH_OUTFITS.map(function(o){ return '<button class="fav-chip'+(myTheme.coachOutfit===o.id?' on':'')+'" onclick="setupPickCoach(\'outfit\',\''+o.id+'\')">'+coachOutfitEmoji(o)+' '+o.name+'</button>'; }).join('')+'</div><p style="font-weight:800;color:var(--muted);margin:8px 0 0;font-size:15px">'+coachOutfitDesc(cOf)+'</p></div>';
-  } else if(setupStep===3){
+  } else if(setupStep===5){
     if(!setupLastSug) setupLastSug=suggestedWorldName();
-    h+='<h3>✏️ Step 4 of 7 — Enter your first name!</h3>'
+    h+='<h3>✏️ Step 6 of 6 — Enter your first name!</h3>'
       +'<input class="setup-input" id="setupChildName" style="margin:8px 0 12px" maxlength="24" autocomplete="off" placeholder="Enter your child\'s name" aria-label="Enter your child\'s name" value="'+setupEsc(myTheme.childName)+'" oninput="setupChildInput(this)"/>'
       +'<input class="setup-input world" id="setupWorldName" maxlength="40" autocomplete="off" placeholder="e.g. John\u2019s Court" aria-label="Your world\u2019s name" value="'+setupEsc(myTheme.worldName)+'" oninput="setupWorldInput(this)"/>';
-  } else if(setupStep===5){
-    /* STEP 6 — the Player Design Studio lives HERE, inside the wizard.
+  } else if(setupStep===4){
+    /* STEP 5 — the Player Design Studio lives HERE, inside the wizard.
        Its containers keep their studio ids (#studioPreview, #studioName,
        #studioOptions), so renderStudio() and renderAllPlayers() fill
        them exactly as they filled the old homepage modal — the studio's
        contents did not change, only where it lives. renderSetup calls
        renderStudio() right after this HTML lands. */
-    h+='<h3>🎨 Step 6 of 7 — My Player Studio!</h3><p class="setup-lead">Tap anything to change it — your player updates right away, saves on this device, and he is the one who plays in every game!</p>'
+    h+='<h3>🎨 Step 5 of 6 — My Player Studio!</h3><p class="setup-lead">Tap anything to change it — your player updates right away, saves on this device, and he is the one who plays in every game!</p>'
       +'<div class="studio-layout"><div class="studio-preview"><div id="studioPreview" style="height:248px"></div><div class="pname" id="studioName">#7 — Your Player ⭐</div></div><div id="studioOptions"></div></div>';
-  } else {
-    /* STEP 7 — the Coach Design Studio lives HERE, inside the wizard:
-       the same coach section the Theme Studio carries (preview card,
-       name field, face/hair build, dressed-in picks), wired to the
-       wizard's own coach handlers so the picks update this step.
-       Pressing the bottom button here finishes the wizard. */
-    var csOf=coachOutfit();
-    h+='<h3>👦 Step 7 of 7 — My Coach Studio!</h3>'
-      +'<div class="coach-preview-card">'+coachAvatarHTML(coachOutfitEmoji())+'<span><b>'+setupEsc(coachTitle())+'</b></span></div>'
-      +'<label class="setup-field-label" for="setupCoachName">Your coach\u2019s name</label>'
-      +'<input class="setup-input" id="setupCoachName" maxlength="24" autocomplete="off" placeholder="e.g. Leo" aria-label="Your coach\u2019s name" value="'+setupEsc(myTheme.coachName)+'" oninput="setupCoachNameInput(this)"/>'
-      +coachLookHTML('setupPickCoach')
-      +'<div class="opt-group"><h4>👕 How is your coach dressed?</h4><div class="opt-row">'+COACH_OUTFITS.map(function(o){ return '<button class="fav-chip'+(myTheme.coachOutfit===o.id?' on':'')+'" onclick="setupPickCoach(\'outfit\',\''+o.id+'\')">'+coachOutfitEmoji(o)+' '+o.name+'</button>'; }).join('')+'</div><p style="font-weight:800;color:var(--muted);margin:8px 0 0;font-size:15px">'+coachOutfitDesc(csOf)+' Pick the sport jersey or the mascot suit and your coach\u2019s look follows the favorite sport and animal you picked!</p></div>';
   }
   body.innerHTML=h;
-  if(setupStep===5&&typeof renderStudio==='function') renderStudio(); /* step 6 IS the Player Design Studio — fill its studio containers */
+  if(setupStep===4&&typeof renderStudio==='function') renderStudio(); /* step 5 IS the Player Design Studio — fill its studio containers */
   lockControlsIn(body); /* toggle ON = this step's picks are locked */
-  if(setupStep===5){ body.classList.remove('locked'); body.querySelectorAll('button,input').forEach(function(el){ el.disabled=false; }); } /* the Player Studio is not part of the keep-original lock — the player is not theme, background, colors or coach */
+  if(setupStep===4){ body.classList.remove('locked'); body.querySelectorAll('button,input').forEach(function(el){ el.disabled=false; }); } /* the Player Studio is not part of the keep-original lock — the player is not theme, background, colors or coach */
   updateSetupPreview();
 }
 function setupMove(dir){
-  if(dir>0&&setupStep===4) setupReadCoachInputs();
-  if(dir>0&&setupStep===3) setupReadNameInputs();
-  if(dir>0&&setupStep>=6){ finishSetup(); return; }
-  setupStep=Math.max(0,Math.min(6,setupStep+dir));
+  if(dir>0&&setupStep===3) setupReadCoachInputs();
+  if(dir>0&&setupStep===5) setupReadNameInputs();
+  if(dir>0&&setupStep>=5){ finishSetup(); return; }
+  setupStep=Math.max(0,Math.min(5,setupStep+dir));
   renderSetup(); try{ sfx('step'); }catch(e){}
 }
 function finishSetup(){
@@ -6647,9 +6676,9 @@ function finishSetup(){
      Soccer and Tennis). No customization at all: no Player Studio,
      no theme.
    • CUSTOM link — the same link with ?custom=1 on the end. ALL
-     customization lives here only: the Player Design Studio and
-     the Coach Design Studio live inside the setup wizard (steps 6
-     and 7), and the Theme Studio is part of the world.
+     customization lives here only: the Player Design Studio
+     lives inside the setup wizard (step 5), coach design lives in
+     the wizard's Step 4, and the Theme Studio is part of the world.
    Opening a custom link enables customization on that device (kept in
    on-device storage, like the grade and progress), so the child does
    not need the special link every visit. Opening a link with
@@ -6676,8 +6705,8 @@ function isCustomUnlocked(){ return !!customUnlocked; }
    music player at the bottom. The difference is ONLY what lives in
    that layout: customization is custom-link-only. The classic build
    has NO setup wizard and NO Player Studio at all — neither build
-   has a studio card on its home screen (the studios live inside the
-   wizard as steps 6 and 7), the hub row simply carries Trophy Case
+   has a studio card on its home screen (the studio lives inside the
+   wizard as step 5), the hub row simply carries Trophy Case
    and Bonus Round in both builds (the .no-player grid keeps the
    same balanced spacing), the player on the court in classic is
    always the plain default player (never a design saved while the
@@ -6694,8 +6723,8 @@ function applyVersionUI(){
   var unlocked=isCustomUnlocked();
   var setupItem=document.getElementById('menuSetupItem'); if(setupItem) setupItem.style.display= unlocked?'':'none';
   /* NO STUDIO CARDS ON THE HOMEPAGE in either build: the Player
-     Design Studio and the Coach Design Studio live inside the setup
-     wizard as steps 6 and 7, so the hub row always carries just
+     Design Studio lives inside the setup
+     wizard as step 5, so the hub row always carries just
      Trophy Case and Bonus Round in the two-card .no-player layout. */
   var hubRow=document.getElementById('gameHub');
   if(hubRow) hubRow.classList.add('no-player');
@@ -6723,11 +6752,11 @@ function openTrophies(){
 }
 
 /* ----- Player studio ----- */
-/* The Player Design Studio lives INSIDE the Setup Wizard as step 6 —
+/* The Player Design Studio lives INSIDE the Setup Wizard as step 5 —
    there is no studio card or modal on the homepage. Opening it means
    opening the wizard on that step (e.g. from the Theme Studio's
    "Open My Player Studio" button). */
-function openStudio(){ if(!isCustomUnlocked()){ toast('🔒 Designing your player lives in the Customized edition — ask a grown-up to unlock it!'); try{ sfx('rim'); }catch(e){} return; } openSetupWizard(); setupStep=5; renderSetup(); }
+function openStudio(){ if(!isCustomUnlocked()){ toast('🔒 Designing your player lives in the Customized edition — ask a grown-up to unlock it!'); try{ sfx('rim'); }catch(e){} return; } openSetupWizard(); setupStep=4; renderSetup(); }
 function closeStudio(){ saveDesign(); renderAllPlayers(); }
 function setDesign(key,val){ playerDesign[key]=val; saveDesign(); renderStudio(); renderAllPlayers(); }
 function toggleDesign(key){ playerDesign[key]=!playerDesign[key]; saveDesign(); renderStudio(); renderAllPlayers(); sfx('bounce'); }
