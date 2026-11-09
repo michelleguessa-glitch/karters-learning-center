@@ -1416,19 +1416,21 @@ body.playing #practiceView.fit-menu .gamecard{padding:5px 7px}
 @keyframes swimSway{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(5px) rotate(3deg)}}
 /* Swimming: the player is IN the water. His legs sit below a translucent
    water overlay with a rippling surface line, and while he waits he is
-   simply in the water kicking his feet — nothing floating beside him. The
-   swimmer token floats in his lane at water level, bobbing and kicking —
-   a right answer races it across the pool, a wrong one sinks it. */
+   simply in the water kicking his feet — nothing floating beside him. */
 .court-stage.sport-swimming .court-player{bottom:24%}
 .court-stage.sport-swimming .court-player:after{content:"";position:absolute;left:-8px;right:-8px;bottom:-5px;height:37%;z-index:3;background:linear-gradient(180deg,rgba(126,211,247,.5),rgba(23,132,196,.82));border-top:3px solid rgba(255,255,255,.9);border-radius:50% 50% 0 0/13px;animation:waterLine 1.7s ease-in-out infinite;pointer-events:none}
 @keyframes waterLine{0%,100%{transform:translateY(0)}50%{transform:translateY(2.5px)}}
-.court-stage.sport-swimming .shot-ball{left:152px;bottom:30%}
-/* The swimmer token RESTS at water level in his lane, where its spot
-   places it. The old swimKick loop bobbed and rocked it up out of its
-   spot on its own while he waited — floating motion with no logic —
-   so that animation is GONE (Michelle, Nov 8–9, 2026). The swimmer only
-   moves when he races on an answer (the WAAPI race in playSportShot:
-   a continuous glide across the pool and back, visible the whole way). */
+/* NO SWIMMER TOKEN (Michelle, Nov 8–9, 2026 — the last floater from the
+   no-mysterious-objects sweep): a small 🏊 swimmer emoji used to sit in
+   the water immediately to the player's right while he waited — a second,
+   separate swimmer floating beside the player himself, whose feet kick
+   under the water. That 🏊 element is DELETED from the Swimming stage
+   entirely: the player IS the swimmer, so the shared shot-ball token is
+   never rendered in this world at all — not while he waits, and it never
+   pops in on an answer either (no floating, no teleporting). He simply
+   stays in the water kicking his feet (swimSway above). The token still
+   exists for every other sport, untouched. */
+.court-stage.sport-swimming .shot-ball{display:none}
 .sport-scene svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .court-stage.sport-running.dribbling .court-player{animation:jogRun .34s ease-in-out infinite}
 @keyframes jogRun{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
