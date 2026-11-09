@@ -3685,6 +3685,11 @@ function replayHint(){ if(lastHintText) speakLeo(lastHintText,true); }
 function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(function(){t.style.display='none'},2200); }
 function normalize(v){ return String(v).trim().toLowerCase().replace(/\s+/g,''); }
 function checkAnswer(){
+  /* BASEBALL ONLY: this exact question was already answered right
+     and its home run is still playing out — the tap is inert, the
+     same question can never score twice, and the next question
+     follows on the usual timing (see bbAnsweredQ). */
+  if(bbAnsweredQ&&bbAnsweredQ===current&&sportInfo()===SPORT_INFO.baseball){ return; }
   if(typeof toggleWorkPanel==='function') toggleWorkPanel(false);
   var guess= current.display==='choice'? chosen : document.getElementById('answerInput').value;
   var fb=document.getElementById('feedback');
@@ -4318,6 +4323,15 @@ function updateScoreboard(){
 var COURT_IMG={iw:2640,ih:864,fx:0.753,fy:0.273,posX:0.5,posY:0.5};
 var shotSeq=0;
 var shotAnimActive=false, dribblePending=false;
+/* BASEBALL ONLY: the question object a correct answer has already
+   scored on. While his home run is still flying, that question is
+   DONE — a repeat tap on Check It must not score it a second time
+   (the next question is already on its way on Leo's usual timing,
+   and the home-run flight carries a backstop that advances it if
+   that timing is ever lost). Identity-compared only: every new
+   prompt is a fresh object, so the lock releases itself the moment
+   the next question lands. No other sport reads this. */
+var bbAnsweredQ=null;
 function startDribble(){ if(shotAnimActive){ dribblePending=true; return; } var st=document.getElementById('courtStage'); if(st) st.classList.add('dribbling'); }
 function stopDribble(){ shotAnimActive=false; dribblePending=false; var st=document.getElementById('courtStage'); if(st) st.classList.remove('dribbling','shooting','celebrating'); var b=document.getElementById('shotBall'); if(b&&b.getAnimations){ try{ b.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){} } }
 /* Layered celebration: a burst of sparkles at the hoop on a made shot. Each
@@ -4581,22 +4595,60 @@ function playSportShot(success){
     try{
       var bAnim;
       if(success){
-        var bDx=Math.round(bsr.width*0.52), bUp=-Math.round(bsr.height*0.80);
+        /* The flight is measured off the PAINTED WALL itself, the
+           way the basketball shot is measured off the hoop: the
+           built scene is an 800x560 frame slice-fitted to the
+           stage, and the outfield wall band stands at scene
+           y196-262 (its yellow top line at y196). Wherever that
+           band lands on THIS stage, the ball's peak carries its
+           bottom edge clear above the wall's top line, it comes
+           down on the warning track BEHIND the wall, bounces
+           there, and hops back OVER the wall to his glove — the
+           wall and the flight agree at every stage size. (The
+           old fixed 80%-of-stage rise agreed with the wall at no
+           size: on a phone it threw the ball clean off the top
+           of the stage, and on a wide desktop stage — where the
+           slice crop puts the wall's top line at the stage's own
+           top edge — the ball crossed low in front of the wall's
+           face and fell back, so a called home run never read as
+           one.) The peak is floored at 14px: on a wide stage the
+           ball rides up over the wall's top edge with most of it
+           still in frame at the very top of the arc, but it never
+           leaves the stage and vanishes. */
+        var bbr=ball.getBoundingClientRect();
+        var bStartBot=bbr.bottom-bsr.top, bStartCX=bbr.left-bsr.left+bbr.width/2;
+        var bSc=Math.max(bsr.width/800,bsr.height/560), bOy=(bsr.height-560*bSc)/2;
+        var bWallTop=196*bSc+bOy, bWallBot=262*bSc+bOy;
+        var bPeakBot=Math.max(14,Math.min(Math.round(bWallTop)-12,bStartBot-50));
+        var bPeakTy=bPeakBot-bStartBot;
+        var bLandBot=Math.round(bWallBot)+10, bLandTy=bLandBot-bStartBot;
+        var bMidTy=Math.round(bPeakTy+(bLandTy-bPeakTy)*0.55);
+        var bDx=Math.round(bsr.width*0.52);
         var bDur=2300;
         bAnim=ball.animate([
           {transform:'translate(0,0) rotate(0deg) scale(1)',opacity:1,easing:'ease-out'},
-          {transform:'translate('+Math.round(bDx*0.3)+'px,'+Math.round(bUp*0.62)+'px) rotate(80deg) scale(.9)',offset:.26,easing:'ease-out'},
-          {transform:'translate('+bDx+'px,'+bUp+'px) rotate(150deg) scale(.6)',opacity:1,offset:.48,easing:'ease-in'},
-          {transform:'translate('+Math.round(bDx*1.08)+'px,'+Math.round(bUp*0.52)+'px) rotate(185deg) scale(.62)',offset:.6,easing:'ease-out'},
-          {transform:'translate('+Math.round(bDx*1.04)+'px,'+Math.round(bUp*0.36)+'px) rotate(205deg) scale(.64)',offset:.66,easing:'ease-in'},
-          {transform:'translate('+bDx+'px,'+Math.round(bUp*0.52)+'px) rotate(225deg) scale(.66)',offset:.72,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(bDx*0.45)+'px,'+Math.round(bUp*0.28)+'px) rotate(290deg) scale(.85)',offset:.86,easing:'ease-out'},
+          {transform:'translate('+Math.round(bDx*0.3)+'px,'+Math.round(bPeakTy*0.62)+'px) rotate(80deg) scale(.9)',offset:.26,easing:'ease-out'},
+          {transform:'translate('+bDx+'px,'+bPeakTy+'px) rotate(150deg) scale(.6)',opacity:1,offset:.48,easing:'ease-in'},
+          {transform:'translate('+Math.round(bDx*1.08)+'px,'+bMidTy+'px) rotate(185deg) scale(.62)',offset:.6,easing:'ease-out'},
+          {transform:'translate('+Math.round(bDx*1.04)+'px,'+bLandTy+'px) rotate(205deg) scale(.64)',offset:.66,easing:'ease-in'},
+          {transform:'translate('+bDx+'px,'+(bLandTy-16)+'px) rotate(225deg) scale(.66)',offset:.72,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(bDx*0.45)+'px,'+bPeakTy+'px) rotate(290deg) scale(.85)',offset:.86,easing:'ease-out'},
           {transform:'translate(0,0) rotate(360deg) scale(1)',opacity:1,offset:1}
         ],{duration:bDur});
         if(bAnim) bAnim.onfinish=function(){ settleShot(mySeq,true); };
         setTimeout(function(){ settleShot(mySeq,true); },bDur+90);
-        setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(Math.round(bsr.width*0.68),Math.round(bsr.height*0.13),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); var st6=document.getElementById('courtStage'); if(st6) st6.classList.add('celebrating'); sfx('sparkle'); } },Math.round(bDur*0.6));
+        setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(Math.round(bStartCX+bDx*1.05),Math.max(14,bLandBot-24),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); var st6=document.getElementById('courtStage'); if(st6) st6.classList.add('celebrating'); sfx('sparkle'); } },Math.round(bDur*0.6));
         setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(bDur*0.66));
+        /* This question is scored and DONE (see bbAnsweredQ): lock
+           it against a repeat Check tap, and carry a backstop on
+           the flight itself — when the ball settles, if the
+           answered question is somehow still the one on screen
+           (the usual advance timing ever being lost), the flight
+           hands him the next question itself, exactly the way
+           Leo's scheduled advance would have. A win or a finished
+           topic is left exactly as checkAnswer left it. */
+        var answeredQ=current; bbAnsweredQ=answeredQ;
+        setTimeout(function(){ if(mySeq===shotSeq&&current===answeredQ&&!gameSession.over&&document.body.classList.contains('playing')&&topicProg(currentTopic.id).done<240) nextPrompt(false); },bDur+250);
       } else {
         var wDur2=1250;
         bAnim=ball.animate([
@@ -5979,27 +6031,47 @@ function gameSceneHTML(id,accent){
     +'<line x1="754" y1="274" x2="766" y2="274" stroke="rgba(43,22,8,.4)" stroke-width="3"/><line x1="754" y1="318" x2="766" y2="318" stroke="rgba(43,22,8,.4)" stroke-width="3"/><line x1="754" y1="362" x2="766" y2="362" stroke="rgba(43,22,8,.4)" stroke-width="3"/>'
     +'<polygon points="0,546 800,546 800,560 0,560" fill="#9CC8DE"/>'
     +'<polygon points="6,118 88,118 74,84 20,84" fill="'+accent+'"/><polygon points="20,84 74,84 88,118 6,118" fill="rgba(255,255,255,.28)"/><polygon points="88,118 97,110 83,78 74,84" fill="rgba(43,22,8,.22)"/>');
-  /* Gymnastics GAME venue — ONLY what the game was told to have:
-     the gym wall and windows, the still rings hanging, and the mat
-     floor. No medals, no gymnast figures, no stacked mats, no chalk
-     bowl, no extra graphics of any kind painted on the venue. The
-     balance beam itself is NOT painted here either: it is the
-     stage's own .gym-beam element, placed so the player's feet land
-     exactly on its top edge (see the beam CSS). */
-  if(id==='gymnastics') return wrap(defs
-    +'<rect width="800" height="396" fill="#F7E8D8"/>'
-    +[0,1,2].map(function(i){ return '<rect x="'+(70+i*240)+'" y="28" width="180" height="76" rx="10" fill="'+T3S+'" stroke="#fff" stroke-width="6"/>'; }).join('')
-    +'<line x1="252" y1="0" x2="252" y2="118" stroke="#8A97A5" stroke-width="5"/><line x1="548" y1="0" x2="548" y2="118" stroke="#8A97A5" stroke-width="5"/>'
-    +'<circle cx="252" cy="132" r="14" fill="none" stroke="#374151" stroke-width="5"/><circle cx="548" cy="132" r="14" fill="none" stroke="#374151" stroke-width="5"/>'
-    /* The parallel bars — the bars her gymnastics spec calls for,
-       standing on the mat at the back of the gym (drawn in the
-       scene layer, behind the beam and the player): two rails on
-       four uprights, nothing else added. */
-    +'<line x1="606" y1="356" x2="606" y2="396" stroke="#374151" stroke-width="6"/><line x1="714" y1="356" x2="714" y2="396" stroke="#374151" stroke-width="6"/><line x1="622" y1="368" x2="622" y2="396" stroke="#374151" stroke-width="6"/><line x1="730" y1="368" x2="730" y2="396" stroke="#374151" stroke-width="6"/>'
-    +'<line x1="598" y1="356" x2="722" y2="356" stroke="#8A5A2B" stroke-width="8" stroke-linecap="round"/><line x1="614" y1="368" x2="738" y2="368" stroke="#8A5A2B" stroke-width="8" stroke-linecap="round"/>'
-    +'<rect y="396" width="800" height="164" fill="#7FB2D9"/>'
-    +[1,2,3,4,5,6,7].map(function(i){ return '<line x1="'+(i*100)+'" y1="396" x2="'+(i*100)+'" y2="560" stroke="rgba(43,22,8,.14)" stroke-width="3"/>'; }).join('')
-    +'<line x1="0" y1="396" x2="800" y2="396" stroke="#fff" stroke-width="4"/>');
+  /* Gymnastics GAME venue — the BUILT gym, given the same built-
+     venue treatment as his other games and as Royce's gym: a
+     paneled back wall with a gold rail, the still rings hanging
+     from the rail, a vault block standing at the back of the
+     floor, and the mat floor with a landing mat around the beam,
+     all in his gym's colors. Every piece is composed inside the
+     middle band of the scene — the band the stage's slice fit
+     actually shows at playing sizes: the old scene kept its
+     windows, rings and floor at the frame's edges, where the
+     crop cuts them away, so the stage showed bare beige wall
+     and nothing else. The balance beam itself is NOT painted
+     here either: it is the stage's own .gym-beam element, placed
+     so the player's feet land exactly on its top edge (see the
+     beam CSS), and the player, his star and the beam walk are
+     untouched. No medals, no gymnast figures, no extra graphics
+     of any kind painted on the venue. */
+  if(id==='gymnastics') return wrap(defs+blush()
+    +slabShadow(400,548,390)
+    /* the paneled back wall, with its pads */
+    +'<rect y="140" width="800" height="162" fill="#FAEDDA"/>'
+    +'<rect y="140" width="800" height="10" fill="rgba(255,255,255,.35)"/>'
+    +[0,1,2,3].map(function(i){ return '<rect x="'+(36+i*192)+'" y="202" width="168" height="84" rx="8" fill="'+SS+'" stroke="rgba(43,22,8,.20)" stroke-width="3"/>'; }).join('')
+    /* the gold rail the rings hang from */
+    +'<rect y="188" width="800" height="12" fill="'+B2+'"/>'
+    /* the still rings */
+    +'<line x1="252" y1="200" x2="252" y2="240" stroke="#8A97A5" stroke-width="5"/><line x1="548" y1="200" x2="548" y2="240" stroke="#8A97A5" stroke-width="5"/>'
+    +'<circle cx="252" cy="256" r="15" fill="none" stroke="#374151" stroke-width="6"/><circle cx="548" cy="256" r="15" fill="none" stroke="#374151" stroke-width="6"/>'
+    /* the wall's base trim, in his red */
+    +'<rect y="296" width="800" height="8" fill="'+accent+'"/>'
+    /* the mat floor */
+    +'<rect y="304" width="800" height="256" fill="#7FB2D9"/>'
+    +'<line x1="0" y1="452" x2="800" y2="452" stroke="rgba(255,255,255,.35)" stroke-width="4"/>'
+    +'<g stroke="rgba(43,22,8,.10)" stroke-width="3"><line x1="150" y1="452" x2="110" y2="560"/><line x1="400" y1="452" x2="400" y2="560"/><line x1="650" y1="452" x2="690" y2="560"/></g>'
+    /* the vault block, standing at the back of the floor */
+    +'<polygon points="622,254 726,254 742,266 638,266" fill="#FFD94D"/>'
+    +'<rect x="622" y="254" width="104" height="60" fill="'+accent+'"/>'
+    +'<rect x="622" y="254" width="104" height="12" fill="rgba(255,255,255,.28)"/>'
+    +'<polygon points="726,254 742,266 742,326 726,314" fill="rgba(43,22,8,.22)"/>'
+    /* the landing mat around the beam */
+    +'<rect x="52" y="312" width="696" height="92" rx="14" fill="'+SS+'" stroke="'+B2+'" stroke-width="5"/>'
+    +'<rect x="66" y="322" width="668" height="72" rx="10" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="3"/>');
   return wrap(defs
     +'<rect width="800" height="300" fill="#BEE3F5"/><rect y="300" width="800" height="260" fill="'+T3S+'"/>'
     +'<line x1="0" y1="300" x2="800" y2="300" stroke="#fff" stroke-width="5"/>');
