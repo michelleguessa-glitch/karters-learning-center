@@ -716,14 +716,9 @@ body.grade-gate-open .wrap{z-index:95}
 .trio-slot-head b{font-family:'Fredoka';font-size:19px;line-height:1.1}
 .trio-slot-head .trio-job{font-size:13px;font-weight:800;color:var(--muted);line-height:1.35;flex:1 1 200px}
 .trio-picked{font-weight:900;font-size:14px;margin:8px 0 0}
-.trio-preview{border:3px solid var(--ink);border-radius:18px;overflow:hidden;margin:4px 0 12px;background:#fff}
-.trio-preview .tpv-hero{padding:12px 14px;color:#fff;font-family:'Fredoka';font-weight:700;font-size:19px;line-height:1.15;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.trio-preview .tpv-badge{font-size:13px;border-radius:999px;padding:5px 11px;color:var(--ink);border:2.5px solid var(--ink);white-space:nowrap}
-.trio-preview .tpv-card{margin:12px;border-radius:14px;padding:11px 13px;display:flex;gap:11px;align-items:center;background:#fff}
-.trio-preview .tpv-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:23px;flex:0 0 44px;border:2px solid var(--ink)}
-.trio-preview .tpv-card b{font-family:'Fredoka';font-size:17px;display:block;line-height:1.15}
-.trio-preview .tpv-card span{font-size:13px;font-weight:800;color:var(--muted);line-height:1.35;display:block}
-.trio-preview .tpv-btn{margin:0 12px 13px;border-radius:999px;color:#fff;font-family:'Fredoka';font-weight:700;font-size:16px;text-align:center;padding:10px}
+/* The colors picker's "Your Hero / Your Game Card" preview card
+   (.trio-preview) was removed entirely (Michelle, Nov 8, 2026) —
+   its styles went with it. */
 .setup-review .sr-dot{width:30px;height:30px;border-radius:50%;border:3px solid var(--ink);flex:0 0 30px}
 /* White picked as Primary: the hero and Play buttons go near-white, so
    their words switch to ink to stay readable. */
@@ -737,7 +732,7 @@ body[data-world-color="white"] .lion-coach-badge{color:var(--ink)}
    sport's scene — one single pick, never asked again) → favorite
    animal → coach → name your world → review, then straight to
    Pick Your Grade. */
-.setup-shell{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start;margin-top:16px}
+.setup-shell{display:grid;grid-template-columns:1fr;gap:16px;align-items:start;margin-top:16px}
 .setup-card{background:#fff;border:3px solid var(--line);border-radius:28px;padding:22px;box-shadow:0 8px 0 var(--line)}
 .setup-card h3{font-size:28px;margin:2px 0 6px}
 .setup-lead{font-weight:800;color:var(--muted);line-height:1.5;margin:0 0 6px}
@@ -772,11 +767,9 @@ body[data-world-color="white"] .lion-coach-badge{color:var(--ink)}
 .setup-input.world{font-size:21px}
 .setup-field-label{display:block;font-family:'Fredoka';font-size:17px;font-weight:700;margin:14px 0 7px}
 .setup-field-label:first-of-type{margin-top:4px}
-.setup-preview{background:var(--theme-soft,#FFF3C4);border:3px solid var(--ink);border-radius:20px;padding:14px 12px;text-align:center}
-.setup-preview .sp-court{border:3px solid var(--ink);border-radius:16px;padding:16px 8px 12px;color:#fff;margin-bottom:10px}
-.setup-preview .sp-emoji{font-size:46px;line-height:1.15}
-.setup-preview .sp-name{font-family:'Fredoka';font-weight:700;font-size:22px;line-height:1.15;margin-top:5px;word-break:break-word}
-.setup-preview .sp-sub{font-size:13px;font-weight:800;opacity:.95;line-height:1.4;margin-top:3px}
+/* The wizard's world-preview card (.setup-preview with its sp-court /
+   sp-name / sp-sub / sp-coach lines) was removed entirely (Michelle,
+   Nov 8, 2026) — its styles went with it. */
 .setup-review{display:grid;gap:9px;margin-top:6px}
 .setup-review .sr-row{display:flex;align-items:center;gap:11px;background:#FFF7ED;border:2px solid var(--line);border-radius:14px;padding:11px 13px;font-weight:900;font-size:16px;text-align:left}
 .setup-review .sr-row .sr-emoji{font-size:26px;flex:0 0 auto}
@@ -1407,7 +1400,7 @@ body.playing #practiceView.fit-menu .gamecard{padding:5px 7px}
 .hero-pattern .hp-lines{position:absolute;left:0;right:0;bottom:0;height:52px;border-top:4px solid rgba(255,255,255,.5);background:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 3px,transparent 3px 74px)}
 /* Wizard / Theme Studio previews: the mini world shows the real sport
    scene (field, tools, figures), not a flat color block. */
-.setup-preview .sp-court,.theme-preview .tp-court{position:relative;overflow:hidden}
+.theme-preview .tp-court{position:relative;overflow:hidden}
 .preview-scene{position:absolute;inset:0}
 .preview-scene svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .preview-front{position:relative;z-index:2}
@@ -1422,19 +1415,20 @@ body.playing #practiceView.fit-menu .gamecard{padding:5px 7px}
 .court-stage.sport-swimming:not(.dribbling):not(.shooting):not(.celebrating) .court-player{animation:swimSway 2.6s ease-in-out infinite}
 @keyframes swimSway{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(5px) rotate(3deg)}}
 /* Swimming: the player is IN the water. His legs sit below a translucent
-   water overlay with a rippling surface line, and while he waits (the
-   dribbling state) his feet kick up a little splash at the surface. The
+   water overlay with a rippling surface line, and while he waits he is
+   simply in the water kicking his feet — nothing floating beside him. The
    swimmer token floats in his lane at water level, bobbing and kicking —
    a right answer races it across the pool, a wrong one sinks it. */
 .court-stage.sport-swimming .court-player{bottom:24%}
 .court-stage.sport-swimming .court-player:after{content:"";position:absolute;left:-8px;right:-8px;bottom:-5px;height:37%;z-index:3;background:linear-gradient(180deg,rgba(126,211,247,.5),rgba(23,132,196,.82));border-top:3px solid rgba(255,255,255,.9);border-radius:50% 50% 0 0/13px;animation:waterLine 1.7s ease-in-out infinite;pointer-events:none}
 @keyframes waterLine{0%,100%{transform:translateY(0)}50%{transform:translateY(2.5px)}}
-.court-stage.sport-swimming .court-player:before{content:"💦";position:absolute;right:-16px;bottom:24%;z-index:4;font-size:21px;line-height:1;opacity:0;pointer-events:none}
-.court-stage.sport-swimming.dribbling .court-player:before{opacity:1;animation:kickSplash .48s ease-in-out infinite}
-@keyframes kickSplash{0%,100%{transform:translate(0,0) rotate(-8deg) scale(.85)}45%{transform:translate(3px,-9px) rotate(10deg) scale(1.12)}}
 .court-stage.sport-swimming .shot-ball{left:152px;bottom:30%}
-.court-stage.sport-swimming.dribbling .shot-ball{animation:swimKick .9s ease-in-out infinite}
-@keyframes swimKick{0%,100%{transform:translateY(0) rotate(-5deg)}30%{transform:translateY(-5px) rotate(3deg)}55%{transform:translateY(1px) rotate(-3deg)}80%{transform:translateY(-4px) rotate(4deg)}}
+/* The swimmer token RESTS at water level in his lane, where its spot
+   places it. The old swimKick loop bobbed and rocked it up out of its
+   spot on its own while he waited — floating motion with no logic —
+   so that animation is GONE (Michelle, Nov 8–9, 2026). The swimmer only
+   moves when he races on an answer (the WAAPI race in playSportShot:
+   a continuous glide across the pool and back, visible the whole way). */
 .sport-scene svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .court-stage.sport-running.dribbling .court-player{animation:jogRun .34s ease-in-out infinite}
 @keyframes jogRun{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
@@ -1510,8 +1504,14 @@ body.world-tennis .p-racket,.court-stage.sport-tennis .court-player .p-racket{di
 .court-stage.sport-gymnastics.dribbling .court-player{animation:beamBalance .9s ease-in-out infinite}
 .court-stage.sport-gymnastics:not(.dribbling):not(.shooting):not(.celebrating) .court-player{animation:beamBalance 1.9s ease-in-out infinite}
 @keyframes beamBalance{0%,100%{transform:rotate(-2.2deg) translateY(0)}50%{transform:rotate(2.2deg) translateY(2px)}}
-.court-stage.sport-gymnastics.dribbling .shot-ball{animation:beamStarBob .9s ease-in-out infinite}
-@keyframes beamStarBob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-6px) rotate(6deg)}}
+/* NO FLOATING STAR (Michelle, Nov 8–9, 2026 — no mysterious objects
+   floating on any game screen, in any game): the gymnastics star token
+   RESTS flat on top of the beam, right where its spot places it. The old
+   beamStarBob loop lifted it up off the beam and spun it in mid-air
+   beside the gymnast while he waited — a floating object with no real
+   motion or logic — so that animation is GONE. The star only moves when
+   he walks the beam on an answer (the WAAPI beam walk in playSportShot,
+   one continuous trip across and back). */
 /* ===== GYMNASTICS BEAM — the player stands ON it, feet touching =====
    The beam is a real stage element (not part of the painted scene),
    so its top edge is a known line at every stage size: the beam div
@@ -1621,10 +1621,14 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
 .court-stage.sport-football.shooting .court-player .p-arm-r{animation:none}
 .court-stage.sport-football.shooting .court-player .p-leg-r{animation:footballStride .3s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0%}
 @keyframes footballStride{0%,100%{transform:rotate(17deg)}50%{transform:rotate(-17deg)}}
-/* Running waiting: the shoe token takes quick little steps in place
-   along with his jog — small hops, no dribble squash. */
-.court-stage.sport-running.dribbling .shot-ball{animation:shoeSteps .36s ease-in-out infinite}
-@keyframes shoeSteps{0%,100%{transform:translateY(0) rotate(-7deg)}50%{transform:translateY(-7px) rotate(7deg)}}
+/* Running waiting: the shoe token RESTS on the track at his right shoe,
+   where its spot places it. The old shoeSteps loop hopped the lone shoe
+   up into the air and tilted it back and forth beside his foot — a
+   disembodied shoe floating and hopping with nobody wearing it — so
+   that animation is GONE (Michelle, Nov 8–9, 2026: no floating objects,
+   real motion and real logic only). The shoe only moves when he sprints
+   on an answer (the WAAPI sprint in playSportShot, striding along the
+   track and back, feet on the ground the whole way). */
 /* Soccer shooting: a KICK, not a jump shot — his body rocks into it
    and his right leg swings through the ball; his arm does not
    shoot a basketball. */
@@ -1830,26 +1834,14 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
       <div style="display:flex;align-items:center;gap:12px"><img class="wiz-leo" src="assets/coach-leo-cutout.png" data-coach-img="face" alt="Coach Leo, your young coach"/><div><h2 style="margin:0">✨ Let's Build Your World!</h2><p>Coach Leo walks you through it, one step at a time.</p></div></div>
     </div>
     <div class="setup-shell">
-      <div class="setup-preview" id="setupPreview" aria-label="Your world so far">
-        <div class="sp-court" id="spCourt">
-          <div class="preview-scene" id="spScene" aria-hidden="true"></div>
-          <div class="preview-front">
-          <div class="sp-emoji"><span class="theme-animal-emoji">🦁</span> <span class="theme-sport-emoji">🏀</span></div>
-          <div class="sp-name" id="spName">Lion Basketball World</div>
-          <div class="sp-sub" id="spSub">Red • Basketball • Lion</div>
-          </div>
-        </div>
-        <div class="coach-line" id="spCoach">🏀 Coach Leo</div>
-        <div style="font-weight:900;font-size:14.5px;line-height:1.45;margin-top:10px">This is YOUR world taking shape — it updates with every pick! ⭐</div>
-      </div>
       <div class="setup-card">
         <div class="setup-default-toggle" id="setupDefaultToggle">
           <span class="sdt-label" id="setupDefaultLabel">Keep the original design</span>
           <span class="sdt-right"><span class="sdt-state" id="setupKeepState">On</span><button type="button" class="sdt-switch on" id="setupKeepBtn" role="switch" aria-checked="true" aria-labelledby="setupDefaultLabel" onclick="setupToggleKeepOriginal()"><span class="sdt-knob" aria-hidden="true"></span></button></span>
         </div>
-        <div class="setup-progress" id="setupProgress" role="progressbar" aria-label="Setup progress" aria-valuemin="1" aria-valuemax="6" aria-valuenow="1">
-          <div class="setup-progress-top"><span id="setupProgressLabel">Step 1 of 6</span><span class="sp-pct" id="setupProgressPct">17%</span></div>
-          <div class="setup-progress-track"><div class="setup-progress-fill" id="setupProgressFill" style="width:17%"></div></div>
+        <div class="setup-progress" id="setupProgress" role="progressbar" aria-label="Setup progress" aria-valuemin="1" aria-valuemax="7" aria-valuenow="1">
+          <div class="setup-progress-top"><span id="setupProgressLabel">Step 1 of 7</span><span class="sp-pct" id="setupProgressPct">14%</span></div>
+          <div class="setup-progress-track"><div class="setup-progress-fill" id="setupProgressFill" style="width:14%"></div></div>
         </div>
         <div class="stepdots" id="setupDots" style="margin:0 0 8px"></div>
         <div class="setup-body" id="setupBody"></div>
@@ -1888,7 +1880,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
          shows no locks and no upgrade panel.) -->
     <div class="sport-switcher" id="sportSwitcher" style="display:none">
       <button class="sport-switch-btn" id="sportSwitchBtn" onclick="openSportPicker()" aria-label="Pick your sport for today">
-        <span class="ss-main"><span id="sportSwitchEmoji">🏀</span> Pick Your Sport for Today!</span>
+        <span class="ss-main">Pick Your Sport</span>
         <span class="ss-today" id="sportToday">Today: Basketball 🏀 — tap to change</span>
       </button>
     </div>
@@ -1908,10 +1900,10 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
          Pick Your Sport bar, a little breathing space, then the
          Math Court / Spelling Court tabs that tell you which area
          you're in, then — underneath the courts — the row of cards
-         across (on the custom link: My Player Design Studio, Trophy
-         Case, Bonus Round; on the classic link the Player Studio is
-         not part of the build at all, so the same row carries just
-         Trophy Case and Bonus Round), then — BELOW those cards —
+         across (Trophy Case and Bonus Round in BOTH builds — there
+         are no studio cards on the homepage; the Player Design
+         Studio and the Coach Design Studio live inside the setup
+         wizard as steps 6 and 7, customized link only), then — BELOW those cards —
          the chosen section's title (e.g. "Math Tennis Court — Pick
          Your Game!"), and directly underneath that title the game
          cards grid for that category. Every block keeps real space
@@ -1919,9 +1911,11 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
     <!-- MAKE IT YOURS is NOT a card on this page. It is the SETUP WIZARD
          (setupView, above): on the customized link it opens by itself the
          first time a family opens the page and walks them through
-         building their theme one step at a time — favorite colors,
-         background (favorite sport — one pick, never asked twice),
-         favorite animal, coach, world name, review —
+         building their theme one step at a time — background (favorite
+         sport — one pick, never asked twice), the three colors,
+         favorite animal, the child's first name (and the world's
+         name), coach, the Player Design Studio, the Coach Design
+         Studio — seven steps in all,
          with a progress bar, like an intake form. After that first run,
          the same wizard is re-opened from the ☰ Menu ("Make It Yours —
          Setup Wizard", customized link only). The classic link never
@@ -1931,12 +1925,11 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
       <button class="tab" id="tabSpell" onclick="showCat('spelling')">📣 <span id="tabSpellLabel">SPELLING COURT</span></button>
     </div>
     <div class="game-hub" id="gameHub" aria-label="Your game stuff">
-      <!-- PLAYER STUDIO CARD — CUSTOM LINK ONLY. The classic build has
-           NO Player Studio and NO setup wizard: this card starts hidden
-           and applyVersionUI() reveals it only on the customized link.
-           In classic the hub keeps the same layout and spacing with
-           just Trophy Case and Bonus Round (the .no-player grid). -->
-      <button class="hub-card hub-player" id="playerHubCard" style="display:none" onclick="openStudio()"><span class="mini-player player-slot" data-size="mini"></span><span><b>🎨 My Player — Design &amp; Dress Him!</b><span>Pick his skin, hair, jersey, number, shoes and gear. <span id="playerHubDesc">He is the player who shoots in every game!</span></span></span></button>
+      <!-- NO STUDIO CARDS ON THE HOMEPAGE — in BOTH builds the hub row
+           carries just Trophy Case and Bonus Round (the .no-player
+           grid). The Player Design Studio and the Coach Design Studio
+           live INSIDE the setup wizard as its steps 6 and 7 (customized
+           link only); the classic build has no studios and no wizard. -->
       <button class="hub-card" onclick="openTrophies()"><span class="hub-emoji">🏆</span><span><b>Trophy Case</b><span>See every trophy and piece of gear you have won.</span></span></button>
       <button class="hub-card" onclick="openBonus()"><span class="hub-emoji">🎁</span><span><b>Bonus Round</b><span id="bonusHubDesc">Free-throw tapping and tap-the-right-ball games!</span></span></button>
     </div>
@@ -2216,19 +2209,10 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
   </div>
 </div>
 
-<!-- PLAYER STUDIO -->
-<div class="modal" id="studioModal" role="dialog" aria-modal="true">
-  <div class="sheet" style="width:min(860px,100%)">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span class="fred" style="color:var(--red);font-size:15px;letter-spacing:.08em">🎨 MY PLAYER STUDIO</span><button class="ghost" onclick="closeStudio()">✕ Done!</button></div>
-    <h3>Design &amp; dress YOUR player!</h3>
-    <p style="font-weight:800;color:var(--muted);margin:4px 0 14px;line-height:1.45">Tap anything to change it — your player updates right away, saves on this device, and he is the one who plays in every game!</p>
-    <div class="studio-layout">
-      <div class="studio-preview"><div id="studioPreview" style="height:248px"></div><div class="pname" id="studioName">#7 — Your Player ⭐</div></div>
-      <div id="studioOptions"></div>
-    </div>
-    <button class="check-btn" onclick="closeStudio()" style="width:100%;margin-top:6px">✅ Looks Awesome — Let's Play!</button>
-  </div>
-</div>
+<!-- PLAYER STUDIO — no modal anymore: the Player Design Studio lives
+     INSIDE the setup wizard as its step 6 (the studioPreview /
+     studioName / studioOptions containers are rendered there by
+     renderSetup, and renderStudio fills them exactly as before). -->
 <!-- MAKE IT YOURS — THEME STUDIO -->
 <!-- SPORT PICKER — big icon+name cards; one tap switches the games and their language only, never the world theme or page background -->
 <div class="modal" id="sportModal" role="dialog" aria-modal="true" aria-label="Pick your sport for today">
@@ -2238,7 +2222,6 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
       <a class="unlock-btn" id="upgradeUnlockBtn" href="https://www.scalewithmichelle.com/l/creative-learning-center-customized" target="_blank" rel="noopener">Upgrade to Unlock</a>
     </div>
     <h3>Pick Your Sport for Today!</h3>
-    <p id="sportModalIntro" style="font-weight:800;color:var(--muted);margin:4px 0 6px;line-height:1.5">Tap a sport and your GAMES change right away — the words, your coach's title for the game, and how every game plays and scores — on your own world's background, which never changes! Your WORLD does not change: its background, your favorite color, your mascot, your coach, your grade and all your stars stay exactly the same.</p>
     <div class="sport-pick-grid" id="sportPickGrid"></div>
     <button class="check-btn" onclick="closeSportPicker()" style="width:100%;margin-top:14px">✅ Keep This Sport — Let's Play!</button>
   </div>
@@ -3440,7 +3423,17 @@ function fitGameView(){
     var tm=document.getElementById('toolsMenu');
     var el=(tm&&tm.style.display!=='none')? tm : document.getElementById('toolsToggleBtn');
     if(!el) return 0;
-    return Math.max(0, Math.round(el.getBoundingClientRect().bottom - pv.getBoundingClientRect().bottom + 6));
+    /* The line the last element must end above is the LOWER of the game
+       column's own bottom edge and the visible screen's bottom edge:
+       on phones the 100svh shell can leave the column's edge below
+       what is actually visible, and the open Helper Tools menu then
+       measured as "fitting" while its last options hung off-screen,
+       tucked and cut off (Michelle, Nov 8, 2026). Measuring against
+       the visible screen too means opening the menu always steps the
+       view down until Work It Out / Show Me an Example / Get a Hint
+       are ALL fully in view. */
+    var edge=Math.min(pv.getBoundingClientRect().bottom, window.innerHeight);
+    return Math.max(0, Math.round(el.getBoundingClientRect().bottom - edge + 6));
   }
   function visScale(){
     if(!inner||natH<=0||ov<=0) return;
@@ -3846,7 +3839,7 @@ function renderPlayerSVG(d){
    default player — a design saved on this device while it was unlocked
    must never leak into the classic build, where there is no studio. */
 function activePlayerDesign(){ var unlocked=(typeof isCustomUnlocked==='function')?isCustomUnlocked():false; return unlocked? playerDesign : defaultDesign(); }
-function renderAllPlayers(){ var shown=activePlayerDesign(); document.querySelectorAll('.player-slot').forEach(function(el){ el.innerHTML=renderPlayerSVG(shown); }); var sp=document.getElementById('studioPreview'); if(sp&&document.getElementById('studioModal').classList.contains('open')){ sp.innerHTML=renderPlayerSVG(playerDesign); } var sn=document.getElementById('studioName'); if(sn) sn.textContent='#'+playerDesign.number+' — Your Player ⭐'; var ball=document.getElementById('shotBall'); if(ball&&gameSession) ball.classList.toggle('fire',!!gameSession.onFire); }
+function renderAllPlayers(){ var shown=activePlayerDesign(); document.querySelectorAll('.player-slot').forEach(function(el){ el.innerHTML=renderPlayerSVG(shown); }); var sp=document.getElementById('studioPreview'); if(sp){ sp.innerHTML=renderPlayerSVG(playerDesign); } var sn=document.getElementById('studioName'); if(sn) sn.textContent='#'+playerDesign.number+' — Your Player ⭐'; var ball=document.getElementById('shotBall'); if(ball&&gameSession) ball.classList.toggle('fire',!!gameSession.onFire); }
 
 /* ----- Sound effects (WebAudio, separate from music) ----- */
 var audioCtx=null, sfxMuted=false;
@@ -3924,27 +3917,15 @@ function cheerVoice(delay,base){
   o.start(t); o.stop(t+0.38);
 }
 function crowdReactionBurst(big){
-  try{
-    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var stage=document.getElementById('courtStage'); if(!stage) return;
-    var sr=stage.getBoundingClientRect(); if(!sr.width) return;
-    var chars=big?['👏','👏','🙌','🎉','👏','⭐','🙌','👏']:['👏','👏','🙌','👏','🎉','👏'];
-    var n=big?14:8;
-    for(var i=0;i<n;i++){
-      var s=document.createElement('span'); s.className='sparkle-bit'; s.textContent=chars[i%chars.length];
-      var sz=17+Math.random()*13; s.style.fontSize=sz+'px';
-      var x=sr.width*(0.10+Math.random()*0.80), y=sr.height*(0.58+Math.random()*0.18);
-      s.style.left=Math.round(x)+'px'; s.style.top=Math.round(y)+'px'; s.style.zIndex='7';
-      stage.appendChild(s);
-      var rise=44+Math.random()*46, drift=(Math.random()*36-18);
-      var anim=s.animate([
-        {transform:'translate(0,0) scale(.7)',opacity:0},
-        {transform:'translate('+(drift*0.4)+'px,'+(-rise*0.45)+'px) scale(1.12)',opacity:1,offset:.35},
-        {transform:'translate('+drift+'px,'+(-rise)+'px) scale(1)',opacity:0}
-      ],{duration:820+Math.random()*420,delay:Math.random()*180,easing:'cubic-bezier(.22,.61,.36,1)'});
-      (function(el,a){ if(a) a.onfinish=function(){ el.remove(); }; setTimeout(function(){ el.remove(); },1700); })(s,anim);
-    }
-  }catch(e){}
+  /* NO FLOATING CROWD EMOJIS ON THE GAME SCREEN (Michelle, Nov 8–9,
+     2026 — same sweep as sparkleBurst above). This used to float loose
+     👏 🙌 🎉 ⭐ shapes up through the air over the playing surface —
+     disembodied hands and stars hovering over the court where no crowd
+     sits. REMOVED: the function stays as a no-op so the sound code can
+     keep calling it safely. The crowd is still HEARD on every cheer
+     (clapping, roars and voices in playCrowdCelebration) — it is just
+     never drawn floating on the game screen. */
+  return;
 }
 function playClapping(count,dur,vol){
   /* first 4 claps land together on a beat — that's the “everybody clap!” hit —
@@ -4042,26 +4023,19 @@ function stopDribble(){ shotAnimActive=false; dribblePending=false; var st=docum
    capped at ~20 tiny elements and removed when done, so a child's tablet
    stays smooth. Skipped entirely for reduced-motion. */
 function sparkleBurst(cx,cy,n,big){
-  try{
-    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var stage=document.getElementById('courtStage'); if(!stage) return;
-    var chars=['✦','⭐','✧','✦']; var colors=['#FFB800','#FF6B1A','#fff','#FFD34D','#16A34A'];
-    var count=Math.min(big?20:12,n||12);
-    for(var i=0;i<count;i++){
-      var s=document.createElement('span'); s.className='sparkle-bit'; s.textContent=chars[i%chars.length];
-      var sz=11+Math.random()*12; s.style.fontSize=sz+'px'; s.style.color=colors[i%colors.length];
-      s.style.left=Math.round(cx-sz/2)+'px'; s.style.top=Math.round(cy-sz/2)+'px';
-      stage.appendChild(s);
-      var ang=(Math.PI*2*i)/count+Math.random()*.5, dist=26+Math.random()*(big?64:44);
-      var dx=Math.cos(ang)*dist, dyUp=Math.sin(ang)*dist*.7-18, fall=34+Math.random()*30;
-      var anim=s.animate([
-        {transform:'translate(0,0) rotate(0deg) scale(.6)',opacity:1,easing:'cubic-bezier(.22,.61,.36,1)'},
-        {transform:'translate('+Math.round(dx*.8)+'px,'+Math.round(dyUp)+'px) rotate('+(90+Math.random()*120)+'deg) scale(1.1)',opacity:1,offset:.45,easing:'cubic-bezier(.55,.06,.68,.19)'},
-        {transform:'translate('+Math.round(dx)+'px,'+Math.round(dyUp+fall)+'px) rotate('+(200+Math.random()*160)+'deg) scale(.85)',opacity:0}
-      ],{duration:760+Math.random()*380});
-      (function(el,a){ if(a) a.onfinish=function(){ el.remove(); }; setTimeout(function(){ el.remove(); },1400); })(s,anim);
-    }
-  }catch(e){}
+  /* NO FLOATING STARS ON THE GAME SCREEN (Michelle, Nov 8–9, 2026 —
+     check EVERY game: no mysterious items or objects floating on the
+     video game screen windows, nobody floating, real motion and real
+     logic only, no teleporting). This used to burst a dozen loose ⭐/✦
+     shapes into mid-air over the court / field / pool on every made
+     shot — objects that belong to no sport and float where nothing
+     should be. The burst is REMOVED: the function stays as a no-op so
+     every sport's shot code can keep calling it safely. A made shot
+     still celebrates with real things only — the ball's own continuous
+     flight and roll back, the net ripple on a swish, the player's
+     two-hop celebration with his feet landing back on the ground, and
+     the crowd SOUNDS. Nothing appears floating on the stage. */
+  return;
 }
 function rippleNet(cx,cy,dw){ var net=document.getElementById('netRipple'); if(!net) return; var w=Math.max(30,Math.round(dw*0.105)); net.style.width=w+'px'; net.style.height=Math.round(w*0.95)+'px'; net.style.left=Math.round(cx-w/2)+'px'; net.style.top=Math.round(cy-2)+'px'; net.classList.remove('rippling'); void net.offsetWidth; net.classList.add('rippling'); }
 /* When a shot sequence (flight + floor landing + roll-back) finishes, the ball is
@@ -4120,14 +4094,20 @@ function playSportShot(success){
         setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(Math.round(sLandCX),Math.round(ssr.height*0.64),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); var st3=document.getElementById('courtStage'); if(st3) st3.classList.add('celebrating'); sfx('sparkle'); } },Math.round(sDur*0.8));
         setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(sDur*0.84));
       } else {
+        /* The sunk swimmer stays VISIBLE (never fainter than .55) on
+           the whole swim back under the surface — the old fade down
+           to .12 made him all but vanish under the water and then
+           reappear at the start, which reads as a teleport (Michelle,
+           Nov 8–9, 2026: no teleporting in any game). Now the entire
+           trip out, down, back and up is on screen the whole way. */
         var mDur=2000, mFwd=Math.round(sDx*0.22);
         sAnim=ball.animate([
           {transform:'translate(0,0) rotate(-4deg)',opacity:1,easing:'ease-out'},
           {transform:'translate('+mFwd+'px,-5px) rotate(3deg)',offset:.2,easing:'ease-in-out'},
           {transform:'translate('+(mFwd+14)+'px,16px) rotate(16deg)',opacity:.75,offset:.36,easing:'ease-in'},
-          {transform:'translate('+(mFwd+20)+'px,58px) rotate(30deg)',opacity:.22,offset:.52,easing:'ease-in'},
-          {transform:'translate('+(mFwd+16)+'px,64px) rotate(24deg)',opacity:.12,offset:.62,easing:'ease-in-out'},
-          {transform:'translate(0,52px) rotate(-8deg)',opacity:.3,offset:.8,easing:'ease-out'},
+          {transform:'translate('+(mFwd+20)+'px,58px) rotate(30deg)',opacity:.6,offset:.52,easing:'ease-in'},
+          {transform:'translate('+(mFwd+16)+'px,64px) rotate(24deg)',opacity:.55,offset:.62,easing:'ease-in-out'},
+          {transform:'translate(0,52px) rotate(-8deg)',opacity:.65,offset:.8,easing:'ease-out'},
           {transform:'translate(0,10px) rotate(-3deg)',opacity:.75,offset:.92,easing:'ease-out'},
           {transform:'translate(0,0) rotate(0deg)',opacity:1,offset:1}
         ],{duration:mDur});
@@ -4543,6 +4523,13 @@ function playShot(success){
       var landX=Math.max(36,hx-18);
       var rollDeg=Math.round(landX/(Math.PI*Math.max(20,br.width))*360);
       var rollMidX=Math.round(landX*0.48);
+      /* The roll home ends on the nearest FULL turn of the ball, so
+         when the flight animation lets go and the dribble takes over,
+         the seams sit exactly where the flight left them — the old
+         ending angle (112−rollDeg) snapped the ball's seams to a
+         different rotation in one frame, a little teleport of the
+         ball's face (Michelle, Nov 8–9, 2026: no teleporting). */
+      var endRotS=Math.round((112-rollDeg)/360)*360;
       var dur=2150;
       shotAnimActive=true;
       var animS=ball.animate([
@@ -4554,8 +4541,8 @@ function playShot(success){
         {transform:'translate('+(landX-12)+'px,'+(floorY-bounceY)+'px) rotate(132deg) scale(.96,1.05)',offset:.60,easing:'ease-in'},
         {transform:'translate('+(landX-24)+'px,'+floorY+'px) rotate(112deg)',offset:.64,easing:'ease-in-out'},
         {transform:'translate('+rollMidX+'px,'+floorY+'px) rotate('+Math.round(112-rollDeg*0.55)+'deg)',offset:.82,easing:'ease-out'},
-        {transform:'translate(0,'+floorY+'px) rotate('+(112-rollDeg)+'deg)',offset:.95,easing:'ease-out'},
-        {transform:'translate(0,0) rotate('+(112-rollDeg)+'deg)',offset:1}
+        {transform:'translate(0,'+floorY+'px) rotate('+endRotS+'deg)',offset:.95,easing:'ease-out'},
+        {transform:'translate(0,0) rotate('+endRotS+'deg)',offset:1}
       ],{duration:dur});
       if(animS) animS.onfinish=function(){ settleShot(mySeq,true); };
       setTimeout(function(){ settleShot(mySeq,true); },dur+90);
@@ -4584,6 +4571,10 @@ function playShot(success){
       var rollStartXM=Math.max(8,landXM-44);
       var rollDegM=Math.round(rollStartXM/(Math.PI*Math.max(20,br.width))*360);
       var rollMidXM=Math.round(rollStartXM*0.48);
+      /* Same full-turn ending as the made shot: the rebound roll home
+         ends on the nearest full turn so the ball's seams never snap
+         when the dribble takes over (no teleporting, Nov 8–9, 2026). */
+      var endRotM=Math.round((124-rollDegM)/360)*360;
       var durM=2000;
       shotAnimActive=true;
       var animM=ball.animate([
@@ -4602,8 +4593,8 @@ function playShot(success){
         {transform:'translate('+(landXM-35)+'px,'+(floorY-bounce2Y)+'px) rotate(132deg)',offset:.78,easing:'ease-in'},
         {transform:'translate('+rollStartXM+'px,'+floorY+'px) rotate(124deg)',offset:.815,easing:'ease-out'},
         {transform:'translate('+rollMidXM+'px,'+floorY+'px) rotate('+Math.round(124-rollDegM*0.55)+'deg)',offset:.90,easing:'ease-out'},
-        {transform:'translate(0,'+floorY+'px) rotate('+(124-rollDegM)+'deg)',offset:.96,easing:'ease-out'},
-        {transform:'translate(0,0) rotate('+(124-rollDegM)+'deg)',offset:1}
+        {transform:'translate(0,'+floorY+'px) rotate('+endRotM+'deg)',offset:.96,easing:'ease-out'},
+        {transform:'translate(0,0) rotate('+endRotM+'deg)',offset:1}
       ],{duration:durM});
       if(animM) animM.onfinish=function(){ settleShot(mySeq,false); };
       setTimeout(function(){ settleShot(mySeq,false); },durM+90);
@@ -5218,7 +5209,6 @@ function applyCoachDisplay(lockedOut,sportObj){
   document.querySelectorAll('.coach-first-name').forEach(function(el){ el.textContent=name; });
   var sb=document.getElementById('sbCoachTeam'); if(sb) sb.textContent=team;
   var line=animalEmoji+' '+title+(lockedOut?'':' — your '+(sportObj?sportObj.name:'Basketball').toLowerCase()+' coach');
-  var sp=document.getElementById('spCoach'); if(sp) sp.textContent=line;
   var tp=document.getElementById('tpCoach'); if(tp) tp.textContent=line;
   /* Coach Leo's picture is ONE background-free cutout of him
      (assets/coach-leo-cutout.png) in every sport — it never swaps
@@ -5267,33 +5257,25 @@ function themeWorldName(){
    sport is NEVER read for any of it (except two small text labels
    noted below), so switching the sport for today's games cannot
    re-theme or re-background this world anywhere. */
-/* The three-slot color picker, shared by the setup wizard (step 1)
+/* The three-slot color picker, shared by the setup wizard (step 2)
    and the Theme Studio so a family rebuilds colors the exact same
    way in both places. handler is the onclick function name; each
-   swatch calls handler(slotKey,colorId). The live preview under the
-   slots is a tiny hero + game card dressed in the three picks, so
-   the child SEES how primary, secondary and tertiary work together
-   before the real page repaints. */
-function trioPreviewHTML(){
-  var t=trioColors();
-  return '<div class="trio-preview" aria-hidden="true">'
-    +'<div class="tpv-hero" style="background:'+t[0].primary+';border-bottom:5px solid '+t[2].primary+'"><span>Your Hero</span><span class="tpv-badge" style="background:'+t[1].bright+'">⭐ Stars</span></div>'
-    +'<div class="tpv-card" style="border:3px solid '+t[2].soft+';box-shadow:0 4px 0 '+t[2].soft+'"><span class="tpv-icon" style="background:'+t[1].soft+'">🎮</span><span><b>Your Game Card</b><span>Border in Tertiary, icon box in Secondary, Play button in Primary.</span></span></div>'
-    +'<div class="tpv-btn" style="background:'+t[0].primary+'">▶ Play — Primary</div></div>';
-}
-function trioPickerHTML(handler){
+   swatch calls handler(slotKey,colorId). There is deliberately NO
+   preview card under the slots — Michelle removed the "Your Hero /
+   Your Game Card" preview card from the wizard entirely (Nov 8,
+   2026), and the picker renders without it in both places. */
+function trioPickerHTML(handler,plain){
   var ids=trioIds();
-  var h='<p style="font-weight:800;color:var(--muted);margin:0 0 10px;font-size:14.5px;line-height:1.5">Pick <b>three different colors</b> — one for each job. Watch the little hero and card under the colors change as you pick!</p>';
+  var h= plain? '' : '<p style="font-weight:800;color:var(--muted);margin:0 0 10px;font-size:14.5px;line-height:1.5">Pick <b>three different colors</b> — one for each job. Watch the little hero and card under the colors change as you pick!</p>';
   TRIO_SLOTS.forEach(function(slot,si){
     var cur=colorById(ids[si]);
-    h+='<div class="trio-slot" style="border-color:'+cur.soft+';box-shadow:0 3px 0 '+cur.soft+'"><div class="trio-slot-head"><span class="trio-dot" style="background:'+cur.primary+'"></span><b>'+(si+1)+'. '+slot.label+'</b><span class="trio-job">'+slot.job+'</span></div>'
+    h+='<div class="trio-slot" style="border-color:'+cur.soft+';box-shadow:0 3px 0 '+cur.soft+'"><div class="trio-slot-head"><span class="trio-dot" style="background:'+cur.primary+'"></span><b>'+(si+1)+'. '+slot.label+'</b>'+(plain?'':'<span class="trio-job">'+slot.job+'</span>')+'</div>'
       +'<div class="opt-row">'+PICKABLE_COLORS.map(function(c){
         var taken=ids.indexOf(c.id)>=0&&ids[si]!==c.id;
         return '<button class="swatch'+(ids[si]===c.id?' on':'')+'" style="background:'+c.primary+(taken?';opacity:.32':'')+'" onclick="'+handler+'(\''+slot.key+'\',\''+c.id+'\')" aria-label="'+slot.label+' color: '+c.name+(taken?' — already picked for another job':'')+'" title="'+c.name+(taken?' (already picked)':'')+'"></button>';
       }).join('')+'</div>'
-      +'<p class="trio-picked">Your '+slot.label+': <b>'+cur.name+'</b>'+(si===0?' — paints the hero and Play buttons.':(si===1?' — shines on stars, tabs, buttons and frames.':' — pops on card borders and the hero\u2019s edge.'))+'</p></div>';
+      +'<p class="trio-picked">Your '+slot.label+': <b>'+cur.name+'</b>'+(plain?'':(si===0?' — paints the hero and Play buttons.':(si===1?' — shines on stars, tabs, buttons and frames.':' — pops on card borders and the hero\u2019s edge.')))+'</p></div>';
   });
-  h+=trioPreviewHTML();
   return h;
 }
 /* One pick for one slot. A color already doing another job cannot be
@@ -5846,7 +5828,20 @@ function worldBackdropOverlaySVG(id){
     +'<g transform="translate(556,700)"><ellipse rx="30" ry="10" cy="7" fill="#000000"/><rect x="-30" y="-7" width="60" height="14" fill="#000000"/><ellipse rx="30" ry="10" cy="-7" fill="#0A0A0A"/></g>'
     +'</svg>';
 }
-var WB_FLOATS={basketball:['🏀','🏀','🏀'],soccer:['⚽','⚽','⚽'],baseball:['⚾','⚾','🧢'],football:['🏈','🏈','🏈'],gymnastics:[],tennis:['🎾','🎾','🎾'],swimming:['🏊','💦','🥽'],hockey:['🏒','🏒','⛸️'],running:['👟','🏁','👟'],dance:['🩰','💃','🎵'],cheer:['📣','📣','🎉']};
+/* NO FLOATING OBJECTS ANYWHERE (Michelle, Nov 8–9, 2026 — she checked
+   the rest of the games: no mysterious items or objects floating on
+   the game screens, and the same rule covers the page backdrop and
+   the hero). Every sport's float list is EMPTY: loose balls, caps,
+   goggles, skates, shoes, flags and music notes used to bob up and
+   down in mid-air over the page background and inside the hero,
+   hanging in the air with nothing holding them and no real motion
+   or logic. They are all REMOVED — nothing is substituted in their
+   place (the empty-list path in renderWorldBackground already paints
+   no floats at all, the way gymnastics always shipped). The painted
+   world scenes themselves stay: their objects lie ON their own
+   ground — footballs resting on the field, the puck on the ice at
+   the stick, pom-poms ringing the cheer mat. */
+var WB_FLOATS={basketball:[],soccer:[],baseball:[],football:[],gymnastics:[],tennis:[],swimming:[],hockey:[],running:[],dance:[],cheer:[]};
 var WB_POS=[{l:'3%',t:'13%',s:34,d:'0s'},{l:'93%',t:'9%',s:28,d:'1.4s'},{l:'88%',t:'57%',s:38,d:'2.6s'},{l:'4%',t:'68%',s:26,d:'.8s'}];
 function renderWorldBackground(lockedOut,c,ds){
   var floats=WB_FLOATS[ds.id]||WB_FLOATS.basketball;
@@ -5859,7 +5854,6 @@ function renderWorldBackground(lockedOut,c,ds){
   var hp=document.getElementById('heroPattern');
   if(hp) hp.innerHTML= hpFloats+'<div class="hp-lines" aria-hidden="true"></div>'; /* the hero's OWN floating sport pattern + court lines, painted inside the hero over its solid primary color — never the page scene showing through */
   var sceneHTML=sportSceneHTML(ds.id,c.primary);
-  var spS=document.getElementById('spScene'); if(spS) spS.innerHTML=sceneHTML;
   var tpS=document.getElementById('tpScene'); if(tpS) tpS.innerHTML=sceneHTML;
 }
 function applyTheme(){
@@ -5971,16 +5965,12 @@ function renderSportSwitcher(){
   var unlocked=(typeof isCustomUnlocked==='function')?isCustomUnlocked():false;
   wrap.style.display='';
   var s=effectiveSportObj();
-  var em=document.getElementById('sportSwitchEmoji'); if(em) em.textContent=s.emoji;
   var today=document.getElementById('sportToday'); if(today) today.textContent='Today: '+s.name+' '+s.emoji+' — tap to change';
+  /* The picker's intro paragraph was removed entirely (Michelle,
+     Nov 8, 2026) in BOTH builds — the sheet carries just the heading
+     and the sports grid (plus the classic build's Upgrade panel). */
   var intro=document.getElementById('sportModalIntro');
-  if(intro){
-    /* The classic picker carries NO intro paragraph — just the
-       Upgrade to Unlock button, the heading and the sports grid.
-       The custom build keeps its own intro paragraph. */
-    if(unlocked){ intro.style.display=''; intro.textContent='Tap a sport and your GAMES change right away — the words, your coach\u2019s title for the game, and how every game plays and scores — on your own world\u2019s background, which never changes! Your WORLD does not change: its background, your favorite color, your mascot, your world name, your coach, your grade and all your stars stay exactly the same — the world you built is your world.'; }
-    else{ intro.style.display='none'; intro.textContent=''; }
-  }
+  if(intro){ intro.style.display='none'; intro.textContent=''; }
   var panel=document.getElementById('classicUnlockPanel'); if(panel) panel.style.display= unlocked?'none':'';
   var grid=document.getElementById('sportPickGrid');
   if(grid) grid.innerHTML=THEME_SPORTS.map(function(sp){
@@ -6089,7 +6079,7 @@ function renderThemeStudio(){
   h+='<div class="opt-group"><h4>🏅 2. What is your favorite sport?</h4>'+bgTemplateGridHTML('setThemePart')+'<p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">This is your <b>default</b> sport — the one your world is built around. Its field or court, with that sport\u2019s own tools in it (an ice rink with pucks and sticks, a football field with footballs, a gymnastics gym with a beam, rings, bars and gymnasts), becomes the background of your whole world. It sets your world\u2019s theme and the sport your games start with. Switching sport on the sport bar later changes only the games and their words — never your world\u2019s background. '+(SPORT_INFO[myTheme.sport]||SPORT_INFO.basketball).note+'</p></div>';
   h+='<div class="opt-group"><h4>🐾 3. What is your favorite animal?</h4><div class="opt-row">'+THEME_ANIMALS.map(function(a){ return '<button class="fav-chip'+(myTheme.animal===a.id?' on':'')+'" onclick="setThemePart(\'animal\',\''+a.id+'\')">'+a.emoji+' '+a.name+'</button>'; }).join('')+'</div><p style="font-weight:800;color:var(--muted);margin:6px 0 0;font-size:14px">Your '+themeAnimal().name+' '+themeAnimal().emoji+' is your team mascot — it cheers beside Coach Leo in your <b>'+themeWorldName()+'</b>.</p></div>';
   /* The coach recap lines ("Boy Coach • He/Him" and the dressed-in
-     summary) live ONLY in the setup wizard (Steps 4 and 6) — the
+     summary) live ONLY in the setup wizard (Step 5) — the
      Theme Studio shows the coach's name and the dressing picks
      themselves, never those summary lines. */
   h+='<div class="opt-group" id="themeCoachSection"><h4>👦 4. Customize your coach</h4>'
@@ -6120,14 +6110,16 @@ function closeThemeStudio(){ document.getElementById('themeModal').classList.rem
 
 /* ----- SETUP WIZARD (customized world, first open) -----
    The flow a family meets the first time they open the customized link:
-   Step 1 favorite colors → Step 2 background (every background
-   template IS a favorite sport's home, so this one pick is also the
+   Step 1 background (every background template IS a favorite sport's
+   home, named by its actual sport, so this one pick is also the
    favorite / default sport — there is deliberately no separate
-   favorite-sport step later in the wizard) → Step 3 favorite
-   animal → Step 4 customize your coach (name, face, outfit — the coach
-   is always a boy coach in this boys' world, and the sport and mascot
-   outfits follow the favorite sport & animal picks)
-   → Step 5 name your world → Step 6 review. Finishing the wizard
+   favorite-sport step and no Theme step in the wizard) → Step 2 pick
+   your three colors → Step 3 favorite animal → Step 4 enter the
+   child's first name (and name the world) → Step 5 customize your
+   coach (name, face, outfit — the coach is always a boy coach in this
+   boys' world, and the sport and mascot outfits follow the favorite
+   sport & animal picks) → Step 6 My Player Studio → Step 7 My Coach
+   Studio. Finishing the wizard
    hands straight over to the existing Pick Your Grade card, and picking
    a grade drops the child into their world (the existing grade flow).
    The plain link never sees any of this. Finishing is remembered on the
@@ -6280,14 +6272,10 @@ function applySetupGate(){
   return false;
 }
 function updateSetupPreview(){
+  /* The wizard's world-preview card was removed entirely (Michelle,
+     Nov 8, 2026) — there is no preview element left to paint. This
+     now only keeps the keep-original toggle's state honest. */
   updateSetupKeepToggle();
-  var court=document.getElementById('spCourt'); if(!court) return;
-  var c=themeColor(), c2=themeColor2(), c3=themeColor3(), s=themeSport(), a=themeAnimal();
-  court.style.background=c.primary; court.style.borderColor=c3.primary; court.style.boxShadow='0 0 0 3px '+c2.bright;
-  var prev=document.getElementById('setupPreview'); if(prev) prev.style.background=c3.soft;
-  var nm=document.getElementById('spName'); if(nm) nm.textContent=themeWorldName();
-  var sub=document.getElementById('spSub'); if(sub) sub.textContent=c.name+' • '+c2.name+' • '+c3.name+' • '+s.name+' • '+a.name;
-  var coachEl=document.getElementById('spCoach'); if(coachEl){ /* coach line text is set by applyCoachDisplay; colors ride the CSS vars */ }
 }
 function setupPick(key,val){
   if(setupLocked()){
@@ -6350,61 +6338,73 @@ function gradeIsSaved(){ for(var i=0;i<GRADES.length;i++){ if(GRADES[i].id===cur
 function renderSetup(){
   var body=document.getElementById('setupBody'); if(!body) return;
   var dots=document.getElementById('setupDots');
-  if(dots) dots.innerHTML=[0,1,2,3,4,5].map(function(i){ return '<div class="dot'+(i===setupStep?' on':'')+'"></div>'; }).join('');
-  var pct=Math.round(((setupStep+1)/6)*100);
+  if(dots) dots.innerHTML=[0,1,2,3,4,5,6].map(function(i){ return '<div class="dot'+(i===setupStep?' on':'')+'"></div>'; }).join('');
+  var pct=Math.round(((setupStep+1)/7)*100);
   var pFill=document.getElementById('setupProgressFill'); if(pFill) pFill.style.width=pct+'%';
-  var pLab=document.getElementById('setupProgressLabel'); if(pLab) pLab.textContent='Step '+(setupStep+1)+' of 6';
+  var pLab=document.getElementById('setupProgressLabel'); if(pLab) pLab.textContent='Step '+(setupStep+1)+' of 7';
   var pPct=document.getElementById('setupProgressPct'); if(pPct) pPct.textContent=pct+'%';
   var pBar=document.getElementById('setupProgress'); if(pBar) pBar.setAttribute('aria-valuenow', String(setupStep+1));
   var back=document.getElementById('setupBack'), next=document.getElementById('setupNext');
   if(back) back.style.visibility= setupStep===0?'hidden':'visible';
-  if(next) next.textContent= setupStep===4? 'See My World →' : (setupStep===5? (gradeIsSaved()? '🎉 Step Into My World →' : '🎒 Pick My Grade →') : 'Next Step →');
+  if(next) next.textContent= setupStep===6? (gradeIsSaved()? '🎉 Step Into My World →' : '🎒 Pick My Grade →') : 'Next Step →';
   var h='';
-  if(setupStep===0){
-    h+='<h3>🎨 Step 1 of 6 — Pick your THREE colors!</h3><p class="setup-lead">Your world wears three colors, and each one has a job. Your <b>Primary</b> paints the hero and the big Play buttons, your <b>Secondary</b> shines on the stars, tabs, shiny buttons and picture frames, and your <b>Tertiary</b> pops on the card borders and the hero\u2019s edge. Together they dress every card, and your Primary paints the hero one solid color — your page background behind the cards is your sport\u2019s own scene, the sport you pick next, and it never shows through the hero!</p><div class="opt-group">'+trioPickerHTML('setupPickColor')+'</div>';
-  } else if(setupStep===1){
-    h+='<h3>🖼️ Step 2 of 6 — Pick your background!</h3><p class="setup-lead">Your favorite sport is your DEFAULT sport — together with your color and your animal, it builds your world\u2019s theme and background, and it is the sport your games start with! That sport\u2019s own field or court becomes the background of your WHOLE world, with that sport\u2019s tools in it: a soccer field with goals and balls, an ice rink with pucks and sticks, a football field with footballs resting on it, a tennis court with its net, a swimming pool with lanes — and a gymnastics gym filled with a balance beam, still rings, a pommel horse, parallel bars, a vault and gymnasts mid-move! Later, the sport bar can switch the games and their words for today — but your world\u2019s background never changes. It stays the world you build here!</p><div class="opt-group">'+bgTemplateGridHTML('setupPick')+'<p style="font-weight:800;color:var(--muted);margin:8px 0 0;font-size:15px">'+(SPORT_INFO[myTheme.sport]||SPORT_INFO.basketball).note+'</p></div>';
+  if(setupStep===1){
+    h+='<h3>🎨 Step 2 of 7 — Pick your THREE colors!</h3><div class="opt-group">'+trioPickerHTML('setupPickColor',true)+'</div>';
+  } else if(setupStep===0){
+    h+='<h3>🖼️ Step 1 of 7 — Pick your background!</h3><p class="setup-lead">Your favorite sport is your DEFAULT sport — together with your color and your animal, it builds your world\u2019s theme and background, and it is the sport your games start with! That sport\u2019s own field or court becomes the background of your WHOLE world, with that sport\u2019s tools in it: a soccer field with goals and balls, an ice rink with pucks and sticks, a football field with footballs resting on it, a tennis court with its net, a swimming pool with lanes — and a gymnastics gym filled with a balance beam, still rings, a pommel horse, parallel bars, a vault and gymnasts mid-move! Later, the sport bar can switch the games and their words for today — but your world\u2019s background never changes. It stays the world you build here!</p><div class="opt-group">'+bgTemplateGridHTML('setupPick')+'<p style="font-weight:800;color:var(--muted);margin:8px 0 0;font-size:15px">'+(SPORT_INFO[myTheme.sport]||SPORT_INFO.basketball).note+'</p></div>';
   } else if(setupStep===2){
-    h+='<h3>🐾 Step 3 of 6 — Pick your favorite animal!</h3><p class="setup-lead">Your animal becomes your team mascot, cheering right beside Coach Leo.</p><div class="opt-group"><div class="opt-row">'+THEME_ANIMALS.map(function(a){ return '<button class="fav-chip'+(myTheme.animal===a.id?' on':'')+'" onclick="setupPick(\'animal\',\''+a.id+'\')">'+a.emoji+' '+a.name+'</button>'; }).join('')+'</div></div>';
-  } else if(setupStep===3){
+    h+='<h3>🐾 Step 3 of 7 — Pick your favorite animal!</h3><p class="setup-lead">Your animal becomes your team mascot, cheering right beside Coach Leo.</p><div class="opt-group"><div class="opt-row">'+THEME_ANIMALS.map(function(a){ return '<button class="fav-chip'+(myTheme.animal===a.id?' on':'')+'" onclick="setupPick(\'animal\',\''+a.id+'\')">'+a.emoji+' '+a.name+'</button>'; }).join('')+'</div></div>';
+  } else if(setupStep===4){
     var cAv=coachAnimalObj(), cOf=coachOutfit(), cId=coachIdentity();
-    h+='<h3>👦 Step 4 of 6 — Customize your coach!</h3><p class="setup-lead">This coach is YOUR coach — give him a name, build his face your way, and dress him your way. He is a young man!</p>'
+    h+='<h3>👦 Step 5 of 7 — Customize your coach!</h3><p class="setup-lead">This coach is YOUR coach — give him a name, build his face your way, and dress him your way. He is a young man!</p>'
       +'<div class="coach-preview-card">'+coachAvatarHTML(coachOutfitEmoji(cOf))+'<span><b>'+setupEsc(coachTitle())+'</b><small>'+cId.label+' • '+cId.pronouns+' • '+coachOutfitEmoji(cOf)+' '+cOf.name+'</small></span></div>'
       +'<label class="setup-field-label" for="setupCoachName">Your coach\u2019s name</label>'
       +'<input class="setup-input" id="setupCoachName" maxlength="24" autocomplete="off" placeholder="e.g. Leo" aria-label="Your coach\u2019s name" value="'+setupEsc(myTheme.coachName)+'" oninput="setupCoachNameInput(this)"/>'
-      +'<div class="opt-group"><h4>🌟 Who is your coach?</h4><div class="opt-row"><span class="fav-chip on" aria-label="Boy Coach, He/Him">👦 Boy Coach • He/Him</span></div></div>'
       +coachLookHTML('setupPickCoach')+'<div class="opt-group"><h4>👕 How is your coach dressed?</h4><div class="opt-row">'+COACH_OUTFITS.map(function(o){ return '<button class="fav-chip'+(myTheme.coachOutfit===o.id?' on':'')+'" onclick="setupPickCoach(\'outfit\',\''+o.id+'\')">'+coachOutfitEmoji(o)+' '+o.name+'</button>'; }).join('')+'</div><p style="font-weight:800;color:var(--muted);margin:8px 0 0;font-size:15px">'+coachOutfitDesc(cOf)+'</p></div>';
-  } else if(setupStep===4){
+  } else if(setupStep===3){
     if(!setupLastSug) setupLastSug=suggestedWorldName();
-    h+='<h3>✏️ Step 5 of 6 — Name your world!</h3>'
+    h+='<h3>✏️ Step 4 of 7 — Enter your first name!</h3>'
       +'<input class="setup-input" id="setupChildName" style="margin:8px 0 12px" maxlength="24" autocomplete="off" placeholder="Enter your child\'s name" aria-label="Enter your child\'s name" value="'+setupEsc(myTheme.childName)+'" oninput="setupChildInput(this)"/>'
       +'<input class="setup-input world" id="setupWorldName" maxlength="40" autocomplete="off" placeholder="e.g. John\u2019s Court" aria-label="Your world\u2019s name" value="'+setupEsc(myTheme.worldName)+'" oninput="setupWorldInput(this)"/>';
+  } else if(setupStep===5){
+    /* STEP 6 — the Player Design Studio lives HERE, inside the wizard.
+       Its containers keep their studio ids (#studioPreview, #studioName,
+       #studioOptions), so renderStudio() and renderAllPlayers() fill
+       them exactly as they filled the old homepage modal — the studio's
+       contents did not change, only where it lives. renderSetup calls
+       renderStudio() right after this HTML lands. */
+    h+='<h3>🎨 Step 6 of 7 — My Player Studio!</h3><p class="setup-lead">Tap anything to change it — your player updates right away, saves on this device, and he is the one who plays in every game!</p>'
+      +'<div class="studio-layout"><div class="studio-preview"><div id="studioPreview" style="height:248px"></div><div class="pname" id="studioName">#7 — Your Player ⭐</div></div><div id="studioOptions"></div></div>';
   } else {
-    var c2=themeColor(), c2b=themeColor2(), c2c=themeColor3(), s2=themeSport(), a2=themeAnimal();
-    h+='<h3>🎉 Step 6 of 6 — Your world is ready!</h3><p class="setup-lead">'+(gradeIsSaved()? 'Look at what you built, superstar — your grade is already picked, so step right inside and play!' : 'Look at what you built, superstar — then pick your grade and step inside!')+'</p><div class="setup-review">'
-      +(gradeIsSaved()? '<div class="sr-row"><span class="sr-emoji">🎒</span><span><small>Your grade — already picked!</small>'+gradeLabel()+'</span></div>' : '')
-      +'<div class="sr-row"><span class="sr-dot" style="background:'+c2.primary+'"></span><span><small>Primary — hero &amp; Play buttons</small>'+c2.name+'</span></div>'
-      +'<div class="sr-row"><span class="sr-dot" style="background:'+c2b.bright+'"></span><span><small>Secondary — stars, tabs &amp; frames</small>'+c2b.name+'</span></div>'
-      +'<div class="sr-row"><span class="sr-dot" style="background:'+c2c.primary+'"></span><span><small>Tertiary — card borders &amp; hero edge</small>'+c2c.name+'</span></div>'
-      +'<div class="sr-row"><span class="sr-emoji">'+s2.emoji+'</span><span><small>Your sport</small>'+s2.name+'</span></div>'
-      +'<div class="sr-row"><span class="sr-emoji">'+a2.emoji+'</span><span><small>Your mascot</small>'+a2.name+' — cheering beside '+setupEsc(coachTitle())+' '+coachFaceEmoji()+'</span></div>'
-      +'<div class="sr-row"><span class="sr-emoji">'+coachFaceEmoji()+'</span><span><small>Your coach</small>'+setupEsc(coachTitle())+' — '+coachIdentity().label+' • '+coachIdentity().pronouns+'<br>'+coachOutfitEmoji()+' Dressed in: '+coachOutfit().name+'</span></div>'
-      +'<div class="sr-row"><span class="sr-emoji">👑</span><span><small>Your world</small>'+setupEsc(themeWorldName())+'</span></div></div>';
+    /* STEP 7 — the Coach Design Studio lives HERE, inside the wizard:
+       the same coach section the Theme Studio carries (preview card,
+       name field, face/hair build, dressed-in picks), wired to the
+       wizard's own coach handlers so the picks update this step.
+       Pressing the bottom button here finishes the wizard. */
+    var csOf=coachOutfit();
+    h+='<h3>👦 Step 7 of 7 — My Coach Studio!</h3>'
+      +'<div class="coach-preview-card">'+coachAvatarHTML(coachOutfitEmoji())+'<span><b>'+setupEsc(coachTitle())+'</b></span></div>'
+      +'<label class="setup-field-label" for="setupCoachName">Your coach\u2019s name</label>'
+      +'<input class="setup-input" id="setupCoachName" maxlength="24" autocomplete="off" placeholder="e.g. Leo" aria-label="Your coach\u2019s name" value="'+setupEsc(myTheme.coachName)+'" oninput="setupCoachNameInput(this)"/>'
+      +coachLookHTML('setupPickCoach')
+      +'<div class="opt-group"><h4>👕 How is your coach dressed?</h4><div class="opt-row">'+COACH_OUTFITS.map(function(o){ return '<button class="fav-chip'+(myTheme.coachOutfit===o.id?' on':'')+'" onclick="setupPickCoach(\'outfit\',\''+o.id+'\')">'+coachOutfitEmoji(o)+' '+o.name+'</button>'; }).join('')+'</div><p style="font-weight:800;color:var(--muted);margin:8px 0 0;font-size:15px">'+coachOutfitDesc(csOf)+' Pick the sport jersey or the mascot suit and your coach\u2019s look follows the favorite sport and animal you picked!</p></div>';
   }
   body.innerHTML=h;
+  if(setupStep===5&&typeof renderStudio==='function') renderStudio(); /* step 6 IS the Player Design Studio — fill its studio containers */
   lockControlsIn(body); /* toggle ON = this step's picks are locked */
+  if(setupStep===5){ body.classList.remove('locked'); body.querySelectorAll('button,input').forEach(function(el){ el.disabled=false; }); } /* the Player Studio is not part of the keep-original lock — the player is not theme, background, colors or coach */
   updateSetupPreview();
 }
 function setupMove(dir){
-  if(dir>0&&setupStep===3) setupReadCoachInputs();
-  if(dir>0&&setupStep===4) setupReadNameInputs();
-  if(dir>0&&setupStep>=5){ finishSetup(); return; }
-  setupStep=Math.max(0,Math.min(5,setupStep+dir));
+  if(dir>0&&setupStep===4) setupReadCoachInputs();
+  if(dir>0&&setupStep===3) setupReadNameInputs();
+  if(dir>0&&setupStep>=6){ finishSetup(); return; }
+  setupStep=Math.max(0,Math.min(6,setupStep+dir));
   renderSetup(); try{ sfx('step'); }catch(e){}
 }
 function finishSetup(){
   var firstFinish=!isSetupDone(); /* a first-time finish lands on home with grade + name in — Leo reads the hero welcome (below); a wizard re-run from the Menu does not re-read it */
-  setupReadNameInputs(); saveTheme(); markSetupDone(); applyTheme(); renderAllPlayers(); try{ renderGrid(); }catch(e){}
+  setupReadNameInputs(); setupReadCoachInputs(); saveTheme(); markSetupDone(); applyTheme(); renderAllPlayers(); try{ renderGrid(); }catch(e){}
   var sv=document.getElementById('setupView'); if(sv) sv.style.display='none';
   var hero=document.getElementById('heroSection'); if(hero) hero.style.display='';
   /* Grade dedupe: the grade was already picked in the first-open pop-up
@@ -6430,8 +6430,9 @@ function finishSetup(){
      Soccer and Tennis). No customization at all: no Player Studio,
      no theme.
    • CUSTOM link — the same link with ?custom=1 on the end. ALL
-     customization lives here only: the Player Studio and the Theme
-     Studio both appear as ordinary parts of the world.
+     customization lives here only: the Player Design Studio and
+     the Coach Design Studio live inside the setup wizard (steps 6
+     and 7), and the Theme Studio is part of the world.
    Opening a custom link enables customization on that device (kept in
    on-device storage, like the grade and progress), so the child does
    not need the special link every visit. Opening a link with
@@ -6457,16 +6458,16 @@ function isCustomUnlocked(){ return !!customUnlocked; }
    sport-named title above the same games grid, and the same centered
    music player at the bottom. The difference is ONLY what lives in
    that layout: customization is custom-link-only. The classic build
-   has NO setup wizard and NO Player Studio at all — the "My Player —
-   Design & Dress Him!" hub card is not on its home screen, the hub
-   row simply carries Trophy Case and Bonus Round (the .no-player
-   grid keeps the same balanced spacing), the player on the court is
+   has NO setup wizard and NO Player Studio at all — neither build
+   has a studio card on its home screen (the studios live inside the
+   wizard as steps 6 and 7), the hub row simply carries Trophy Case
+   and Bonus Round in both builds (the .no-player grid keeps the
+   same balanced spacing), the player on the court in classic is
    always the plain default player (never a design saved while the
    device was unlocked), and no studio or theme modal can open. On
    the custom link the wizard opens by itself on a first open and
    walks the family through building their theme step by step; after
-   that it is re-opened from the ☰ Menu, and the My Player card sits
-   in the hub row where the studio opens from. One exception, for
+   that it is re-opened from the ☰ Menu. One exception, for
    the sport teaser only: the plain link shows its locked sports in
    the picker, with an always-visible "Upgrade to Unlock" button to
    the product page — inside the sport picker, where all the sports
@@ -6475,16 +6476,15 @@ function isCustomUnlocked(){ return !!customUnlocked; }
 function applyVersionUI(){
   var unlocked=isCustomUnlocked();
   var setupItem=document.getElementById('menuSetupItem'); if(setupItem) setupItem.style.display= unlocked?'':'none';
-  /* Player Studio card: CUSTOM ONLY. Classic hides it completely (it
-     also starts hidden in the markup, so it can never flash on a
-     classic open) and the hub switches to the two-card .no-player
-     layout; custom shows it in its usual hub spot. */
-  var hub=document.getElementById('playerHubCard');
-  if(hub){ hub.style.display= unlocked?'':'none'; var hubRow=hub.parentElement; if(hubRow) hubRow.classList.toggle('no-player',!unlocked); }
+  /* NO STUDIO CARDS ON THE HOMEPAGE in either build: the Player
+     Design Studio and the Coach Design Studio live inside the setup
+     wizard as steps 6 and 7, so the hub row always carries just
+     Trophy Case and Bonus Round in the two-card .no-player layout. */
+  var hubRow=document.getElementById('gameHub');
+  if(hubRow) hubRow.classList.add('no-player');
   if(!unlocked){
     /* Nothing customization-shaped may linger in classic: close any
-       studio / theme modal and keep the setup wizard shut. */
-    var sm=document.getElementById('studioModal'); if(sm) sm.classList.remove('open');
+       theme modal and keep the setup wizard shut. */
     var tm=document.getElementById('themeModal'); if(tm) tm.classList.remove('open');
     var sv=document.getElementById('setupView'); if(sv) sv.style.display='none';
   }
@@ -6506,8 +6506,12 @@ function openTrophies(){
 }
 
 /* ----- Player studio ----- */
-function openStudio(){ if(!isCustomUnlocked()){ toast('🔒 Designing your player lives in the Customized edition — ask a grown-up to unlock it!'); try{ sfx('rim'); }catch(e){} return; } renderStudio(); document.getElementById('studioModal').classList.add('open'); renderAllPlayers(); }
-function closeStudio(){ document.getElementById('studioModal').classList.remove('open'); saveDesign(); renderAllPlayers(); }
+/* The Player Design Studio lives INSIDE the Setup Wizard as step 6 —
+   there is no studio card or modal on the homepage. Opening it means
+   opening the wizard on that step (e.g. from the Theme Studio's
+   "Open My Player Studio" button). */
+function openStudio(){ if(!isCustomUnlocked()){ toast('🔒 Designing your player lives in the Customized edition — ask a grown-up to unlock it!'); try{ sfx('rim'); }catch(e){} return; } openSetupWizard(); setupStep=5; renderSetup(); }
+function closeStudio(){ saveDesign(); renderAllPlayers(); }
 function setDesign(key,val){ playerDesign[key]=val; saveDesign(); renderStudio(); renderAllPlayers(); }
 function toggleDesign(key){ playerDesign[key]=!playerDesign[key]; saveDesign(); renderStudio(); renderAllPlayers(); sfx('bounce'); }
 function changeNumber(dlt){ var n=playerDesign.number+dlt; if(n<0)n=99; if(n>99)n=0; playerDesign.number=n; saveDesign(); renderStudio(); renderAllPlayers(); }
@@ -6780,21 +6784,14 @@ function traceThreshold(){
   return it.kind==='word'? base*it.text.length*0.7 : base; /* a word takes about a letter's worth of tracing per letter */
 }
 function traceSparkleBurst(){
-  try{
-    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var wrap=document.querySelector('.trace-wrap'); if(!wrap) return;
-    var chars=['✦','⭐','✧','🎉','⭐'];
-    for(var i=0;i<12;i++){
-      var s=document.createElement('span'); s.className='sparkle-bit'; s.textContent=chars[i%chars.length];
-      var sz=15+Math.random()*13; s.style.fontSize=sz+'px'; s.style.color=['#FFB800','#D92323','#16A34A','#FF6B1A'][i%4];
-      s.style.left=Math.round(wrap.clientWidth*(0.2+Math.random()*0.6))+'px';
-      s.style.top=Math.round(wrap.clientHeight*(0.3+Math.random()*0.3))+'px';
-      wrap.appendChild(s);
-      var dx=Math.random()*70-35, dy=-(40+Math.random()*55);
-      var anim=s.animate([{transform:'translate(0,0) scale(.7)',opacity:0},{transform:'translate('+(dx*0.5)+'px,'+dy+'px) scale(1.15)',opacity:1,offset:.4},{transform:'translate('+dx+'px,'+(dy+52)+'px) scale(.9)',opacity:0}],{duration:850+Math.random()*350,easing:'cubic-bezier(.22,.61,.36,1)'});
-      (function(el,a){ if(a) a.onfinish=function(){ el.remove(); }; setTimeout(function(){ el.remove(); },1500); })(s,anim);
-    }
-  }catch(e){}
+  /* NO FLOATING STARS ON THE WRITING SCREEN EITHER (Michelle, Nov 8–9,
+     2026 — the no-floating-objects sweep covers every game screen,
+     writing included). This used to burst loose ⭐/✦/🎉 shapes into
+     the air over the trace pad. REMOVED: the function stays as a no-op
+     so the finish code can keep calling it safely. Finishing a trace
+     still celebrates with Leo's cheers, the crowd sounds and the
+     feedback card — nothing floats over the pad. */
+  return;
 }
 function finishTrace(fromButton){
   if(wTraceDone) return;
