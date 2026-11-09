@@ -581,7 +581,7 @@ body.grade-gate-open .wrap{z-index:95}
 .net-ripple{position:absolute;z-index:3;opacity:0;pointer-events:none}
 .net-ripple.rippling{animation:netRippleAnim .7s ease}
 @keyframes netRippleAnim{0%{opacity:0;transform:rotate(0)}15%{opacity:.95}35%{transform:rotate(4deg)}55%{transform:rotate(-4deg)}75%{transform:rotate(2deg)}100%{opacity:0;transform:rotate(0)}}
-.shot-ball{position:absolute;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#FFC38F,#FF6B1A 58%,#E85D0C);border:3px solid #7C2D12;box-shadow:0 7px 9px rgba(43,22,8,.35),inset 0 -4px 6px rgba(124,45,18,.35);left:95px;bottom:64px;z-index:4;pointer-events:none} /* basketball spot: centered under his right palm (player 124px wide at left:16 — hand center ~112px across, ball center here is 95+17=112) */
+.shot-ball{position:absolute;width:34px;height:34px;border-radius:50%;background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Cg fill=%22none%22 stroke=%22%2320120B%22 stroke-width=%225%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2246%22/%3E%3Cpath d=%22M4 50H96%22/%3E%3Cpath d=%22M50 4V96%22/%3E%3Cpath d=%22M24 12C40 32 40 68 24 88%22/%3E%3Cpath d=%22M76 12C60 32 60 68 76 88%22/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat,radial-gradient(circle at 32% 28%,#FFC38F,#FF7A1A 55%,#E85D0C);border:3px solid #20120B;box-shadow:0 7px 9px rgba(43,22,8,.35),inset 0 -4px 6px rgba(124,45,18,.35);left:95px;bottom:64px;z-index:4;pointer-events:none} /* the ball looks like 🏀 (Michelle, Nov 9, 2026): orange, with the black curved seam lines of a real basketball drawn in the background layer over the orange — the same paint in every state (waiting/dribbling, flight, made, missed). Basketball spot: centered under his right palm (player 124px wide at left:16 — hand center ~112px across, ball center here is 95+17=112) */
 .court-stage:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 90% at 50% 38%,rgba(0,0,0,0) 55%,rgba(43,22,8,.20)),linear-gradient(180deg,rgba(255,255,255,.10),rgba(0,0,0,0) 30%,rgba(43,22,8,.14));border-radius:inherit}
 .court-stage.fire-glow{box-shadow:0 0 0 3px #FFB800,0 0 26px 6px rgba(255,140,0,.55);animation:fireGlowPulse .8s ease-in-out infinite alternate}
 @keyframes fireGlowPulse{from{box-shadow:0 0 0 3px #FFB800,0 0 18px 4px rgba(255,140,0,.45)}to{box-shadow:0 0 0 3px #FFB800,0 0 30px 9px rgba(255,140,0,.65)}}
@@ -612,9 +612,9 @@ body.grade-gate-open .wrap{z-index:95}
 @keyframes bubblePop{0%{transform:scale(.96)}55%{transform:scale(1.02)}100%{transform:scale(1)}}
 @keyframes playerBob{0%,100%{transform:translateY(0)}46%{transform:translateY(3px)}}
 @keyframes armPump{0%,100%{transform:translateY(0) rotate(0)}46%{transform:translateY(6px) rotate(-4deg)}}
-.shot-ball:before,.shot-ball:after{content:"";position:absolute;background:#7C2D12}
+.shot-ball:before,.shot-ball:after{content:"";position:absolute;display:none} /* the old straight brown cross seams are retired — the ball's seams are the black curved 🏀 seams in its background layer (see .shot-ball above) */
 .shot-ball:before{width:3px;height:100%;left:50%;top:0}.shot-ball:after{width:100%;height:3px;top:50%;left:0}
-.shot-ball.fire{box-shadow:0 0 0 4px #FFB800,0 -10px 18px 6px rgba(255,107,26,.75);background:#FF8A00}
+.shot-ball.fire{box-shadow:0 0 0 4px #FFB800,0 -10px 18px 6px rgba(255,107,26,.75);background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Cg fill=%22none%22 stroke=%22%2320120B%22 stroke-width=%225%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2246%22/%3E%3Cpath d=%22M4 50H96%22/%3E%3Cpath d=%22M50 4V96%22/%3E%3Cpath d=%22M24 12C40 32 40 68 24 88%22/%3E%3Cpath d=%22M76 12C60 32 60 68 76 88%22/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat,radial-gradient(circle at 32% 28%,#FFD08A,#FF8A00 58%,#F26D00)} /* on fire the ball glows brighter orange — the black 🏀 seams stay on it */
 .swish-net{animation:netWiggle .5s ease}
 @keyframes netWiggle{0%,100%{transform:rotate(0)}30%{transform:rotate(4deg)}60%{transform:rotate(-4deg)}}
 /* Studio */
@@ -958,6 +958,7 @@ body.playing .qlabel{font-size:11px}
   body.playing .shot-ball{left:52px;bottom:46px;width:26px;height:26px} /* basketball spot: centered under his right palm (player 68px wide at left:12 — his hand center works out to ~65px across, ~50px up), so the dribble bounces under his hand with NO gap beside it. This generic spot sat at left:88px, ~36px right of his palm. Sports whose own ball spot was tuned for the big player had the same trouble at this size — the hockey puck rested at left:114px, over 50px from his blade — so the sports that needed it carry ID-scoped spots in this same block, each resting exactly where that sport holds it. */
   body.playing #practiceView .court-stage.sport-tennis .shot-ball{left:74px;bottom:23px} /* centered on his racket strings */
   body.playing #practiceView .court-stage.sport-soccer .shot-ball{left:44px;bottom:4px} /* centered under his right shoe, on the ground */
+  body.playing #practiceView .court-stage.sport-football .shot-ball{left:44px;bottom:4px} /* on the ground by his right shoe, where he kicks it from */
   body.playing #practiceView .court-stage.sport-hockey .shot-ball{left:60px;bottom:10px} /* on the ice at his stick blade */
   body.playing #practiceView .court-stage.sport-hockey .shot-ball.puck-token{left:65px;width:16px;height:9px} /* puck-sized at this size too, center still on the blade */
   body.playing #practiceView .court-stage.sport-baseball .shot-ball{left:14px;bottom:46px} /* the contact spot at his bat — where the thrown-in ball meets it; the ball is only ever seen during the hit */
@@ -1576,23 +1577,34 @@ body.playing .court-stage.sport-tennis .shot-ball{left:105px;bottom:37px;width:1
    under his foot — it does not bounce, juggle or leave the ground the
    way the basketball does (the generic .dribbling dribbleBounce is
    overridden here). His foot sits ON TOP of the ball and rocks back
-   and forth, rolling the ball a few pixels each way under his sole:
-   the ball rolls side to side and spins as it rolls, his shoe rocks
-   with the same timing so it stays planted on the ball, and his whole
-   body sways gently from his ankles instead of bobbing up off it.
-   The ball only ever leaves his foot when he KICKS it on an answer —
-   that flight is the WAAPI shot in playSportShot, not this wait loop.
-   To keep his shoe visibly ON the ball, the ball sits right under his
-   right shoe and the player layer rides above the ball in this world. */
+   and forth, rolling the ball under his sole.
+   FOOT-ON-BALL LOCKSTEP (Michelle, Nov 9, 2026: "the ball rocks but
+   not really under his foot — it's more so passing his foot back
+   and forth. So fix that."): the roll is small and the shoe moves
+   WITH the ball — the shoe's travel below is written in the player
+   SVG's own units to land on the same screen distance as the
+   ball's pixel travel, the shoe pivots on its SOLE (the contact
+   point with the ball) as it rolls, and his body does not sway or
+   bob at all in this state: he stands PLANTED, both feet on the
+   ground, only the rolling shoe and the ball beneath it moving, so
+   the ball stays under his foot the whole motion — never beside
+   it, no gap. (The old loop slid the ball ±7px against a shoe
+   that barely followed, on a different sway timing — the ball
+   slid out from under the shoe and read as passing his foot.)
+   The ball only ever leaves his foot when he KICKS it on an
+   answer — that flight is the WAAPI shot in playSportShot, not
+   this wait loop. To keep his shoe visibly ON the ball, the ball
+   sits right under his right shoe and the player layer rides
+   above the ball in this world. */
 .court-stage.sport-soccer .shot-ball{left:74px;bottom:6px}
 .court-stage.sport-soccer .court-player{z-index:5;transform-origin:50% 100%}
 .court-stage.sport-soccer.dribbling .shot-ball{animation:soccerFootRoll 1.15s ease-in-out infinite}
-@keyframes soccerFootRoll{0%,100%{transform:translateX(-7px) rotate(-26deg)}50%{transform:translateX(7px) rotate(26deg)}}
-.court-stage.sport-soccer.dribbling .court-player{animation:soccerFootSway 2.3s ease-in-out infinite}
+@keyframes soccerFootRoll{0%,100%{transform:translateX(-3px) rotate(-14deg)}50%{transform:translateX(3px) rotate(14deg)}}
+.court-stage.sport-soccer.dribbling .court-player{animation:none}
 .court-stage.sport-soccer:not(.dribbling):not(.shooting):not(.celebrating) .court-player{animation:soccerFootSway 3.4s ease-in-out infinite}
 @keyframes soccerFootSway{0%,100%{transform:rotate(-.8deg) translateX(-1px)}50%{transform:rotate(.8deg) translateX(1px)}}
-.court-stage.sport-soccer.dribbling .court-player .p-shoe-r{animation:soccerShoeRock 1.15s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0%}
-@keyframes soccerShoeRock{0%,100%{transform:translateX(-4px) rotate(-7deg)}50%{transform:translateX(4px) rotate(7deg)}}
+.court-stage.sport-soccer.dribbling .court-player .p-shoe-r{animation:soccerShoeRock 1.15s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes soccerShoeRock{0%,100%{transform:translateX(-5px) rotate(-5deg)}50%{transform:translateX(5px) rotate(5deg)}}
 .court-stage.sport-soccer.dribbling .court-player .p-leg-r{animation:soccerLegRock 1.15s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0%}
 @keyframes soccerLegRock{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
 @media(max-width:900px){.court-stage.sport-soccer .shot-ball{left:58px;bottom:4px}}
@@ -1622,7 +1634,7 @@ body.world-tennis .p-racket,.court-stage.sport-tennis .court-player .p-racket{di
    a wrong answer wobbles him off onto the mat and he climbs back on. */
 .court-stage.sport-gymnastics.dribbling .court-player{animation:beamBalance .9s ease-in-out infinite}
 .court-stage.sport-gymnastics:not(.dribbling):not(.shooting):not(.celebrating) .court-player{animation:beamBalance 1.9s ease-in-out infinite}
-@keyframes beamBalance{0%,100%{transform:rotate(-2.2deg) translateY(0)}50%{transform:rotate(2.2deg) translateY(2px)}}
+@keyframes beamBalance{0%,100%{transform:rotate(-1.1deg) translateY(0)}50%{transform:rotate(1.1deg) translateY(-1px)}}
 /* NO STAR TOKEN (Michelle, Nov 9, 2026 — "Remove the star on the
    gymnastics video game"): the gold star token that used to rest on
    the end of the balance beam and ride beside him on the beam walk
@@ -1645,30 +1657,59 @@ body.world-tennis .p-racket,.court-stage.sport-tennis .court-player .p-racket{di
 .gym-beam i{position:absolute;top:calc(100% + 3px);width:11px;height:46px;background:#8A5A2B;border-radius:0 0 4px 4px}
 .gym-beam i.l{left:11%}.gym-beam i.r{right:11%}
 .court-stage.sport-gymnastics .gym-beam{display:block}
-.court-stage.sport-gymnastics .court-player{bottom:calc(20% + 6px)}
-body.playing .court-stage.sport-gymnastics .court-player{bottom:calc(20% + 8px)}
-@media(max-width:760px){.court-stage.sport-gymnastics .court-player{bottom:calc(20% + 8px)}.gym-beam i{height:34px}}
+/* TEAM MASCOT (Michelle, Nov 9, 2026): the wizard's favorite-animal
+   pick stands INSIDE every game as a FULL-BODY mascot character —
+   upright, dressed in the team jersey, like the original dressed-up
+   lion Coach Leo — never just a head. Karter's build mascot is the
+   LION, and he is the DEFAULT: with no pick made, the lion stands
+   in the games; a learner's pick takes the lion's exact spots. Each
+   sport parks him at its logical sideline spot, off to the side and
+   out of the way of the play — baseline under the hoop, the far
+   touchline, the far boards, the mat's edge, poolside — rendered by
+   mascotSVG() from the picked animal (themeAnimal()) in
+   renderStageBackdrop, so he is present in waiting, correct and
+   wrong states alike and never covers the player, the ball, the
+   counting picture or any target. */
+.stage-mascot{position:absolute;z-index:1;width:58px;height:87px;pointer-events:none}
+.stage-mascot svg{width:100%;height:100%;display:block;filter:drop-shadow(0 4px 4px rgba(43,22,8,.30))}
+.court-stage.sport-basketball .stage-mascot{right:10px;bottom:4px}
+.court-stage.sport-soccer .stage-mascot{left:176px;bottom:34%}
+.court-stage.sport-football .stage-mascot{right:22px;bottom:34%}
+.court-stage.sport-baseball .stage-mascot{right:16px;bottom:24%}
+.court-stage.sport-tennis .stage-mascot{right:16px;bottom:38%}
+.court-stage.sport-hockey .stage-mascot{left:190px;bottom:50%}
+.court-stage.sport-running .stage-mascot{right:14px;bottom:48%}
+.court-stage.sport-swimming .stage-mascot{right:10px;bottom:2px;z-index:6} /* in front of the swim-water layer: he stands on the near deck, poolside */
+.court-stage.sport-gymnastics .stage-mascot{left:12px;bottom:4px}
+@media(max-width:760px){.stage-mascot{width:46px;height:69px}}
+@media(max-width:900px){.court-stage.sport-soccer .stage-mascot{left:132px}.court-stage.sport-hockey .stage-mascot{left:150px}}
+.court-stage.sport-gymnastics .court-player{bottom:calc(20% + 15px);transform-origin:50% 100%}
+body.playing .court-stage.sport-gymnastics .court-player{bottom:calc(20% + 15px)}
+@media(max-width:760px){.court-stage.sport-gymnastics .court-player{bottom:calc(20% + 15px)}.gym-beam i{height:34px}}
 .court-stage.sport-gymnastics .shot-ball{left:148px;bottom:calc(20% + 15px)}
 body.playing .court-stage.sport-gymnastics .shot-ball{left:128px;bottom:calc(20% + 15px)}
 @media(max-width:900px){body.playing .court-stage.sport-gymnastics .shot-ball{left:100px;bottom:calc(20% + 15px)}}
-/* Baseball waiting move (Michelle, Nov 9, 2026): practice swings ONLY —
-   his bat arm loads back and swings through on a slow loop while his
-   whole body waggles in the batter's box. The ball does NOT bounce
-   while he waits: it rests at the plate, still, until he hits it. */
-.court-stage.sport-baseball.dribbling .court-player{animation:batWaggle 1.6s ease-in-out infinite}
-.court-stage.sport-baseball:not(.dribbling):not(.shooting):not(.celebrating) .court-player{animation:batWaggle 2.6s ease-in-out infinite}
-@keyframes batWaggle{0%,100%{transform:rotate(0deg) translateY(0)}30%{transform:rotate(-2.5deg) translateY(1px)}55%{transform:rotate(2deg) translateY(0)}78%{transform:rotate(-1deg) translateY(1px)}}
-.court-stage.sport-baseball.dribbling .court-player .p-arm-r{animation:batSwing 1.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 6%}
-@keyframes batSwing{0%,100%{transform:rotate(8deg)}35%{transform:rotate(-40deg)}55%{transform:rotate(26deg)}72%{transform:rotate(10deg)}}
+/* Baseball waiting move (Michelle, Nov 9, 2026, revised later that
+   morning: "he can stand holding the bat while he waits instead of
+   swinging it"): he STANDS at the plate holding the bat — no
+   swinging, no waggle while he waits. His body and his bat arm
+   stay still (the generic dribble bob, idle sway and arm pump are
+   switched off for baseball in this state), the bat resting in
+   his hands, his back to us, and NO ball in play. The bat only
+   moves when he swings on an answer — the hit and the
+   swing-and-miss, both the stage's .shooting move. */
+.court-stage.sport-baseball.dribbling .court-player{animation:none}
+.court-stage.sport-baseball:not(.dribbling):not(.shooting):not(.celebrating) .court-player{animation:none}
+.court-stage.sport-baseball.dribbling .court-player .p-arm-r{animation:none}
 /* ===== BASEBALL BAT — it STAYS in the player's hands =====
    Same rule as the tennis racket: the bat is drawn INSIDE the player's
    right-arm group (.p-arm-r) in renderPlayerSVG, with his hand drawn on
    top of the grip — it is never a separate piece on the field. Only the
    baseball (#shotBall) ever flies on an answer; the bat itself has no
    flight animation of its own, so it cannot leave his hands: while he
-   waits it waggles and takes practice swings WITH his arm (batWaggle /
-   batSwing), and on the hit and the swing-and-miss it swings WITH his
-   arm (armShoot) and settles right back into his grip. It only shows
+   waits it rests still in his hands as he stands at the plate, and on
+   the hit and the swing-and-miss it swings WITH his arm (armShoot)
+   and settles right back into his grip. It only shows
    in the baseball world. */
 .p-bat{display:none}
 body.world-baseball .p-bat,.court-stage.sport-baseball .court-player .p-bat{display:block}
@@ -1676,9 +1717,9 @@ body.world-baseball .p-bat,.court-stage.sport-baseball .court-player .p-bat{disp
    pinned to the SHOULDER in view-box units (155,97 of the 200x262
    player) instead of the group's own box — arm, hand and bat rotate
    around the shoulder joint as one rigid piece and the grip never
-   slides out of his hand mid-swing. The dribbling rule below repeats
-   the exact batSwing selector (later in the sheet) so its pivot wins
-   over the fill-box pivot batSwing was first declared with. */
+   slides out of his hand mid-swing. The dribbling rule below keeps
+   that same shoulder pivot on the waiting arm, which now stands
+   still holding the bat. */
 .court-stage.sport-baseball.shooting .court-player .p-arm-r{transform-box:view-box;transform-origin:77.5% 37%}
 .court-stage.sport-baseball.dribbling .court-player .p-arm-r{transform-box:view-box;transform-origin:77.5% 37%}
 /* ===== HOCKEY STICK — it STAYS in the player's hands =====
@@ -1722,16 +1763,15 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
 .court-stage.sport-hockey .shot-ball.puck-token{width:22px;height:11px;left:120px}
 body.playing .court-stage.sport-hockey .shot-ball.puck-token{width:20px;height:10px;left:119px}
 @keyframes puckStickhandle{0%,100%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
-/* While he waits at the plate the ball RESTS — no bounce, no toss
-   (Michelle, Nov 9, 2026: "The player should be just swinging the
-   bat while waiting. The ball is not bouncing."). The generic
-   dribble bounce is switched off for baseball here; the only ball
-   motion in this world is the hit itself. */
+/* While he waits at the plate there is NO ball — no bounce, no
+   toss: he just stands holding the bat (Michelle, Nov 9, 2026).
+   The generic dribble bounce is switched off for baseball here;
+   the only ball motion in this world is the hit itself. */
 .court-stage.sport-baseball.dribbling .shot-ball{animation:none}
 /* NO BALL IN PLAY WHILE HE WAITS (Michelle, Nov 9, 2026): in the
    baseball game the ball exists only for the hit — it is thrown in
    from the left when the answer is right, and it is gone again
-   (rolled out of the frame) when the flight ends. So the stage ball
+   (flown out of the frame) when the flight ends. So the stage ball
    is hidden in this world unless the flight code has a ball live:
    the .ball-live class is added and removed by the baseball flight
    alone, on the same beats as .hr-flight. */
@@ -1745,32 +1785,27 @@ body.playing .court-stage.sport-hockey .shot-ball.puck-token{width:20px;height:1
    the football got "dribbled" while he waited and the swimmer
    "jump-shot" out of the pool. Every sport now waits and shoots its
    own way. */
-/* Football waiting: he TOSSES the ball up and catches it while he
-   calls the play — a gentle rise and fall with a little spin, never
-   a dribble bounce, never a squash on the ground, and no dribbling
-   arm pump. */
-.court-stage.sport-football.dribbling .shot-ball{animation:footballToss 1.25s ease-in-out infinite}
-@keyframes footballToss{0%,100%{transform:translateY(0) rotate(-10deg)}50%{transform:translateY(-19px) rotate(12deg)}}
+/* Football waiting (Michelle, Nov 9, 2026 — field-goal game): the
+   ball RESTS BY HIS FOOT on the ground — not tucked in his hand,
+   not tossed. It sits still at his right shoe (the same ground
+   spots the soccer ball uses) while he waits in his ready stance;
+   the only ball motion in this world is the kick on an answer. */
+.court-stage.sport-football .shot-ball{left:74px;bottom:6px}
+@media(max-width:900px){.court-stage.sport-football .shot-ball{left:58px;bottom:4px}}
+.court-stage.sport-football.dribbling .shot-ball{animation:none}
 .court-stage.sport-football.dribbling .court-player{animation:footballReady 1.25s ease-in-out infinite}
 @keyframes footballReady{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
 .court-stage.sport-football.dribbling .court-player .p-arm-r{animation:none}
-/* Football shooting: the TOUCHDOWN RUN — playSportShot drives the
-   player himself down the field with the ball in his hand, so the
-   generic basketball jump-shot body animation is OFF for football
-   (the run animation owns his transform). BOTH legs stride wide in
-   opposite phase the whole run and his free (left) arm pumps at
-   the shoulder — no gliding (Michelle, Nov 9, 2026: the old run
-   swung only the right leg ±17° and left the other leg still,
-   which read as a slide). His right arm stays tucked still on the
-   ball he is carrying — player and ball ride the exact same path,
-   so the ball never leaves his hand and no gap ever opens. */
-.court-stage.sport-football.shooting .court-player{animation:none}
+/* Football shooting: the FIELD-GOAL KICK — he stays in his spot
+   and KICKS: his body rocks into it and his right leg swings
+   through the ball at his foot (the same kick build as soccer's),
+   while playSportShot flies the ball itself up to the goal post.
+   No run, no carry — the player never leaves his spot. */
+.court-stage.sport-football.shooting .court-player{animation:footballKickBody .95s ease-in-out}
+@keyframes footballKickBody{0%{transform:rotate(0)}30%{transform:rotate(-3deg) translateY(1px)}55%{transform:rotate(2deg)}100%{transform:rotate(0)}}
 .court-stage.sport-football.shooting .court-player .p-arm-r{animation:none}
-.court-stage.sport-football.shooting .court-player .p-leg-r{animation:footballStride .28s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0%}
-.court-stage.sport-football.shooting .court-player .p-leg-l{animation:footballStride .28s ease-in-out -.14s infinite;transform-box:fill-box;transform-origin:50% 0%}
-@keyframes footballStride{0%,100%{transform:rotate(31deg)}50%{transform:rotate(-31deg)}}
-.court-stage.sport-football.shooting .court-player .p-arm-l{animation:footballArmPump .28s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 6%}
-@keyframes footballArmPump{0%,100%{transform:rotate(-25deg)}50%{transform:rotate(25deg)}}
+.court-stage.sport-football.shooting .court-player .p-leg-r{animation:footballKickLeg .95s ease-in-out;transform-box:fill-box;transform-origin:50% 0%}
+@keyframes footballKickLeg{0%{transform:rotate(0)}30%{transform:rotate(-24deg)}55%{transform:rotate(30deg)}100%{transform:rotate(0)}}
 /* Running waiting: the shoe token RESTS on the track at his right shoe,
    where its spot places it. The old shoeSteps loop hopped the lone shoe
    up into the air and tilted it back and forth beside his foot — a
@@ -1829,6 +1864,15 @@ body.playing .court-stage.sport-hockey .shot-ball.puck-token{width:20px;height:1
 .court-stage.sport-gymnastics.shooting .court-player{animation:none}
 .court-stage.sport-gymnastics.shooting .court-player .p-leg-r{animation:beamStep .4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0%}
 .court-stage.sport-gymnastics.shooting .court-player .p-leg-l{animation:beamStep .4s ease-in-out -.2s infinite;transform-box:fill-box;transform-origin:50% 0%}
+/* The leap's split pose (Michelle, Nov 9, 2026): while he is
+   airborne in the correct-answer leap, his legs hold a real
+   SPLIT — front leg reaching forward, back leg trailing (the
+   kick-leg convention: positive rotation swings forward) —
+   instead of the walking step cycle. The shot code adds
+   .leap-split for exactly the flight window and takes it off
+   at the landing. */
+.court-stage.sport-gymnastics.shooting .court-player.leap-split .p-leg-r{animation:none;transform:rotate(43deg)}
+.court-stage.sport-gymnastics.shooting .court-player.leap-split .p-leg-l{animation:none;transform:rotate(-43deg)}
 @keyframes beamStep{0%,100%{transform:rotate(17deg)}50%{transform:rotate(-17deg)}}
 /* Hockey: he never travels across on an answer (only the puck
    flies), but his in-place skating is real skating — his legs push
@@ -2180,10 +2224,11 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
     </div>
     <div class="champ-banner" id="champBanner">🏆 CHAMPIONSHIP GAME! Win this one for a Championship Trophy! 🏆</div>
     <div class="court-stage" id="courtStage" aria-label="Your player dribbling and shooting on Coach Leo's court">
-      <img class="court-photo" id="courtPhoto" src="assets/court-game.jpg" alt=""/>
+      <img class="court-photo" id="courtPhoto" src="assets/court-3d.svg" alt=""/>
       <div class="sport-scene" id="sportScene" aria-hidden="true"></div>
       <div class="gym-beam" id="gymBeam" aria-hidden="true"><i class="l"></i><i class="r"></i></div>
       <div class="court-player player-slot" id="courtPlayer"></div>
+      <div class="stage-mascot" id="stageMascot" aria-hidden="true"></div>
       <!-- Royce's swim-water layer (same design as hers): a stage-wide
            water layer in front of the swimmer's lower body, shown only
            in the swimming world — never a bubble around the player. -->
@@ -4150,8 +4195,9 @@ function renderPlayerSVG(d,sportId){
    arm groups at the same coordinates, the bat gripped in his right
    hand inside .p-arm-r exactly as the front view builds it (hand
    drawn on top of the grip, no gap), so every baseball arm move —
-   the practice-swing waggle, the swing on a hit, the swing-and-miss
-   — plays on him unchanged. What differs is only what a back view
+   standing still holding the bat while he waits, the swing on a
+   hit, the swing-and-miss — plays on him unchanged. What differs
+   is only what a back view
    shows: hair over the whole back of his head (no face at all), his
    ears at the sides, and his number big on the back of his jersey
    the way a real uniform reads from behind. */
@@ -4443,7 +4489,7 @@ function updateScoreboard(){
    object; everything Leo has to say lives in his bubble and in the
    question card's feedback line, where it always also appeared. */
 /* ----- The photo court: dribble loop + shots aimed at the photo's own hoop ----- */
-/* Rim center of assets/court-game.jpg — the video-game court, rendered at the same 1120x2240 geometry as the court it replaces: rim center at 89% across / 16.8% down, wall/floor line at 53.6%. The cover math below mirrors .court-photo (object-fit:cover, object-position 50% 15%), so the ball lands on the game court's hoop at any stage size — the 15% anchor keeps the hoop in frame even on the short same-view mobile stage. The same rendered court stands behind Coach Leo in the hero (assets/coach-leo.jpg). The dribble itself is visual-only, so it can never fight his music. */
+/* Rim center of the CONSTRUCTED 3D court (assets/court-3d.svg — Michelle, Nov 9, 2026: the game court is BUILT, not the flat hero picture: cream paneled walls, red stripe with gold chevrons, arena lights, glossy perspective hardwood, red painted key, single glass backboard/hoop upper right — drawn at the same 1120x2240 geometry as the photo court it replaces in the game; his basketball PAGE BACKGROUND and wizard template keep the restored original picture): rim center at 89% across / 16.8% down, wall/floor line at 53.6%. The cover math below mirrors .court-photo (object-fit:cover, object-position 50% 15%), so the ball lands on the game court's hoop at any stage size — the 15% anchor keeps the hoop in frame even on the short same-view mobile stage. The same rendered court stands behind Coach Leo in the hero (assets/coach-leo.jpg). The dribble itself is visual-only, so it can never fight his music. */
 var COURT_IMG={iw:1120,ih:2240,fx:0.89,fy:0.168,posX:0.5,posY:0.15};
 var shotSeq=0;
 var shotAnimActive=false, dribblePending=false;
@@ -4574,12 +4620,13 @@ function playSportShot(success){
     }catch(e){ shotAnimActive=false; if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },900); }
     return;
   }
-  /* Gymnastics plays the balance-beam walk with the GYMNAST HIMSELF:
-     a correct answer WALKS HIM all the way across the beam — the
-     WAAPI trip below drives the PLAYER step by step (the .shooting
-     beam-step leg animation in the CSS swings his legs in opposite
-     phase the whole way). He sticks the landing at the far end, then
-     walks back across. A wrong answer walks him partway, wobbles
+  /* Gymnastics plays the balance beam with the GYMNAST HIMSELF:
+     a correct answer LEAPS HIM across the beam (Michelle, Nov 9,
+     2026 — the shared-sport leap from Royce's game): two quick
+     steps, then one big split leap through the air for the rest
+     of the beam's length, landing ON the beam at the far end and
+     sticking it; then he walks back across. The WAAPI trip below
+     drives the PLAYER himself the whole way. A wrong answer walks him partway, wobbles
      him, and he steps OFF the beam down onto the mat, walks back
      along the mat, and climbs back up at the start to walk the same
      one again. The gymnast is never slid across with still legs —
@@ -4594,26 +4641,43 @@ function playSportShot(success){
     var gStartCX=gpr.left-gr.left+gpr.width/2;
     var gLandCX=gr.width*0.82, gDx=Math.round(gLandCX-gStartCX);
     shotAnimActive=true;
+    gymnast.classList.remove('leap-split');
     try{ gymnast.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){}
     try{
       var gAnimP;
       if(success){
         var gDur=2400;
-        var gSteps=[[0,0,0],[.1,.16,-4],[.2,.32,0],[.3,.48,-4],[.4,.64,0],[.5,.8,-4],[.58,1,0]];
-        var gFramesP=gSteps.map(function(st){ return {transform:'translate('+Math.round(gDx*st[1])+'px,'+st[2]+'px)',offset:st[0],easing:'ease-in-out'}; });
-        /* Stuck landing at the far end: one hop, feet back on the beam. */
-        gFramesP.push({transform:'translate('+gDx+'px,-11px)',offset:.66,easing:'ease-out'});
-        gFramesP.push({transform:'translate('+gDx+'px,0px)',offset:.72,easing:'ease-in'});
-        /* Walk back across the same way — one continuous trip home. */
-        gFramesP.push({transform:'translate('+Math.round(gDx*.5)+'px,-4px)',offset:.86,easing:'ease-in-out'});
-        gFramesP.push({transform:'translate(0,0)',offset:1});
+        /* Run-up: two quick steps along the beam (the .shooting
+           beam-step legs step him), then THE LEAP: a single big
+           arc carrying him from 18% of the trip to the far end,
+           peaking well clear of the beam with his legs in the
+           .leap-split split (added for exactly the flight
+           window). He lands ON the beam, sticks it with one
+           small hop, then walks back across to start again. */
+        var gPeak=Math.max(38,Math.round(gr.height*0.17));
+        var gFramesP=[
+          {transform:'translate(0,0)',offset:0,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(gDx*.07)+'px,-3px)',offset:.08,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(gDx*.13)+'px,0px)',offset:.16,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(gDx*.18)+'px,-2px)',offset:.22,easing:'ease-out'},
+          {transform:'translate('+Math.round(gDx*.45)+'px,'+Math.round(-gPeak*.82)+'px)',offset:.34,easing:'ease-out'},
+          {transform:'translate('+Math.round(gDx*.68)+'px,'+(-gPeak)+'px)',offset:.44,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(gDx*.88)+'px,'+Math.round(-gPeak*.55)+'px)',offset:.54,easing:'ease-in'},
+          {transform:'translate('+gDx+'px,0px)',offset:.62,easing:'ease-in'},
+          {transform:'translate('+gDx+'px,-8px)',offset:.68,easing:'ease-out'},
+          {transform:'translate('+gDx+'px,0px)',offset:.74,easing:'ease-in'},
+          {transform:'translate('+Math.round(gDx*.5)+'px,-4px)',offset:.87,easing:'ease-in-out'},
+          {transform:'translate(0,0)',offset:1}
+        ];
         gAnimP=gymnast.animate(gFramesP,{duration:gDur});
+        setTimeout(function(){ if(mySeq===shotSeq) gymnast.classList.add('leap-split'); },Math.round(gDur*0.20));
+        setTimeout(function(){ if(mySeq===shotSeq) gymnast.classList.remove('leap-split'); },Math.round(gDur*0.62));
         if(gAnimP) gAnimP.onfinish=function(){ settleShot(mySeq,true); };
         setTimeout(function(){ settleShot(mySeq,true); },gDur+90);
         setTimeout(function(){ if(mySeq===shotSeq){ var st4=document.getElementById('courtStage'); if(st4) st4.classList.add('celebrating'); } },Math.round(gDur*0.72));
         setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(gDur*0.78));
       } else {
-        var wDur=2100, wFwd=Math.round(gDx*0.3), wDrop=Math.max(40,Math.round(gr.height*0.20)-6);
+        var wDur=2100, wFwd=Math.round(gDx*0.3), wDrop=Math.max(40,Math.round(gr.height*0.20)+1);
         var wFramesP=[
           {transform:'translate(0,0) rotate(0deg)',opacity:1,easing:'ease-in-out'},
           {transform:'translate('+Math.round(wFwd*.55)+'px,-4px) rotate(6deg)',offset:.2,easing:'ease-in-out'},
@@ -4698,19 +4762,20 @@ function playSportShot(success){
     }catch(e){ shotAnimActive=false; if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },900); }
     return;
   }
-  /* Baseball plays the AT-BAT (Michelle, Nov 9, 2026): while he
-     waits there is NO ball in play at all — he just takes practice
-     swings at the plate, his back to us. A correct answer is a
-     HOME RUN: the ball is THROWN IN FROM THE LEFT — the only
-     moment a ball ever enters — travels in to his bat, and he
-     hits it up and OVER the outfield fence (the wall band at the
-     top of the diamond scene); it lands on the warning track
-     behind the wall, bounces there, then ROLLS OUT of the frame
-     and is gone — it never hops back over. When the flight ends
-     the game has reset: he is at the plate taking practice swings
-     again, ready for the next question. A wrong answer is a SWING
-     AND A MISS: no ball is thrown in — he takes his swing, whiffs,
-     and steps back in on the same one again. */
+  /* Baseball plays the AT-BAT (Michelle, Nov 9, 2026; flight
+     revised later that morning): while he waits there is NO ball
+     in play at all — he just STANDS at the plate holding the bat,
+     his back to us. A correct answer is a HOME RUN: the ball is
+     THROWN IN FROM THE LEFT — the only moment a ball ever
+     enters — travels in to his bat, and he hits it up and OVER
+     the outfield fence (the wall band at the top of the diamond
+     scene), arcing up and over and flying OUT OF THE FRAME
+     altogether — it never comes down: no landing on the warning
+     track, no bounce, no roll-out. When the flight ends the game
+     has reset: he is at the plate standing holding the bat again,
+     ready for the next question. A wrong answer is a SWING AND A
+     MISS: no ball is thrown in — he takes his swing, whiffs, and
+     steps back in on the same one again. */
   if(info===SPORT_INFO.baseball){
     stage.classList.add('shooting');
     var bsr=stage.getBoundingClientRect();
@@ -4773,17 +4838,18 @@ function playSportShot(success){
            sport are untouched. */
         var bPeakBot=bWallTop-60;
         var bPeakTy=Math.round((bPeakBot-bStartBot)/bK);
-        /* It comes down on the WARNING TRACK BEHIND the wall —
-           the middle of the painted track band, between the wall's
-           bottom edge and the track's far edge — bounces there,
-           then rolls along the track, out of the frame, and is
-           gone: bEdgeDx takes the ball's own left edge to the
-           stage's right edge, and the last stretch carries it
-           clear out while it fades, so it leaves the frame and
-           disappears instead of hovering outside it (the stage's
-           clip is lifted during this flight — see .hr-flight). */
-        var bLandBot=(bWallBot+bTrackBot)/2, bLandTy=Math.round((bLandBot-bStartBot)/bK);
-        var bMidTy=Math.round(bPeakTy+(bLandTy-bPeakTy)*0.55);
+        /* OUT OF THE FRAME ALTOGETHER (Michelle, Nov 9, 2026):
+           from the peak the ball does NOT come down — it keeps
+           arcing up and over, rising past the top of the frame
+           while it travels right and clear out of it, fading only
+           on the last stretch so it leaves the frame and is gone
+           instead of hovering outside it (the stage's clip is
+           lifted during this flight — see .hr-flight). bExitTy
+           puts the ball's bottom edge a full ball-height plus a
+           margin above the stage's top edge at the flight's end.
+           There is no warning-track landing and no roll-out
+           anymore. */
+        var bExitTy=Math.round((-(bbr.height+24)-bStartBot)/bK);
         var bDx=Math.round(bsr.width*0.52/bK);
         var bDur=2300;
         stage.classList.add('hr-flight','ball-live');
@@ -4800,11 +4866,11 @@ function playSportShot(success){
            in front, as it flies off the bat. It reaches his bat at
            the ball's own spot (translate 0,0) a fifth of the way
            into the flight. From contact the hit itself: up over
-           the wall, down on the warning track, a bounce, then the
-           roll out of the frame. */
+           the wall at the peak, then still rising as it arcs up
+           and over and flies out of the frame altogether — it
+           never comes down, never lands, never rolls. */
         var bStartLeft=bbr.left-bsr.left;
         var bThrowDx=Math.round((-(bStartLeft+bbr.width-4))/bK);
-        var bEdgeDx=Math.round((bsr.width-bStartLeft)/bK);
         var bOutDx=Math.round((bsr.width+70-bStartLeft)/bK);
         bAnim=ball.animate([
           {transform:'translate('+bThrowDx+'px,8px) rotate(-30deg) scale(1)',opacity:1,zIndex:1,easing:'ease-in'},
@@ -4812,16 +4878,12 @@ function playSportShot(success){
           {transform:'translate(0,0) rotate(0deg) scale(1)',offset:.2,zIndex:1,easing:'ease-out'},
           {transform:'translate('+Math.round(bDx*0.3)+'px,'+Math.round(bPeakTy*0.62)+'px) rotate(80deg) scale(.9)',offset:.38,zIndex:5,easing:'ease-out'},
           {transform:'translate('+bDx+'px,'+bPeakTy+'px) rotate(150deg) scale(.6)',opacity:1,offset:.56,easing:'ease-in'},
-          {transform:'translate('+Math.round(bDx*1.08)+'px,'+bMidTy+'px) rotate(185deg) scale(.62)',offset:.68,easing:'ease-out'},
-          {transform:'translate('+Math.round(bDx*1.04)+'px,'+bLandTy+'px) rotate(205deg) scale(.64)',offset:.74,easing:'ease-in'},
-          {transform:'translate('+bDx+'px,'+(bLandTy-16)+'px) rotate(225deg) scale(.66)',offset:.79,easing:'ease-out'},
-          {transform:'translate('+Math.round(bDx*1.02)+'px,'+bLandTy+'px) rotate(245deg) scale(.66)',opacity:1,offset:.84,easing:'ease-in'},
-          {transform:'translate('+bEdgeDx+'px,'+bLandTy+'px) rotate(540deg) scale(.66)',opacity:1,offset:.93,easing:'ease-in'},
-          {transform:'translate('+bOutDx+'px,'+bLandTy+'px) rotate(660deg) scale(.66)',opacity:0,offset:1}
+          {transform:'translate('+Math.round(bDx+(bOutDx-bDx)*0.5)+'px,'+Math.round(bPeakTy+(bExitTy-bPeakTy)*0.45)+'px) rotate(230deg) scale(.55)',opacity:1,offset:.78,easing:'ease-in'},
+          {transform:'translate('+bOutDx+'px,'+bExitTy+'px) rotate(330deg) scale(.5)',opacity:0,offset:1}
         ],{duration:bDur});
         if(bAnim) bAnim.onfinish=function(){ stage.classList.remove('hr-flight','ball-live'); settleShot(mySeq,true); };
         setTimeout(function(){ stage.classList.remove('hr-flight','ball-live'); settleShot(mySeq,true); },bDur+90);
-        setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(Math.round(bStartCX+bDx*1.05),Math.max(14,bLandBot-24),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); var st6=document.getElementById('courtStage'); if(st6) st6.classList.add('celebrating'); sfx('sparkle'); } },Math.round(bDur*0.6));
+        setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(Math.round(bStartCX+bDx*bK),Math.max(12,Math.round(bPeakBot-30)),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); var st6=document.getElementById('courtStage'); if(st6) st6.classList.add('celebrating'); sfx('sparkle'); } },Math.round(bDur*0.6));
         setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(bDur*0.66));
         /* This question is scored and DONE (see bbAnsweredQ): lock
            it against a repeat Check tap, and carry a backstop on
@@ -4953,79 +5015,97 @@ function playSportShot(success){
     }catch(e){ shotAnimActive=false; if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },900); }
     return;
   }
-  /* Football plays the TOUCHDOWN RUN: the ball never leaves his
-     hand — there is no throw and no pass. A correct answer sends
-     HIM down the field carrying the ball: player and ball ride
-     the exact same path, stride for stride (ground-level strides
-     with a running bob, feet on the ground the whole way), all
-     the way into the end zone, where he hops twice to celebrate
-     with the ball still in his hand, then jogs back the same way.
-     A wrong answer strides partway and STUMBLES — a dip and a
-     shake, ball still in his hand — gets back up, and jogs back
-     to run the same one again. One continuous trip out and back:
-     nothing flies, nothing fades, nothing teleports. */
-  var fbPlayer=document.getElementById('courtPlayer');
-  if(info===SPORT_INFO.football&&fbPlayer&&fbPlayer.animate){
+  /* Football plays the FIELD GOAL (Michelle, Nov 9, 2026 — this
+     SUPERSEDES the touchdown run): the ball rests by his foot
+     while he waits, and on an answer HE KICKS it — the stage's
+     .shooting move is his kicking leg, and he never leaves his
+     spot. A correct answer sends the ball arcing up through the
+     air and through the CENTER of the goal post — between the
+     uprights, over the crossbar of the 3D field's far post —
+     for the score; it comes down beyond the post, bounces on
+     the grass, and rolls back to his foot for the next kick.
+     A wrong answer kicks it OFF THE POST: the ball strikes the
+     left upright and BOUNCES OFF it, back out over the field —
+     no good, no score, and he kicks the same one again. No run,
+     no carry, no throw: the ball does all the traveling. */
+  if(info===SPORT_INFO.football){
     stage.classList.add('shooting');
-    var fr2=stage.getBoundingClientRect(),fpr=fbPlayer.getBoundingClientRect();
-    var fStartCX=fpr.left-fr2.left+fpr.width/2;
-    var fLandCX=fr2.width*0.90, fDx=Math.round(fLandCX-fStartCX);
+    var fr2=stage.getBoundingClientRect(),fbr=ball.getBoundingClientRect();
+    var fStartCX=fbr.left-fr2.left+fbr.width/2, fStartCY=fbr.top-fr2.top+fbr.height/2;
+    /* Ground contact for the landing bounce: a few px below the
+       ball's rest spot, where the squash keyframes land it. */
+    var fFloorY=Math.max(3,Math.round(fbr.height*0.18));
     shotAnimActive=true;
-    try{ fbPlayer.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){}
     try{
-      var fAnimP,fAnimB;
+      /* The target is measured off the goal post's ACTUAL
+         RENDERED position, the same way baseball measures its
+         wall: in the 3D field scene the uprights stand at scene
+         x352-448 with the crossbar at y276-285, so the CENTER
+         of the post — midway between the uprights, midway up
+         them — is scene (400,226), and the left upright's
+         center is scene (357,226). */
+      var fGoalX=null,fPostX=null,fGoalY=null;
+      var fSvg=stage.querySelector('.sport-scene svg');
+      if(fSvg&&fSvg.getScreenCTM){
+        try{
+          var fCtm=fSvg.getScreenCTM(), fPt=fSvg.createSVGPoint();
+          if(fCtm){
+            fPt.x=400; fPt.y=226; var fC=fPt.matrixTransform(fCtm); fGoalX=fC.x-fr2.left; fGoalY=fC.y-fr2.top;
+            fPt.x=357; fPt.y=226; fPostX=fPt.matrixTransform(fCtm).x-fr2.left;
+          }
+        }catch(e){ fGoalX=null; }
+      }
+      if(fGoalX===null||fPostX===null||fGoalY===null){
+        var fvr=fSvg?fSvg.getBoundingClientRect():fr2;
+        var fSc=Math.max(fvr.width/800,fvr.height/560), fOx=(fvr.left-fr2.left)+(fvr.width-800*fSc)/2, fOy=(fvr.top-fr2.top)+(fvr.height-560*fSc)/2;
+        fGoalX=400*fSc+fOx; fPostX=357*fSc+fOx; fGoalY=226*fSc+fOy;
+      }
+      /* Ball-local conversion, same as baseball's: the flight
+         runs in the ball's own pixels, the targets are screen
+         pixels. The ball also SHRINKS as it flies away down the
+         3D field (scale toward .55 at the post) and grows back
+         on the roll home — real depth, no teleporting. */
+      var fK=(fbr.height>0&&ball.offsetHeight>0)? fbr.height/ball.offsetHeight : 1; if(!(fK>0)) fK=1;
+      var fCrossTy=Math.round((fGoalY-fStartCY)/fK);
+      var fAnim;
       if(success){
-        var fDur=2350;
-        var fSteps=[[0,0,0],[.09,.14,-7],[.18,.27,0],[.27,.4,-7],[.36,.53,0],[.45,.66,-7],[.54,.79,0]];
-        var fFramesP=fSteps.map(function(st){ return {transform:'translate('+Math.round(fDx*st[1])+'px,'+st[2]+'px) rotate(2deg)',offset:st[0],easing:'ease-in-out'}; });
-        var fFramesB=fSteps.map(function(st){ return {transform:'translate('+Math.round(fDx*st[1])+'px,'+st[2]+'px)',offset:st[0],easing:'ease-in-out'}; });
-        /* In the end zone: two celebration hops, ball still in hand. */
-        fFramesP.push({transform:'translate('+fDx+'px,-16px) rotate(0deg)',offset:.62,easing:'ease-out'});
-        fFramesP.push({transform:'translate('+fDx+'px,0px) rotate(0deg)',offset:.68,easing:'ease-in'});
-        fFramesP.push({transform:'translate('+fDx+'px,-13px) rotate(0deg)',offset:.74,easing:'ease-out'});
-        fFramesP.push({transform:'translate('+fDx+'px,0px) rotate(0deg)',offset:.8,easing:'ease-in'});
-        fFramesB.push({transform:'translate('+fDx+'px,-16px)',offset:.62,easing:'ease-out'});
-        fFramesB.push({transform:'translate('+fDx+'px,0px)',offset:.68,easing:'ease-in'});
-        fFramesB.push({transform:'translate('+fDx+'px,-13px)',offset:.74,easing:'ease-out'});
-        fFramesB.push({transform:'translate('+fDx+'px,0px)',offset:.8,easing:'ease-in'});
-        /* Jog back the same way — one continuous trip home. */
-        fFramesP.push({transform:'translate('+Math.round(fDx*.5)+'px,-6px) rotate(2deg)',offset:.9,easing:'ease-in-out'});
-        fFramesP.push({transform:'translate(0,0) rotate(0deg)',offset:1});
-        fFramesB.push({transform:'translate('+Math.round(fDx*.5)+'px,-6px)',offset:.9,easing:'ease-in-out'});
-        fFramesB.push({transform:'translate(0,0)',offset:1});
-        fAnimP=fbPlayer.animate(fFramesP,{duration:fDur});
-        fAnimB=ball.animate(fFramesB,{duration:fDur});
-        if(fAnimP) fAnimP.onfinish=function(){ settleShot(mySeq,true); };
+        var fDx=Math.round((fGoalX-fStartCX)/fK);
+        var fDur=2000;
+        fAnim=ball.animate([
+          {transform:'translate(0,0) rotate(0deg) scale(1)',opacity:1,easing:'ease-out'},
+          {transform:'translate('+Math.round(fDx*0.45)+'px,'+Math.round(fCrossTy*0.94)+'px) rotate(120deg) scale(.78)',offset:.3,easing:'ease-out'},
+          {transform:'translate('+fDx+'px,'+fCrossTy+'px) rotate(200deg) scale(.55)',offset:.52,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(fDx*1.04)+'px,'+Math.round(fCrossTy*0.88)+'px) rotate(245deg) scale(.52)',offset:.62,easing:'ease-in'},
+          {transform:'translate('+Math.round(fDx*1.07)+'px,'+fFloorY+'px) rotate(300deg) scale(.8)',offset:.78,easing:'ease-in'},
+          {transform:'translate('+Math.round(fDx*0.55)+'px,'+fFloorY+'px) rotate(160deg) scale(.92)',offset:.9,easing:'ease-out'},
+          {transform:'translate(0,'+fFloorY+'px) rotate(0deg) scale(1)',offset:.97,easing:'ease-out'},
+          {transform:'translate(0,0) rotate(0deg) scale(1)',offset:1}
+        ],{duration:fDur});
+        if(fAnim) fAnim.onfinish=function(){ settleShot(mySeq,true); };
         setTimeout(function(){ settleShot(mySeq,true); },fDur+90);
-        setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(Math.round(fLandCX),Math.round(fr2.height*0.72),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); sfx('sparkle'); } },Math.round(fDur*0.56));
-        setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(fDur*0.62));
+        setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(Math.round(fGoalX),Math.round(fGoalY),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); var st7=document.getElementById('courtStage'); if(st7) st7.classList.add('celebrating'); sfx('sparkle'); } },Math.round(fDur*0.52));
+        setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(fDur*0.6));
       } else {
-        var tDx=Math.round(fr2.width*0.34-fStartCX), tDur=1900;
-        fAnimP=fbPlayer.animate([
-          {transform:'translate(0,0) rotate(2deg)',opacity:1,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(tDx*.45)+'px,-6px) rotate(2deg)',offset:.18,easing:'ease-in-out'},
-          {transform:'translate('+tDx+'px,0px) rotate(2deg)',offset:.32,easing:'ease-in'},
-          {transform:'translate('+(tDx+7)+'px,11px) rotate(0deg)',offset:.44,easing:'ease-in'},
-          {transform:'translate('+(tDx+3)+'px,6px) rotate(0deg)',offset:.52,easing:'ease-in-out'},
-          {transform:'translate('+(tDx+6)+'px,9px) rotate(0deg)',offset:.6,easing:'ease-in'},
-          {transform:'translate('+tDx+'px,0px) rotate(2deg)',offset:.7,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(tDx*.5)+'px,-6px) rotate(2deg)',offset:.85,easing:'ease-in-out'},
-          {transform:'translate(0,0) rotate(0deg)',offset:1}
-        ],{duration:tDur});
-        fAnimB=ball.animate([
-          {transform:'translate(0,0)',opacity:1,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(tDx*.45)+'px,-6px)',offset:.18,easing:'ease-in-out'},
-          {transform:'translate('+tDx+'px,0px)',offset:.32,easing:'ease-in'},
-          {transform:'translate('+(tDx+7)+'px,11px)',offset:.44,easing:'ease-in'},
-          {transform:'translate('+(tDx+3)+'px,6px)',offset:.52,easing:'ease-in-out'},
-          {transform:'translate('+(tDx+6)+'px,9px)',offset:.6,easing:'ease-in'},
-          {transform:'translate('+tDx+'px,0px)',offset:.7,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(tDx*.5)+'px,-6px)',offset:.85,easing:'ease-in-out'},
-          {transform:'translate(0,0)',offset:1}
-        ],{duration:tDur});
-        if(fAnimP) fAnimP.onfinish=function(){ settleShot(mySeq,false); };
-        setTimeout(function(){ settleShot(mySeq,false); },tDur+90);
-        setTimeout(function(){ if(mySeq===shotSeq) sfx('rim'); },Math.round(tDur*0.44));
+        /* OFF THE POST: the kick arcs to the LEFT UPRIGHT,
+           strikes it at the same height a make crosses at, and
+           BOUNCES OFF — rebounding back out over the field,
+           dropping to the grass, and rolling back to his foot.
+           The clang (rim sfx) lands on the strike, at the
+           keyframe where the ball reaches the post. */
+        var mDx=Math.round((fPostX-fStartCX)/fK);
+        var mDur=1800;
+        fAnim=ball.animate([
+          {transform:'translate(0,0) rotate(0deg) scale(1)',opacity:1,easing:'ease-out'},
+          {transform:'translate('+Math.round(mDx*0.5)+'px,'+Math.round(fCrossTy*0.95)+'px) rotate(110deg) scale(.76)',offset:.3,easing:'ease-out'},
+          {transform:'translate('+mDx+'px,'+fCrossTy+'px) rotate(190deg) scale(.55)',offset:.5,easing:'ease-in'},
+          {transform:'translate('+Math.round(mDx*0.68)+'px,'+Math.round(fCrossTy*0.66)+'px) rotate(115deg) scale(.68)',offset:.6,easing:'ease-out'},
+          {transform:'translate('+Math.round(mDx*0.55)+'px,'+fFloorY+'px) rotate(55deg) scale(.92)',offset:.76,easing:'ease-in'},
+          {transform:'translate('+Math.round(mDx*0.28)+'px,'+fFloorY+'px) rotate(18deg) scale(1)',offset:.9,easing:'ease-out'},
+          {transform:'translate(0,0) rotate(0deg) scale(1)',offset:1}
+        ],{duration:mDur});
+        if(fAnim) fAnim.onfinish=function(){ settleShot(mySeq,false); };
+        setTimeout(function(){ settleShot(mySeq,false); },mDur+90);
+        setTimeout(function(){ if(mySeq===shotSeq) sfx('rim'); },Math.round(mDur*0.5));
       }
     }catch(e){ shotAnimActive=false; if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },900); }
     return;
@@ -5035,12 +5115,13 @@ function playSportShot(success){
   var floorY=parseFloat(getComputedStyle(stage).getPropertyValue('--drop'))||16;
   var startCX=br.left-sr.left+br.width/2;
   /* Each sport's token lands at ITS OWN target: soccer into the
-     goal (a miss comes off the post, right at the goal), football
-     into the end zone, running across the finish line, hockey into
-     the net (a miss slides wide of it) — never one basketball spot
-     for every sport. */
+     goal (a miss comes off the post, right at the goal), running
+     across the finish line, hockey into the net (a miss slides
+     wide of it) — never one basketball spot for every sport.
+     (Football never reaches this shared flight: its field-goal
+     kick branch above measures the goal post itself.) */
   var landPct= success
-    ? (info===SPORT_INFO.soccer?0.90 : info===SPORT_INFO.football?0.90 : info===SPORT_INFO.running?0.90 : 0.80)
+    ? (info===SPORT_INFO.soccer?0.90 : info===SPORT_INFO.running?0.90 : 0.80)
     : (info===SPORT_INFO.soccer?0.86 : info===SPORT_INFO.hockey?0.64 : 0.34);
   var landCX= sr.width*landPct;
   var dx=Math.round(landCX-startCX);
@@ -5376,12 +5457,12 @@ basketball:{arena:'Court',venue:'basketball court',contest:'game',headline:'LEAR
 tennis:{arena:'Tennis Court',venue:'tennis court',contest:'match',headline:'SERVE.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'🎾',countEmoji:'🎾',countName:'tennis balls',subGame:'Tiebreak',wpGame:'Match Point',idleDrop:'13px',stageBg:'linear-gradient(180deg,#3E7CC4 0 54%,#2F9E63 54% 100%)',readyMsg:'Your player is standing ready, the ball resting on his racket — answer to serve! 🎾',makeMsg:'🎉 OVER THE NET! It lands on the other side! +PTS points!',makeShort:'Your player smashed it over the net and scored',oppCheer:'keep that rally going, champ!',missMsg:'The ball hit the net and landed on the ground on YOUR side — no point! Read Leo\u2019s tip and serve again on this same one! 🎾',missShort:'It hit the net — your side!',nextPhrase:'then we serve and rally all the way to the championship!',promptPhrases:['New one! Read it carefully, then serve your answer! 🎾','Here we go — eyes on the ball… here\u2019s your next one!','Racket ready… here\u2019s your next one!'],playerDesc:'He is the player who serves and rallies in every game!',bonusDesc:'Rally tapping and tap-the-right-ball games!',bonusTapName:'Rally Tap',bonusTapDesc:'Tap HIT when the ball marker is in the green OVER-THE-NET ZONE!',zone:'OVER-THE-NET ZONE',ballRoundName:'Tap the Right Ball',note:'Tennis: there is ONE racket, in your player\u2019s hand, and the ball RESTS on that racket while he waits — no bouncing. A right answer serves the ball up in a clear arc OVER the net so it lands on the other side — point! A wrong answer sends the ball INTO the net — it drops to the ground on YOUR side, no point, serve again.'},
 soccer:{arena:'Soccer Field',venue:'soccer field',contest:'match',headline:'KICK.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'⚽',countEmoji:'⚽',countName:'soccer balls',subGame:'Shootout',wpGame:'Cup Final',idleDrop:'2px',stageBg:'linear-gradient(180deg,#57B24A 0 100%)',readyMsg:'Your player has his foot on the ball, rolling it back and forth under his foot — answer to shoot at the goal! ⚽',makeMsg:'🎉 GOAL! Right into the net! +PTS points!',makeShort:'Your player kicked it into the goal and scored',oppCheer:'keep kicking for that goal, champ!',missMsg:'Off the post! No goal — read Leo\u2019s tip and kick again on this same one! ⚽',missShort:'Off the post!',nextPhrase:'then we dribble down the field all the way to the championship!',promptPhrases:['New one! Read it carefully, then kick your answer! ⚽','Here we go — eyes on the goal… here\u2019s your next one!','Boots ready… here\u2019s your next one!'],playerDesc:'He is the player who dribbles and shoots in every game!',bonusDesc:'Penalty-kick tapping and tap-the-right-ball games!',bonusTapName:'Penalty Tap',bonusTapDesc:'Tap KICK when the ball marker is in the green GOAL ZONE!',zone:'GOAL ZONE',ballRoundName:'Tap the Right Ball',note:'Soccer: your player waits with his foot on top of the ball, his foot rocking back and forth and rolling the ball under it on the ground — the ball is never bounced or juggled while he waits. A right answer kicks it into the goal — GOAL! A wrong answer hits the post — no goal, kick again.'},
 baseball:{arena:'Baseball Diamond',venue:'baseball diamond',contest:'game',headline:'SWING.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'⚾',countEmoji:'⚾',countName:'baseballs',subGame:'Strikeout',wpGame:'World Series',idleDrop:'18px',stageBg:'linear-gradient(180deg,#57B24A 0 62%,#C98B4B 62% 100%)',readyMsg:'Your player is at the plate taking practice swings — answer right and the ball comes in for him to hit! ⚾',makeMsg:'🎉 HOME RUN! Over the fence! +PTS points!',makeShort:'Your player hit a home run and scored',oppCheer:'keep swinging for the fences, champ!',missMsg:'Swing and a miss — strike! No run. Read Leo\u2019s tip and swing again on this same one! ⚾',missShort:'Swing and a miss — strike!',nextPhrase:'then we step back up to the plate all the way to the championship!',promptPhrases:['New one! Read it carefully, then swing at your answer! ⚾','Here we go — batter up… here\u2019s your next one!','Bat ready… here\u2019s your next one!'],playerDesc:'He is the player who bats in every game!',bonusDesc:'Home-run tapping and tap-the-right-ball games!',bonusTapName:'Home-Run Tap',bonusTapDesc:'Tap SWING when the ball marker is in the green HOME-RUN ZONE!',zone:'HOME-RUN ZONE',ballRoundName:'Tap the Right Ball',note:'Baseball: your player waits at the plate taking practice swings, his back to you, with no ball in play. On a right answer the ball is thrown in from the left and he hits it — a home run over the fence scores! A wrong answer is a swing and a miss, a strike, no run — step back in and swing again.'},
-football:{arena:'Football Field',venue:'football field',contest:'game',headline:'RUN.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'🏈',countEmoji:'🏈',countName:'footballs',subGame:'Touchdown',wpGame:'Bowl Game',idleDrop:'24px',stageBg:'linear-gradient(180deg,#4CA34A 0 100%)',readyMsg:'Your player has the ball tucked tight in his hand — answer to run it in! 🏈',makeMsg:'🎉 TOUCHDOWN! Right into the end zone! +PTS points!',makeShort:'Your player ran it in for a touchdown and scored',oppCheer:'keep running for the end zone, champ!',missMsg:'He stumbled on the run — no touchdown yet! Read Leo\u2019s tip and run it again on this same one! 🏈',missShort:'A stumble — run it again!',nextPhrase:'then we huddle up and run all the way to the championship!',promptPhrases:['New one! Read it carefully, then run it in! 🏈','Here we go — hut, hut… here\u2019s your next one!','Legs ready… here\u2019s your next one!'],playerDesc:'He is the player who runs the ball in every game!',bonusDesc:'Touchdown tapping and tap-the-right-ball games!',bonusTapName:'Touchdown Tap',bonusTapDesc:'Tap RUN when the ball marker is in the green TOUCHDOWN ZONE!',zone:'TOUCHDOWN ZONE',ballRoundName:'Tap the Right Ball',note:'Football: your player waits with the ball tucked in his hand. A right answer is a touchdown run — he carries the ball all the way into the end zone himself! A wrong answer is a stumble on the run — huddle up and run it again.'},
+football:{arena:'Football Field',venue:'football field',contest:'game',headline:'KICK.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'🏈',countEmoji:'🏈',countName:'footballs',subGame:'Field Goal',wpGame:'Bowl Game',idleDrop:'24px',stageBg:'linear-gradient(180deg,#4CA34A 0 100%)',readyMsg:'Your player is ready, the ball resting by his foot — answer to kick a field goal! 🏈',makeMsg:'🎉 FIELD GOAL! Right through the center of the post! +PTS points!',makeShort:'Your player kicked it through the post and scored',oppCheer:'keep kicking for that post, champ!',missMsg:'Off the post! It hit the upright and bounced off — no good! Read Leo\u2019s tip and kick again on this same one! 🏈',missShort:'Off the post — no good!',nextPhrase:'then we kick our way all the way to the championship!',promptPhrases:['New one! Read it carefully, then kick your answer! 🏈','Here we go — eyes on the post… here\u2019s your next one!','Kick ready… here\u2019s your next one!'],playerDesc:'He is the player who kicks field goals in every game!',bonusDesc:'Field-goal tapping and tap-the-right-ball games!',bonusTapName:'Field-Goal Tap',bonusTapDesc:'Tap KICK when the ball marker is in the green FIELD-GOAL ZONE!',zone:'FIELD-GOAL ZONE',ballRoundName:'Tap the Right Ball',note:'Football: your player waits with the ball resting by his foot on the ground. A right answer kicks a FIELD GOAL — the ball arcs up through the air and through the CENTER of the goal post, and it scores! A wrong answer kicks the ball off the post — it hits the upright and bounces off, no good — kick the same one again.'},
 cheer:{arena:'Cheer Mat',venue:'cheer mat',contest:'competition',headline:'CHEER.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'⭐',idleDrop:'20px',stageBg:'linear-gradient(180deg,#FFF3C4 0 55%,#FFE1B8 55% 100%)',readyMsg:'Your player is bouncing to the beat — answer to hit the routine! 📣',makeMsg:'🎉 NAILED IT! A perfect routine! +PTS points!',makeShort:'Your player nailed the routine and scored',oppCheer:'keep hitting that routine, champ!',missMsg:'A wobble in the routine — no points yet! Read Leo\u2019s tip and try the same move again! 📣',missShort:'A wobble — try that move again!',nextPhrase:'then we count in and hit the next routine!',promptPhrases:['New one! Read it carefully, then hit your move! 📣','Here we go — 5, 6, 7, 8… here\u2019s your next one!','Pom-poms ready… here\u2019s your next one!'],playerDesc:'He is the player who performs in every game!',bonusDesc:'Routine tapping and tap-the-right-star games!',bonusTapName:'Routine Tap',bonusTapDesc:'Tap HIT IT when the marker is in the green PERFECT ZONE!',zone:'PERFECT ZONE',ballRoundName:'Tap the Right Star',note:'Cheer & Dance: your player bounces to the beat while he waits. A right answer nails the routine! A wrong answer wobbles — run the same move again until it sticks.'},
 swimming:{arena:'Swimming Pool',venue:'swimming pool',contest:'meet',headline:'SWIM.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'🏊',countEmoji:'🏊',countName:'swimmers',subGame:'Splash',wpGame:'Swim Meet',idleDrop:'7px',stageBg:'linear-gradient(180deg,#7ED3F7 0 22%,#1E9BD8 22% 100%)',readyMsg:'Your swimmer is in the water, kicking his feet while he waits — answer to race! 🏊',makeMsg:'🎉 FIRST TO THE WALL! He swam all the way across! +PTS points!',makeShort:'Your swimmer touched the wall first and scored',oppCheer:'keep swimming strong, champ!',missMsg:'He sank under the water — no point! He pops back up at the start. Read Leo\u2019s tip and swim this same one again! 🏊',missShort:'He sank — back to the start!',nextPhrase:'then we push off the wall all the way to the championship!',promptPhrases:['New one! Read it carefully, then dive into your answer! 🏊','Here we go — on your mark… here\u2019s your next one!','Goggles on… here\u2019s your next one!'],playerDesc:'He is the swimmer who races in every game!',bonusDesc:'Finish-line tapping and tap-the-right-ball games!',bonusTapName:'Finish Tap',bonusTapDesc:'Tap FINISH when the marker is in the green WALL ZONE!',zone:'WALL ZONE',ballRoundName:'Tap the Right Ball',note:'Swimming: your swimmer waits IN the water, kicking his feet at the surface. A right answer races him all the way across the pool to touch the wall first! A wrong answer sinks him under — he pops back up at the start and tries the same one again.'},
 hockey:{arena:'Hockey Rink',venue:'hockey rink',contest:'game',headline:'SKATE.<br><span>LEARN &amp; WIN!</span>',tokenType:'puck',tokenEmoji:'🏒',countEmoji:'🏒',countName:'pucks',subGame:'Slap Shot',wpGame:'Hat Trick',idleDrop:'4px',stageBg:'linear-gradient(180deg,#EAF7FF 0 100%)',readyMsg:'Your player is skating in place, stick ready — answer to shoot the puck! 🏒',makeMsg:'🎉 HE SCORES! The puck is in the net! +PTS points!',makeShort:'Your player slapped the puck into the net and scored',oppCheer:'keep skating and shooting, champ!',missMsg:'The puck slid wide of the net — no goal! Read Leo\u2019s tip and shoot again on this same one! 🏒',missShort:'The puck slid wide!',nextPhrase:'then we skate back and line up all the way to the championship!',promptPhrases:['New one! Read it carefully, then shoot your answer! 🏒','Here we go — stick on the ice… here\u2019s your next one!','Skates ready… here\u2019s your next one!'],playerDesc:'He is the player who skates and shoots in every game!',bonusDesc:'Slap-shot tapping and tap-the-right-puck games!',bonusTapName:'Slap-Shot Tap',bonusTapDesc:'Tap SHOOT when the puck marker is in the green NET ZONE!',zone:'NET ZONE',ballRoundName:'Tap the Right Puck',note:'Hockey: your player skates in place while he waits, his stick IN his hands the whole time — the stick never leaves his hands; only the puck moves. The puck rests on the ice at his blade, stickhandled side to side while he waits. A right answer slaps the puck into the net — HE SCORES! A wrong answer slides the puck wide — line it up and shoot again.'},
 running:{arena:'Running Track',venue:'running track',contest:'race',headline:'RUN.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'👟',countEmoji:'👟',countName:'running shoes',subGame:'Sprint',wpGame:'Photo Finish',idleDrop:'10px',stageBg:'linear-gradient(180deg,#B4552D 0 100%)',readyMsg:'Your runner is jogging in place — answer to sprint! 👟',makeMsg:'🎉 FIRST ACROSS THE LINE! You win the sprint! +PTS points!',makeShort:'Your runner crossed the finish line first and scored',oppCheer:'keep running strong, champ!',missMsg:'You stumbled on the track — no point! Read Leo\u2019s tip and run this same one again! 👟',missShort:'A stumble — run it again!',nextPhrase:'then we jog all the way to the championship!',promptPhrases:['New one! Read it carefully, then sprint to your answer! 👟','Here we go — ready, set… here\u2019s your next one!','Spikes ready… here\u2019s your next one!'],playerDesc:'He is the runner who races in every game!',bonusDesc:'Finish-line tapping and tap-the-right-ball games!',bonusTapName:'Finish-Line Tap',bonusTapDesc:'Tap SPRINT when the marker is in the green FINISH ZONE!',zone:'FINISH ZONE',ballRoundName:'Tap the Right Ball',note:'Running: your runner jogs in place while he waits. A right answer wins the sprint to the finish line! A wrong answer is a stumble — get up and run the same one again.'},
-gymnastics:{arena:'Gymnastics Gym',venue:'gymnastics gym',contest:'meet',headline:'FLIP.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'⭐',countEmoji:'⭐',countName:'stars',subGame:'Stick-It',wpGame:'Finals',idleDrop:'8px',stageBg:'linear-gradient(180deg,#FDE8C8 0 58%,#C98B4B 58% 100%)',readyMsg:'Your boy gymnast is on the balance beam, arms out, balancing while he waits — answer to walk the beam! 🤸‍♂️',makeMsg:'🎉 HE STICKS THE LANDING! He walked the whole beam and stuck it! +PTS points!',makeShort:'Your boy gymnast walked the beam and stuck the landing',oppCheer:'keep nailing that routine, champ!',missMsg:'He wobbled and stepped off the beam — no point! He climbs back on. Read Leo\u2019s tip and walk this same one again! 🤸‍♂️',missShort:'A wobble — he stepped off the beam!',nextPhrase:'then we climb back on the beam all the way to the championship!',promptPhrases:['New one! Read it carefully, then walk the beam with your answer! 🤸‍♂️','Here we go — arms out, eyes ahead… here\u2019s your next one!','Beam ready… here\u2019s your next one!'],playerDesc:'He is the boy gymnast who walks the beam in every game!',bonusDesc:'Beam-balance tapping and tap-the-right-star games!',bonusTapName:'Beam Tap',bonusTapDesc:'Tap STICK IT when the marker is in the green STUCK-LANDING ZONE!',zone:'STUCK-LANDING ZONE',ballRoundName:'Tap the Right Star',note:'Gymnastics — BOYS: this gymnast is a BOY gymnast (he/him), never a girl gymnast — same boy player as every other sport in this boys\u2019 world, in his team gear, no skirt or dress. He waits ON the balance beam, balancing with his arms out. A right answer walks him all the way across the beam and he sticks the landing, then comes back. A wrong answer wobbles him — he steps off the beam onto the mat, climbs back on, and walks the same one again until he sticks it.'}
+gymnastics:{arena:'Gymnastics Gym',venue:'gymnastics gym',contest:'meet',headline:'FLIP.<br><span>LEARN &amp; WIN!</span>',tokenType:'emoji',tokenEmoji:'⭐',countEmoji:'⭐',countName:'stars',subGame:'Stick-It',wpGame:'Finals',idleDrop:'8px',stageBg:'linear-gradient(180deg,#FDE8C8 0 58%,#C98B4B 58% 100%)',readyMsg:'Your boy gymnast is on the balance beam, arms out, balancing while he waits — answer to walk the beam! 🤸‍♂️',makeMsg:'🎉 HE STICKS THE LANDING! He leaped the whole beam and stuck it! +PTS points!',makeShort:'Your boy gymnast leaped the beam and stuck the landing',oppCheer:'keep nailing that routine, champ!',missMsg:'He wobbled and stepped off the beam — no point! He climbs back on. Read Leo\u2019s tip and walk this same one again! 🤸‍♂️',missShort:'A wobble — he stepped off the beam!',nextPhrase:'then we climb back on the beam all the way to the championship!',promptPhrases:['New one! Read it carefully, then walk the beam with your answer! 🤸‍♂️','Here we go — arms out, eyes ahead… here\u2019s your next one!','Beam ready… here\u2019s your next one!'],playerDesc:'He is the boy gymnast who walks the beam in every game!',bonusDesc:'Beam-balance tapping and tap-the-right-star games!',bonusTapName:'Beam Tap',bonusTapDesc:'Tap STICK IT when the marker is in the green STUCK-LANDING ZONE!',zone:'STUCK-LANDING ZONE',ballRoundName:'Tap the Right Star',note:'Gymnastics — BOYS: this gymnast is a BOY gymnast (he/him), never a girl gymnast — same boy player as every other sport in this boys\u2019 world, in his team gear, no skirt or dress. He waits ON the balance beam, balancing with his arms out. A right answer LEAPS him all the way across the beam — one big split leap — and he sticks the landing, then walks back. A wrong answer wobbles him — he steps off the beam onto the mat, climbs back on, and walks the same one again until he sticks it.'}
 };
 /* ===== CLASSIC-BUILD SPORT TEASER (Michelle's exception, this feature
    only) =====
@@ -5634,7 +5715,10 @@ function sportSceneHTML(id,accent){
     /* GYMNASTICS TEMPLATE = the glossy 3D boy-gymnasts artwork
        (assets/gymnastics-boys-bg.webp), presented scaled back
        (meet) on a cream ground so the whole group of gymnasts
-       shows — the SAME
+       shows, SCATTERED across the whole frame (Michelle, Nov 9,
+       2026: "fill the page" = the same seven boys, not redrawn,
+       repositioned out of their single bottom row so they spread
+       over the full page area) — the SAME
        artwork worldBackdropSVG paints as the page background and
        in the wizard's Background step. The old drawn flat
        stick-figure gymnastics scene is REMOVED from this template
@@ -5925,7 +6009,7 @@ function applyWorldTheme(){
   }
   updateSetupPreview();
   var ball=document.getElementById('shotBall');
-  if(ball) ball.style.background='radial-gradient(circle at 32% 28%,'+c2.soft+','+c.primary+' 58%,'+c.dark+')';
+  if(ball) ball.style.background='url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Cg fill=%22none%22 stroke=%22%2320120B%22 stroke-width=%225%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2246%22/%3E%3Cpath d=%22M4 50H96%22/%3E%3Cpath d=%22M50 4V96%22/%3E%3Cpath d=%22M24 12C40 32 40 68 24 88%22/%3E%3Cpath d=%22M76 12C60 32 60 68 76 88%22/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat,radial-gradient(circle at 32% 28%,#FFC38F,#FF7A1A 55%,#E85D0C)'; /* the game ball is a real 🏀 (Michelle, Nov 9, 2026) — orange with black curved seams — so a theme repaint never washes it back into the world colors; the emoji and puck tokens keep their own !important CSS paint */
   applyCoachDisplay(lockedOut,ds);
   renderWorldBackdrop(lockedOut,c,ds,displayName);
   renderWorldBackground(lockedOut,c,ds);
@@ -5941,8 +6025,9 @@ function applyWorldTheme(){
    exactly where that sport's shot logic plays to: tennis net at the
    stage's exact middle, soccer goal mouth around the 90% landing
    spot with its post where a miss comes off it, hockey net around
-   the 80% spot (a miss slides wide at 64%), the football end zone
-   and running finish line at the right, the swimming touchpad on
+   the 80% spot (a miss slides wide at 64%), the football goal
+   post at the far end of its 3D field with the kick measured to
+   it, the running finish line at the right, the swimming touchpad on
    the far wall, the baseball outfield wall under the home-run
    flight, the gymnastics beam at the star's walking height.
    Every venue below is a TRUE 3D BUILD (Michelle, Nov 9, 2026):
@@ -6040,32 +6125,49 @@ function gameSceneHTML(id,accent){
     +'<rect x="62" y="296" width="660" height="14" fill="url(#gamepost)" stroke="#2B1608" stroke-width="2"/>'
     +'<rect x="58" y="290" width="11" height="146" rx="3" fill="#374151"/>'
     +'<rect x="719" y="290" width="11" height="146" rx="3" fill="#374151"/>');
-  /* SOCCER — RESTORED to the previous version (Michelle, Nov 9,
-     2026: "The soccer game can be restored to previous version"):
-     the drawn pitch the game was live and passing on before the
-     built-3D venue rebuild — the same scene the sport template
-     (sportSceneHTML) still paints: striped grass, the full pitch
-     markings, and the goal net on the right edge. On the GAME
-     STAGE ONLY the scene is reframed (STAGE_VIEWBOX in
-     renderStageBackdrop: viewBox "150 0 640 560"), which puts the
-     goal mouth — scene x 726-790, y 212-348 — at the stage's far
-     side, exactly where the kick plays: the make spot (stage 90%)
-     lands on the goal line at the mouth, and the miss spot (86%)
-     strikes beside it, off the post, exactly as the passing
-     version played. The built-3D pitch this replaces is gone from
-     the game; his soccer PAGE BACKGROUND is a separate thing and
-     keeps its current version, untouched. */
-  if(id==='soccer') return wrap(defs
-    +'<defs><pattern id="netmesh" width="11" height="11" patternUnits="userSpaceOnUse"><path d="M0 0H11M0 0V11" stroke="rgba(255,255,255,.75)" stroke-width="1.6" fill="none"/></pattern></defs>'
-    +[0,1,2,3,4,5,6,7,8,9].map(function(i){ return '<rect x="'+(i*80)+'" width="80" height="560" fill="'+(i%2?'#4DA843':'#57B24A')+'"/>'; }).join('')
-    +'<rect x="30" y="30" width="740" height="500" fill="none" stroke="'+W+'" stroke-width="5"/>'
-    +'<line x1="400" y1="30" x2="400" y2="530" stroke="'+W+'" stroke-width="5"/><circle cx="400" cy="280" r="78" fill="none" stroke="'+W+'" stroke-width="5"/><circle cx="400" cy="280" r="6" fill="'+W+'"/>'
-    +'<rect x="600" y="140" width="170" height="280" fill="none" stroke="'+W+'" stroke-width="5"/><rect x="688" y="205" width="82" height="150" fill="none" stroke="'+W+'" stroke-width="5"/><circle cx="648" cy="280" r="5" fill="'+W+'"/>'
-    +'<rect x="30" y="140" width="170" height="280" fill="none" stroke="'+W+'" stroke-width="5"/><rect x="30" y="205" width="82" height="150" fill="none" stroke="'+W+'" stroke-width="5"/>'
-    +'<path d="M30 58 A28 28 0 0 1 58 30 M742 30 A28 28 0 0 1 770 58 M770 502 A28 28 0 0 1 742 530 M58 530 A28 28 0 0 1 30 502" fill="none" stroke="'+W+'" stroke-width="4"/>'
-    +'<rect x="726" y="212" width="64" height="136" fill="url(#netmesh)" stroke="#fff" stroke-width="5"/>'
-    +'<circle cx="400" cy="280" r="90" fill="none" stroke="'+T3+'" stroke-width="5" opacity=".65"/>'
-    +'<path d="M30 30 l40 11 l-40 11 Z" fill="'+accent+'"/><path d="M770 30 l-40 11 l40 11 Z" fill="'+B2+'"/><path d="M30 530 l40 -11 l-40 -11 Z" fill="'+T3+'"/><path d="M770 530 l-40 -11 l40 -11 Z" fill="'+accent+'"/>');
+  /* SOCCER — TRUE 3D BUILD (Michelle, Nov 9, 2026: "Give me a 3D
+     soccer field and goal net thing. Not an angled view but an
+     actual field"): a constructed field sitting proper in the
+     page, in the same built manner as the hockey rink and the
+     football field — a tiered stand band behind, a boards strip,
+     and a glossed grass slab laid in perspective with mow stripes
+     and the pitch lines painted on the surface in front of the
+     goal (penalty box, six-yard box, penalty spot, goal line).
+     The GOAL at the shooting end is a real 3D object: white posts
+     and crossbar, a mesh front over a dark net interior, and the
+     net's depth roof and side panel behind the frame, standing on
+     the grass where the kick plays. The game reframing stays
+     (STAGE_VIEWBOX in renderStageBackdrop: viewBox
+     "150 0 640 560"), so the kick's spots land against this goal
+     exactly as the logic has them: the make spot (stage 90%,
+     scene x726) is INSIDE the mouth, between the posts (706-788)
+     — the ball goes into the net; the miss spot (stage 86%,
+     scene x700) strikes just left of the near post — off the
+     post, no goal. His soccer PAGE BACKGROUND is a separate
+     thing and keeps its current version, untouched. */
+  if(id==='soccer') return wrap(defs+blush()
+    +slabShadow(400,550,390)
+    +'<rect width="800" height="118" fill="url(#gamestand)"/>'
+    +'<line x1="0" y1="38" x2="800" y2="38" stroke="rgba(255,255,255,.12)" stroke-width="4"/><line x1="0" y1="76" x2="800" y2="76" stroke="rgba(255,255,255,.12)" stroke-width="4"/>'
+    +'<rect y="118" width="800" height="10" fill="'+accent+'"/>'
+    +'<rect y="128" width="800" height="40" fill="#EDF2F7"/>'
+    +'<polygon points="0,168 800,168 800,546 0,546" fill="url(#gamepitch)"/>'
+    +'<polygon points="120,168 240,168 300,546 150,546" fill="#FFFFFF" opacity=".06"/><polygon points="360,168 480,168 560,546 430,546" fill="#FFFFFF" opacity=".06"/><polygon points="600,168 720,168 800,546 690,546" fill="#FFFFFF" opacity=".06"/>'
+    +'<polygon points="60,168 400,168 240,546 0,546" fill="#FFFFFF" opacity=".07"/>'
+    +'<line x1="0" y1="168" x2="800" y2="168" stroke="'+W+'" stroke-width="4"/>'
+    +'<path d="M486 292 L712 302 L712 462 L486 522 Z" fill="none" stroke="'+W+'" stroke-width="5"/>'
+    +'<path d="M592 334 L712 340 L712 428 L592 466 Z" fill="none" stroke="'+W+'" stroke-width="4"/>'
+    +'<line x1="712" y1="298" x2="712" y2="472" stroke="'+W+'" stroke-width="5"/>'
+    +'<ellipse cx="614" cy="424" rx="8" ry="3.5" fill="'+W+'"/>'
+    +'<polygon points="0,546 800,546 800,560 0,560" fill="rgba(20,60,25,.35)"/>'
+    +'<ellipse cx="747" cy="470" rx="64" ry="8" fill="rgba(20,60,25,.22)"/>'
+    +'<polygon points="718,258 744,236 788,236 782,258" fill="url(#gamenetdark)"/>'
+    +'<polygon points="782,258 788,236 788,428 782,456" fill="url(#gamenetdark)"/>'
+    +'<rect x="718" y="267" width="58" height="189" fill="rgba(16,42,20,.20)"/>'
+    +'<rect x="718" y="267" width="58" height="189" fill="url(#gamenet)"/>'
+    +'<rect x="706" y="254" width="82" height="13" fill="url(#gamepost)" stroke="rgba(43,22,8,.3)" stroke-width="1.5"/>'
+    +'<rect x="706" y="254" width="12" height="208" fill="url(#gamepost)" stroke="rgba(43,22,8,.3)" stroke-width="1.5"/>'
+    +'<rect x="776" y="254" width="12" height="208" fill="url(#gamepost)" stroke="rgba(43,22,8,.3)" stroke-width="1.5"/>');
   /* HOCKEY — built 3D rink: arena band, glass over white boards
      with the red kick plate, glossed ice slab with the blue line,
      the goal line, a faceoff circle and the crease painted on it,
@@ -6100,46 +6202,53 @@ function gameSceneHTML(id,accent){
     +'<rect x="592" y="244" width="198" height="11" fill="#D92323"/>'
     +'<rect x="592" y="244" width="11" height="216" fill="#D92323"/>'
     +'<rect x="774" y="248" width="10" height="212" fill="#D92323"/>');
-  /* FOOTBALL — REDESIGNED (Michelle, Nov 9, 2026: "Redesign the
-     football video game field and touchdown zone. A new 3D build
-     of a football field not angled but a true football field
-     design. And make sure the yard numbers are visible"): a NEW
-     constructed build (drawn in the page, not a picture), seen
-     STRAIGHT-ON from the side — no perspective fan, no angled
-     lines. A true football field: straight vertical yard lines
-     every ten yards across the whole field, hash-mark rows, and
-     the YARD NUMBERS standing upright and readable at the top and
-     bottom of the field — 10 20 30 40 50 40 30 20 10 — running to
-     the goal line at x655 (stage 82%) and the END ZONE beyond it,
-     with the gold goalpost standing at the back of the end zone.
-     He carries the ball in his hand and RUNS it in (no throw, no
-     pass, ever): the touchdown spot (stage 90%, x720) is inside
-     this end zone, under the crossbar, and the stumble spot (34%)
-     stays far behind the goal line, out on the open field — the
-     run path reads straight across the yard lines into the
-     touchdown zone. */
-  if(id==='football') return wrap(defs
+  /* FOOTBALL — TRUE 3D FIELD (Michelle, Nov 9, 2026: "The view
+     of the football field has to be 3D like a true video game"):
+     a constructed field with real perspective depth — the grass
+     slab recedes from the wide near edge at the bottom of the
+     stage to the goal line at the far end, the yard lines bunch
+     closer together as they go away, the hash marks converge,
+     and the YARD NUMBERS lie painted on the grass in perspective
+     (10 20 30 40 50), growing bigger and staying readable as
+     they come toward the viewer. The END ZONE caps the far end
+     and the gold GOAL POST stands in it in 3D — shaded uprights
+     and crossbar on their pole, in front of the stands. The
+     far end is composed LOW in the scene (goal line y330, the
+     post's center at scene (400,226)) so the post stays inside
+     the stage's visible band even on a wide, short stage, and
+     the slab's near corners run off both sides of the frame so
+     the kicker always stands on the grass. The field-goal kick
+     plays to THIS post: its center — midway between the
+     uprights (x352-448), midway up them at y213 — is where a
+     made kick crosses, measured live off the rendered scene by
+     playSportShot, and the left upright (x357) is what a missed
+     kick strikes and bounces off. (This game scene is the
+     field-goal build; the run-it-in touchdown and its
+     straight-on field are gone. His football PAGE BACKGROUND
+     template is a separate thing and is untouched.) */
+  if(id==='football') return wrap(defs+blush()
     +slabShadow(400,550,390)
-    +'<rect width="800" height="64" fill="url(#gamestand)"/>'
-    +'<line x1="0" y1="22" x2="800" y2="22" stroke="rgba(255,255,255,.12)" stroke-width="4"/><line x1="0" y1="44" x2="800" y2="44" stroke="rgba(255,255,255,.12)" stroke-width="4"/>'
-    +'<rect y="64" width="800" height="8" fill="'+accent+'"/>'
-    +'<rect y="72" width="800" height="488" fill="url(#gamepitch)"/>'
-    +'<rect y="168" width="655" height="42" fill="rgba(255,255,255,.05)"/><rect y="290" width="655" height="42" fill="rgba(255,255,255,.05)"/><rect y="412" width="655" height="42" fill="rgba(255,255,255,.05)"/>'
-    +'<rect x="655" y="72" width="145" height="488" fill="'+accent+'"/>'
-    +'<rect x="655" y="72" width="145" height="488" fill="rgba(0,0,0,.13)"/>'
-    +[65.5,131,196.5,262,327.5,393,458.5,524,589.5].map(function(x){ return '<line x1="'+x+'" y1="72" x2="'+x+'" y2="560" stroke="'+W+'" stroke-width="4"/>'; }).join('')
-    +[65.5,131,196.5,262,327.5,393,458.5,524,589.5,655].map(function(x){ return '<rect x="'+(x-10)+'" y="214" width="20" height="5" fill="'+W+'"/><rect x="'+(x-10)+'" y="336" width="20" height="5" fill="'+W+'"/>'; }).join('')
-    +[[32,'10'],[98,'20'],[163,'30'],[229,'40'],[294,'50'],[360,'40'],[425,'30'],[491,'20'],[556,'10']].map(function(n){ return '<text x="'+n[0]+'" y="240" font-family="Fredoka" font-weight="700" font-size="30" fill="#FFFFFF" stroke="rgba(20,60,25,.45)" stroke-width="1" text-anchor="middle">'+n[1]+'</text><text x="'+n[0]+'" y="330" font-family="Fredoka" font-weight="700" font-size="30" fill="#FFFFFF" stroke="rgba(20,60,25,.45)" stroke-width="1" text-anchor="middle">'+n[1]+'</text>'; }).join('')
-    +'<line x1="655" y1="72" x2="655" y2="560" stroke="#fff" stroke-width="7"/>'
-    +'<polygon points="120,72 400,72 260,560 0,560" fill="#FFFFFF" opacity=".05"/>'
-    +'<rect y="546" width="800" height="14" fill="rgba(0,0,0,.12)"/>'
-    +'<text x="724" y="318" font-family="Fredoka" font-weight="700" font-size="24" fill="#fff" text-anchor="middle" letter-spacing="1">END ZONE</text>'
-    +'<ellipse cx="750" cy="500" rx="30" ry="6" fill="rgba(43,22,8,.18)"/>'
-    +'<rect x="737" y="472" width="26" height="28" rx="6" fill="'+accent+'" stroke="rgba(43,22,8,.35)" stroke-width="2"/>'
-    +'<rect x="737" y="472" width="26" height="9" rx="4" fill="rgba(255,255,255,.35)"/>'
-    +'<rect x="746" y="330" width="8" height="146" fill="url(#gamegold)"/>'
-    +'<rect x="706" y="322" width="88" height="9" fill="url(#gamegold)"/>'
-    +'<rect x="706" y="238" width="9" height="88" fill="url(#gamegold)"/><rect x="785" y="238" width="9" height="88" fill="url(#gamegold)"/>');
+    +'<rect width="800" height="250" fill="url(#gamestand)"/>'
+    +'<line x1="0" y1="84" x2="800" y2="84" stroke="rgba(255,255,255,.12)" stroke-width="4"/><line x1="0" y1="168" x2="800" y2="168" stroke="rgba(255,255,255,.12)" stroke-width="4"/>'
+    +'<rect y="250" width="800" height="10" fill="'+accent+'"/>'
+    +'<rect y="260" width="800" height="32" fill="#EDF2F7"/>'
+    +'<polygon points="95,292 705,292 740,330 60,330" fill="'+accent+'"/>'
+    +'<polygon points="95,292 705,292 740,330 60,330" fill="rgba(0,0,0,.13)"/>'
+    +'<polygon points="60,330 740,330 940,546 -140,546" fill="url(#gamepitch)"/>'
+    +'<polygon points="43,348 757,348 782,376 18,376" fill="#FFFFFF" opacity=".05"/><polygon points="-3,410 803,410 842,452 -42,452" fill="#FFFFFF" opacity=".05"/><polygon points="-99,502 899,502 940,546 -140,546" fill="#FFFFFF" opacity=".05"/>'
+    +'<polygon points="240,330 380,330 520,546 180,546" fill="#FFFFFF" opacity=".05"/>'
+    +'<line x1="60" y1="330" x2="-140" y2="546" stroke="'+W+'" stroke-width="5"/><line x1="740" y1="330" x2="940" y2="546" stroke="'+W+'" stroke-width="5"/>'
+    +[[348,43,757,3],[376,18,782,3.5],[410,-3,803,4],[452,-42,842,5],[502,-99,899,6]].map(function(l){ return '<line x1="'+l[1]+'" y1="'+l[0]+'" x2="'+l[2]+'" y2="'+l[0]+'" stroke="'+W+'" stroke-width="'+l[3]+'"/>'; }).join('')
+    +'<line x1="60" y1="330" x2="740" y2="330" stroke="#FFFFFF" stroke-width="6"/>'
+    +[348,376,410,452,502].map(function(y){ var t=(y-330)/216, hl=320-90*t, hr=480+90*t, hw=7+7*t; return '<line x1="'+(hl-hw)+'" y1="'+y+'" x2="'+(hl+hw)+'" y2="'+y+'" stroke="'+W+'" stroke-width="3.5"/><line x1="'+(hr-hw)+'" y1="'+y+'" x2="'+(hr+hw)+'" y2="'+y+'" stroke="'+W+'" stroke-width="3.5"/>'; }).join('')
+    +[[348,'10',15,200,600,342],[376,'20',18,182,618,370],[410,'30',23,160,640,404],[452,'40',29,134,666,446],[502,'50',36,104,696,496]].map(function(n){ var yy=n[5]; return '<text transform="translate('+n[3]+','+yy+') scale(1,.55)" font-family="Fredoka" font-weight="700" font-size="'+n[2]+'" fill="#FFFFFF" stroke="rgba(20,60,25,.45)" stroke-width="1" text-anchor="middle">'+n[1]+'</text><text transform="translate('+n[4]+','+yy+') scale(1,.55)" font-family="Fredoka" font-weight="700" font-size="'+n[2]+'" fill="#FFFFFF" stroke="rgba(20,60,25,.45)" stroke-width="1" text-anchor="middle">'+n[1]+'</text>'; }).join('')
+    +'<text transform="translate(400,320) scale(1,.6)" font-family="Fredoka" font-weight="700" font-size="15" fill="#FFFFFF" opacity=".85" text-anchor="middle" letter-spacing="2">END ZONE</text>'
+    +'<rect y="546" width="800" height="14" fill="rgba(20,60,25,.35)"/>'
+    +'<ellipse cx="400" cy="302" rx="26" ry="4.5" fill="rgba(20,60,25,.25)"/>'
+    +'<rect x="396" y="284" width="8" height="18" fill="url(#gamegold)"/><rect x="402" y="284" width="2.5" height="18" fill="rgba(0,0,0,.18)"/>'
+    +'<rect x="352" y="176" width="9" height="103" rx="3" fill="url(#gamegold)"/><rect x="358" y="176" width="3" height="103" fill="rgba(0,0,0,.15)"/>'
+    +'<rect x="439" y="176" width="9" height="103" rx="3" fill="url(#gamegold)"/><rect x="445" y="176" width="3" height="103" fill="rgba(0,0,0,.15)"/>'
+    +'<rect x="348" y="276" width="104" height="9" rx="3" fill="url(#gamegold)"/><rect x="348" y="276" width="104" height="3" fill="rgba(255,255,255,.35)"/>');
   /* BASEBALL — built 3D diamond: tiered stand band behind, the
      padded green outfield wall (yellow top line, 375 marker)
      under the home-run flight, warning track, grass sweeping
@@ -6147,8 +6256,8 @@ function gameSceneHTML(id,accent){
      batter stands — plate at x 102-130, y 426-452, beside his
      glove and bat, exactly where his swing and the toss-and-
      catch already play. A home run rises over the wall band
-     (y196-262) and comes down behind it; a swing and a miss
-     never leaves the plate. */
+     (y196-262) and flies out of the frame altogether; a swing
+     and a miss never leaves the plate. */
   if(id==='baseball') return wrap(defs+blush()
     +slabShadow(400,550,390)
     +'<rect y="84" width="800" height="104" fill="url(#gamestand)"/>'+crowd(116)
@@ -6287,16 +6396,87 @@ function gameSceneHTML(id,accent){
    squarer than that, so the scene's slice fit cropped its sides —
    and the scoring target sits at the far side of most scenes: the
    soccer goal and the hockey net both fell at (or past) the stage's
-   right edge. The two RESTORED scenes (Soccer, restored Nov 9,
-   2026; Hockey, whose drawn rink this build's template restore
-   brought back) are reframed on the GAME STAGE ONLY — a tighter
-   viewBox, the exact framing their previous live versions played
-   with — so the target the player plays to is always in view: the
+   right edge. Soccer (its built 3D field and goal) and Hockey
+   (whose drawn rink this build's template restore brought back)
+   are reframed on the GAME STAGE ONLY — a tighter viewBox — so
+   the target the player plays to is always in view: the
    soccer goal mouth lands inside the stage's right side, and the
    hockey net (drawn on the rink's right) lands inside the stage's
    right edge, where the puck is actually shot. Every
    other sport keeps the full wide picture, unchanged. */
-var STAGE_VIEWBOX={soccer:'150 0 640 560',hockey:'160 0 640 560'};
+/* TEAM MASCOT BUILDER (Michelle, Nov 9, 2026): the full-body
+   mascot character for the games — the picked animal standing
+   UPRIGHT on two legs in mascot style, dressed in the team jersey
+   (the world's primary color, gold star on the chest), sneakers
+   on its feet — the way the original Coach Leo lion was a
+   dressed-up lion, never a plain animal on all fours. The lion
+   is Karter's build mascot and the default (themeAnimal() falls
+   back to him); any animal the learner picks in the wizard is
+   built by this same function and placed in the lion's spots. */
+function mascotSVG(id,primary){
+  var FURS={lion:'#E8A84B',tiger:'#F59B23',dog:'#B07B4F',cat:'#A7B0B8',bear:'#96622F',panda:'#F4F1EA',fox:'#EE7B33',owl:'#7E63B0',turtle:'#63B06A',dolphin:'#86BFE8'};
+  var fur=FURS[id]||FURS.lion, armF=(id==='panda')?'#2A2521':fur;
+  var eyes='<circle cx="42" cy="33" r="2.8" fill="#241408"/><circle cx="58" cy="33" r="2.8" fill="#241408"/><circle cx="42.9" cy="32.1" r=".95" fill="#fff"/><circle cx="58.9" cy="32.1" r=".95" fill="#fff"/>';
+  var smile='<path d="M44 49 Q50 54 56 49" stroke="#7A4A21" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+  var behind='', head='';
+  if(id==='lion'){
+    behind='<path d="M72 106 Q94 100 89 76" stroke="#C77F2E" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="89" cy="72" r="7" fill="#8A5A1D"/>';
+    head='<circle cx="50" cy="36" r="31" fill="#A85F1C"/><circle cx="50" cy="7" r="9" fill="#A85F1C"/><circle cx="71" cy="13" r="9" fill="#A85F1C"/><circle cx="79" cy="32" r="9" fill="#A85F1C"/><circle cx="71" cy="53" r="9" fill="#A85F1C"/><circle cx="50" cy="61" r="9" fill="#A85F1C"/><circle cx="29" cy="53" r="9" fill="#A85F1C"/><circle cx="21" cy="32" r="9" fill="#A85F1C"/><circle cx="29" cy="13" r="9" fill="#A85F1C"/>'
+      +'<circle cx="33" cy="17" r="6" fill="#8A4F14"/><circle cx="67" cy="17" r="6" fill="#8A4F14"/>'
+      +'<circle cx="50" cy="37" r="21" fill="#F6BC58"/><ellipse cx="50" cy="45" rx="10" ry="7" fill="#FBE3B2"/><path d="M46 41 L54 41 L50 46 Z" fill="#8A4B2A"/>'+eyes+smile;
+  } else if(id==='tiger'){
+    behind='<path d="M72 106 Q94 100 90 78" stroke="#E87F1E" stroke-width="7" fill="none" stroke-linecap="round"/>';
+    head='<circle cx="29" cy="16" r="7.5" fill="#E87F1E"/><circle cx="71" cy="16" r="7.5" fill="#E87F1E"/><circle cx="29" cy="16" r="3.5" fill="#F8CD8A"/><circle cx="71" cy="16" r="3.5" fill="#F8CD8A"/>'
+      +'<circle cx="50" cy="36" r="22" fill="#F59B23"/><g stroke="#7A3B0E" stroke-width="3" stroke-linecap="round"><line x1="50" y1="15" x2="50" y2="22"/><line x1="39" y1="17" x2="41" y2="23"/><line x1="61" y1="17" x2="59" y2="23"/><line x1="29" y1="38" x2="35" y2="39"/><line x1="71" y1="38" x2="65" y2="39"/></g>'
+      +'<ellipse cx="50" cy="46" rx="11" ry="7.5" fill="#FFF1DC"/><ellipse cx="50" cy="41.5" rx="4.6" ry="3.2" fill="#B3543F"/>'+eyes+smile;
+  } else if(id==='dog'){
+    behind='<path d="M72 104 Q92 96 88 80" stroke="#7A4E2A" stroke-width="7" fill="none" stroke-linecap="round"/>';
+    head='<ellipse cx="25" cy="36" rx="8" ry="17" fill="#6E4525"/><ellipse cx="75" cy="36" rx="8" ry="17" fill="#6E4525"/>'
+      +'<circle cx="50" cy="36" r="22" fill="#B07B4F"/><ellipse cx="50" cy="46" rx="11" ry="8" fill="#EAC9A0"/><ellipse cx="50" cy="42" rx="5" ry="3.6" fill="#241408"/>'+eyes+'<path d="M43 50 Q50 55 57 50" stroke="#7A4A21" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+  } else if(id==='cat'){
+    behind='<path d="M72 108 Q95 104 92 74" stroke="#8E99A4" stroke-width="6" fill="none" stroke-linecap="round"/>';
+    head='<polygon points="30,20 35,3 45,15" fill="#8E99A4"/><polygon points="70,20 65,3 55,15" fill="#8E99A4"/><polygon points="33,16 36,8 41,14" fill="#F4A9BC"/><polygon points="67,16 64,8 59,14" fill="#F4A9BC"/>'
+      +'<circle cx="50" cy="36" r="22" fill="#A7B0B8"/><ellipse cx="50" cy="47" rx="7" ry="5" fill="#C7CFD6"/><path d="M47 43 L53 43 L50 47 Z" fill="#E56B8C"/>'
+      +'<g stroke="#5A6672" stroke-width="1.6"><line x1="14" y1="42" x2="30" y2="44"/><line x1="15" y1="49" x2="30" y2="48"/><line x1="86" y1="42" x2="70" y2="44"/><line x1="85" y1="49" x2="70" y2="48"/></g>'+eyes+smile;
+  } else if(id==='bear'){
+    behind='<circle cx="74" cy="104" r="6" fill="#7A4A26"/>';
+    head='<circle cx="29" cy="16" r="8" fill="#7A4A26"/><circle cx="71" cy="16" r="8" fill="#7A4A26"/><circle cx="29" cy="16" r="4" fill="#C89B6C"/><circle cx="71" cy="16" r="4" fill="#C89B6C"/>'
+      +'<circle cx="50" cy="36" r="22" fill="#96622F"/><ellipse cx="50" cy="46" rx="11" ry="8" fill="#E3C08A"/><ellipse cx="50" cy="41" rx="5" ry="3.5" fill="#241408"/>'+eyes+smile;
+  } else if(id==='panda'){
+    behind='<circle cx="74" cy="104" r="6" fill="#E8E2D6" stroke="#CFC8BC" stroke-width="1.5"/>';
+    head='<circle cx="29" cy="16" r="8.5" fill="#26221F"/><circle cx="71" cy="16" r="8.5" fill="#26221F"/>'
+      +'<circle cx="50" cy="36" r="22" fill="#FFFFFF" stroke="#D9D2C6" stroke-width="2"/>'
+      +'<ellipse cx="41" cy="34" rx="6" ry="8.5" fill="#26221F" transform="rotate(-14 41 34)"/><ellipse cx="59" cy="34" rx="6" ry="8.5" fill="#26221F" transform="rotate(14 59 34)"/>'
+      +'<circle cx="41" cy="33" r="2.2" fill="#fff"/><circle cx="59" cy="33" r="2.2" fill="#fff"/>'
+      +'<ellipse cx="50" cy="44" rx="3.6" ry="2.6" fill="#26221F"/><path d="M46 49 Q50 51.5 54 49" stroke="#26221F" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+  } else if(id==='fox'){
+    behind='<path d="M70 112 Q98 104 94 70 Q84 88 70 92 Z" fill="#D9622B"/><path d="M94 70 Q90 84 82 90 Q90 88 94 70 Z" fill="#FFF3E2"/>';
+    head='<polygon points="28,22 33,2 47,14" fill="#D9622B"/><polygon points="72,22 67,2 53,14" fill="#D9622B"/>'
+      +'<circle cx="50" cy="36" r="22" fill="#EE7B33"/><ellipse cx="37" cy="47" rx="10" ry="7.5" fill="#FFF6EA"/><ellipse cx="63" cy="47" rx="10" ry="7.5" fill="#FFF6EA"/><ellipse cx="50" cy="48" rx="8" ry="6" fill="#FFF6EA"/><ellipse cx="50" cy="44.5" rx="4" ry="3" fill="#241408"/>'+eyes+smile;
+  } else if(id==='owl'){
+    head='<polygon points="29,17 33,3 41,13" fill="#6B4F9E"/><polygon points="71,17 67,3 59,13" fill="#6B4F9E"/>'
+      +'<circle cx="50" cy="36" r="22" fill="#7E63B0"/><circle cx="41" cy="35" r="9" fill="#FFFFFF"/><circle cx="59" cy="35" r="9" fill="#FFFFFF"/>'
+      +'<circle cx="41" cy="35" r="4.2" fill="#241408"/><circle cx="59" cy="35" r="4.2" fill="#241408"/><circle cx="42.4" cy="33.6" r="1.3" fill="#fff"/><circle cx="60.4" cy="33.6" r="1.3" fill="#fff"/>'
+      +'<polygon points="50,43 44.5,50 55.5,50" fill="#F59E23"/>';
+  } else if(id==='turtle'){
+    behind='<ellipse cx="50" cy="94" rx="31" ry="36" fill="#3E7A3A"/><ellipse cx="50" cy="94" rx="31" ry="36" fill="none" stroke="#2E5C2C" stroke-width="3"/>';
+    head='<circle cx="50" cy="36" r="22" fill="#63B06A"/><ellipse cx="50" cy="46" rx="10" ry="7" fill="#CDE8B0"/><circle cx="41" cy="33" r="3.4" fill="#241408"/><circle cx="59" cy="33" r="3.4" fill="#241408"/><circle cx="42.2" cy="31.8" r="1.1" fill="#fff"/><circle cx="60.2" cy="31.8" r="1.1" fill="#fff"/><path d="M42 49 Q50 55 58 49" stroke="#2E5C2C" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+  } else if(id==='dolphin'){
+    head='<polygon points="50,2 41,17 61,15" fill="#5E97C4"/>'
+      +'<circle cx="50" cy="37" r="21" fill="#86BFE8"/><ellipse cx="50" cy="47" rx="13" ry="6.5" fill="#D8F0FC"/><path d="M40 48 Q50 53 60 48" stroke="#3E6E96" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+      +'<circle cx="40" cy="32" r="2.8" fill="#241408"/><circle cx="60" cy="32" r="2.8" fill="#241408"/><circle cx="40.9" cy="31.1" r=".95" fill="#fff"/><circle cx="60.9" cy="31.1" r=".95" fill="#fff"/>';
+  }
+  var body='<rect x="35" y="102" width="11" height="32" rx="5" fill="'+armF+'"/><rect x="54" y="102" width="11" height="32" rx="5" fill="'+armF+'"/>'
+    +'<ellipse cx="39" cy="140" rx="12" ry="6" fill="#FFFFFF" stroke="rgba(43,22,8,.25)"/><ellipse cx="61" cy="140" rx="12" ry="6" fill="#FFFFFF" stroke="rgba(43,22,8,.25)"/>'
+    +'<line x1="29" y1="138" x2="49" y2="138" stroke="'+primary+'" stroke-width="3"/><line x1="51" y1="138" x2="71" y2="138" stroke="'+primary+'" stroke-width="3"/>'
+    +'<rect x="14" y="64" width="12" height="36" rx="6" fill="'+armF+'" transform="rotate(14 20 64)"/><rect x="74" y="64" width="12" height="36" rx="6" fill="'+armF+'" transform="rotate(-14 80 64)"/>'
+    +'<rect x="26" y="58" width="48" height="54" rx="15" fill="'+fur+'"/>'
+    +'<path d="M26 72 L74 72 L74 100 Q74 112 62 112 L38 112 Q26 112 26 100 Z" fill="'+primary+'"/>'
+    +'<path d="M39 59 Q50 70 61 59 L61 66 Q50 75 39 66 Z" fill="#FFFFFF" opacity=".9"/>'
+    +'<polygon points="50,80 52.6,87.2 60.2,87.5 54.2,92.2 56.2,99.6 50,95.4 43.8,99.6 45.8,92.2 39.8,87.5 47.4,87.2" fill="#FFD94D" stroke="#D9A406" stroke-width="1.2"/>';
+  return '<svg viewBox="0 0 100 150" aria-hidden="true">'+behind+body+head+'</svg>';
+}
+var STAGE_VIEWBOX={soccer:'150 0 640 560',hockey:'160 0 640 560',football:'0 40 800 440'};
 function renderStageBackdrop(c,s){
   var info=SPORT_INFO[s.id]||SPORT_INFO.basketball;
   var stage=document.getElementById('courtStage');
@@ -6311,6 +6491,8 @@ function renderStageBackdrop(c,s){
       var stageSvg=scene.querySelector('svg'); if(stageSvg){ var vb=STAGE_VIEWBOX[s.id]; if(vb) stageSvg.setAttribute('viewBox',vb); }
     }
   }
+  var stageMascotEl=document.getElementById('stageMascot');
+  if(stageMascotEl) stageMascotEl.innerHTML=mascotSVG(themeAnimal().id,c.primary);
   /* NO venue-name pill is painted on the stage (Pass 5): Michelle's
      rule — the game shows the player and the venue clean, with no
      added floating images or text bars on it. The label element, its
@@ -6463,7 +6645,12 @@ function worldBackdropSVG(id,c){
      seated floor split and a handstand split). The artwork's
      own colors were set to HIS brand colors (Nov 9, 2026): the
      gymnasts wear red, gold and cream, and the studio backdrop
-     behind them is warm cream — no pink or purple anywhere. It replaces the old drawn flat
+     behind them is warm cream — no pink or purple anywhere.
+     The seven boys in the file were REPOSITIONED, not redrawn
+     (Michelle, Nov 9, 2026): the exact same gymnasts are
+     scattered across the full frame — staggered over the top
+     and bottom of the page — instead of standing in one row
+     along the bottom. It replaces the old drawn flat
      gymnastics scene template entirely. renderWorldBackground()
      and the wizard's Background step present the same artwork
      scaled back (meet) over a cream ground, so the full group of
@@ -6636,7 +6823,7 @@ function applySportTheme(lockedOut,c,s){
     tok.classList.toggle('sport-token',info.tokenType!=='ball');
     tok.classList.toggle('puck-token',info.tokenType==='puck');
     tok.textContent= info.tokenType==='ball' ? '' : (info.tokenType==='puck' ? '' : info.tokenEmoji);
-    if(info.tokenType==='ball') tok.style.background='radial-gradient(circle at 32% 28%,'+c.soft+','+c.primary+' 58%,'+c.dark+')';
+    if(info.tokenType==='ball') tok.style.background='url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Cg fill=%22none%22 stroke=%22%2320120B%22 stroke-width=%225%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2246%22/%3E%3Cpath d=%22M4 50H96%22/%3E%3Cpath d=%22M50 4V96%22/%3E%3Cpath d=%22M24 12C40 32 40 68 24 88%22/%3E%3Cpath d=%22M76 12C60 32 60 68 76 88%22/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat,radial-gradient(circle at 32% 28%,#FFC38F,#FF7A1A 55%,#E85D0C)'; /* Basketball's ball always looks like 🏀 (Michelle, Nov 9, 2026) — orange with black curved seams — while he waits and dribbles, in flight, and after a make or a miss; it never takes the theme colors */
   }
   try{ updateCoachPortrait(s.id,(lockedOut?'Leo':coachName()),c.primary); }catch(e){} /* the coach's portrait is the same background-free cutout in every sport — it never swaps */
   try{ if(typeof updateScoreboard==='function'&&typeof gameSession!=='undefined'&&gameSession) updateScoreboard(); }catch(e){}
