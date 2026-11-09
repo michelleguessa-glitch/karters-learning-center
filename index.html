@@ -827,6 +827,17 @@ body.playing .p-top .stars-pill{padding:6px 10px;font-size:13px}
 .leo-compact .leo-face{width:44px;height:44px;flex:0 0 44px;border-width:3px}
 .leo-compact .bubble{flex:1 1 auto;min-width:0;min-height:0;max-height:54px;overflow-y:auto;font-size:13.5px;line-height:1.35;padding:8px 12px;border-radius:14px;border-width:2px}
 .leo-compact .bubble:before{display:none}
+/* CAPTIONS ARE PLAIN TEXT — NO CARD, NO BUBBLE, NO BOX (Michelle,
+   Nov 8–9, 2026): in the game view the coach's instruction captions
+   sit in this spot as plain text on the page — no bubble shape, no
+   card background, no border, no shadow, no pill, no tail. And when
+   the instructions finish, the caption logic clears the text, so
+   NOTHING is left behind here: no empty card, no blank text box, no
+   empty visible container of any kind — the words are simply gone
+   until Leo speaks again. (The speaking-head replay button beside
+   the text stays plain, exactly as it already is.) */
+#practiceView .leo-compact .bubble{background:transparent;border:none;box-shadow:none;border-radius:0;padding:0}
+#practiceView .leo-compact .bubble:empty{height:0;max-height:0;overflow:hidden}
 .leo-compact .hear-it-btn{flex:0 0 auto;padding:8px;font-size:22px;white-space:nowrap;min-width:48px;min-height:44px}
 /* The game view is ONE flat column in Royce's approved order — header,
    Leo's instructions, scoreboard, stage, game card — all direct
@@ -1639,19 +1650,50 @@ body.world-hockey .p-stick,.court-stage.sport-hockey .court-player .p-stick{disp
 .court-stage.sport-soccer.shooting .court-player .p-arm-r{animation:none}
 .court-stage.sport-soccer.shooting .court-player .p-leg-r{animation:soccerKickLeg .95s ease-in-out;transform-box:fill-box;transform-origin:50% 0%}
 @keyframes soccerKickLeg{0%{transform:rotate(0)}30%{transform:rotate(-24deg)}55%{transform:rotate(30deg)}100%{transform:rotate(0)}}
-/* Swimming shooting: he stays IN the water, swaying and kicking
-   while the swimmer races — no jump shot out of the pool. */
-.court-stage.sport-swimming.shooting .court-player{animation:swimSway 1.2s ease-in-out infinite}
-/* Gymnastics shooting: he keeps his balance on the beam while the
-   star walks it — no jump shot off the beam. */
-.court-stage.sport-gymnastics.shooting .court-player{animation:beamBalance .9s ease-in-out infinite}
-/* Hockey shooting: he keeps skating through the slap shot — no
-   jump shot on the ice. */
+/* ===== NO GLIDING — EVER (Michelle, Nov 8–9, 2026) =====
+   Any time the player himself moves from one side to the other, he
+   moves the sport's real way, with visible body and leg motion the
+   whole way: swimming with strokes and kicks, walking the beam step
+   by step, running with strides, skating with leg pushes. A figure
+   translating across with a still body or still legs (gliding) is
+   never acceptable. In Swimming, Gymnastics and Running the WAAPI
+   trips in playSportShot now drive the PLAYER himself across (the
+   .shooting animation on his body is OFF — the trip owns his
+   transform) while these limb animations run the whole way: */
+/* Swimming shooting: HE swims across — freestyle arm strokes
+   windmilling around each shoulder (pivots pinned to the shoulders
+   in view-box units, like the tennis racket) and a flutter kick,
+   legs alternating in opposite phase. While he waits he kicks too. */
+.court-stage.sport-swimming.shooting .court-player{animation:none}
+.court-stage.sport-swimming.shooting .court-player .p-arm-r{animation:swimStroke 1.15s linear infinite;transform-box:view-box;transform-origin:77.5% 37%}
+.court-stage.sport-swimming.shooting .court-player .p-arm-l{animation:swimStroke 1.15s linear -.575s infinite;transform-box:view-box;transform-origin:22.5% 37%}
+@keyframes swimStroke{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
+.court-stage.sport-swimming.shooting .court-player .p-leg-r,.court-stage.sport-swimming.dribbling .court-player .p-leg-r{animation:swimKick .38s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0%}
+.court-stage.sport-swimming.shooting .court-player .p-leg-l,.court-stage.sport-swimming.dribbling .court-player .p-leg-l{animation:swimKick .38s ease-in-out -.19s infinite;transform-box:fill-box;transform-origin:50% 0%}
+@keyframes swimKick{0%,100%{transform:rotate(13deg)}50%{transform:rotate(-13deg)}}
+/* Gymnastics shooting: HE walks the beam — careful steps, legs
+   swinging in opposite phase the whole way across and back. */
+.court-stage.sport-gymnastics.shooting .court-player{animation:none}
+.court-stage.sport-gymnastics.shooting .court-player .p-leg-r{animation:beamStep .46s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0%}
+.court-stage.sport-gymnastics.shooting .court-player .p-leg-l{animation:beamStep .46s ease-in-out -.23s infinite;transform-box:fill-box;transform-origin:50% 0%}
+@keyframes beamStep{0%,100%{transform:rotate(10deg)}50%{transform:rotate(-10deg)}}
+/* Hockey: he never travels across on an answer (only the puck
+   flies), but his in-place skating is real skating — his legs push
+   in alternating skating strides, timed with the sway, while he
+   waits and while he shoots. No still-legged sliding. */
 .court-stage.sport-hockey.shooting .court-player{animation:skateSway 1.1s ease-in-out infinite}
-/* Running shooting: he keeps sprinting in place while the shoe
-   races to the finish — no jump shot, arms pumping with the run. */
-.court-stage.sport-running.shooting .court-player{animation:jogRun .34s ease-in-out infinite}
+.court-stage.sport-hockey.dribbling .court-player .p-leg-r,.court-stage.sport-hockey.shooting .court-player .p-leg-r{animation:skatePush 1.1s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0%}
+.court-stage.sport-hockey.dribbling .court-player .p-leg-l,.court-stage.sport-hockey.shooting .court-player .p-leg-l{animation:skatePush 1.1s ease-in-out -.55s infinite;transform-box:fill-box;transform-origin:50% 0%}
+@keyframes skatePush{0%,100%{transform:rotate(-13deg)}50%{transform:rotate(13deg)}}
+/* Running shooting: HE runs the track — full running strides, both
+   legs swinging in opposite phase and both arms pumping the whole
+   way across and back. */
+.court-stage.sport-running.shooting .court-player{animation:none}
+.court-stage.sport-running.shooting .court-player .p-leg-r{animation:runStride .3s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0%}
+.court-stage.sport-running.shooting .court-player .p-leg-l{animation:runStride .3s ease-in-out -.15s infinite;transform-box:fill-box;transform-origin:50% 0%}
+@keyframes runStride{0%,100%{transform:rotate(19deg)}50%{transform:rotate(-19deg)}}
 .court-stage.sport-running.shooting .court-player .p-arm-r{animation:armPump .34s ease-in-out infinite}
+.court-stage.sport-running.shooting .court-player .p-arm-l{animation:armPump .34s ease-in-out -.17s infinite;transform-box:fill-box;transform-origin:50% 6%}
 /* Bonus Ball Round: in every sport except basketball the answer
    balls wear that sport's look, not basketball orange — a clean
    white ball with the sport's own token on it. */
@@ -3789,7 +3831,18 @@ function renderPlayerSVG(d){
   var flames= d.shoeSpecial==='fire'? '<text x="58" y="240" font-size="15">🔥</text><text x="128" y="240" font-size="15">🔥</text>':'';
   return '<svg viewBox="0 0 200 262" role="img" aria-label="Your player">'
   + (d.hair==='afro'?hair:'')
-  + '<g class="p-arm-r"><rect x="146" y="96" width="18" height="60" rx="9" fill="'+skin+'"/>'+wristR
+  /* FULLY CONNECTED BODY (Michelle, Nov 8–9, 2026): his arms join his
+     body at the shoulders with NO gap — each arm rect is widened
+     inward so its inner edge runs UNDER the jersey torso (drawn after
+     the arms, below) along the arm's whole length, and a round
+     shoulder cap sits on the joint. The old 18-wide arms hung beside
+     the narrower chest with daylight between arm and torso from the
+     shoulder down to the shorts. His hand stays exactly where it
+     always was (cx 155, cy 150 — every ball spot and every piece of
+     equipment is tuned to it), and because arm, cap and equipment all
+     live in the same .p-arm-r group, the shoulder stays joined at
+     every moment of every swing, pump, stroke and stride. */
+  + '<g class="p-arm-r"><circle cx="147" cy="100" r="12" fill="'+skin+'"/><rect x="140" y="94" width="24" height="62" rx="10" fill="'+skin+'"/>'+wristR
   /* THE tennis racket — the only one in the build — gripped IN his
      right hand: the handle runs through his hand (his hand circle is
      drawn last, on top of the handle, so he is visibly holding it) and
@@ -3822,9 +3875,13 @@ function renderPlayerSVG(d){
      never leaves his hands. Only the puck ever flies. Only shown in
      the hockey world (see .p-stick CSS). */
   + '<g class="p-stick" aria-hidden="true"><line x1="156" y1="138" x2="190" y2="228" stroke="#8A5A2B" stroke-width="6.5" stroke-linecap="round"/><line x1="156" y1="138" x2="165" y2="160" stroke="#17110B" stroke-width="7" stroke-linecap="round"/><path d="M190 228 L167 241" stroke="#17110B" stroke-width="7.5" stroke-linecap="round" fill="none"/><circle cx="155" cy="150" r="7.5" fill="'+skin+'"/></g></g>'
-  + '<rect x="36" y="96" width="18" height="60" rx="9" fill="'+skin+'"/>'+sleeve+wristL
-  + '<rect x="64" y="200" width="17" height="36" rx="7" fill="'+skin+'"/><rect class="p-leg-r" x="119" y="200" width="17" height="36" rx="7" fill="'+skin+'"/>'
+  + '<g class="p-arm-l"><circle cx="53" cy="100" r="12" fill="'+skin+'"/><rect x="36" y="94" width="24" height="62" rx="10" fill="'+skin+'"/>'+sleeve+wristL+'</g>'
+  + '<rect class="p-leg-l" x="64" y="200" width="17" height="36" rx="7" fill="'+skin+'"/><rect class="p-leg-r" x="119" y="200" width="17" height="36" rx="7" fill="'+skin+'"/>'
   + '<path d="M56 164 L144 164 L150 204 L106 204 L100 184 L94 204 L50 204Z" fill="'+d.shorts+'" stroke="#2B1608" stroke-width="2.5"/>'
+  /* Neck bridge: a short neck under the head, drawn before the torso
+     and the head, so head, neck and body overlap into one connected
+     figure — no gap at the neck in any pose. */
+  + '<rect x="90" y="72" width="20" height="22" rx="6" fill="'+skin+'"/>'
   + '<path d="M62 94 Q100 82 138 94 L147 168 Q100 179 53 168Z" fill="'+jersey+'" stroke="#2B1608" stroke-width="2.5"/>'
   + '<path d="M62 94 Q100 82 138 94 L140 106 Q100 94 60 106Z" fill="#FFB800" opacity=".85"/>'
   + (d.jerseySpecial==='gold'?'<text x="100" y="112" text-anchor="middle" font-size="13">👑</text>':'')
@@ -4059,7 +4116,7 @@ function settleShot(mySeq,success){
    where it lands, bounces and rolls back to the player. A wrong answer
    falls SHORT on the player's own side (tennis: on your side of the net,
    no point), bounces there, and rolls back so he can try the same one
-   again. Swimming's token is the swimmer himself gliding across. */
+   again. In Swimming, Gymnastics and Running the PLAYER himself makes the trip (swimming, beam-walking, sprinting) — see those branches. */
 function playSportShot(success){
   stopDribble();
   var mySeq=++shotSeq;
@@ -4067,100 +4124,128 @@ function playSportShot(success){
   var info=sportInfo();
   var stage=document.getElementById('courtStage'),ball=document.getElementById('shotBall');
   if(!stage||!ball||!ball.animate){ setTimeout(function(){ sfx(success?'cheer':'rim'); },300); if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },1200); return; }
-  /* Swimming plays its own race: the swimmer glides across the pool in his
-     lane, bobbing at the surface, touches the far wall, then glides back.
-     A wrong answer sinks him under the water — he goes back to the start
-     and pops back up at the surface, ready to race the same one again. */
+  /* Swimming plays its own race: HE swims across the pool himself.
+     The WAAPI trip below drives the PLAYER all the way across his
+     lane, bobbing at the surface — the shared shot-ball is never used
+     here (it is display:none in this world; he IS the swimmer), and
+     the whole way his arms windmill in freestyle strokes and his legs
+     flutter-kick (the .shooting limb animations in the CSS). He
+     touches the far wall, then swims back. A wrong answer swims him
+     partway, dips him under the surface — still fully visible the
+     whole way, never faded out, so nothing reads as a teleport — and
+     he swims back under the surface and pops back up at the start,
+     ready to race the same one again. He is never slid across the
+     pool with a still body: no gliding, only strokes and kicks. */
   if(info===SPORT_INFO.swimming){
     stage.classList.add('shooting');
-    var ssr=stage.getBoundingClientRect(),sbr=ball.getBoundingClientRect();
-    var sStartCX=sbr.left-ssr.left+sbr.width/2;
-    var sLandCX=ssr.width*0.93, sDx=Math.round(sLandCX-sStartCX);
+    var swimmer=document.getElementById('courtPlayer');
+    var ssr=stage.getBoundingClientRect(),spr=swimmer?swimmer.getBoundingClientRect():null;
+    if(!swimmer||!spr||!swimmer.animate){ setTimeout(function(){ sfx(success?'cheer':'rim'); },300); if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },1200); return; }
+    var sStartCX=spr.left-ssr.left+spr.width/2;
+    var sLandCX=ssr.width*0.88, sDx=Math.round(sLandCX-sStartCX);
     shotAnimActive=true;
+    try{ swimmer.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){}
     try{
       var sAnim;
       if(success){
-        var sDur=2450;
-        sAnim=ball.animate([
-          {transform:'translate(0,0) rotate(-4deg)',opacity:1,easing:'ease-out'},
-          {transform:'translate('+Math.round(sDx*.16)+'px,-6px) rotate(3deg)',offset:.16,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(sDx*.34)+'px,2px) rotate(-4deg)',offset:.34,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(sDx*.52)+'px,-6px) rotate(3deg)',offset:.52,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(sDx*.7)+'px,2px) rotate(-4deg)',offset:.68,easing:'ease-in-out'},
-          {transform:'translate('+sDx+'px,-3px) rotate(0deg) scale(1.14)',offset:.8,easing:'ease-out'},
-          {transform:'translate('+Math.round(sDx*.5)+'px,2px) rotate(-176deg)',offset:.9,easing:'ease-in-out'},
-          {transform:'translate(0,0) rotate(-360deg)',offset:1}
+        var sDur=2600;
+        sAnim=swimmer.animate([
+          {transform:'translate(0,0) rotate(-2deg)',opacity:1,easing:'ease-out'},
+          {transform:'translate('+Math.round(sDx*.14)+'px,-5px) rotate(2deg)',offset:.14,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(sDx*.28)+'px,2px) rotate(-2deg)',offset:.28,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(sDx*.42)+'px,-5px) rotate(2deg)',offset:.42,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(sDx*.56)+'px,2px) rotate(-2deg)',offset:.56,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(sDx*.7)+'px,-5px) rotate(2deg)',offset:.7,easing:'ease-in-out'},
+          {transform:'translate('+sDx+'px,-2px) rotate(0deg)',offset:.8,easing:'ease-out'},
+          {transform:'translate('+Math.round(sDx*.5)+'px,2px) rotate(-2deg)',offset:.9,easing:'ease-in-out'},
+          {transform:'translate(0,0) rotate(0deg)',offset:1}
         ],{duration:sDur});
         if(sAnim) sAnim.onfinish=function(){ settleShot(mySeq,true); };
         setTimeout(function(){ settleShot(mySeq,true); },sDur+90);
-        setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(Math.round(sLandCX),Math.round(ssr.height*0.64),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); var st3=document.getElementById('courtStage'); if(st3) st3.classList.add('celebrating'); sfx('sparkle'); } },Math.round(sDur*0.8));
+        setTimeout(function(){ if(mySeq===shotSeq){ var st3=document.getElementById('courtStage'); if(st3) st3.classList.add('celebrating'); } },Math.round(sDur*0.8));
         setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(sDur*0.84));
       } else {
-        /* The sunk swimmer stays VISIBLE (never fainter than .55) on
-           the whole swim back under the surface — the old fade down
-           to .12 made him all but vanish under the water and then
-           reappear at the start, which reads as a teleport (Michelle,
-           Nov 8–9, 2026: no teleporting in any game). Now the entire
-           trip out, down, back and up is on screen the whole way. */
-        var mDur=2000, mFwd=Math.round(sDx*0.22);
-        sAnim=ball.animate([
-          {transform:'translate(0,0) rotate(-4deg)',opacity:1,easing:'ease-out'},
-          {transform:'translate('+mFwd+'px,-5px) rotate(3deg)',offset:.2,easing:'ease-in-out'},
-          {transform:'translate('+(mFwd+14)+'px,16px) rotate(16deg)',opacity:.75,offset:.36,easing:'ease-in'},
-          {transform:'translate('+(mFwd+20)+'px,58px) rotate(30deg)',opacity:.6,offset:.52,easing:'ease-in'},
-          {transform:'translate('+(mFwd+16)+'px,64px) rotate(24deg)',opacity:.55,offset:.62,easing:'ease-in-out'},
-          {transform:'translate(0,52px) rotate(-8deg)',opacity:.65,offset:.8,easing:'ease-out'},
-          {transform:'translate(0,10px) rotate(-3deg)',opacity:.75,offset:.92,easing:'ease-out'},
-          {transform:'translate(0,0) rotate(0deg)',opacity:1,offset:1}
+        /* He sinks, but stays VISIBLE (opacity 1, never faded) on the
+           whole swim back under the surface — the old token fade down
+           to .55/.12 made the swimmer all but vanish and then reappear
+           at the start, which reads as a teleport (Michelle, Nov 8-9,
+           2026: no teleporting in any game). The entire trip out,
+           down, back and up is on screen the whole way. */
+        var mDur=2100, mFwd=Math.round(sDx*0.24);
+        sAnim=swimmer.animate([
+          {transform:'translate(0,0) rotate(-2deg)',opacity:1,easing:'ease-out'},
+          {transform:'translate('+Math.round(mFwd*.5)+'px,-4px) rotate(2deg)',offset:.16,easing:'ease-in-out'},
+          {transform:'translate('+mFwd+'px,0px) rotate(-2deg)',offset:.3,easing:'ease-in-out'},
+          {transform:'translate('+(mFwd+10)+'px,15px) rotate(4deg)',offset:.44,easing:'ease-in'},
+          {transform:'translate('+(mFwd+6)+'px,22px) rotate(2deg)',offset:.56,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(mFwd*.45)+'px,16px) rotate(-2deg)',offset:.76,easing:'ease-in-out'},
+          {transform:'translate(0,8px) rotate(-1deg)',offset:.92,easing:'ease-out'},
+          {transform:'translate(0,0) rotate(0deg)',offset:1}
         ],{duration:mDur});
         if(sAnim) sAnim.onfinish=function(){ settleShot(mySeq,false); };
         setTimeout(function(){ settleShot(mySeq,false); },mDur+90);
-        setTimeout(function(){ if(mySeq===shotSeq) sfx('rim'); },Math.round(mDur*0.4));
+        setTimeout(function(){ if(mySeq===shotSeq) sfx('rim'); },Math.round(mDur*0.44));
       }
     }catch(e){ shotAnimActive=false; if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },900); }
     return;
   }
-  /* Gymnastics plays the balance-beam logic with the BOY gymnast's star:
-     a correct answer carries it step by step all the way across the beam,
-     it sticks the landing at the far end, then comes back across. A wrong
-     answer wobbles partway, drops off the beam onto the mat below, and
-     returns to the start so he climbs back on and walks the same one
-     again — the beam-walk / stuck-landing / step-off-and-retry logic. */
+  /* Gymnastics plays the balance-beam walk with the GYMNAST HIMSELF:
+     a correct answer WALKS HIM all the way across the beam — the
+     WAAPI trip below drives the PLAYER step by step (the .shooting
+     beam-step leg animation in the CSS swings his legs in opposite
+     phase the whole way), and his star rides on the beam beside him
+     on the exact same path, the way the football rides in the
+     runner's hand. He sticks the landing at the far end, then walks
+     back across. A wrong answer walks him partway, wobbles him, and
+     he steps OFF the beam down onto the mat, walks back along the
+     mat, and climbs back up at the start to walk the same one again.
+     The gymnast is never slid across with still legs — every inch
+     of the trip is stepped. */
   if(info===SPORT_INFO.gymnastics){
     stage.classList.add('shooting');
-    var gr=stage.getBoundingClientRect(),gbr=ball.getBoundingClientRect();
-    var gStartCX=gbr.left-gr.left+gbr.width/2;
+    var gymnast=document.getElementById('courtPlayer');
+    var gr=stage.getBoundingClientRect(),gpr=gymnast?gymnast.getBoundingClientRect():null;
+    if(!gymnast||!gpr||!gymnast.animate){ setTimeout(function(){ sfx(success?'cheer':'rim'); },300); if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },1200); return; }
+    var gStartCX=gpr.left-gr.left+gpr.width/2;
     var gLandCX=gr.width*0.82, gDx=Math.round(gLandCX-gStartCX);
     shotAnimActive=true;
+    try{ gymnast.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){}
     try{
-      var gAnim;
+      var gAnimP,gAnimB;
       if(success){
-        var gDur=2300;
-        gAnim=ball.animate([
-          {transform:'translate(0,0) rotate(0deg)',opacity:1,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(gDx*.2)+'px,-7px) rotate(10deg)',offset:.2,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(gDx*.42)+'px,0px) rotate(-8deg)',offset:.42,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(gDx*.64)+'px,-7px) rotate(10deg)',offset:.62,easing:'ease-in-out'},
-          {transform:'translate('+gDx+'px,-12px) rotate(0deg) scale(1.3)',offset:.78,easing:'ease-out'},
-          {transform:'translate('+Math.round(gDx*.5)+'px,-4px) rotate(-170deg)',offset:.9,easing:'ease-in-out'},
-          {transform:'translate(0,0) rotate(-360deg)',offset:1}
-        ],{duration:gDur});
-        if(gAnim) gAnim.onfinish=function(){ settleShot(mySeq,true); };
+        var gDur=2400;
+        var gSteps=[[0,0,0],[.1,.16,-4],[.2,.32,0],[.3,.48,-4],[.4,.64,0],[.5,.8,-4],[.58,1,0]];
+        var gFramesP=gSteps.map(function(st){ return {transform:'translate('+Math.round(gDx*st[1])+'px,'+st[2]+'px)',offset:st[0],easing:'ease-in-out'}; });
+        /* Stuck landing at the far end: one hop, feet back on the beam. */
+        gFramesP.push({transform:'translate('+gDx+'px,-11px)',offset:.66,easing:'ease-out'});
+        gFramesP.push({transform:'translate('+gDx+'px,0px)',offset:.72,easing:'ease-in'});
+        /* Walk back across the same way — one continuous trip home. */
+        gFramesP.push({transform:'translate('+Math.round(gDx*.5)+'px,-4px)',offset:.86,easing:'ease-in-out'});
+        gFramesP.push({transform:'translate(0,0)',offset:1});
+        var gFramesB=gFramesP.map(function(f){ return {transform:f.transform,offset:f.offset,easing:f.easing}; });
+        gAnimP=gymnast.animate(gFramesP,{duration:gDur});
+        gAnimB=ball.animate(gFramesB,{duration:gDur});
+        if(gAnimP) gAnimP.onfinish=function(){ settleShot(mySeq,true); };
         setTimeout(function(){ settleShot(mySeq,true); },gDur+90);
-        setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(Math.round(gLandCX),Math.round(gr.height*0.76),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); var st4=document.getElementById('courtStage'); if(st4) st4.classList.add('celebrating'); sfx('sparkle'); } },Math.round(gDur*0.76));
-        setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(gDur*0.8));
+        setTimeout(function(){ if(mySeq===shotSeq){ var st4=document.getElementById('courtStage'); if(st4) st4.classList.add('celebrating'); } },Math.round(gDur*0.72));
+        setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(gDur*0.78));
       } else {
-        var wDur=1900, wFwd=Math.round(gDx*0.3);
-        gAnim=ball.animate([
+        var wDur=2100, wFwd=Math.round(gDx*0.3), wDrop=Math.max(40,Math.round(gr.height*0.20)-6);
+        var wFramesP=[
           {transform:'translate(0,0) rotate(0deg)',opacity:1,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(wFwd*.55)+'px,-6px) rotate(12deg)',offset:.22,easing:'ease-in-out'},
-          {transform:'translate('+wFwd+'px,-2px) rotate(-22deg)',offset:.36,easing:'ease-in-out'},
-          {transform:'translate('+(wFwd+8)+'px,4px) rotate(24deg)',offset:.46,easing:'ease-in'},
-          {transform:'translate('+(wFwd+12)+'px,52px) rotate(40deg)',opacity:.8,offset:.6,easing:'ease-in'},
-          {transform:'translate('+Math.round(wFwd*.4)+'px,52px) rotate(10deg)',opacity:.9,offset:.8,easing:'ease-out'},
-          {transform:'translate(0,0) rotate(0deg)',opacity:1,offset:1}
-        ],{duration:wDur});
-        if(gAnim) gAnim.onfinish=function(){ settleShot(mySeq,false); };
+          {transform:'translate('+Math.round(wFwd*.55)+'px,-4px) rotate(6deg)',offset:.2,easing:'ease-in-out'},
+          {transform:'translate('+wFwd+'px,-2px) rotate(-15deg)',offset:.34,easing:'ease-in-out'},
+          {transform:'translate('+(wFwd+12)+'px,'+wDrop+'px) rotate(5deg)',offset:.48,easing:'ease-in'},
+          {transform:'translate('+(wFwd+12)+'px,'+wDrop+'px) rotate(0deg)',offset:.6,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(wFwd*.4)+'px,'+wDrop+'px) rotate(0deg)',offset:.78,easing:'ease-in-out'},
+          {transform:'translate(0,'+wDrop+'px) rotate(0deg)',offset:.88,easing:'ease-out'},
+          {transform:'translate(0,'+Math.round(wDrop/2)+'px) rotate(0deg)',offset:.95,easing:'ease-out'},
+          {transform:'translate(0,0) rotate(0deg)',offset:1}
+        ];
+        var wFramesB=wFramesP.map(function(f){ return {transform:f.transform.replace(/ rotate\(-?\d+deg\)/,''),offset:f.offset,easing:f.easing}; });
+        gAnimP=gymnast.animate(wFramesP,{duration:wDur});
+        gAnimB=ball.animate(wFramesB,{duration:wDur});
+        if(gAnimP) gAnimP.onfinish=function(){ settleShot(mySeq,false); };
         setTimeout(function(){ settleShot(mySeq,false); },wDur+90);
         setTimeout(function(){ if(mySeq===shotSeq) sfx('rim'); },Math.round(wDur*0.48));
       }
@@ -4330,50 +4415,75 @@ function playSportShot(success){
     }catch(e){ shotAnimActive=false; if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },900); }
     return;
   }
-  /* Running plays the SPRINT: the shoe stays ON the track. A
-     correct answer strides it down the lane in quick running
-     steps — short hops, foot to foot, leaning into the run — all
-     the way across the finish line, with one bigger hop as it
-     crosses, then it jogs back the same way. A wrong answer
-     strides partway and STUMBLES (a dip and a tilt, just like
-     the miss message says), gets back up, and jogs back to the
-     start to run the same one again. The shoe never flies —
-     runners stay on the ground. */
+  /* Running plays the SPRINT with the RUNNER HIMSELF: a correct
+     answer RUNS HIM down the track — the WAAPI trip below drives the
+     PLAYER in quick running strides, ground-level bob, feet on the
+     track the whole way (the .shooting stride animation in the CSS
+     swings both of his legs and pumps both of his arms the whole
+     way), and his shoe token rides at his foot on the exact same
+     path, the way the football rides in the runner's hand. He
+     crosses the finish line with one bigger hop, then jogs back the
+     same way. A wrong answer strides partway and STUMBLES (a dip
+     and a tilt, just like the miss message says), gets back up, and
+     jogs back to the start to run the same one again. He is never
+     slid down the track with still legs, and the shoe never races
+     on its own with nobody wearing it. */
   if(info===SPORT_INFO.running){
     stage.classList.add('shooting');
-    var rr=stage.getBoundingClientRect(),rbr=ball.getBoundingClientRect();
-    var rStartCX=rbr.left-rr.left+rbr.width/2;
-    var rFloorY=parseFloat(getComputedStyle(stage).getPropertyValue('--drop'))||10;
+    var runner=document.getElementById('courtPlayer');
+    var rr=stage.getBoundingClientRect(),rpr=runner?runner.getBoundingClientRect():null;
+    if(!runner||!rpr||!runner.animate){ setTimeout(function(){ sfx(success?'cheer':'rim'); },300); if(!success) setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },1200); return; }
+    var rStartCX=rpr.left-rr.left+rpr.width/2;
+    var rLandCX=rr.width*0.90, rDx=Math.round(rLandCX-rStartCX);
     shotAnimActive=true;
+    try{ runner.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){}
     try{
-      var rAnim;
+      var rAnimP,rAnimB;
       if(success){
-        var rDx=Math.round(rr.width*0.90-rStartCX), rDur=2150;
-        var rSteps=[[0,0,0,0],[.13,.16,-11,-7],[.26,.32,0,6],[.39,.48,-11,-7],[.52,.64,0,6],[.65,.8,-11,-7]];
-        var rFrames=rSteps.map(function(st){ return {transform:'translate('+Math.round(rDx*st[1])+'px,'+(rFloorY+st[2])+'px) rotate('+st[3]+'deg)',offset:st[0],easing:'ease-in-out'}; });
-        rFrames.push({transform:'translate('+rDx+'px,'+(rFloorY-20)+'px) rotate(0deg) scale(1.22)',offset:.74,easing:'ease-out'});
-        rFrames.push({transform:'translate('+rDx+'px,'+rFloorY+'px) rotate(0deg) scale(1)',offset:.8,easing:'ease-in'});
-        rFrames.push({transform:'translate('+Math.round(rDx*.55)+'px,'+(rFloorY-9)+'px) rotate(-6deg)',offset:.9,easing:'ease-in-out'});
-        rFrames.push({transform:'translate(0,'+rFloorY+'px) rotate(0deg)',offset:.97,easing:'ease-out'});
-        rFrames.push({transform:'translate(0,0) rotate(0deg)',offset:1});
-        rAnim=ball.animate(rFrames,{duration:rDur});
-        if(rAnim) rAnim.onfinish=function(){ settleShot(mySeq,true); };
+        var rDur=2250;
+        var rSteps=[[0,0,0],[.09,.14,-9],[.18,.27,0],[.27,.4,-9],[.36,.53,0],[.45,.66,-9],[.54,.79,0]];
+        var rFramesP=rSteps.map(function(st){ return {transform:'translate('+Math.round(rDx*st[1])+'px,'+st[2]+'px) rotate(2deg)',offset:st[0],easing:'ease-in-out'}; });
+        var rFramesB=rSteps.map(function(st){ return {transform:'translate('+Math.round(rDx*st[1])+'px,'+st[2]+'px)',offset:st[0],easing:'ease-in-out'}; });
+        /* Across the finish line: one bigger hop, land, jog back. */
+        rFramesP.push({transform:'translate('+rDx+'px,-20px) rotate(0deg)',offset:.66,easing:'ease-out'});
+        rFramesP.push({transform:'translate('+rDx+'px,0px) rotate(0deg)',offset:.74,easing:'ease-in'});
+        rFramesP.push({transform:'translate('+Math.round(rDx*.55)+'px,-8px) rotate(2deg)',offset:.88,easing:'ease-in-out'});
+        rFramesP.push({transform:'translate(0,0) rotate(0deg)',offset:1});
+        rFramesB.push({transform:'translate('+rDx+'px,-20px)',offset:.66,easing:'ease-out'});
+        rFramesB.push({transform:'translate('+rDx+'px,0px)',offset:.74,easing:'ease-in'});
+        rFramesB.push({transform:'translate('+Math.round(rDx*.55)+'px,-8px)',offset:.88,easing:'ease-in-out'});
+        rFramesB.push({transform:'translate(0,0)',offset:1});
+        rAnimP=runner.animate(rFramesP,{duration:rDur});
+        rAnimB=ball.animate(rFramesB,{duration:rDur});
+        if(rAnimP) rAnimP.onfinish=function(){ settleShot(mySeq,true); };
         setTimeout(function(){ settleShot(mySeq,true); },rDur+90);
-        setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(Math.round(rr.width*0.9),Math.round(rr.height*0.78),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); var st8=document.getElementById('courtStage'); if(st8) st8.classList.add('celebrating'); sfx('sparkle'); } },Math.round(rDur*0.74));
+        setTimeout(function(){ if(mySeq===shotSeq){ var st8=document.getElementById('courtStage'); if(st8) st8.classList.add('celebrating'); } },Math.round(rDur*0.74));
         setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(rDur*0.78));
       } else {
-        var sDx=Math.round(rr.width*0.34-rStartCX), sDur=1750;
-        rAnim=ball.animate([
-          {transform:'translate(0,'+rFloorY+'px) rotate(0deg)',opacity:1,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(sDx*.45)+'px,'+(rFloorY-10)+'px) rotate(-7deg)',offset:.18,easing:'ease-in-out'},
-          {transform:'translate('+sDx+'px,'+rFloorY+'px) rotate(6deg)',offset:.34,easing:'ease-in'},
-          {transform:'translate('+(sDx+7)+'px,'+(rFloorY+9)+'px) rotate(30deg)',offset:.46,easing:'ease-in'},
-          {transform:'translate('+(sDx+3)+'px,'+(rFloorY+6)+'px) rotate(-9deg)',offset:.58,easing:'ease-in-out'},
-          {transform:'translate('+Math.round(sDx*.5)+'px,'+(rFloorY-8)+'px) rotate(-6deg)',offset:.78,easing:'ease-in-out'},
-          {transform:'translate(0,'+rFloorY+'px) rotate(0deg)',offset:.94,easing:'ease-out'},
+        var sDx=Math.round(rr.width*0.34-rStartCX), sDur=1900;
+        rAnimP=runner.animate([
+          {transform:'translate(0,0) rotate(2deg)',opacity:1,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(sDx*.45)+'px,-7px) rotate(2deg)',offset:.18,easing:'ease-in-out'},
+          {transform:'translate('+sDx+'px,0px) rotate(2deg)',offset:.32,easing:'ease-in'},
+          {transform:'translate('+(sDx+7)+'px,11px) rotate(0deg)',offset:.44,easing:'ease-in'},
+          {transform:'translate('+(sDx+3)+'px,6px) rotate(0deg)',offset:.52,easing:'ease-in-out'},
+          {transform:'translate('+(sDx+6)+'px,9px) rotate(0deg)',offset:.6,easing:'ease-in'},
+          {transform:'translate('+sDx+'px,0px) rotate(2deg)',offset:.7,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(sDx*.5)+'px,-7px) rotate(2deg)',offset:.85,easing:'ease-in-out'},
           {transform:'translate(0,0) rotate(0deg)',offset:1}
         ],{duration:sDur});
-        if(rAnim) rAnim.onfinish=function(){ settleShot(mySeq,false); };
+        rAnimB=ball.animate([
+          {transform:'translate(0,0)',opacity:1,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(sDx*.45)+'px,-7px)',offset:.18,easing:'ease-in-out'},
+          {transform:'translate('+sDx+'px,0px)',offset:.32,easing:'ease-in'},
+          {transform:'translate('+(sDx+7)+'px,11px)',offset:.44,easing:'ease-in'},
+          {transform:'translate('+(sDx+3)+'px,6px)',offset:.52,easing:'ease-in-out'},
+          {transform:'translate('+(sDx+6)+'px,9px)',offset:.6,easing:'ease-in'},
+          {transform:'translate('+sDx+'px,0px)',offset:.7,easing:'ease-in-out'},
+          {transform:'translate('+Math.round(sDx*.5)+'px,-7px)',offset:.85,easing:'ease-in-out'},
+          {transform:'translate(0,0)',offset:1}
+        ],{duration:sDur});
+        if(rAnimP) rAnimP.onfinish=function(){ settleShot(mySeq,false); };
         setTimeout(function(){ settleShot(mySeq,false); },sDur+90);
         setTimeout(function(){ if(mySeq===shotSeq) sfx('rim'); },Math.round(sDur*0.46));
       }
