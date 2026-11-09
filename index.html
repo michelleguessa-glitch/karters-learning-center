@@ -6608,7 +6608,7 @@ function renderSetup(){
        and the pick stays live under the keep-original lock, like
        hers — it is the way out of the lock. */
     var bmeta=WORLD_SCENE_META[myTheme.sport]||WORLD_SCENE_META.basketball;
-    h+='<div class="setup-kicker">STEP 1 OF 6 — YOUR BACKGROUND</div><div class="setup-q">Your background is built! 🖼️</div>';
+    h+='<div class="setup-kicker">STEP 1 OF 6 — YOUR BACKGROUND</div><div class="setup-q">Choose Your Background 🖼️</div>';
     h+='<div class="scene-preview" style="margin:0 0 12px">'+worldBackdropSVG(myTheme.sport,themeColor())+'<div class="scene-preview-cap">🖼️ Your background: '+bmeta.name+'</div></div>';
     h+='<div class="opt-row">'+THEME_SPORTS.map(function(x){ var m=WORLD_SCENE_META[x.id]||WORLD_SCENE_META.basketball; return '<button class="big-chip'+(myTheme.sport===x.id?' on':'')+'" onclick="setupPick(\'sport\',\''+x.id+'\')"><span class="bce">'+x.emoji+'</span>'+m.name+'</button>'; }).join('')+'</div>';
   } else if(setupStep===2){
