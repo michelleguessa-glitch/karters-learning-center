@@ -3179,22 +3179,45 @@ function stopLeoSpeech(){ if(typeof stopCaptions==='function') stopCaptions(); i
    The game view carries NO static instructions card. When a game
    opens, Coach Leo reads the instructions aloud automatically, and as
    he reads, the words appear as CAPTIONS in his bubble — the
-   instructions space at the top of the game view — one sentence at a
-   time, every caption sentence in proper sentence structure: a
-   complete sentence, a capital letter to start, proper ending
-   punctuation. When the reading finishes, the FULL instruction text
-   stays sitting in the bubble so the learner can glance back at it.
-   The 💬 replay (hearCurrentTask) runs this same captioned reading,
-   so the voice and the captions always come together. */
+   instructions space at the top of the game view — with TRUE VIDEO-
+   CAPTION logic: the bubble shows ONLY the one sentence he is
+   currently saying, in proper sentence structure (a complete
+   sentence, a capital letter to start, proper ending punctuation).
+   When that sentence finishes, it clears and the next sentence
+   appears on its own. Captions NEVER build up, and when he finishes
+   speaking the captions are done — no accumulated text and no full
+   paragraph is left sitting in the bubble. The bubble is not a text
+   card holding the whole instructions.
+   The speaking-head replay (hearCurrentTask) runs this same captioned
+   reading, so the voice and the captions always come together, one
+   sentence at a time, the same way. */
 function captionSentences(text){
   var plain=plainSpeechText(text||''); if(!plain) return [];
-  var parts=plain.match(/[^.!?]+[.!?]+["']*\s*|[^.!?]+$/g)||[];
+  var parts=plain.match(/[^.!?]+[.!?]+["'”’]*\s*|[^.!?]+$/g)||[];
   var out=[];
   for(var i=0;i<parts.length;i++){
-    var s=parts[i].replace(/^[^A-Za-z0-9"“”]+/,'').trim();
+    var s=parts[i].replace(/^[^A-Za-z0-9"“”'‘’]+/,'').trim();
     if(!/[A-Za-z0-9]/.test(s)) continue; /* symbol-only scraps are not sentences */
-    s=s.charAt(0).toUpperCase()+s.slice(1);
-    if(!/[.!?]["']?$/.test(s)) s+='.';
+    /* PROPER SENTENCE FORMAT (Michelle, Nov 8, 2026): every caption
+       shown on screen is a proper sentence — a capital letter at the
+       start and ending punctuation at the end — for every sentence,
+       in every game. That is guaranteed HERE, for every sentence,
+       before any caption is shown:
+       - START: the first LETTER is capitalized. Only an opening
+         quote mark may stand before it, so a sentence that opens
+         with a quote still caps the letter after it; a sentence
+         that opens with a number keeps the number first, untouched.
+       - END: the sentence must close with . ! or ?. A closing quote
+         or bracket belongs AFTER that punctuation, never instead of
+         it, and a trailing comma / semicolon / colon is never left
+         standing where the ending punctuation belongs — the period
+         takes its place. */
+    s=s.replace(/^([^A-Za-z0-9]*)([A-Za-z])/,function(m,pre,ch){ return pre+ch.toUpperCase(); });
+    var trail=s.match(/["'”’)\]]+$/);
+    var closers=trail?trail[0]:'';
+    var core=closers?s.slice(0,s.length-closers.length):s;
+    if(!/[.!?]$/.test(core)){ core=core.replace(/[,;:]+$/,'')+'.'; }
+    s=core+closers;
     out.push(s);
   }
   return out;
@@ -3204,27 +3227,45 @@ function speakCaptions(text){
   var b=document.getElementById('leoBubble');
   var sentences=captionSentences(text);
   if(!b||!sentences.length){ if(text) speakLeo(text,true); return; }
-  var full=sentences.join(' ');
   stopCaptions(); stopLeoSpeech();
   var run=captionRunId;
   b.classList.remove('bubble-pop'); void b.offsetWidth; b.classList.add('bubble-pop');
-  if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance){ b.textContent=full; return; } /* no voice on this device — the full text simply sits in the bubble */
   b.textContent='';
+  var idx=0;
+  /* TRUE VIDEO CAPTIONS: show ONLY the sentence currently being said.
+     The previous sentence is cleared as the next one appears — the
+     text never accumulates — and when the last sentence finishes the
+     bubble clears too: the captions are done, nothing is left sitting
+     in the bubble. */
+  var showSentence=function(i){ b.textContent=''; b.textContent=sentences[i]; try{ b.scrollTop=b.scrollHeight; }catch(e){} if(typeof fitGameView==='function') fitGameView(); };
+  var clearCaptions=function(){ b.textContent=''; if(typeof fitGameView==='function') fitGameView(); };
+  var estFor=function(s){ return Math.min(9000,Math.max(1700,s.split(/\s+/).length*430+1000)); };
+  if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance){
+    /* No voice on this device — the captions still step through one
+       sentence at a time on the same reading-time estimates, and
+       clear when they are done. The full text never sits in the bubble. */
+    var advanceSilent=function(){
+      if(run!==captionRunId) return;
+      if(idx>=sentences.length){ clearCaptions(); return; }
+      var i=idx; idx++;
+      showSentence(i);
+      captionTimers.push(setTimeout(advanceSilent,estFor(sentences[i])));
+    };
+    captionTimers.push(setTimeout(function(){ if(run===captionRunId) advanceSilent(); },90));
+    return;
+  }
   var synth=window.speechSynthesis;
   var v=pickLeoVoice();
-  var idx=0;
-  var showUpTo=function(n){ b.textContent=sentences.slice(0,n).join(' '); try{ b.scrollTop=b.scrollHeight; }catch(e){} if(typeof fitGameView==='function') fitGameView(); };
   var advance=function(){
     if(run!==captionRunId) return;
-    if(idx>=sentences.length){ b.textContent=full; try{ b.scrollTop=b.scrollHeight; }catch(e){} return; }
+    if(idx>=sentences.length){ clearCaptions(); return; } /* he is done speaking — the captions are done too */
     var i=idx; idx++;
-    showUpTo(i+1); /* this sentence's caption lands as Leo starts saying it */
+    showSentence(i); /* ONLY this sentence's caption is on screen while Leo says it */
     var said=false;
     var next=function(){ if(said) return; said=true; advance(); };
     /* Fallback advance on a reading-time estimate, in case a device
        never fires the utterance's end event — captions never stall. */
-    var est=Math.min(9000,Math.max(1700,sentences[i].split(/\s+/).length*430+1000));
-    captionTimers.push(setTimeout(next,est));
+    captionTimers.push(setTimeout(next,estFor(sentences[i])));
     try{
       var u=new SpeechSynthesisUtterance(sentences[i]);
       if(v){ u.voice=v; try{ u.lang=v.lang||'en-US'; }catch(e){} }
@@ -3337,17 +3378,18 @@ function startTopic(id){ var lt=TOPICS.find(function(t){return t.id===id}); if(i
    💬 replay reads the same instructions again on tap), and no Example
    ever starts or pops out at game open — an example or a hint is read
    aloud only when the learner selects it. The reading is CAPTIONED (speakCaptions): as Leo reads,
-   the words appear sentence by sentence in his bubble — the
-   instructions space at the top of the game view — in proper sentence
-   structure, and the full instruction text stays there when he
-   finishes. */
+   the words appear as true video captions in his bubble — the
+   instructions space at the top of the game view — ONLY the sentence
+   he is currently saying, in proper sentence structure; each sentence
+   clears as the next appears, and when he finishes the captions are
+   done and the bubble is clear — no paragraph is left sitting there. */
 function gameOpenReadAloud(){
   try{
     var instr=taskInstructionText();
     var sInfo=sportInfo();
     var welcome='Welcome to '+topicTitle(currentTopic)+'! Watch my example with the ✨ button if you need it, then try this one. You\'ve got this, champ! '+(sInfo?sInfo.tokenEmoji:'');
     var text=(welcome+' '+(instr||'')).trim();
-    if(text) speakCaptions(text); /* voice + sentence-by-sentence captions in the bubble, full text stays when he finishes */
+    if(text) speakCaptions(text); /* voice + true video captions in the bubble: only the current sentence shows, and the bubble clears when he finishes */
   }catch(e){}
 }
 function goHome(){ stopLeoSpeech(); stopDribble(); if(typeof closeHintPanel==='function') closeHintPanel(); if(typeof closeToolsMenu==='function') closeToolsMenu(); if(typeof toggleWorkPanel==='function') toggleWorkPanel(false); document.body.classList.remove('playing'); clearInterval(timerInt); saveP(progress); document.getElementById('practiceView').style.display='none'; var wv=document.getElementById('writingView'); if(wv) wv.style.display='none'; var gv2=document.getElementById('grownView'); if(gv2) gv2.style.display='none'; var sv2=document.getElementById('setupView'); if(sv2) sv2.style.display='none'; var hero2=document.getElementById('heroSection'); if(hero2) hero2.style.display=''; var grv=document.getElementById('gradeView'); if(grv) grv.style.display='none'; document.body.classList.remove('grade-gate-open'); document.getElementById('homeView').style.display='block'; renderGrid(); updateTotals(); if(typeof updateWritingVisibility==='function') updateWritingVisibility(); renderAllPlayers(); window.scrollTo({top:0}); }
