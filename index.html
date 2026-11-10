@@ -5088,15 +5088,21 @@ function stageSportId(){ var st=document.getElementById('courtStage'); var id=st
 var HERO_CUTOUTS=[{"s": 0, "h": "fade", "c": "black", "f": "assets/heroes/cut-s0-fade-black.webp"}, {"s": 0, "h": "short", "c": "black", "f": "assets/heroes/cut-s0-short-black.webp"}, {"s": 0, "h": "twists", "c": "black", "f": "assets/heroes/cut-s0-twists-black.webp"}, {"s": 0, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s0-twists-gold.webp"}, {"s": 0, "h": "twists", "c": "red", "f": "assets/heroes/cut-s0-twists-red.webp"}, {"s": 1, "h": "afro", "c": "black", "f": "assets/heroes/cut-s1-afro-black.webp"}, {"s": 1, "h": "fade", "c": "black", "f": "assets/heroes/cut-s1-fade-black.webp"}, {"s": 1, "h": "short", "c": "black", "f": "assets/heroes/cut-s1-short-black.webp"}, {"s": 1, "h": "twists", "c": "black", "f": "assets/heroes/cut-s1-twists-black.webp"}, {"s": 1, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s1-twists-gold.webp"}, {"s": 1, "h": "twists", "c": "red", "f": "assets/heroes/cut-s1-twists-red.webp"}, {"s": 2, "h": "afro", "c": "black", "f": "assets/heroes/cut-s2-afro-black.webp"}, {"s": 2, "h": "fade", "c": "black", "f": "assets/heroes/cut-s2-fade-black.webp"}, {"s": 2, "h": "short", "c": "black", "f": "assets/heroes/cut-s2-short-black.webp"}, {"s": 2, "h": "twists", "c": "black", "f": "assets/heroes/cut-s2-twists-black.webp"}, {"s": 2, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s2-twists-gold.webp"}, {"s": 2, "h": "twists", "c": "red", "f": "assets/heroes/cut-s2-twists-red.webp"}, {"s": 3, "h": "afro", "c": "black", "f": "assets/heroes/cut-s3-afro-black.webp"}, {"s": 3, "h": "fade", "c": "black", "f": "assets/heroes/cut-s3-fade-black.webp"}, {"s": 3, "h": "short", "c": "black", "f": "assets/heroes/cut-s3-short-black.webp"}, {"s": 3, "h": "twists", "c": "black", "f": "assets/heroes/cut-s3-twists-black.webp"}, {"s": 3, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s3-twists-gold.webp"}, {"s": 3, "h": "twists", "c": "red", "f": "assets/heroes/cut-s3-twists-red.webp"}, {"s": 4, "h": "afro", "c": "black", "f": "assets/heroes/cut-s4-afro-black.webp"}, {"s": 4, "h": "afro", "c": "brown", "f": "assets/heroes/cut-s4-afro-brown.webp"}, {"s": 4, "h": "afro", "c": "darkbrown", "f": "assets/heroes/cut-s4-afro-darkbrown.webp"}, {"s": 4, "h": "afro", "c": "gold", "f": "assets/heroes/cut-s4-afro-gold.webp"}, {"s": 4, "h": "afro", "c": "red", "f": "assets/heroes/cut-s4-afro-red.webp"}, {"s": 4, "h": "fade", "c": "black", "f": "assets/heroes/cut-s4-fade-black.webp"}, {"s": 4, "h": "fade", "c": "brown", "f": "assets/heroes/cut-s4-fade-brown.webp"}, {"s": 4, "h": "fade", "c": "darkbrown", "f": "assets/heroes/cut-s4-fade-darkbrown.webp"}, {"s": 4, "h": "fade", "c": "gold", "f": "assets/heroes/cut-s4-fade-gold.webp"}, {"s": 4, "h": "fade", "c": "red", "f": "assets/heroes/cut-s4-fade-red.webp"}, {"s": 4, "h": "short", "c": "brown", "f": "assets/heroes/cut-s4-short-brown.webp"}, {"s": 4, "h": "short", "c": "darkbrown", "f": "assets/heroes/cut-s4-short-darkbrown.webp"}, {"s": 4, "h": "short", "c": "gold", "f": "assets/heroes/cut-s4-short-gold.webp"}, {"s": 4, "h": "short", "c": "red", "f": "assets/heroes/cut-s4-short-red.webp"}, {"s": 4, "h": "twists", "c": "black", "f": "assets/heroes/cut-s4-twists-black.webp"}, {"s": 4, "h": "twists", "c": "brown", "f": "assets/heroes/cut-s4-twists-brown.webp"}, {"s": 4, "h": "twists", "c": "darkbrown", "f": "assets/heroes/cut-s4-twists-darkbrown.webp"}, {"s": 4, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s4-twists-gold.webp"}, {"s": 4, "h": "twists", "c": "red", "f": "assets/heroes/cut-s4-twists-red.webp"}, {"s": 5, "h": "afro", "c": "black", "f": "assets/heroes/cut-s5-afro-black.webp"}, {"s": 5, "h": "fade", "c": "black", "f": "assets/heroes/cut-s5-fade-black.webp"}, {"s": 5, "h": "twists", "c": "black", "f": "assets/heroes/cut-s5-twists-black.webp"}, {"s": 5, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s5-twists-gold.webp"}, {"s": 5, "h": "twists", "c": "red", "f": "assets/heroes/cut-s5-twists-red.webp"}];
 var HERO_FULLS=[{"s": 0, "h": "afro", "c": "black", "f": "assets/heroes/full-s0-afro-black.webp"}, {"s": 0, "h": "fade", "c": "black", "f": "assets/heroes/full-s0-fade-black.webp"}, {"s": 0, "h": "short", "c": "black", "f": "assets/heroes/full-s0-short-black.webp"}, {"s": 0, "h": "twists", "c": "black", "f": "assets/heroes/full-s0-twists-black.webp"}, {"s": 1, "h": "afro", "c": "black", "f": "assets/heroes/full-s1-afro-black.webp"}, {"s": 1, "h": "fade", "c": "black", "f": "assets/heroes/full-s1-fade-black.webp"}, {"s": 1, "h": "short", "c": "black", "f": "assets/heroes/full-s1-short-black.webp"}, {"s": 1, "h": "twists", "c": "black", "f": "assets/heroes/full-s1-twists-black.webp"}, {"s": 2, "h": "fade", "c": "black", "f": "assets/heroes/full-s2-fade-black.webp"}, {"s": 2, "h": "short", "c": "black", "f": "assets/heroes/full-s2-short-black.webp"}, {"s": 2, "h": "twists", "c": "black", "f": "assets/heroes/full-s2-twists-black.webp"}, {"s": 4, "h": "afro", "c": "gold", "f": "assets/heroes/full-s4-afro-gold.webp"}];
 var HERO_SCENES={"baseball": "assets/heroes/scene-baseball.webp", "basketball": "assets/heroes/scene-basketball.webp", "cheer": "assets/heroes/scene-cheer.webp", "football": "assets/heroes/scene-football.webp", "gymnastics": "assets/heroes/scene-gymnastics.webp", "hockey": "assets/heroes/scene-hockey.webp", "running": "assets/heroes/scene-running.webp", "soccer": "assets/heroes/scene-soccer.webp", "swimming": "assets/heroes/scene-swimming.webp", "tennis": "assets/heroes/scene-tennis.webp"};
-var HERO_SPORT_RENDERS={"running": "assets/heroes/full-running-short7.webp", "soccer": "assets/heroes/full-soccer-short7.webp", "tennis": "assets/heroes/full-tennis-short7.webp", "football": "assets/heroes/full-football-short7.webp"};
-/* The sport renders above depict one exact design: the default
-   hero boy (skin 4, short black hair) wearing the red jersey with
+var HERO_SPORT_RENDERS={"running": {"short": "assets/heroes/full-running-short7.webp", "twists": "assets/heroes/full-running-twists7.webp"}, "soccer": {"short": "assets/heroes/full-soccer-short7.webp", "twists": "assets/heroes/full-soccer-twists7.webp"}, "tennis": {"short": "assets/heroes/full-tennis-short7.webp", "twists": "assets/heroes/full-tennis-twists7.webp"}, "football": {"short": "assets/heroes/full-football-short7.webp", "twists": "assets/heroes/full-football-twists7.webp"}};
+/* The sport renders above depict one exact design per hair style:
+   the default hero boy (skin 4, black hair — short cut or twists,
+   the two styles renders exist for) wearing the red jersey with
    number 7 and no special gear. They are served ONLY to a design
    that matches what they depict, field for field — a render is
-   never passed off as a design it is not. */
+   never passed off as a design it is not. (Live-check fix, Nov 9,
+   2026: the default design's hair is TWISTS, so with only the
+   short-hair renders bundled the default design missed the match
+   and fell to the composite — the boy holding a basketball on the
+   running track with no number. The twists renders now exist, so
+   the default design is served its own real render.) */
 function designMatchesSportRender(d){
   if(!d) return false;
-  return d.skin===4 && d.hair==='short' && d.hairColor==='#17120B' && d.jersey==='#D92323' && Number(d.number)===7 && !d.jerseySpecial && !d.shoeSpecial && !d.headband && !d.headbandSpecial;
+  return d.skin===4 && (d.hair==='short' || d.hair==='twists') && d.hairColor==='#17120B' && d.jersey==='#D92323' && Number(d.number)===7 && !d.jerseySpecial && !d.shoeSpecial && !d.headband && !d.headbandSpecial;
 }
 var HERO_COLOR_NAMES={'#17120B':'black','#3B2310':'darkbrown','#6B4423':'brown','#D9A441':'gold','#B33A1F':'red'};
 function playerCustomized(){
@@ -5151,10 +5157,11 @@ function updatePlayerHero(){
      number on it, the sport's own object (running: no ball at
      all; soccer: the ball at his feet; tennis: the racket in his
      hand; football: the ball under his arm). The renders bundled
-     today depict the default hero boy (short hair, black hair
-     color, skin 4) in the red jersey with number 7, so they serve
+     today depict the default hero boy (black hair — short cut or
+     twists — skin 4) in the red jersey with number 7, so they serve
      exactly the designs they depict — never a design they don't. */
-  var sr=(typeof HERO_SPORT_RENDERS!=='undefined'&&HERO_SPORT_RENDERS)?HERO_SPORT_RENDERS[bg]:null;
+  var srMap=(typeof HERO_SPORT_RENDERS!=='undefined'&&HERO_SPORT_RENDERS)?HERO_SPORT_RENDERS[bg]:null;
+  var sr=(srMap&&d)?(srMap[d.hair]||null):null;
   if(sr&&designMatchesSportRender(d)){
     if(comp) comp.style.display='none';
     im.style.display='';
@@ -9633,7 +9640,7 @@ function tapKeypadLetter(btn,ch){
    one, it reloads once into the new build; a per-session guard makes a
    reload loop impossible. Every future fix reaches returning devices the
    same way, with nobody having to close and reopen anything by hand. */
-var APP_BUILD='20261107.12';
+var APP_BUILD='20261109.13';
 var updCheckedAt=0, updReloading=false;
 function checkForNewBuild(){
   var now=Date.now(); if(updReloading||now-updCheckedAt<20000) return; updCheckedAt=now;
