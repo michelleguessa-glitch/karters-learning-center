@@ -1767,7 +1767,7 @@ body.world-tennis .p-racket,.court-stage.sport-tennis .court-player .p-racket{di
 .mascot-ball{position:absolute;width:19px;height:19px;border-radius:50%;z-index:6;pointer-events:none;display:none}
 .mascot-ball.show{display:block}
 .court-stage.sport-tennis .mascot-ball{background:radial-gradient(circle at 34% 30%,#F2F9C0,#C6E33B 58%,#9DBE28);border:2px solid #7FA01C;box-shadow:0 3px 5px rgba(43,22,8,.32)}
-.court-stage.sport-baseball .mascot-ball{background:radial-gradient(circle at 34% 30%,#FFFFFF,#F6EDDD 60%,#E4D4BC);border:2px solid #C0392B;box-shadow:0 3px 5px rgba(43,22,8,.32)}
+.court-stage.sport-baseball .mascot-ball{width:23px;height:23px;background:radial-gradient(circle at 34% 30%,#FFFFFF,#F6EDDD 60%,#E4D4BC);border:2px solid #C0392B;box-shadow:0 3px 5px rgba(43,22,8,.32)} /* a touch larger than the shared 19px, with its red stitched-ball border — the ball in his paws reads as a baseball at a glance, never as part of his jersey */
 .court-stage.sport-football .mascot-ball{width:25px;height:16px;background:radial-gradient(circle at 36% 32%,#B06A35,#8A4B21 60%,#6B3410);border:2px solid #5B2D10;box-shadow:0 3px 5px rgba(43,22,8,.32)}
 .court-stage.sport-gymnastics .court-player{bottom:calc(20% + 15px);transform-origin:50% 100%}
 /* ON THE BEAM, NOT BESIDE IT (LIVE-CHECK FIX, Nov 9, 2026): the beam
@@ -4380,6 +4380,21 @@ function checkAnswer(){
      same question can never score twice, and the next question
      follows on the usual timing (see bbAnsweredQ). */
   if(bbAnsweredQ&&bbAnsweredQ===current&&sportInfo()===SPORT_INFO.baseball){ return; }
+  /* SEQUENCE PROTECTION (LIVE-CHECK FIX, Nov 9, 2026): while a shot
+     sequence is still playing — above all Football's mascot
+     carry-back and Baseball's pitch-and-fetch, which run seconds
+     past the next question being dealt (a correct answer deals the
+     next question at Leo's usual 1.7s) — a Check tap is INERT. On
+     the live page a fast second answer landed mid-fetch and its
+     playSportShot -> stopDribble -> mascotReset teleported the
+     mascot home and put the ball back at his foot while the lion
+     was still mid-field: the carry-back never stood a chance. A
+     tap only counts once the play has settled (settleShot clears
+     shotAnimActive), exactly like the baseball lock above; the
+     9s bound is a backstop so a wedged sequence can never lock
+     the game — past it the tap falls through and playSportShot's
+     own stopDribble resets cleanly, as before. */
+  if(shotAnimActive&&(performance.now()-shotStartedAt)<9000){ return; }
   if(typeof toggleWorkPanel==='function') toggleWorkPanel(false);
   var guess= current.display==='choice'? chosen : document.getElementById('answerInput').value;
   var fb=document.getElementById('feedback');
@@ -4833,8 +4848,8 @@ function renderPlayerSVG(d,sportId){
   /* Hockey skates instead of shoes; gymnastics slippers are his
      own skin tone (shoeFill above), the way gymnasts go barefoot. */
   var shoeWear= ostyle==='hockey'
-   ? '<rect x="48" y="226" width="38" height="15" rx="6" fill="#374151" stroke="#2B1608" stroke-width="2.5"/><rect x="44" y="243" width="46" height="4" rx="2" fill="#C9CED6"/><rect class="p-shoe-r" x="114" y="226" width="38" height="15" rx="6" fill="#374151" stroke="#2B1608" stroke-width="2.5"/><rect x="110" y="243" width="46" height="4" rx="2" fill="#C9CED6"/>'
-   : '<rect x="48" y="234" width="38" height="14" rx="7" fill="'+shoeFill+'" stroke="#2B1608" stroke-width="2.5"/><rect class="p-shoe-r" x="114" y="234" width="38" height="14" rx="7" fill="'+shoeFill+'" stroke="#2B1608" stroke-width="2.5"/>';
+   ? '<rect class="p-shoe-l" x="48" y="226" width="38" height="15" rx="6" fill="#374151" stroke="#2B1608" stroke-width="2.5"/><rect x="44" y="243" width="46" height="4" rx="2" fill="#C9CED6"/><rect class="p-shoe-r" x="114" y="226" width="38" height="15" rx="6" fill="#374151" stroke="#2B1608" stroke-width="2.5"/><rect x="110" y="243" width="46" height="4" rx="2" fill="#C9CED6"/>'
+   : '<rect class="p-shoe-l" x="48" y="234" width="38" height="14" rx="7" fill="'+shoeFill+'" stroke="#2B1608" stroke-width="2.5"/><rect class="p-shoe-r" x="114" y="234" width="38" height="14" rx="7" fill="'+shoeFill+'" stroke="#2B1608" stroke-width="2.5"/>';
   var hair=hairFrontSVG(d.hair,hc,skin);
   var band='';
   if(d.headband||d.headbandSpecial){ band='<rect x="72" y="47" width="56" height="11" rx="5" fill="'+(d.headbandSpecial==='star'?'#FFB800':'#FFB800')+'" stroke="#2B1608" stroke-width="2"/>'+(d.headbandSpecial==='star'?'<text x="100" y="57" text-anchor="middle" font-size="11">⭐</text>':''); }
@@ -5382,6 +5397,7 @@ function updateScoreboard(){
 var COURT_IMG={iw:1760,ih:880,fx:0.89,fy:0.222,posX:0.5,posY:0.5};
 var shotSeq=0;
 var shotAnimActive=false, dribblePending=false;
+var shotStartedAt=0; /* when the currently playing shot sequence began — checkAnswer stays inert while one is still playing (see the guard there), so a fast next tap can never reset a mascot mid-duty */
 /* BASEBALL ONLY: the question object a correct answer has already
    scored on. While his home run is still flying, that question is
    DONE — a repeat tap on Check It must not score it a second time
@@ -5497,16 +5513,19 @@ function driveLimbsKF(els,dur){
      in every environment (the reduced-motion rule cannot reach
      inline styles either). The CSS animation is restored when the
      drive ends or is stopped. */
-  live.forEach(function(x){ try{ x.el.style.transformBox='fill-box'; x.el.style.transformOrigin=x.origin; x.el.style.animation='none'; }catch(e){} });
+  live.forEach(function(x){ try{ x.el.style.transformBox=x.box||'fill-box'; x.el.style.transformOrigin=x.origin; x.el.style.animation='none'; }catch(e){} });
   var t0=performance.now(), stopped=false;
-  var restore=function(){ live.forEach(function(x){ try{ x.el.style.animation=''; }catch(e){} }); };
+  var restore=function(){ live.forEach(function(x){ try{ x.el.style.animation=''; x.el.style.removeProperty('transform'); }catch(e){} }); };
   var iv=setInterval(function(){
     if(stopped) return;
     var t=(performance.now()-t0)/dur; if(t>1) t=1;
-    live.forEach(function(x){ try{ x.el.style.transform='rotate('+kfSample(x.kf,t).toFixed(1)+'deg)'; }catch(e){} });
+    /* !IMPORTANT writes, same as driveKF (see kfWrite): the limb's
+       pose cannot be painted over by its own CSS step cycle or any
+       other animation while the drive runs. */
+    live.forEach(function(x){ try{ x.el.style.setProperty('transform','rotate('+kfSample(x.kf,t).toFixed(1)+'deg)','important'); }catch(e){} });
     if(t>=1){ clearInterval(iv); restore(); }
   },33);
-  var stop=function(){ if(stopped) return; stopped=true; clearInterval(iv); restore(); live.forEach(function(x){ try{ x.el.style.transform=''; }catch(e){} }); };
+  var stop=function(){ if(stopped) return; stopped=true; clearInterval(iv); restore(); };
   limbDriverStops.push(stop);
   return stop;
 }
@@ -5568,7 +5587,21 @@ function kfSamplePts(pts,t){
 function kfWrite(el,p){
   var tf='translate('+p.tf.tx.toFixed(1)+'px,'+p.tf.ty.toFixed(1)+'px) rotate('+p.tf.rot.toFixed(1)+'deg)';
   if(p.tf.sx!==1||p.tf.sy!==1) tf+=' scale('+p.tf.sx.toFixed(3)+','+p.tf.sy.toFixed(3)+')';
-  try{ el.style.transform=tf; if(p.op!==null) el.style.opacity=p.op; if(p.zi!==null&&p.zi!==undefined) el.style.zIndex=p.zi; }catch(e){}
+  /* !IMPORTANT WRITES (LIVE-CHECK FIX, Nov 9, 2026 — the four-sport
+     fix): the driven pose is written with author !important priority,
+     the one cascade level that sits ABOVE every CSS animation. The
+     plain inline writes this driver used before could be painted
+     over by any CSS animation that owns the element's transform —
+     the generic .shooting playerShoot jump on the PLAYER (its .95s
+     covered the gymnastics pull-up's opening and the run's first
+     steps), the idle/balance loops, the limbs' own step cycles —
+     so on the live page the driven element could sit in its CSS
+     pose while the timer ran, or lose exactly the beats the CSS
+     animation covered. With !important the timer's pose is the
+     pose that renders, for the whole drive, in every environment.
+     Cleanup uses removeProperty (see stopDrive / finish below),
+     which clears an !important inline declaration outright. */
+  try{ el.style.setProperty('transform',tf,'important'); if(p.op!==null) el.style.setProperty('opacity',p.op,'important'); if(p.zi!==null&&p.zi!==undefined) el.style.zIndex=p.zi; }catch(e){}
 }
 function cancelKFDrives(el){
   var mine=kfDrives.filter(function(d){ return d.el===el; });
@@ -5599,7 +5632,7 @@ function driveKF(el,frames,opts){
       apply(1); state='filled';
     } else {
       state='dead'; unregister();
-      try{ el.style.transform=''; el.style.opacity=''; el.style.zIndex=''; }catch(e){}
+      try{ el.style.removeProperty('transform'); el.style.removeProperty('opacity'); el.style.zIndex=''; }catch(e){}
     }
     var cb=handle.onfinish; if(typeof cb==='function'){ try{ cb(); }catch(e){} }
   }
@@ -5607,7 +5640,7 @@ function driveKF(el,frames,opts){
     if(state==='dead') return; state='dead';
     if(iv) clearInterval(iv);
     unregister();
-    try{ el.style.transform=''; el.style.opacity=''; el.style.zIndex=''; }catch(e){}
+    try{ el.style.removeProperty('transform'); el.style.removeProperty('opacity'); el.style.zIndex=''; }catch(e){}
   }
   kfDrives.push(drive);
   iv=setInterval(function(){
@@ -5622,7 +5655,7 @@ function driveKF(el,frames,opts){
 var runStrideTimer=null, runStrideLimbs=[];
 function stopRunStride(){
   if(runStrideTimer){ clearInterval(runStrideTimer); runStrideTimer=null; }
-  runStrideLimbs.forEach(function(el){ try{ el.style.transform=''; el.style.animation=''; }catch(e){} });
+  runStrideLimbs.forEach(function(el){ try{ el.style.removeProperty('transform'); el.style.animation=''; }catch(e){} });
   runStrideLimbs=[];
 }
 function startRunStride(){
@@ -5630,6 +5663,7 @@ function startRunStride(){
   var st=document.getElementById('courtStage'); if(!st||stageSportId()!=='running') return;
   var cp=document.getElementById('courtPlayer'); if(!cp) return;
   var legR=cp.querySelector('.p-leg-r'), legL=cp.querySelector('.p-leg-l'), armR=cp.querySelector('.p-arm-r'), armL=cp.querySelector('.p-arm-l');
+  var shoeR=cp.querySelector('.p-shoe-r'), shoeL=cp.querySelector('.p-shoe-l');
   if(!legR||!legL) return;
   /* TIMER STRIDE (LIVE-CHECK FIX, Nov 9, 2026): the stride is driven
      by a plain JavaScript timer writing inline transforms on the
@@ -5651,15 +5685,31 @@ function startRunStride(){
      is re-called at the trip's start on the nodes as they stand, and
      stopRunStride (backdrop repaint away from Running, goHome)
      clears the timer, the transforms and the animation switch. */
-  var limbs=[{el:legR,amp:33,ph:0,origin:'50% 0%'},{el:legL,amp:33,ph:Math.PI,origin:'50% 0%'}];
-  if(armR) limbs.push({el:armR,amp:27,ph:Math.PI,origin:'50% 6%'});
-  if(armL) limbs.push({el:armL,amp:27,ph:0,origin:'50% 6%'});
-  limbs.forEach(function(L){ try{ L.el.style.transformBox='fill-box'; L.el.style.transformOrigin=L.origin; L.el.style.animation='none'; }catch(e){} });
+  /* THE SHOES STEP WITH THE LEGS (LIVE-CHECK FIX, Nov 9, 2026):
+     his shoes are SEPARATE rects in the figure (drawn at the feet,
+     not inside the leg elements), so every earlier stride drive
+     swung the shin rects while the shoes sat planted side by side
+     — on the live page the crossing read as a glide on a standing
+     sprite: legs straight, shoes together. Legs and shoes are now
+     driven TOGETHER around the HIP pivot in view-box units (the
+     figure's viewBox is 200x262; the hips sit at (73,200) and
+     (128,200), the tops of the leg rects), so each leg and its
+     shoe rotate as ONE rigid limb — the foot visibly leaves the
+     ground, swings through and plants, in opposite phase to the
+     other leg, while the arms pump opposite to the same-side leg.
+     The writes carry !important priority (see kfWrite), so no CSS
+     stride cycle or idle loop can paint over the driven pose. */
+  var limbs=[{el:legR,amp:33,ph:0,origin:'128px 200px',box:'view-box'},{el:legL,amp:33,ph:Math.PI,origin:'73px 200px',box:'view-box'}];
+  if(shoeR) limbs.push({el:shoeR,amp:33,ph:0,origin:'128px 200px',box:'view-box'});
+  if(shoeL) limbs.push({el:shoeL,amp:33,ph:Math.PI,origin:'73px 200px',box:'view-box'});
+  if(armR) limbs.push({el:armR,amp:27,ph:Math.PI,origin:'50% 6%',box:'fill-box'});
+  if(armL) limbs.push({el:armL,amp:27,ph:0,origin:'50% 6%',box:'fill-box'});
+  limbs.forEach(function(L){ try{ L.el.style.transformBox=L.box; L.el.style.transformOrigin=L.origin; L.el.style.animation='none'; }catch(e){} });
   runStrideLimbs=limbs.map(function(L){ return L.el; });
   var t0=performance.now();
   var tick=function(){
     var ph=((performance.now()-t0)%560)/560*Math.PI*2;
-    limbs.forEach(function(L){ try{ L.el.style.transform='rotate('+(Math.sin(ph+L.ph)*L.amp).toFixed(1)+'deg)'; }catch(e){} });
+    limbs.forEach(function(L){ try{ L.el.style.setProperty('transform','rotate('+(Math.sin(ph+L.ph)*L.amp).toFixed(1)+'deg)','important'); }catch(e){} });
   };
   tick();
   runStrideTimer=setInterval(tick,33);
@@ -5829,7 +5879,15 @@ function mascotHoldBall(){
   if(!m||!mb||!st) return;
   mb.classList.add('show'); /* visible before measuring, so its own size is real and it lands exactly in his hands */
   mb.style.left=Math.round(m.offsetLeft+m.offsetWidth*0.50-mb.offsetWidth/2)+'px';
-  mb.style.bottom=Math.round(st.clientHeight-(m.offsetTop+m.offsetHeight*0.46)-mb.offsetHeight/2)+'px';
+  /* IN HIS PAWS, NOT ON HIS CHEST (LIVE-CHECK FIX, Nov 9, 2026):
+     the held ball used to park 46% down the mascot's figure —
+     chest height on the lion render, where the zoomed live frame
+     read the white baseball as a jersey logo and his hands as
+     EMPTY. It now parks 60% down, at his paws, and the baseball
+     pitch's origin point in playSportShot is measured at the
+     same 60% so the pitch leaves the exact spot the ball was
+     visibly held. */
+  mb.style.bottom=Math.round(st.clientHeight-(m.offsetTop+m.offsetHeight*0.60)-mb.offsetHeight/2)+'px';
   mb.style.transform='translate('+mascotTX+'px,'+mascotTY+'px)';
   mb.classList.add('show');
 }
@@ -5952,7 +6010,7 @@ function footballMascotFetch(mySeq,ok,fSettle){
 }
 function playSportShot(success){
   stopDribble();
-  var mySeq=++shotSeq;
+  var mySeq=++shotSeq; shotStartedAt=performance.now();
   sfx('pop');
   var info=sportInfo();
   var stage=document.getElementById('courtStage'),ball=document.getElementById('shotBall');
@@ -6161,7 +6219,11 @@ function playSportShot(success){
             {transform:'rotate(0deg)',offset:1}
           ];
         }
-        driveLimbsKF([{el:gymnast.querySelector('.p-arm-r'),kf:gymArmKF(1),origin:'50% 6%'},{el:gymnast.querySelector('.p-arm-l'),kf:gymArmKF(-1),origin:'50% 6%'},{el:gymnast.querySelector('.p-leg-r'),kf:gymLegKF(1),origin:'50% 0%'},{el:gymnast.querySelector('.p-leg-l'),kf:gymLegKF(-1),origin:'50% 0%'}],gDur); /* arms to the rings + legs, timer-driven in step with the trip (see driveLimbsKF) */
+        /* Shoes ride WITH their legs around the hip pivots in
+           view-box units (see startRunStride), so his feet step,
+           trail, reach and plant as part of each leg — never left
+           planted at the start while the shins swing. */
+        driveLimbsKF([{el:gymnast.querySelector('.p-arm-r'),kf:gymArmKF(1),origin:'50% 6%'},{el:gymnast.querySelector('.p-arm-l'),kf:gymArmKF(-1),origin:'50% 6%'},{el:gymnast.querySelector('.p-leg-r'),kf:gymLegKF(1),origin:'128px 200px',box:'view-box'},{el:gymnast.querySelector('.p-leg-l'),kf:gymLegKF(-1),origin:'73px 200px',box:'view-box'},{el:gymnast.querySelector('.p-shoe-r'),kf:gymLegKF(1),origin:'128px 200px',box:'view-box'},{el:gymnast.querySelector('.p-shoe-l'),kf:gymLegKF(-1),origin:'73px 200px',box:'view-box'}],gDur); /* arms to the rings + legs, timer-driven in step with the trip (see driveLimbsKF) */
         if(gAnimP) gAnimP.onfinish=function(){ settleShot(mySeq,true); };
         setTimeout(function(){ settleShot(mySeq,true); },gDur+90);
         setTimeout(function(){ if(mySeq===shotSeq){ var st4=document.getElementById('courtStage'); if(st4) st4.classList.add('celebrating'); } },Math.round(gDur*0.80)); /* after the stick: he lands feet-first at .66 and HOLDS the stick through .86 before walking back — the celebration never cuts the stick short */
@@ -6202,7 +6264,7 @@ function playSportShot(success){
             {transform:'rotate(0deg)',offset:1}
           ];
         }
-        driveLimbsKF([{el:gymnast.querySelector('.p-leg-r'),kf:gymLegMissKF(1),origin:'50% 0%'},{el:gymnast.querySelector('.p-leg-l'),kf:gymLegMissKF(-1),origin:'50% 0%'}],wDur); /* same timer driver as the rings swing — his steps off the beam and back are played on the leg nodes themselves too, with their CSS step cycle neutralized for the drive */
+        driveLimbsKF([{el:gymnast.querySelector('.p-leg-r'),kf:gymLegMissKF(1),origin:'128px 200px',box:'view-box'},{el:gymnast.querySelector('.p-leg-l'),kf:gymLegMissKF(-1),origin:'73px 200px',box:'view-box'},{el:gymnast.querySelector('.p-shoe-r'),kf:gymLegMissKF(1),origin:'128px 200px',box:'view-box'},{el:gymnast.querySelector('.p-shoe-l'),kf:gymLegMissKF(-1),origin:'73px 200px',box:'view-box'}],wDur); /* same timer driver as the rings swing — his steps off the beam and back are played on the leg nodes themselves too, shoes riding with the legs around the hip pivots, with their CSS step cycle neutralized for the drive */
         if(gAnimP) gAnimP.onfinish=function(){ settleShot(mySeq,false); };
         setTimeout(function(){ settleShot(mySeq,false); },wDur+90);
         setTimeout(function(){ if(mySeq===shotSeq) sfx('rim'); },Math.round(wDur*0.48));
@@ -6352,7 +6414,7 @@ function playSportShot(success){
          there is exactly ONE ball, and it comes from the mascot. */
       var bHandCX=bStartCX+Math.round(bsr.width*0.5), bHandCY=bStartCY-40;
       var bMasc=mascotEl();
-      if(bMasc){ var bMr=bMasc.getBoundingClientRect(); if(bMr.width>0){ bHandCX=bMr.left-bsr.left+bMr.width/2; bHandCY=bMr.top-bsr.top+bMr.height*0.46; } }
+      if(bMasc){ var bMr=bMasc.getBoundingClientRect(); if(bMr.width>0){ bHandCX=bMr.left-bsr.left+bMr.width/2; bHandCY=bMr.top-bsr.top+bMr.height*0.60; } } /* the pitch leaves his PAWS — the same 60%-down spot mascotHoldBall parks the held ball at, so the ball is seen in his hands and then seen leaving them */
       var bPitchDx=Math.round((bHandCX-bStartCX)/bK), bPitchDy=Math.round((bHandCY-bStartCY)/bK);
       var bGroundDy=Math.max(6,Math.round((bsr.bottom-bbr.bottom)-6));
       if(success){
@@ -6787,7 +6849,7 @@ function playSportShot(success){
 function playShot(success){
   if(sportInfo().tokenType!=='ball'||effectiveSportId()!=='basketball'){ playSportShot(success); return; }
   stopDribble();
-  var mySeq=++shotSeq;
+  var mySeq=++shotSeq; shotStartedAt=performance.now();
   sfx('bounce');
   var stage=document.getElementById('courtStage'),ball=document.getElementById('shotBall');
   if(!stage||!ball||!ball.animate){ if(success){ setTimeout(function(){ sfx('swish'); },300); } else { setTimeout(function(){ sfx('rim'); },300); setTimeout(function(){ if(mySeq===shotSeq) startDribble(); },1500); } return; }
