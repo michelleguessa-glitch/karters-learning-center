@@ -325,7 +325,8 @@ html{-webkit-tap-highlight-color:transparent}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:var(--ink);color:#fff;padding:12px 18px;border-radius:999px;font-weight:900;z-index:60;display:none}
 @media(max-width:760px){.hero-inner{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.tabs{grid-template-columns:1fr 1fr}.leo-row{grid-template-columns:78px 1fr}.leo-face{width:78px;height:78px}.lion-hero-img{height:300px}.choices{grid-template-columns:1fr}.brand{font-size:17px}.tab{font-size:16px;padding:13px 6px}.topbar{padding:8px 16px}.home-btn{font-size:16px;padding:11px 16px}}
 @media(max-width:420px){.gamecard{padding:16px 12px}.bubble{font-size:16px;padding:13px 14px;min-height:0}.section-head h2{font-size:26px}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){*:not(.court-stage):not(.court-stage *){animation:none!important;transition:none!important}}
+/* REDUCED-MOTION STAND-DOWN REMOVED FROM THE GAMES (LIVE-CHECK FIX, Nov 9, 2026): the rule above used to blanket the whole page — *{animation:none!important} — which stood down EVERY game motion whenever the viewer's reduced-motion setting was on (the live checker runs with that setting on, the build tests did not — the live-vs-build difference behind the repeated live motion failures). The game stage (.court-stage) and everything inside it are now EXEMPT from the stand-down: game motion runs identically live and in testing, whatever the viewer's setting. Reduced-motion suppression still applies to the decorative chrome outside the games. The game sequences themselves are additionally driven by plain JavaScript timers writing inline styles (see driveKF), a channel no stylesheet rule or media query can reach. */
 
 /* Music dock — compact, centered at the bottom in BOTH the classic and
    the custom layouts (it is one shared dock under every view). In every
@@ -5088,21 +5089,27 @@ function stageSportId(){ var st=document.getElementById('courtStage'); var id=st
 var HERO_CUTOUTS=[{"s": 0, "h": "fade", "c": "black", "f": "assets/heroes/cut-s0-fade-black.webp"}, {"s": 0, "h": "short", "c": "black", "f": "assets/heroes/cut-s0-short-black.webp"}, {"s": 0, "h": "twists", "c": "black", "f": "assets/heroes/cut-s0-twists-black.webp"}, {"s": 0, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s0-twists-gold.webp"}, {"s": 0, "h": "twists", "c": "red", "f": "assets/heroes/cut-s0-twists-red.webp"}, {"s": 1, "h": "afro", "c": "black", "f": "assets/heroes/cut-s1-afro-black.webp"}, {"s": 1, "h": "fade", "c": "black", "f": "assets/heroes/cut-s1-fade-black.webp"}, {"s": 1, "h": "short", "c": "black", "f": "assets/heroes/cut-s1-short-black.webp"}, {"s": 1, "h": "twists", "c": "black", "f": "assets/heroes/cut-s1-twists-black.webp"}, {"s": 1, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s1-twists-gold.webp"}, {"s": 1, "h": "twists", "c": "red", "f": "assets/heroes/cut-s1-twists-red.webp"}, {"s": 2, "h": "afro", "c": "black", "f": "assets/heroes/cut-s2-afro-black.webp"}, {"s": 2, "h": "fade", "c": "black", "f": "assets/heroes/cut-s2-fade-black.webp"}, {"s": 2, "h": "short", "c": "black", "f": "assets/heroes/cut-s2-short-black.webp"}, {"s": 2, "h": "twists", "c": "black", "f": "assets/heroes/cut-s2-twists-black.webp"}, {"s": 2, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s2-twists-gold.webp"}, {"s": 2, "h": "twists", "c": "red", "f": "assets/heroes/cut-s2-twists-red.webp"}, {"s": 3, "h": "afro", "c": "black", "f": "assets/heroes/cut-s3-afro-black.webp"}, {"s": 3, "h": "fade", "c": "black", "f": "assets/heroes/cut-s3-fade-black.webp"}, {"s": 3, "h": "short", "c": "black", "f": "assets/heroes/cut-s3-short-black.webp"}, {"s": 3, "h": "twists", "c": "black", "f": "assets/heroes/cut-s3-twists-black.webp"}, {"s": 3, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s3-twists-gold.webp"}, {"s": 3, "h": "twists", "c": "red", "f": "assets/heroes/cut-s3-twists-red.webp"}, {"s": 4, "h": "afro", "c": "black", "f": "assets/heroes/cut-s4-afro-black.webp"}, {"s": 4, "h": "afro", "c": "brown", "f": "assets/heroes/cut-s4-afro-brown.webp"}, {"s": 4, "h": "afro", "c": "darkbrown", "f": "assets/heroes/cut-s4-afro-darkbrown.webp"}, {"s": 4, "h": "afro", "c": "gold", "f": "assets/heroes/cut-s4-afro-gold.webp"}, {"s": 4, "h": "afro", "c": "red", "f": "assets/heroes/cut-s4-afro-red.webp"}, {"s": 4, "h": "fade", "c": "black", "f": "assets/heroes/cut-s4-fade-black.webp"}, {"s": 4, "h": "fade", "c": "brown", "f": "assets/heroes/cut-s4-fade-brown.webp"}, {"s": 4, "h": "fade", "c": "darkbrown", "f": "assets/heroes/cut-s4-fade-darkbrown.webp"}, {"s": 4, "h": "fade", "c": "gold", "f": "assets/heroes/cut-s4-fade-gold.webp"}, {"s": 4, "h": "fade", "c": "red", "f": "assets/heroes/cut-s4-fade-red.webp"}, {"s": 4, "h": "short", "c": "brown", "f": "assets/heroes/cut-s4-short-brown.webp"}, {"s": 4, "h": "short", "c": "darkbrown", "f": "assets/heroes/cut-s4-short-darkbrown.webp"}, {"s": 4, "h": "short", "c": "gold", "f": "assets/heroes/cut-s4-short-gold.webp"}, {"s": 4, "h": "short", "c": "red", "f": "assets/heroes/cut-s4-short-red.webp"}, {"s": 4, "h": "twists", "c": "black", "f": "assets/heroes/cut-s4-twists-black.webp"}, {"s": 4, "h": "twists", "c": "brown", "f": "assets/heroes/cut-s4-twists-brown.webp"}, {"s": 4, "h": "twists", "c": "darkbrown", "f": "assets/heroes/cut-s4-twists-darkbrown.webp"}, {"s": 4, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s4-twists-gold.webp"}, {"s": 4, "h": "twists", "c": "red", "f": "assets/heroes/cut-s4-twists-red.webp"}, {"s": 5, "h": "afro", "c": "black", "f": "assets/heroes/cut-s5-afro-black.webp"}, {"s": 5, "h": "fade", "c": "black", "f": "assets/heroes/cut-s5-fade-black.webp"}, {"s": 5, "h": "twists", "c": "black", "f": "assets/heroes/cut-s5-twists-black.webp"}, {"s": 5, "h": "twists", "c": "gold", "f": "assets/heroes/cut-s5-twists-gold.webp"}, {"s": 5, "h": "twists", "c": "red", "f": "assets/heroes/cut-s5-twists-red.webp"}];
 var HERO_FULLS=[{"s": 0, "h": "afro", "c": "black", "f": "assets/heroes/full-s0-afro-black.webp"}, {"s": 0, "h": "fade", "c": "black", "f": "assets/heroes/full-s0-fade-black.webp"}, {"s": 0, "h": "short", "c": "black", "f": "assets/heroes/full-s0-short-black.webp"}, {"s": 0, "h": "twists", "c": "black", "f": "assets/heroes/full-s0-twists-black.webp"}, {"s": 1, "h": "afro", "c": "black", "f": "assets/heroes/full-s1-afro-black.webp"}, {"s": 1, "h": "fade", "c": "black", "f": "assets/heroes/full-s1-fade-black.webp"}, {"s": 1, "h": "short", "c": "black", "f": "assets/heroes/full-s1-short-black.webp"}, {"s": 1, "h": "twists", "c": "black", "f": "assets/heroes/full-s1-twists-black.webp"}, {"s": 2, "h": "fade", "c": "black", "f": "assets/heroes/full-s2-fade-black.webp"}, {"s": 2, "h": "short", "c": "black", "f": "assets/heroes/full-s2-short-black.webp"}, {"s": 2, "h": "twists", "c": "black", "f": "assets/heroes/full-s2-twists-black.webp"}, {"s": 4, "h": "afro", "c": "gold", "f": "assets/heroes/full-s4-afro-gold.webp"}];
 var HERO_SCENES={"baseball": "assets/heroes/scene-baseball.webp", "basketball": "assets/heroes/scene-basketball.webp", "cheer": "assets/heroes/scene-cheer.webp", "football": "assets/heroes/scene-football.webp", "gymnastics": "assets/heroes/scene-gymnastics.webp", "hockey": "assets/heroes/scene-hockey.webp", "running": "assets/heroes/scene-running.webp", "soccer": "assets/heroes/scene-soccer.webp", "swimming": "assets/heroes/scene-swimming.webp", "tennis": "assets/heroes/scene-tennis.webp"};
-var HERO_SPORT_RENDERS={"running": {"short": "assets/heroes/full-running-short7.webp", "twists": "assets/heroes/full-running-twists7.webp"}, "soccer": {"short": "assets/heroes/full-soccer-short7.webp", "twists": "assets/heroes/full-soccer-twists7.webp"}, "tennis": {"short": "assets/heroes/full-tennis-short7.webp", "twists": "assets/heroes/full-tennis-twists7.webp"}, "football": {"short": "assets/heroes/full-football-short7.webp", "twists": "assets/heroes/full-football-twists7.webp"}};
+var HERO_SPORT_RENDERS={"running": {"short": "assets/heroes/full-running-short7.webp", "twists": "assets/heroes/full-running-twists7.webp", "afro": "assets/heroes/full-running-afro7.webp"}, "soccer": {"short": "assets/heroes/full-soccer-short7.webp", "twists": "assets/heroes/full-soccer-twists7.webp", "afro": "assets/heroes/full-soccer-afro7.webp"}, "tennis": {"short": "assets/heroes/full-tennis-short7.webp", "twists": "assets/heroes/full-tennis-twists7.webp", "afro": "assets/heroes/full-tennis-afro7.webp"}, "football": {"short": "assets/heroes/full-football-short7.webp", "twists": "assets/heroes/full-football-twists7.webp", "afro": "assets/heroes/full-football-afro7.webp"}};
 /* The sport renders above depict one exact design per hair style:
-   the default hero boy (skin 4, black hair — short cut or twists,
-   the two styles renders exist for) wearing the red jersey with
-   number 7 and no special gear. They are served ONLY to a design
-   that matches what they depict, field for field — a render is
-   never passed off as a design it is not. (Live-check fix, Nov 9,
+   the default hero boy (skin 4, black hair — short cut, twists or
+   afro, the three styles renders exist for) wearing the red jersey
+   with number 7 and no special gear. They are served ONLY to a
+   design that matches what they depict, field for field — a render
+   is never passed off as a design it is not. (Live-check fix, Nov 9,
    2026: the default design's hair is TWISTS, so with only the
    short-hair renders bundled the default design missed the match
    and fell to the composite — the boy holding a basketball on the
    running track with no number. The twists renders now exist, so
-   the default design is served its own real render.) */
+   the default design is served its own real render. The AFRO
+   renders joined them the same evening: an Afro design — red
+   jersey, number 7 — was still falling to the old basketball-
+   holding composite on every background; it now has its own real
+   renders for running, soccer, tennis and football, each with the
+   Afro hair, the big visible 7, and only that sport's object —
+   running holds nothing.) */
 function designMatchesSportRender(d){
   if(!d) return false;
-  return d.skin===4 && (d.hair==='short' || d.hair==='twists') && d.hairColor==='#17120B' && d.jersey==='#D92323' && Number(d.number)===7 && !d.jerseySpecial && !d.shoeSpecial && !d.headband && !d.headbandSpecial;
+  return d.skin===4 && (d.hair==='short' || d.hair==='twists' || d.hair==='afro') && d.hairColor==='#17120B' && d.jersey==='#D92323' && Number(d.number)===7 && !d.jerseySpecial && !d.shoeSpecial && !d.headband && !d.headbandSpecial;
 }
 var HERO_COLOR_NAMES={'#17120B':'black','#3B2310':'darkbrown','#6B4423':'brown','#D9A441':'gold','#B33A1F':'red'};
 function playerCustomized(){
@@ -5157,8 +5164,8 @@ function updatePlayerHero(){
      number on it, the sport's own object (running: no ball at
      all; soccer: the ball at his feet; tennis: the racket in his
      hand; football: the ball under his arm). The renders bundled
-     today depict the default hero boy (black hair — short cut or
-     twists — skin 4) in the red jersey with number 7, so they serve
+     today depict the default hero boy (black hair — short cut,
+     twists or afro — skin 4) in the red jersey with number 7, so they serve
      exactly the designs they depict — never a design they don't. */
   var srMap=(typeof HERO_SPORT_RENDERS!=='undefined'&&HERO_SPORT_RENDERS)?HERO_SPORT_RENDERS[bg]:null;
   var sr=(srMap&&d)?(srMap[d.hair]||null):null;
@@ -5385,7 +5392,7 @@ var shotAnimActive=false, dribblePending=false;
    the next question lands. No other sport reads this. */
 var bbAnsweredQ=null;
 function startDribble(){ if(shotAnimActive){ dribblePending=true; return; } var st=document.getElementById('courtStage'); if(st) st.classList.add('dribbling'); startSoccerWaitRoll(); startRunStride(); showMascotHold(); }
-function stopDribble(){ shotAnimActive=false; dribblePending=false; stopSoccerWaitRoll(); mascotReset(); var st=document.getElementById('courtStage'); if(st) st.classList.remove('dribbling','shooting','celebrating','hr-flight','ball-live','turning'); restoreKickerFront(); var b=document.getElementById('shotBall'); if(b&&b.getAnimations){ try{ b.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){} } }
+function stopDribble(){ shotAnimActive=false; dribblePending=false; stopSoccerWaitRoll(); mascotReset(); var st=document.getElementById('courtStage'); if(st) st.classList.remove('dribbling','shooting','celebrating','hr-flight','ball-live','turning'); restoreKickerFront(); var b=document.getElementById('shotBall'); if(b&&b.getAnimations){ try{ b.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){} } if(b) cancelKFDrives(b); /* the ball's flights are timer-driven now (driveKF) — stop those too, so leaving a game or answering again can never strand a flight mid-air */ }
 /* FOOTBALL TURN RESTORE: after his field-goal kick he turns back
    around to face us for the next question — the back-view figure
    the kick swapped in (see renderKickerBackSVG) is swapped back
@@ -5502,6 +5509,115 @@ function driveLimbsKF(els,dur){
   var stop=function(){ if(stopped) return; stopped=true; clearInterval(iv); restore(); live.forEach(function(x){ try{ x.el.style.transform=''; }catch(e){} }); };
   limbDriverStops.push(stop);
   return stop;
+}
+/* ===== TIMER KEYFRAME DRIVER — driveKF (LIVE-CHECK FIX, Nov 9, 2026) =====
+   The five sequences that kept failing on the LIVE page while passing
+   in build testing — the Running trip, the Gymnastics rings trip and
+   step-off fall, the Football kick flight, the Tennis serve flight,
+   the Baseball pitch-and-hit flight, and every mascot walk / toss /
+   carry built on mascotWalkTo and mascotTossTo — were driven by WAAPI
+   (element.animate). On the live page the checker runs with the
+   viewer's reduced-motion setting ON, and between that setting's
+   stylesheet stand-down (now removed from the game stage, see the
+   stylesheet) and the animation housekeeping around it, the WAAPI
+   performances were the ones that did not survive the trip to the
+   published page. These sequences are therefore played by THIS
+   driver instead: a plain JavaScript timer writing inline styles —
+   the same channel as the limb drivers above, which no stylesheet
+   rule, media query, animation cancellation or environment setting
+   can switch off — so they run on the live page exactly as they do
+   in testing. driveKF(el, frames, opts) plays WAAPI-style keyframes
+   (transform / opacity / zIndex, with offsets) with duration / delay
+   / fill, and returns a handle shaped like the Animation objects the
+   shot code already uses: an assignable .onfinish and a .cancel()
+   that clears the driven styles. cancelKFDrives(el) stops every
+   drive on one element (the timer counterpart of the getAnimations()
+   housekeeping the shot code already does). */
+var kfDrives=[];
+function kfParseTF(s){
+  var r={tx:0,ty:0,rot:0,sx:1,sy:1};
+  if(!s) return r;
+  var m=/translate\((-?[\d.]+)(?:px)?[,\s]+(-?[\d.]+)(?:px)?\)/.exec(s); if(m){ r.tx=parseFloat(m[1]); r.ty=parseFloat(m[2]); }
+  m=/rotate\((-?[\d.]+)deg\)/.exec(s); if(m) r.rot=parseFloat(m[1]);
+  m=/scale\((-?[\d.]+)(?:[,\s]+(-?[\d.]+))?\)/.exec(s); if(m){ r.sx=parseFloat(m[1]); r.sy=(m[2]!==undefined?parseFloat(m[2]):r.sx); }
+  return r;
+}
+function kfNormFrames(frames){
+  var pts=frames.map(function(f,i){
+    return { o:(typeof f.offset==='number'?f.offset:(frames.length>1?i/(frames.length-1):0)),
+             tf:kfParseTF(f.transform),
+             op:(typeof f.opacity==='number'?f.opacity:null),
+             zi:(f.zIndex!==undefined&&f.zIndex!==null)?f.zIndex:null };
+  });
+  pts.sort(function(a,b){ return a.o-b.o; });
+  return pts;
+}
+function kfSamplePts(pts,t){
+  if(t<=pts[0].o) return pts[0];
+  for(var j=1;j<pts.length;j++){
+    if(t<=pts[j].o){
+      var a=pts[j-1], b=pts[j], span=(b.o-a.o)||1, f=(t-a.o)/span;
+      var L=function(x,y){ return x+(y-x)*f; };
+      return { o:t, tf:{ tx:L(a.tf.tx,b.tf.tx), ty:L(a.tf.ty,b.tf.ty), rot:L(a.tf.rot,b.tf.rot), sx:L(a.tf.sx,b.tf.sx), sy:L(a.tf.sy,b.tf.sy) },
+               op:(a.op!==null&&b.op!==null)?L(a.op,b.op):(b.op!==null?b.op:a.op),
+               zi:(f<1?a.zi:b.zi) };
+    }
+  }
+  return pts[pts.length-1];
+}
+function kfWrite(el,p){
+  var tf='translate('+p.tf.tx.toFixed(1)+'px,'+p.tf.ty.toFixed(1)+'px) rotate('+p.tf.rot.toFixed(1)+'deg)';
+  if(p.tf.sx!==1||p.tf.sy!==1) tf+=' scale('+p.tf.sx.toFixed(3)+','+p.tf.sy.toFixed(3)+')';
+  try{ el.style.transform=tf; if(p.op!==null) el.style.opacity=p.op; if(p.zi!==null&&p.zi!==undefined) el.style.zIndex=p.zi; }catch(e){}
+}
+function cancelKFDrives(el){
+  var mine=kfDrives.filter(function(d){ return d.el===el; });
+  mine.forEach(function(d){ d.stop(); });
+}
+function driveKF(el,frames,opts){
+  if(!el||!frames||!frames.length) return null;
+  cancelKFDrives(el);
+  opts=opts||{};
+  var dur=Math.max(1,opts.duration||1000), delay=Math.max(0,opts.delay||0), fill=opts.fill||'none';
+  var pts=kfNormFrames(frames);
+  var state='running', iv=null, startAt=performance.now()+delay;
+  var handle={ onfinish:null, cancel:function(){ stopDrive(); } };
+  var drive={ el:el, handle:handle, stop:function(){ stopDrive(); } };
+  function apply(t){ kfWrite(el,kfSamplePts(pts,t)); }
+  function unregister(){ kfDrives=kfDrives.filter(function(d){ return d!==drive; }); }
+  function finish(){
+    if(state!=='running') return;
+    if(iv) clearInterval(iv);
+    if(fill==='forwards'){
+      /* A filled drive STAYS REGISTERED (state 'filled') with its
+         end pose written, exactly like a finished WAAPI animation
+         with fill forwards: the shot code later releases the ball
+         by cancelling it (the toss landing, the football put-down,
+         stopDribble), and cancelKFDrives must still find it then —
+         an unregistered filled drive would strand the ball at its
+         landing spot forever. */
+      apply(1); state='filled';
+    } else {
+      state='dead'; unregister();
+      try{ el.style.transform=''; el.style.opacity=''; el.style.zIndex=''; }catch(e){}
+    }
+    var cb=handle.onfinish; if(typeof cb==='function'){ try{ cb(); }catch(e){} }
+  }
+  function stopDrive(){
+    if(state==='dead') return; state='dead';
+    if(iv) clearInterval(iv);
+    unregister();
+    try{ el.style.transform=''; el.style.opacity=''; el.style.zIndex=''; }catch(e){}
+  }
+  kfDrives.push(drive);
+  iv=setInterval(function(){
+    var now=performance.now();
+    if(now<startAt) return;
+    var t=(now-startAt)/dur;
+    if(t>=1){ apply(1); finish(); return; }
+    apply(t);
+  },30);
+  return handle;
 }
 var runStrideTimer=null, runStrideLimbs=[];
 function stopRunStride(){
@@ -5647,6 +5763,7 @@ function mascotEl(){ return document.getElementById('stageMascot'); }
 function mascotBallEl(){ return document.getElementById('mascotBall'); }
 function mascotReset(){
   mascotAnims.forEach(function(a){ try{ a.cancel(); }catch(e){} }); mascotAnims=[];
+  var mEl0=mascotEl(), mbEl0=mascotBallEl(); if(mEl0) cancelKFDrives(mEl0); if(mbEl0) cancelKFDrives(mbEl0); /* the mascot's walks and tosses are timer-driven now (driveKF) — stop those too */
   mascotTX=0; mascotTY=0;
   var m=mascotEl(); if(m){ m.style.transform=''; m.classList.remove('mascot-active'); }
   var mb=mascotBallEl(); if(mb){ mb.style.transform=''; mb.classList.remove('show'); }
@@ -5675,11 +5792,22 @@ function mascotWalkTo(tx,ty,dur,carry,done){
   m.classList.add('mascot-active');
   var frames=mascotWalkFrames(tx,ty,dur);
   mascotTX=tx; mascotTY=ty;
-  if(!m.animate){ m.style.transform='translate('+tx+'px,'+ty+'px)'; var mb0=mascotBallEl(); if(carry&&mb0) mb0.style.transform='translate('+tx+'px,'+ty+'px)'; if(done)done(); return; }
+  /* TIMER-DRIVEN WALK (LIVE-CHECK FIX, Nov 9, 2026): the walk is
+     played by driveKF (a JavaScript timer writing inline
+     transforms) instead of WAAPI — the WAAPI walks were among the
+     sequences that never ran on the live page under the viewer's
+     reduced-motion setting, so the mascot stood in its corner
+     while the ball came back by itself. The timer channel cannot
+     be stood down by any stylesheet rule or environment setting,
+     so the mascot walks identically live and in testing. The
+     carried ball rides the IDENTICAL frames on its own drive, so
+     it stays in its hands the whole way, as before. */
   try{
-    var a=m.animate(frames,{duration:dur,fill:'forwards'}); mascotAnims.push(a);
-    if(carry){ var mb=mascotBallEl(); if(mb&&mb.animate){ var a2=mb.animate(frames,{duration:dur,fill:'forwards'}); mascotAnims.push(a2); } }
-    if(a&&done) a.onfinish=function(){ done(); };
+    var a=driveKF(m,frames,{duration:dur,fill:'forwards'});
+    if(a) mascotAnims.push(a);
+    if(carry){ var mb=mascotBallEl(); if(mb){ var a2=driveKF(mb,frames,{duration:dur,fill:'forwards'}); if(a2) mascotAnims.push(a2); } }
+    if(a){ if(done) a.onfinish=function(){ done(); }; }
+    else { m.style.transform='translate('+tx+'px,'+ty+'px)'; var mb0=mascotBallEl(); if(carry&&mb0) mb0.style.transform='translate('+tx+'px,'+ty+'px)'; if(done)done(); }
   }catch(e){ if(done)done(); }
 }
 /* The translate that puts the mascot's feet at (cx, feetFromBottom)
@@ -5732,22 +5860,26 @@ function mascotTossTo(stage,cx,cyFromTop,dur,done){
   var finished=false;
   var finish=function(){
     if(finished) return; finished=true;
-    if(mb){ mb.classList.remove('show'); mb.style.transform=''; }
-    if(b){ if(b.getAnimations){ try{ b.getAnimations().forEach(function(x){ x.cancel(); }); }catch(e){} } b.style.visibility=''; }
+    if(mb){ cancelKFDrives(mb); mb.classList.remove('show'); mb.style.transform=''; }
+    if(b){ if(b.getAnimations){ try{ b.getAnimations().forEach(function(x){ x.cancel(); }); }catch(e){} } cancelKFDrives(b); b.style.visibility=''; }
     if(done)done();
   };
-  if(!mb||!mb.animate){ finish(); return; }
+  if(!mb){ finish(); return; }
   var sr=stage.getBoundingClientRect(), mr=mb.getBoundingClientRect();
   var dx=Math.round(cx-(mr.left-sr.left+mr.width/2)), dy=Math.round(cyFromTop-(mr.top-sr.top+mr.height/2));
   var peak=-Math.round(sr.height*0.16);
   var fx=mascotTX, fy=mascotTY;
   try{
-    var a=mb.animate([
+    /* TIMER-DRIVEN TOSS (LIVE-CHECK FIX, Nov 9, 2026): the toss arc
+       is played by driveKF, the same timer driver as the mascot's
+       walks, so it arcs visibly onto his racket on the live page
+       exactly as in testing — never stood down. */
+    var a=driveKF(mb,[
       {transform:'translate('+fx+'px,'+fy+'px) rotate(0deg)',opacity:1,easing:'ease-out'},
       {transform:'translate('+Math.round(fx+dx*0.5)+'px,'+Math.round(fy+dy*0.5+peak)+'px) rotate(140deg)',offset:.55,easing:'ease-in'},
       {transform:'translate('+(fx+dx)+'px,'+(fy+dy)+'px) rotate(300deg)',offset:1}
     ],{duration:dur,fill:'forwards'});
-    mascotAnims.push(a);
+    if(a) mascotAnims.push(a);
     if(a) a.onfinish=finish;
     setTimeout(finish,dur+70);
   }catch(e){ finish(); }
@@ -5805,8 +5937,9 @@ function footballMascotFetch(mySeq,ok,fSettle){
            held flight is cancelled, which puts it back at its rest
            spot — the ground at his foot — and placeFootballBall
            re-measures that exact spot once the kick has settled. */
-        var mb=mascotBallEl(); if(mb){ mb.classList.remove('show'); mb.style.transform=''; }
+        var mb=mascotBallEl(); if(mb){ cancelKFDrives(mb); mb.classList.remove('show'); mb.style.transform=''; }
         if(ball.getAnimations){ try{ ball.getAnimations().forEach(function(x){ x.cancel(); }); }catch(e){} }
+        cancelKFDrives(ball); /* the kick's held flight is timer-driven now — releasing it puts the ball back at its rest spot, the ground at his foot */
         ball.style.visibility='';
         setTimeout(function(){
           if(mySeq!==shotSeq) return;
@@ -5937,6 +6070,7 @@ function playSportShot(success){
     shotAnimActive=true;
     gymnast.classList.remove('leap-split');
     try{ gymnast.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){}
+    cancelKFDrives(gymnast); /* a previous trip's timer drive lets go before this one starts */
     try{
       var gAnimP;
       if(success){
@@ -5970,7 +6104,7 @@ function playSportShot(success){
           {transform:'translate('+Math.round(gDx*.5)+'px,-3px) rotate(0deg)',offset:.93,easing:'ease-in-out'},
           {transform:'translate(0,0) rotate(0deg)',offset:1}
         ];
-        gAnimP=gymnast.animate(gFramesP,{duration:gDur});
+        gAnimP=driveKF(gymnast,gFramesP,{duration:gDur}); /* timer-driven (driveKF), not WAAPI — the pull-up, swing and stick play on the same unstoppable channel as his limbs, so he RISES to the rings on the live page exactly as in testing, never a beam-height slide */
         /* HIS ARMS AND LEGS, driven together by the JS limb
            driver (driveLimbsKF — timer-written inline transforms,
            the one channel no CSS rule can override or switch
@@ -6045,7 +6179,7 @@ function playSportShot(success){
           {transform:'translate(0,'+Math.round(wDrop/2)+'px) rotate(0deg)',offset:.95,easing:'ease-out'},
           {transform:'translate(0,0) rotate(0deg)',offset:1}
         ];
-        gAnimP=gymnast.animate(wFramesP,{duration:wDur});
+        gAnimP=driveKF(gymnast,wFramesP,{duration:wDur}); /* timer-driven (driveKF), not WAAPI — the wobble and the step OFF the beam onto the mat (the fall) play identically live (see driveKF) */
         /* Stepped the whole way here too (see limbWAAPI above):
            beam steps out to the wobble (0-.34), legs still as he
            steps off and stands on the mat (.44-.58), steps back
@@ -6112,7 +6246,7 @@ function playSportShot(success){
            picks it up and tosses it back to his racket
            (tennisMascotReturn), and only then does the serve
            settle. */
-        tAnim=ball.animate([
+        tAnim=driveKF(ball,[
           {transform:'translate(0,0) rotate(0deg)',opacity:1,easing:'ease-out'},
           {transform:'translate('+Math.round(tDx*0.10)+'px,'+Math.round(tPeak*0.42)+'px) rotate(38deg)',offset:.18,easing:'ease-out'},
           {transform:'translate('+Math.round(tDx*0.52)+'px,'+tPeak+'px) rotate(96deg)',offset:.48,easing:'ease-in'},
@@ -6120,7 +6254,7 @@ function playSportShot(success){
           {transform:'translate('+(tDx-10)+'px,'+(tGroundDy-11)+'px) rotate(158deg) scale(.97,1.04)',offset:.82,easing:'ease-in'},
           {transform:'translate('+(tDx-18)+'px,'+tGroundDy+'px) rotate(148deg)',offset:.92,easing:'ease-in-out'},
           {transform:'translate('+(tDx-18)+'px,'+tGroundDy+'px) rotate(148deg)',offset:1}
-        ],{duration:tDur,fill:'forwards'});
+        ],{duration:tDur,fill:'forwards'}); /* timer-driven (driveKF), not WAAPI — the serve arc plays identically on the live page under reduced-motion (see driveKF) */
         if(tAnim) tAnim.onfinish=function(){ tennisMascotReturn(mySeq,true,tStartCX,tStartCY); };
         setTimeout(function(){ tennisMascotReturn(mySeq,true,tStartCX,tStartCY); },tDur+60);
         setTimeout(function(){ if(mySeq===shotSeq){ sparkleBurst(tLandCX,Math.round(tsr.height*0.86),gameSession&&gameSession.onFire?20:12,!!(gameSession&&gameSession.onFire)); var st5=document.getElementById('courtStage'); if(st5) st5.classList.add('celebrating'); sfx('sparkle'); } },Math.round(tDur*0.72));
@@ -6133,7 +6267,7 @@ function playSportShot(success){
            there at the foot of the net (no roll back) until the
            mascot walks over, picks it up and tosses it back to
            his racket, so he serves the same one again. */
-        tAnim=ball.animate([
+        tAnim=driveKF(ball,[
           {transform:'translate(0,0) rotate(0deg)',opacity:1,easing:'ease-out'},
           {transform:'translate('+Math.round(mNetDx*0.55)+'px,'+Math.round(mHitY*0.72)+'px) rotate(52deg)',offset:.26,easing:'ease-in'},
           {transform:'translate('+mNetDx+'px,'+mHitY+'px) rotate(88deg)',offset:.44,easing:'ease-in'},
@@ -6142,7 +6276,7 @@ function playSportShot(success){
           {transform:'translate('+(mNetDx-16)+'px,'+(tGroundDy-9)+'px) rotate(65deg) scale(.97,1.04)',offset:.8,easing:'ease-in'},
           {transform:'translate('+(mNetDx-20)+'px,'+tGroundDy+'px) rotate(58deg)',offset:.92,easing:'ease-in-out'},
           {transform:'translate('+(mNetDx-20)+'px,'+tGroundDy+'px) rotate(58deg)',offset:1}
-        ],{duration:mDur2,fill:'forwards'});
+        ],{duration:mDur2,fill:'forwards'}); /* timer-driven (driveKF), not WAAPI — see the made-serve drive above */
         if(tAnim) tAnim.onfinish=function(){ tennisMascotReturn(mySeq,false,tStartCX,tStartCY); };
         setTimeout(function(){ tennisMascotReturn(mySeq,false,tStartCX,tStartCY); },mDur2+60);
         setTimeout(function(){ if(mySeq===shotSeq) sfx('rim'); },Math.round(mDur2*0.44));
@@ -6229,7 +6363,7 @@ function playSportShot(success){
            then the hit: up over the wall at the peak, then still
            rising as it arcs up and over and flies out of the
            frame altogether — it never comes down, never lands. */
-        bAnim=ball.animate([
+        bAnim=driveKF(ball,[
           {transform:'translate('+bPitchDx+'px,'+bPitchDy+'px) rotate(-24deg) scale(1)',opacity:1,zIndex:1,easing:'ease-in'},
           {transform:'translate('+Math.round(bPitchDx*0.45)+'px,'+(Math.round(bPitchDy*0.45)-10)+'px) rotate(-10deg) scale(1)',offset:.12,zIndex:1,easing:'ease-out'},
           {transform:'translate(0,0) rotate(0deg) scale(1)',offset:.24,zIndex:1,easing:'ease-out'},
@@ -6237,7 +6371,7 @@ function playSportShot(success){
           {transform:'translate('+bDx+'px,'+bPeakTy+'px) rotate(150deg) scale(.6)',opacity:1,offset:.58,easing:'ease-in'},
           {transform:'translate('+Math.round(bDx+(bOutDx-bDx)*0.5)+'px,'+Math.round(bPeakTy+(bExitTy-bPeakTy)*0.45)+'px) rotate(230deg) scale(.55)',opacity:1,offset:.78,easing:'ease-in'},
           {transform:'translate('+bOutDx+'px,'+bExitTy+'px) rotate(330deg) scale(.5)',opacity:0,offset:1}
-        ],{duration:bDur});
+        ],{duration:bDur}); /* timer-driven (driveKF), not WAAPI — the pitch visibly leaves the mascot's hands and the hit flies out on the live page exactly as in testing (see driveKF) */
         /* After the home run the mascot goes and gets a ball:
            it steps out toward the outfield, comes back HOLDING a
            baseball, and only then does the at-bat settle — so
@@ -6277,7 +6411,7 @@ function playSportShot(success){
            the mascot walks over, picks it up, and carries it back
            to its corner, holding it for the next answer. */
         var wDur=1500;
-        bAnim=ball.animate([
+        bAnim=driveKF(ball,[
           {transform:'translate('+bPitchDx+'px,'+bPitchDy+'px) rotate(-24deg) scale(1)',opacity:1,zIndex:1,easing:'ease-in'},
           {transform:'translate('+Math.round(bPitchDx*0.45)+'px,'+(Math.round(bPitchDy*0.45)-10)+'px) rotate(-10deg) scale(1)',offset:.2,zIndex:1,easing:'ease-out'},
           {transform:'translate(0,0) rotate(0deg) scale(1)',offset:.4,zIndex:5,easing:'ease-out'},
@@ -6286,7 +6420,7 @@ function playSportShot(success){
           {transform:'translate(-29px,'+(bGroundDy-7)+'px) rotate(-62deg) scale(.97,1.04)',offset:.85,easing:'ease-in'},
           {transform:'translate(-31px,'+bGroundDy+'px) rotate(-58deg)',offset:.94,easing:'ease-in-out'},
           {transform:'translate(-31px,'+bGroundDy+'px) rotate(-58deg)',offset:1}
-        ],{duration:wDur,fill:'forwards'});
+        ],{duration:wDur,fill:'forwards'}); /* timer-driven (driveKF), not WAAPI — see the home-run drive above */
         var wFetched=false;
         var wFetch=function(){
           if(wFetched||mySeq!==shotSeq) return; wFetched=true;
@@ -6383,6 +6517,7 @@ function playSportShot(success){
     shotAnimActive=true;
     startRunStride(); /* the stride driver, restarted on the player nodes as they stand at the trip's start — it runs through the whole trip (stopDribble does not stop it) */
     try{ runner.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){}
+    cancelKFDrives(runner); /* a previous trip's timer drive lets go before this one starts */
     try{
       var rAnimP;
       if(success){
@@ -6397,7 +6532,7 @@ function playSportShot(success){
         rFramesP.push({transform:'translate('+rDx+'px,0px) rotate(0deg)',offset:.72,easing:'ease-in'});
         rFramesP.push({transform:'translate('+Math.round(rDx*.55)+'px,-8px) rotate(2deg)',offset:.88,easing:'ease-in-out'});
         rFramesP.push({transform:'translate(0,0) rotate(0deg)',offset:1});
-        rAnimP=runner.animate(rFramesP,{duration:rDur});
+        rAnimP=driveKF(runner,rFramesP,{duration:rDur}); /* timer-driven (driveKF), not WAAPI — the crossing itself is on the same unstoppable channel as the stride, so he runs (never glides) on the live page exactly as in testing */
         /* REAL STRIDES for the WHOLE trip — across the line and
            jogging back — come from the JS stride driver
            (startRunStride, restarted on this trip's own nodes
@@ -6411,7 +6546,7 @@ function playSportShot(success){
         setTimeout(function(){ if(mySeq===shotSeq) sfx('cheer'); },Math.round(rDur*0.78));
       } else {
         var sDx=Math.round(rr.width*0.34-rStartCX), sDur=1900;
-        rAnimP=runner.animate([
+        rAnimP=driveKF(runner,[
           {transform:'translate(0,0) rotate(2deg)',opacity:1,easing:'ease-in-out'},
           {transform:'translate('+Math.round(sDx*.45)+'px,-7px) rotate(2deg)',offset:.18,easing:'ease-in-out'},
           {transform:'translate('+sDx+'px,0px) rotate(2deg)',offset:.32,easing:'ease-in'},
@@ -6554,7 +6689,7 @@ function playSportShot(success){
       if(success){
         var fDx=Math.round((fGoalX-fStartCX)/fK);
         var fDur=2000;
-        fAnim=ball.animate([
+        fAnim=driveKF(ball,[
           {transform:'translate(0,0) rotate(0deg) scale(1)',opacity:1,easing:'ease-out'},
           {transform:'translate('+Math.round(fDx*0.45)+'px,'+Math.round(fCrossTy*0.94)+'px) rotate(120deg) scale(.78)',offset:.34,easing:'ease-out'},
           {transform:'translate('+fDx+'px,'+fCrossTy+'px) rotate(200deg) scale(.55)',offset:.58,easing:'ease-in-out'},
@@ -6562,7 +6697,7 @@ function playSportShot(success){
           {transform:'translate('+Math.round(fDx*1.07)+'px,'+fFloorY+'px) rotate(300deg) scale(.8)',offset:.88,easing:'ease-in'},
           {transform:'translate('+Math.round(fDx*1.05)+'px,'+(fFloorY-6)+'px) rotate(288deg) scale(.82)',offset:.94,easing:'ease-out'},
           {transform:'translate('+Math.round(fDx*1.07)+'px,'+fFloorY+'px) rotate(300deg) scale(.8)',offset:1}
-        ],{duration:fDur,delay:fDelay,fill:'forwards'});
+        ],{duration:fDur,delay:fDelay,fill:'forwards'}); /* timer-driven (driveKF), not WAAPI — the kick leaves his foot, rises and splits the CENTER of the posts on the live page exactly as in testing; the delay still holds the ball at his foot until the turning kick connects (see driveKF) */
         /* The ball STAYS where it landed beyond the post — the
            mascot walks out, picks it up, carries it back and puts
            it on the ground at his foot (footballMascotFetch), and
@@ -6587,7 +6722,7 @@ function playSportShot(success){
            unmistakable. */
         var mDx=Math.round((fPostX-fStartCX)/fK);
         var mDur=1800;
-        fAnim=ball.animate([
+        fAnim=driveKF(ball,[
           {transform:'translate(0,0) rotate(0deg) scale(1)',opacity:1,easing:'ease-out'},
           {transform:'translate('+Math.round(mDx*0.5)+'px,'+Math.round(fCrossTy*0.95)+'px) rotate(110deg) scale(.76)',offset:.3,easing:'ease-out'},
           {transform:'translate('+mDx+'px,'+fCrossTy+'px) rotate(190deg) scale(.82,.34)',offset:.5,easing:'ease-in'},
@@ -6596,7 +6731,7 @@ function playSportShot(success){
           {transform:'translate('+Math.round(mDx*0.34)+'px,'+Math.round(fFloorY*0.3)+'px) rotate(38deg) scale(1)',offset:.86,easing:'ease-out'},
           {transform:'translate('+Math.round(mDx*0.18)+'px,'+fFloorY+'px) rotate(16deg) scale(1)',offset:.94,easing:'ease-out'},
           {transform:'translate('+Math.round(mDx*0.18)+'px,'+fFloorY+'px) rotate(16deg) scale(1)',offset:1}
-        ],{duration:mDur,delay:fDelay,fill:'forwards'});
+        ],{duration:mDur,delay:fDelay,fill:'forwards'}); /* timer-driven (driveKF), not WAAPI — the strike on the upright and the hard bounce off it play identically live (see driveKF) */
         /* The ball STAYS where the rebound dropped it — the mascot
            walks out, picks it up, carries it back and puts it on
            the ground at his foot (footballMascotFetch), and only
@@ -9640,7 +9775,7 @@ function tapKeypadLetter(btn,ch){
    one, it reloads once into the new build; a per-session guard makes a
    reload loop impossible. Every future fix reaches returning devices the
    same way, with nobody having to close and reopen anything by hand. */
-var APP_BUILD='20261109.13';
+var APP_BUILD='20261109.14';
 var updCheckedAt=0, updReloading=false;
 function checkForNewBuild(){
   var now=Date.now(); if(updReloading||now-updCheckedAt<20000) return; updCheckedAt=now;
