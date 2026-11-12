@@ -316,7 +316,7 @@ html{-webkit-tap-highlight-color:transparent}
    Next Step row is pinned to the sheet's own bottom edge. Those
    buttons are therefore always fully in frame, at phone height and
    desktop height alike, however long the example step runs. */
-#wizardModal .sheet{display:flex;flex-direction:column;max-height:calc(100dvh - 24px);overflow:hidden}
+#wizardModal{padding:0}#wizardModal .sheet{display:flex;flex-direction:column;width:100%;height:100dvh;max-height:100dvh;border-radius:0;overflow:hidden} /* FIX PASS Nov 12, 2026: Show Me an Example opens FULL-SCREEN over the game, like Get a Hint — not a centred modal */
 #wizardModal .sheet>*{flex:0 0 auto}
 #wizardModal .stepbox{flex:1 1 auto;min-height:0;overflow-y:auto}
 .stepdots{display:flex;gap:6px;margin:12px 0}.dot{width:36px;height:8px;border-radius:999px;background:#E5E7EB}.dot.on{background:var(--red)}
@@ -972,8 +972,8 @@ body.playing .qlabel{font-size:11px}
    tucked behind the game, crushed into a column beside the question,
    or slid below a fold no scroll can reach (the playing page itself
    never scrolls, which is what buried the old in-card panel). */
-#workModal{align-items:center}
-#workModal .work-panel{width:min(680px,100%);max-height:calc(100dvh - 24px);overflow-y:auto;margin:0;padding:16px;border-radius:22px}
+#workModal{align-items:stretch;padding:0}
+#workModal .work-panel{width:100%;height:100dvh;max-height:100dvh;overflow-y:auto;margin:0;padding:16px;border-radius:0} /* FIX PASS Nov 12, 2026: Work It Out opens FULL-SCREEN over the game, like Get a Hint — not a centred modal */
 #workModal .work-panel h3{font-size:24px}
 .work-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .work-close{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:6px 12px;font-weight:900;font-size:13px;white-space:nowrap}
@@ -1742,11 +1742,11 @@ body.world-tennis .p-racket,.court-stage.sport-tennis .court-player .p-racket{di
    far sideline at the picture's right edge); the rule below is
    its fallback. */
 .court-stage.sport-basketball .stage-mascot{right:10px;bottom:44%}
-.court-stage.sport-soccer .stage-mascot{right:16px;bottom:40%}
+.court-stage.sport-soccer .stage-mascot{right:14px;bottom:76%} /* FIX PASS Nov 12, 2026: RIGHT BACK corner — up behind the goal, never standing on the goalpost */
 .court-stage.sport-football .stage-mascot{right:18px;bottom:40%}
 .court-stage.sport-baseball .stage-mascot{right:16px;bottom:42%}
 .court-stage.sport-tennis .stage-mascot{right:14px;bottom:46%}
-.court-stage.sport-hockey .stage-mascot{right:16px;bottom:50%}
+.court-stage.sport-hockey .stage-mascot{right:14px;bottom:76%} /* FIX PASS Nov 12, 2026: RIGHT BACK corner — up behind the net, never standing on the goalpost */
 .court-stage.sport-running .stage-mascot{right:14px;bottom:48%}
 .court-stage.sport-swimming .stage-mascot{right:10px;bottom:64%;z-index:6} /* the far deck at the back of the pool, in front of the swim-water layer */
 .court-stage.sport-gymnastics .stage-mascot{right:12px;bottom:44%}
@@ -2887,7 +2887,7 @@ function openWizard(t){
          The old build-a-fresh-example path remains only as a
          safety net for a problem with no stored example. */
       if(current&&current.exampleSteps&&current.exampleSteps.length&&currentTopic&&id===currentTopic.id){ wizSteps=current.exampleSteps; }
-      else{ try{ wizSteps=buildWorkedExample(id); }catch(e){ wizSteps=null; } }
+      else{ var wfb=(typeof WIZARDS!=='undefined'&&WIZARDS[id]&&WIZARDS[id].steps&&WIZARDS[id].steps.length)?WIZARDS[id].steps:null; if(wfb){ wizSteps=wfb; } else { try{ wizSteps=buildWorkedExample(id); }catch(e){ wizSteps=null; } } } /* FIX PASS Nov 12, 2026: a problem with no stored example uses the WIZARDS fallback steps — they have Leo recordings — never a fresh-generated example whose new numbers would have no recording */
       if(!wizSteps||!wizSteps.length){ var w=WIZARDS[id]; wizSteps=w?w.steps:[{h:'Watch me!',b:'Leo is getting an example ready — tap Next and watch the steps!'}]; }
     }
   }
@@ -3454,8 +3454,7 @@ function leoPrime(){
   try{
     if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance) return;
     if(window.speechSynthesis.paused) window.speechSynthesis.resume();
-    var u=new SpeechSynthesisUtterance('hi'); u.volume=0; u.rate=1; /* silent practice utterance — this tap is what unlocks Leo's voice on a phone */
-    window.speechSynthesis.speak(u);
+    try{ window.speechSynthesis.cancel(); }catch(e){} /* FIX PASS Nov 12, 2026: priming no longer queues ANY device utterance — Leo speaks only from his recordings, so nothing stale can sit in the device queue */
     leoLoadVoices();
   }catch(e){}
 }
@@ -3554,6 +3553,7 @@ var coachAudio=null, coachAudioRun=0, coachAudioTimer=null, coachSegTimer=null, 
 var coachFastAudio=null; /* the FAST-CLIPS player (game-open instructions only — see LEO_FAST below): its own element, so bundle playback bookkeeping above is untouched */
 function stopCoachAudio(){
   coachAudioRun++;
+  try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){} /* FIX PASS Nov 12, 2026: EVERY stop also empties the device speech queue, so no stale utterance from a previous game, problem or tool can ever run on into the next one */
   if(coachAudioTimer){ clearTimeout(coachAudioTimer); coachAudioTimer=null; }
   if(coachSegTimer){ clearTimeout(coachSegTimer); coachSegTimer=null; }
   if(coachSegWatch){ clearInterval(coachSegWatch); coachSegWatch=null; }
@@ -3815,14 +3815,16 @@ function speakLeo(text,force,rate){
   try{
     if(typeof stopCaptions==='function') stopCaptions(); /* any other Leo speech ends a caption read — the bubble is his again */
     if(!leoUnlocked&&!force) return; /* Leo's voice wakes up with Karter's first tap — there is no on/off switch */
-    /* Leo's REAL voice first: when every sentence of this line has a
-       recording in his picked voice (see COACH_VOICE_LINES above),
-       play the recordings — the device engine below never speaks a
-       line the page already knows. A caller asking for a special
-       pace keeps the device path; the recordings are his natural
-       pace. This sits ahead of the speechSynthesis check on
-       purpose: his recordings play even on a device with no speech
-       engine at all. */
+    /* FIX PASS (Nov 12, 2026) — RECORDED VOICE ONLY: Leo NEVER speaks
+       in the device voice again. A line plays when EVERY sentence in
+       it has a recording; when the whole line has none (a renamed
+       welcome, a fresh-number line), the fallback is sentence-level:
+       every sentence that DOES have a recording still plays, in
+       order, in Leo's real voice — an unrecorded sentence is never
+       spoken by a robot voice in its place. Starting this call has
+       already cancelled every pending recording and emptied the
+       device queue (stopCaptions / stopCoachAudio above), so only
+       THIS line can be heard, and playback stops dead at its end. */
     if(!rate||rate===LEO_RATE){
       var cfiles=coachLineFiles(captionSentences(text));
       if(cfiles){
@@ -3831,30 +3833,16 @@ function speakLeo(text,force,rate){
         playCoachFiles(cfiles,null,null);
         return;
       }
+      var sents=captionSentences(text); var partial=[];
+      for(var si=0;si<sents.length;si++){ var sf=coachLineFiles([sents[si]]); if(sf&&sf.length) partial.push(sf[0]); }
+      if(partial.length){
+        if(leoSpeakTimer){ clearTimeout(leoSpeakTimer); leoSpeakTimer=null; }
+        try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){}
+        playCoachFiles(partial,null,null);
+        return;
+      }
     }
-    if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance) return; /* no device voice on this device — text-only for unrecorded lines, never an error */
-    var plain=plainSpeechText(text); if(!plain) return;
-    var chunks=chunkSpeech(plain);
-    var synth=window.speechSynthesis;
-    var wasBusy=!!(synth.speaking||synth.pending);
-    if(wasBusy) synth.cancel();
-    if(leoSpeakTimer){ clearTimeout(leoSpeakTimer); leoSpeakTimer=null; }
-    var speakAll=function(){
-      leoSpeakTimer=null;
-      try{
-        if(synth.paused) synth.resume();
-        var v=pickLeoVoice();
-        for(var ci=0;ci<chunks.length;ci++){
-          var u=new SpeechSynthesisUtterance(chunks[ci]);
-          if(v){ u.voice=v; try{ u.lang=v.lang||'en-US'; }catch(e){} }
-          u.rate=rate||LEO_RATE; u.pitch=LEO_PITCH; u.volume=1;
-          synth.speak(u);
-        }
-        leoWatchdogStart();
-      }catch(e){}
-    };
-    /* After a cancel, wait a beat before speaking — queueing in the same instant is what silently swallowed Leo's lines. */
-    if(wasBusy) leoSpeakTimer=setTimeout(speakAll,90); else speakAll();
+    return; /* no recording exists for this line — it stays text-only, never the device voice */
   }catch(e){}
 }
 function stopLeoSpeech(){ stopCoachAudio(); if(typeof stopCaptions==='function') stopCaptions(); if(leoSpeakTimer){ clearTimeout(leoSpeakTimer); leoSpeakTimer=null; } try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){} }
@@ -3905,7 +3893,7 @@ function captionSentences(text){
   }
   return out;
 }
-function stopCaptions(){ stopCoachAudio(); captionRunId++; if(captionTimers.length){ captionTimers.forEach(function(t){ clearTimeout(t); }); captionTimers=[]; } }
+function stopCaptions(){ stopCoachAudio(); try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){} captionRunId++; if(captionTimers.length){ captionTimers.forEach(function(t){ clearTimeout(t); }); captionTimers=[]; } }
 function speakCaptions(text,boundSegs){
   var b=document.getElementById('leoBubble');
   var sentences=captionSentences(text);
@@ -3924,28 +3912,24 @@ function speakCaptions(text,boundSegs){
   var clearCaptions=function(){ b.textContent=''; if(typeof fitGameView==='function') fitGameView(); };
   var estFor=function(s){ return Math.min(9000,Math.max(1700,s.split(/\s+/).length*430+1000)); };
   var voiceFiles=boundSegs||coachLineFiles(sentences); /* boundSegs: the current problem's own segments, bound by its internal number at deal time (see storedProblem) — when present they are the lookup, not a fresh text search */
-  /* The bundle / device-voice reading below, unchanged: it is what
-     every number-keyed line (a problem's own hint, example and check,
-     handed over as boundSegs) plays, and it stays the fallback for
-     any game-open line the fast clips cannot cover. */
+  /* FIX PASS (Nov 12, 2026): the device-voice reading branch is GONE.
+     It queued utterances sentence by sentence with no way to cancel
+     them across game / tool boundaries — the stale-audio run-on
+     (a previous game's lines playing ~25s into the next game, a hint
+     hearing the tail of an example). Captions now have exactly two
+     drivers, both fully cancellable by stopCaptions/stopLeoSpeech:
+     Leo's recordings (bundle segments or fast clips), or — for a
+     line with no recording — timed silent captions that roll
+     sentence by sentence on reading-time estimates and clear at
+     the end. The device voice never speaks. */
   var playBundleOrDevice=function(){
   if(voiceFiles){
-    /* Leo's REAL voice: every instruction line has recordings in his
-       picked voice, so the captions are driven by the recordings
-       themselves — each sentence's caption appears as its own
-       recording starts, and the bubble clears when the last
-       recording ends. Same one-sentence-at-a-time caption law as
-       the device-voice path below; only the voice is his. */
     captionTimers.push(setTimeout(function(){
       if(run!==captionRunId) return;
       playCoachFiles(voiceFiles,function(i){ if(run===captionRunId) showSentence(i); },function(){ if(run===captionRunId) clearCaptions(); });
-    },90)); /* the same beat the device path leaves after a cancel */
+    },90));
     return;
   }
-  if(!('speechSynthesis' in window)||!window.SpeechSynthesisUtterance){
-    /* No voice on this device — the captions still step through one
-       sentence at a time on the same reading-time estimates, and
-       clear when they are done. The full text never sits in the bubble. */
     var advanceSilent=function(){
       if(run!==captionRunId) return;
       if(idx>=sentences.length){ clearCaptions(); return; }
@@ -3954,51 +3938,14 @@ function speakCaptions(text,boundSegs){
       captionTimers.push(setTimeout(advanceSilent,estFor(sentences[i])));
     };
     captionTimers.push(setTimeout(function(){ if(run===captionRunId) advanceSilent(); },90));
-    return;
-  }
-  var synth=window.speechSynthesis;
-  var v=pickLeoVoice();
-  var advance=function(){
-    if(run!==captionRunId) return;
-    if(idx>=sentences.length){ clearCaptions(); return; } /* he is done speaking — the captions are done too */
-    var i=idx; idx++;
-    showSentence(i); /* ONLY this sentence's caption is on screen while Leo says it */
-    var said=false;
-    var next=function(){ if(said) return; said=true; advance(); };
-    /* Fallback advance on a reading-time estimate, in case a device
-       never fires the utterance's end event — captions never stall. */
-    captionTimers.push(setTimeout(next,estFor(sentences[i])));
-    try{
-      var u=new SpeechSynthesisUtterance(sentences[i]);
-      if(v){ u.voice=v; try{ u.lang=v.lang||'en-US'; }catch(e){} }
-      u.rate=LEO_RATE; u.pitch=LEO_PITCH; u.volume=1; /* Leo's picked sample-3 voice settings, same as speakLeo */
-      u.onend=next; u.onerror=next;
-      if(synth.paused) synth.resume();
-      synth.speak(u);
-    }catch(e){ next(); }
   };
-  captionTimers.push(setTimeout(function(){ if(run===captionRunId) advance(); },90)); /* the same beat speakLeo leaves after a cancel */
-  leoWatchdogStart();
-  };
-  /* FAST INSTRUCTIONS (first-entry delay fix — the same wiring as
-     Royce's page): a game-open line — the welcome + this game's
-     instructions, the only reading speakCaptions is ever called with
-     WITHOUT bound segments — plays from its tiny clips and starts at
-     once, even on the very first entry of a session. Captions roll
-     sentence by sentence with the clips and clear when the last clip
-     ends, exactly as with the bundle reading. A line carrying bound
-     segments is a problem's own number-keyed hint / example / check
-     and NEVER takes this path — it keeps its bundle segments via
-     playBundleOrDevice below. If a clip somehow fails, the same line
-     falls back to that bundle / device reading rather than leaving
-     the learner in silence. */
   if(!boundSegs){
     var fastFiles=leoFastFiles(sentences);
     if(fastFiles){
       captionTimers.push(setTimeout(function(){
         if(run!==captionRunId) return;
         playCoachFastClips(fastFiles,function(i){ if(run===captionRunId) showSentence(i); },function(){ if(run===captionRunId) clearCaptions(); },function(){ if(run===captionRunId) playBundleOrDevice(); });
-      },90)); /* the same beat the bundle path leaves after a cancel */
+      },90));
       return;
     }
   }
@@ -4414,7 +4361,7 @@ function checkAnswer(){
     var card=document.getElementById('gameCard'); card.classList.remove('bounce'); void card.offsetWidth; card.classList.add('bounce');
     var praiseTxt=pick(praiseLines());
     var sInf2=sportInfo();
-    fb.className='feedback good'; fb.innerHTML='🎉 '+praiseTxt+(attempts>1?' You kept trying and fixed it — that\'s what champions do!':'')+'<br>'+sInf2.tokenEmoji+' <b>'+sInf2.makeShort+' '+shot.pts+' points for your team!</b>'+(shot.fire?' <b>🔥 ON FIRE! Bonus point for your hot streak!</b>':'')+(shot.leoPts?' 🦁 Leo\'s Lions answered with '+shot.leoPts+' points — you\'re still in this, champ!':'');
+    fb.className='feedback good'; fb.innerHTML='🎉 '+praiseTxt+(attempts>1?' You kept trying and fixed it — that\'s what champions do!':'')+'<br>'+sInf2.tokenEmoji+' <b>'+sInf2.makeShort+' '+shot.pts+' points for your team!</b>'+(shot.fire?' <b>🔥 ON FIRE! What a hot streak!</b>':'')+(shot.leoPts?' 🦁 Leo\'s Lions answered with '+shot.leoPts+' points — you\'re still in this, champ!':'');
     leoSay('🎉 <b>'+praiseTxt+'</b><br>'+(shot.won?'That\'s the winning play — get ready to celebrate! 🏆':sInf2.nextPhrase.charAt(0).toUpperCase()+sInf2.nextPhrase.slice(1)));
     chosen=null;
     if(shot.won){ setTimeout(function(){ showWinCelebration(); },1250); }
@@ -5105,6 +5052,21 @@ var HERO_CUTOUTS=[{"s": 0, "h": "fade", "c": "black", "f": "assets/heroes/cut-s0
 var HERO_FULLS=[{"s": 0, "h": "afro", "c": "black", "f": "assets/heroes/full-s0-afro-black.webp"}, {"s": 0, "h": "fade", "c": "black", "f": "assets/heroes/full-s0-fade-black.webp"}, {"s": 0, "h": "short", "c": "black", "f": "assets/heroes/full-s0-short-black.webp"}, {"s": 0, "h": "twists", "c": "black", "f": "assets/heroes/full-s0-twists-black.webp"}, {"s": 1, "h": "afro", "c": "black", "f": "assets/heroes/full-s1-afro-black.webp"}, {"s": 1, "h": "fade", "c": "black", "f": "assets/heroes/full-s1-fade-black.webp"}, {"s": 1, "h": "short", "c": "black", "f": "assets/heroes/full-s1-short-black.webp"}, {"s": 1, "h": "twists", "c": "black", "f": "assets/heroes/full-s1-twists-black.webp"}, {"s": 2, "h": "fade", "c": "black", "f": "assets/heroes/full-s2-fade-black.webp"}, {"s": 2, "h": "short", "c": "black", "f": "assets/heroes/full-s2-short-black.webp"}, {"s": 2, "h": "twists", "c": "black", "f": "assets/heroes/full-s2-twists-black.webp"}, {"s": 4, "h": "afro", "c": "gold", "f": "assets/heroes/full-s4-afro-gold.webp"}];
 var HERO_SCENES={"baseball": "assets/heroes/scene-baseball.webp", "basketball": "assets/heroes/scene-basketball.webp", "cheer": "assets/heroes/scene-cheer.webp", "football": "assets/heroes/scene-football.webp", "gymnastics": "assets/heroes/scene-gymnastics.webp", "hockey": "assets/heroes/scene-hockey.webp", "running": "assets/heroes/scene-running.webp", "soccer": "assets/heroes/scene-soccer.webp", "swimming": "assets/heroes/scene-swimming.webp", "tennis": "assets/heroes/scene-tennis.webp"};
 var HERO_SPORT_RENDERS={"running": {"short": "assets/heroes/full-running-short7.webp", "twists": "assets/heroes/full-running-twists7.webp", "afro": "assets/heroes/full-running-afro7.webp"}, "soccer": {"short": "assets/heroes/full-soccer-short7.webp", "twists": "assets/heroes/full-soccer-twists7.webp", "afro": "assets/heroes/full-soccer-afro7.webp"}, "tennis": {"short": "assets/heroes/full-tennis-short7.webp", "twists": "assets/heroes/full-tennis-twists7.webp", "afro": "assets/heroes/full-tennis-afro7.webp"}, "football": {"short": "assets/heroes/full-football-short7.webp", "twists": "assets/heroes/full-football-twists7.webp", "afro": "assets/heroes/full-football-afro7.webp"}};
+/* FIX PASS (Nov 12, 2026) — EXACT-DESIGN HERO RENDERS: the Nov 9
+   failure repeated live — a customized run (Soccer Field background,
+   GOLD jersey #10) left the home hero as the default red-jersey
+   basketball cutout composited over the soccer scene, because the
+   only soccer renders on file depict red #7 and every cutout depicts
+   the red jersey holding a basketball. True glossy 3D renders of
+   the gold #10 soccer player now ship for the three hair styles the
+   render family covers, matched field-for-field below: the hero IS
+   the render — gold jersey worn on the body, number 10 on it, the
+   soccer ball at his feet in the soccer stadium. */
+var HERO_DESIGN_RENDERS=[
+ {sport:'soccer',skin:4,hair:'twists',hairColor:'#17120B',jersey:'#FFB800',number:10,src:'assets/heroes/full-soccer-twists-gold10.webp'},
+ {sport:'soccer',skin:4,hair:'short',hairColor:'#17120B',jersey:'#FFB800',number:10,src:'assets/heroes/full-soccer-short-gold10.webp'},
+ {sport:'soccer',skin:4,hair:'afro',hairColor:'#17120B',jersey:'#FFB800',number:10,src:'assets/heroes/full-soccer-afro-gold10.webp'}
+];
 /* The sport renders above depict one exact design per hair style:
    the default hero boy (skin 4, black hair — short cut, twists or
    afro, the three styles renders exist for) wearing the red jersey
@@ -5169,6 +5131,18 @@ function updatePlayerHero(){
   var showDefault=function(){ if(comp) comp.style.display='none'; im.style.display=''; var src='assets/karter-hero.webp'; if(im.getAttribute('src')!==src) im.src=src; im.alt='Karter, an 8-year-old boy with a low haircut, in a red and gold jersey, holding a basketball on the court'; var ov0=document.getElementById('heroCutOverlay'); if(ov0) ov0.innerHTML=''; };
   if(bg==='basketball'&&!custom){ showDefault(); return; }
   var d=playerDesign;
+  /* Exact-design renders first (FIX PASS Nov 12, 2026): a design with
+     its own true render is served that render, never the composite. */
+  var drList=(typeof HERO_DESIGN_RENDERS!=='undefined'&&HERO_DESIGN_RENDERS)?HERO_DESIGN_RENDERS:[];
+  var dr=null;
+  for(var dri=0;dri<drList.length;dri++){ var rr=drList[dri]; if(rr.sport===bg&&d&&rr.skin===d.skin&&rr.hair===d.hair&&rr.hairColor===d.hairColor&&rr.jersey===d.jersey&&Number(rr.number)===Number(d.number)&&!d.jerseySpecial&&!d.headband&&!d.headbandSpecial){ dr=rr; break; } }
+  if(dr){
+    if(comp) comp.style.display='none';
+    im.style.display='';
+    if(im.getAttribute('src')!==dr.src) im.src=dr.src;
+    im.alt='Your custom player in your soccer world — gold jersey, number '+d.number+', soccer ball at his feet';
+    return;
+  }
   /* SPORT RENDERS (Michelle, Nov 9, 2026 — the flat-panel overlay
      is REMOVED, rejected on her own screenshot: a rectangular slab
      in the picked color with the number and a drawn ball, pasted
@@ -5407,8 +5381,78 @@ var shotStartedAt=0; /* when the currently playing shot sequence began — check
    prompt is a fresh object, so the lock releases itself the moment
    the next question lands. No other sport reads this. */
 var bbAnsweredQ=null;
-function startDribble(){ if(shotAnimActive){ dribblePending=true; return; } var st=document.getElementById('courtStage'); if(st) st.classList.add('dribbling'); startSoccerWaitRoll(); startRunStride(); showMascotHold(); }
-function stopDribble(){ shotAnimActive=false; dribblePending=false; stopSoccerWaitRoll(); mascotReset(); var st=document.getElementById('courtStage'); if(st) st.classList.remove('dribbling','shooting','celebrating','hr-flight','ball-live','turning'); restoreKickerFront(); var b=document.getElementById('shotBall'); if(b&&b.getAnimations){ try{ b.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){} } if(b) cancelKFDrives(b); /* the ball's flights are timer-driven now (driveKF) — stop those too, so leaving a game or answering again can never strand a flight mid-air */ }
+
+/* ===== WAITING-MOTION DRIVERS (FIX PASS, Nov 12, 2026) =====
+   Live play found the waiting poses STATIC in basketball, tennis,
+   baseball, hockey and swimming even though CSS loops exist for
+   them: a CSS loop alone is one cascade or animation-housekeeping
+   pass away from silence, and baseball's waiting arm was set to
+   animation:none outright (no practice swings at all). These
+   drivers follow the two patterns already proven on this page —
+   WAAPI loops on the ball/puck (the soccer roll) and plain-timer
+   inline-transform limb drives (the running stride) — so the
+   waiting motion runs in every environment: basketball DRIBBLES,
+   the tennis ball BOUNCES ON HIS RACKET, the hockey puck
+   STICKHANDLES side to side, the baseball bat takes PRACTICE
+   SWINGS, and the swimmer's feet KICK. startDribble starts them
+   on every question load; stopDribble stops them before any shot
+   sequence, so they can never fight a shot, a serve or a swing. */
+var waitAnims=[];
+var batSwingTimer=null, batSwingArm=null, swimKickTimer=null, swimKickLegs=[];
+function stopWaitDrivers(){
+  waitAnims.forEach(function(a){ try{ a.cancel(); }catch(e){} }); waitAnims=[];
+  if(batSwingTimer){ clearInterval(batSwingTimer); batSwingTimer=null; }
+  if(batSwingArm){ try{ batSwingArm.style.removeProperty('transform'); batSwingArm.style.animation=''; }catch(e){} batSwingArm=null; }
+  if(swimKickTimer){ clearInterval(swimKickTimer); swimKickTimer=null; }
+  swimKickLegs.forEach(function(el){ try{ el.style.removeProperty('transform'); el.style.animation=''; }catch(e){} }); swimKickLegs=[];
+}
+function startWaitDrivers(){
+  stopWaitDrivers();
+  var st=document.getElementById('courtStage'); if(!st) return;
+  var id=(typeof stageSportId==='function')?stageSportId():'';
+  var ball=document.getElementById('shotBall');
+  try{
+    if(id==='basketball'&&ball&&ball.animate){
+      var dr=ball.animate([{transform:'translateY(0px)',easing:'ease-in'},{transform:'translateY(40px)',easing:'ease-out'},{transform:'translateY(0px)'}],{duration:560,iterations:Infinity});
+      if(dr) waitAnims.push(dr);
+    } else if(id==='tennis'&&ball&&ball.animate){
+      var tb=ball.animate([{transform:'translateY(0px)',easing:'ease-out'},{transform:'translateY(-15px)',easing:'ease-in'},{transform:'translateY(0px)'}],{duration:640,iterations:Infinity});
+      if(tb) waitAnims.push(tb);
+    } else if(id==='hockey'&&ball&&ball.animate){
+      var hk=ball.animate([{transform:'translateX(-13px)',easing:'ease-in-out'},{transform:'translateX(13px)',easing:'ease-in-out'}],{duration:560,iterations:Infinity,direction:'alternate'});
+      if(hk) waitAnims.push(hk);
+    }
+  }catch(e){}
+  var cp=document.getElementById('courtPlayer');
+  if(id==='baseball'&&cp){
+    var arm=cp.querySelector('.p-arm-r');
+    if(arm){
+      batSwingArm=arm;
+      try{ arm.style.animation='none'; arm.style.transformBox='view-box'; arm.style.transformOrigin='77.5% 37%'; }catch(e){}
+      var t0=performance.now();
+      batSwingTimer=setInterval(function(){
+        var ph=((performance.now()-t0)%1200)/1200;
+        var ang=-16+Math.sin(ph*Math.PI*2)*22; /* a real practice swing: back, through, back — the bat never leaves his hands, the arm pivots at his shoulder */
+        try{ arm.style.setProperty('transform','rotate('+ang.toFixed(1)+'deg)','important'); }catch(e){}
+      },40);
+    }
+  }
+  if(id==='swimming'&&cp){
+    var legR=cp.querySelector('.p-leg-r'), legL=cp.querySelector('.p-leg-l');
+    if(legR&&legL){
+      swimKickLegs=[legR,legL];
+      swimKickLegs.forEach(function(el){ try{ el.style.animation='none'; el.style.transformBox='fill-box'; el.style.transformOrigin='50% 0%'; }catch(e){} });
+      var s0=performance.now();
+      swimKickTimer=setInterval(function(){
+        var ph=((performance.now()-s0)%380)/380;
+        var a=Math.sin(ph*Math.PI*2)*14;
+        try{ legR.style.setProperty('transform','rotate('+a.toFixed(1)+'deg)','important'); legL.style.setProperty('transform','rotate('+(-a).toFixed(1)+'deg)','important'); }catch(e){}
+      },40);
+    }
+  }
+}
+function startDribble(){ if(shotAnimActive){ dribblePending=true; return; } var st=document.getElementById('courtStage'); if(st) st.classList.add('dribbling'); startSoccerWaitRoll(); startRunStride(); startWaitDrivers(); showMascotHold(); }
+function stopDribble(){ shotAnimActive=false; dribblePending=false; stopSoccerWaitRoll(); stopWaitDrivers(); mascotReset(); var st=document.getElementById('courtStage'); if(st) st.classList.remove('dribbling','shooting','celebrating','hr-flight','ball-live','turning'); restoreKickerFront(); var b=document.getElementById('shotBall'); if(b&&b.getAnimations){ try{ b.getAnimations().forEach(function(a){ a.cancel(); }); }catch(e){} } if(b) cancelKFDrives(b); /* the ball's flights are timer-driven now (driveKF) — stop those too, so leaving a game or answering again can never strand a flight mid-air */ }
 /* FOOTBALL TURN RESTORE: after his field-goal kick he turns back
    around to face us for the next question — the back-view figure
    the kick swapped in (see renderKickerBackSVG) is swapped back
@@ -6960,14 +7004,10 @@ function onGameCorrect(){
   var wasFire=gameSession.onFire;
   gameSession.onFire=gameSession.streak>=3;
   if(gameSession.onFire&&!wasFire){ unlockGear('fire-shoes'); sfx('fire'); }
-  var pts=(Math.random()<0.25?3:2)+(gameSession.onFire?1:0);
+  var pts=2; /* FIX PASS Nov 12, 2026 — UNIFORM SCORING: a correct answer is worth exactly 2 points in EVERY sport (no random 3s, no on-fire bonus point), and Leo's Lions NEVER score on the player's correct answer — leoPts stays 0 here, always */
   gameSession.player+=pts;
   playShot(true);
   var leoPts=0, won=gameSession.player>=gameSession.target;
-  if(!won&&Math.random()<0.38){
-    var amt=Math.random()<0.2?3:2;
-    if(gameSession.leo+amt<=gameSession.target-5&&gameSession.leo+amt<=gameSession.player+6){ leoPts=amt; gameSession.leo+=amt; }
-  }
   updateScoreboard();
   var sbT=document.getElementById('sbMine'); if(sbT&&sbT.parentElement){ var pt=sbT.parentElement; pt.classList.remove('pop'); void pt.offsetWidth; pt.classList.add('pop'); } /* scoreboard pop on every made shot */
   if(won&&!gameSession.over){ gameSession.over=true; awardWin(); }
@@ -7388,7 +7428,7 @@ function sportSceneHTML(id,accent){
   if(id==='baseball') return wrap(
     '<rect width="800" height="560" fill="#57B24A"/>'
     +[0,1,2,3,4,5].map(function(i){ return '<rect x="'+(i*140)+'" width="70" height="560" fill="#fff" opacity=".07"/>'; }).join('')
-    +'<rect width="800" height="66" fill="#1F6B3A"/><rect y="66" width="800" height="7" fill="'+B2+'"/><rect y="73" width="800" height="5" fill="'+T3+'"/><text x="400" y="45" font-family="Fredoka" font-size="26" font-weight="700" fill="#fff" text-anchor="middle">375</text>'
+    +'<rect width="800" height="66" fill="#1F6B3A"/><rect y="66" width="800" height="7" fill="'+B2+'"/><rect y="73" width="800" height="5" fill="'+T3+'"/>'
     +'<rect y="73" width="800" height="22" fill="#C98B4B"/>'
     +'<line x1="400" y1="492" x2="46" y2="95" stroke="'+W+'" stroke-width="4"/><line x1="400" y1="492" x2="754" y2="95" stroke="'+W+'" stroke-width="4"/>'
     +'<polygon points="400,196 554,350 400,504 246,350" fill="#D9A45B" stroke="'+W+'" stroke-width="4"/>'
@@ -8309,7 +8349,7 @@ function layoutBasketballCourt(){
     ball.style.bottom=Math.round((sr.bottom-cpr2.bottom)+cpr2.height*0.427-br.height/2)+'px'; /* at his hand's height (150/262 down his figure) */
   }
   var m=document.getElementById('stageMascot');
-  if(m){ m.style.left='auto'; m.style.right=Math.round(sr.width-(ox+dw)+dw*0.02)+'px'; m.style.bottom=Math.round(floorFromBottom+dh*0.335)+'px'; } /* mascot home: the RIGHT BACK corner of the court — the far sideline line (the floor band's back edge, ~1/3 up the fitted picture) at its right edge, behind the play (Michelle, Nov 9, 2026) */
+  if(m){ m.style.left='auto'; m.style.right=Math.round(sr.width-(ox+dw)+dw*0.02)+'px'; m.style.bottom=Math.round(floorFromBottom+dh*0.55)+'px'; /* FIX PASS Nov 12, 2026: raised to the far-sideline BACK edge — at 0.335 he stood ON the red key in front of the hoop */ } /* mascot home: the RIGHT BACK corner of the court — the far sideline line (the floor band's back edge, ~1/3 up the fitted picture) at its right edge, behind the play (Michelle, Nov 9, 2026) */
 }
 function placeGymnastOnBeam(){
   var st=document.getElementById('courtStage'); if(!st) return;
