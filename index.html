@@ -493,6 +493,14 @@ body.grade-gate-open .wrap{z-index:95}
 .menu-grade-item.on{background:var(--gold-l);border-color:var(--red)}
 .menu-grade-item.on .mg-check{visibility:visible}
 .menu-divider{height:3px;background:var(--line);border-radius:2px;margin:8px 4px}
+/* UPDATE BACKGROUND — background-only wizard mode: the ☰ Menu's
+   "Update Background" item opens the setup wizard on its Background
+   step ONLY (see openUpdateBackground). In that mode the wizard's
+   six-step chrome — the keep-original toggle, the progress bar and
+   the step dots — is hidden, so the learner sees just the background
+   choices and one Done button: no other wizard step is reachable
+   from there. The full wizard (opened any other way) is untouched. */
+#setupView.bg-only .setup-progress,#setupView.bg-only .stepdots,#setupView.bg-only #setupDefaultToggle{display:none!important}
 .sfx-btn{border:3px solid var(--ink);background:#fff;border-radius:999px;padding:8px 13px;font-weight:900;font-size:14px;white-space:nowrap}
 .sfx-btn.off{background:#FEE2E2;color:#7F1D1D}
 /* SOUNDS IN THE HERO — the 🔊 Sounds toggle lives in the HERO now, not
@@ -2164,7 +2172,7 @@ body.playing .music-note-btn{position:relative;right:auto;bottom:auto;flex:0 0 a
     <span class="lion-brand karter-brand" role="img" aria-label="Karter"><img src="assets/karter-hero.webp" alt="" aria-hidden="true"/></span>
     <div><span id="brandWorldName">KARTER'S COURT</span><small id="brandWorldSub">K to 5th Grade</small></div>
   </div>
-  <div class="nav-actions"><button type="button" class="home-nav-btn" id="homeNavBtn" onclick="goHomeFromOverlay()" aria-label="Home — back to the home screen">🏠 Home</button><div class="stars-pill">⭐ <span id="totalStars">0</span> Stars</div><div class="menu-wrap"><button type="button" class="menu-btn" id="menuBtn" onclick="toggleMenu(event)" aria-haspopup="true" aria-expanded="false" aria-controls="menuPanel" aria-label="Menu — change grade or open the Progress Report">☰ Menu ▾</button><div class="menu-panel" id="menuPanel" role="menu" aria-label="Menu"><div class="menu-grade-head"><span class="mgh-title">🎒 Change Grade</span><span class="mgh-now" id="menuGradeNow">Now: 3rd Grade</span><button type="button" class="menu-close" onclick="closeMenu()" aria-label="Close the menu">✕</button></div><div class="menu-grade-list" id="menuGradeList" role="group" aria-label="Choose your grade"></div><div class="menu-divider" aria-hidden="true"></div><button type="button" class="menu-item" role="menuitem" onclick="menuPick('report')"><span class="mi-emoji" aria-hidden="true">📋</span><span class="mi-text"><span class="mi-title">Progress Report</span></span></button><button type="button" class="menu-item" id="menuSetupItem" role="menuitem" style="display:none" onclick="menuPick('setup')"><span class="mi-emoji" aria-hidden="true">✨</span><span class="mi-text"><span class="mi-title">Make It Yours — Setup Wizard</span><span class="mi-sub">Rebuild your theme, step by step</span></span></button></div></div></div>
+  <div class="nav-actions"><button type="button" class="home-nav-btn" id="homeNavBtn" onclick="goHomeFromOverlay()" aria-label="Home — back to the home screen">🏠 Home</button><div class="stars-pill">⭐ <span id="totalStars">0</span> Stars</div><div class="menu-wrap"><button type="button" class="menu-btn" id="menuBtn" onclick="toggleMenu(event)" aria-haspopup="true" aria-expanded="false" aria-controls="menuPanel" aria-label="Menu — change grade, update background, or open the Progress Report">☰ Menu ▾</button><div class="menu-panel" id="menuPanel" role="menu" aria-label="Menu"><div class="menu-grade-head"><span class="mgh-title">🎒 Change Grade</span><span class="mgh-now" id="menuGradeNow">Now: 3rd Grade</span><button type="button" class="menu-close" onclick="closeMenu()" aria-label="Close the menu">✕</button></div><div class="menu-grade-list" id="menuGradeList" role="group" aria-label="Choose your grade"></div><div class="menu-divider" aria-hidden="true"></div><button type="button" class="menu-item" role="menuitem" onclick="menuPick('report')"><span class="mi-emoji" aria-hidden="true">📋</span><span class="mi-text"><span class="mi-title">Progress Report</span></span></button><button type="button" class="menu-item" id="menuUpdateBgItem" role="menuitem" style="display:none" onclick="menuPick('background')"><span class="mi-emoji" aria-hidden="true">🖼️</span><span class="mi-text"><span class="mi-title">Update Background</span><span class="mi-sub">Change your background anytime</span></span></button><button type="button" class="menu-item" id="menuSetupItem" role="menuitem" style="display:none" onclick="menuPick('setup')"><span class="mi-emoji" aria-hidden="true">✨</span><span class="mi-text"><span class="mi-title">Make It Yours — Setup Wizard</span><span class="mi-sub">Rebuild your theme, step by step</span></span></button></div></div></div>
 </header>
 
 <section class="hero" id="heroSection">
@@ -2719,7 +2727,7 @@ function updateGradeBar(){ var n=document.getElementById('gradeName'); if(n) n.t
    it too. ===== */
 function toggleMenu(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation(); var p=document.getElementById('menuPanel'), b=document.getElementById('menuBtn'); if(!p) return; var open=p.classList.toggle('open'); if(b) b.setAttribute('aria-expanded', open?'true':'false'); }
 function closeMenu(){ var p=document.getElementById('menuPanel'), b=document.getElementById('menuBtn'); if(p) p.classList.remove('open'); if(b) b.setAttribute('aria-expanded','false'); }
-function menuPick(which){ closeMenu(); if(which==='grade') openGradePicker(); else if(which==='report') openGrownUps(); else if(which==='setup') openSetupWizard(); }
+function menuPick(which){ closeMenu(); if(which==='grade') openGradePicker(); else if(which==='report') openGrownUps(); else if(which==='setup') openSetupWizard(); else if(which==='background') openUpdateBackground(); }
 document.addEventListener('click',function(e){ var w=document.querySelector('.menu-wrap'); if(w&&!w.contains(e.target)) closeMenu(); });
 document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeMenu(); });
 function setGrade(id){ /* FIRST-OPEN PICK? A grade card tapped while NO grade was saved yet is the first-open pick — the only pick the classic name pop-up ever follows. Later grade changes (the ☰ Menu list, or re-opening this pop-up with a grade already saved) never ask for a name again. */ var isFirstGradePick=!currentGrade; currentGrade=id; try{ localStorage.setItem(GRADE_KEY,id); }catch(e){} var gv=document.getElementById('gradeView'), hv=document.getElementById('homeView'); if(gv) gv.style.display='none'; document.body.classList.remove('grade-gate-open'); if(hv) hv.style.display='block'; renderGradeCards(); updateGradeBar(); renderGrid(); updateTotals(); if(typeof updateWritingVisibility==='function') updateWritingVisibility(); try{ applyTheme(); }catch(e){} toast('🎒 '+gradeLabel()+' — Leo set every game to your grade level!'); window.scrollTo({top:0}); /* GRADE FIRST, WIZARD SECOND: on the customized link, a first-time family picks their grade in the pop-up before anything else; the moment the grade is picked, the Make It Yours setup wizard opens (first custom open only — after it is done, changing grade never reopens it). */ try{ if(isCustomUnlocked()&&!isSetupDone()) openSetupWizard(); }catch(e){} /* GRADE FIRST, NAME SECOND — CLASSIC LINK ONLY: right after that same first grade pick, the name pop-up asks the learner's name, and the typed name replaces "Karter" in the hero script. The customized link skips it entirely (its name comes from setup), and a classic device that already saved a name is never asked again. */ try{ if(isFirstGradePick&&!isCustomUnlocked()&&!classicLearnerName) openClassicNamePrompt(); }catch(e){} }
@@ -3550,15 +3558,36 @@ function coachLineFiles(sentences){
   return segs;
 }
 var coachAudio=null, coachAudioRun=0, coachAudioTimer=null, coachSegTimer=null, coachAudioSrc='', coachSegWatch=null;
+var coachLoadTimer=null, coachFastTimer=null, coachCanplayH=null; /* FIX PASS #2 (Nov 12, 2026): the pending bundle-load timeout, the fast-clip promptness timeout and the canplay listener are TRACKED, so a stop can cancel them too — untracked, each was a path for a closed tool's or a previous game's audio to start AFTER the stop (see stopCoachAudio) */
 var coachFastAudio=null; /* the FAST-CLIPS player (game-open instructions only — see LEO_FAST below): its own element, so bundle playback bookkeeping above is untouched */
 function stopCoachAudio(){
   coachAudioRun++;
   try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){} /* FIX PASS Nov 12, 2026: EVERY stop also empties the device speech queue, so no stale utterance from a previous game, problem or tool can ever run on into the next one */
   if(coachAudioTimer){ clearTimeout(coachAudioTimer); coachAudioTimer=null; }
-  if(coachSegTimer){ clearTimeout(coachSegTimer); coachSegTimer=null; }
+  if(coachSegTimer){ clearTimeout(coachSegTimer); clearInterval(coachSegTimer); coachSegTimer=null; }
   if(coachSegWatch){ clearInterval(coachSegWatch); coachSegWatch=null; }
-  if(coachAudio){ try{ coachAudio.pause(); }catch(e){} }
-  if(coachFastAudio){ try{ coachFastAudio.pause(); }catch(e){} coachFastAudio.onended=null; coachFastAudio.onerror=null; }
+  /* FIX PASS #2 (Nov 12, 2026) — THE HARD STOP: pause() alone was NOT a
+     stop. A segment chain whose bundle was still loading kept a pending
+     canplay listener and a pending 900ms load timeout alive across the
+     stop, and a play() promise still in flight could land AFTER the
+     pause — so a closed example's speech, or a previous game's tail,
+     started up seconds later inside the next game or tool. A stop now
+     cancels EVERY pending start (load timeout, fast-clip promptness
+     timeout, canplay listener, both players' ended/error handlers)
+     and UNLOADS both players (src removed + load()), so no audio
+     event from anything stopped can ever fire afterward. The next
+     play call re-sets the src it needs, exactly as a first play does. */
+  if(coachLoadTimer){ clearTimeout(coachLoadTimer); coachLoadTimer=null; }
+  if(coachFastTimer){ clearTimeout(coachFastTimer); coachFastTimer=null; }
+  if(coachCanplayH&&coachAudio){ try{ coachAudio.removeEventListener('canplay',coachCanplayH); }catch(e){} }
+  coachCanplayH=null;
+  [coachAudio,coachFastAudio].forEach(function(el){
+    if(!el) return;
+    try{ el.onended=null; el.onerror=null; }catch(e){}
+    try{ el.pause(); }catch(e){}
+    try{ el.removeAttribute('src'); el.load(); }catch(e){}
+  });
+  coachAudioSrc='';
 }
 /* Leo's recordings ship as a small number of bundle files (one per
    topic plus fixed/common bundles — thousands of loose files cannot
@@ -4065,7 +4094,7 @@ function gameOpenReadAloud(){
     if(text) speakCaptions(text); /* voice + true video captions in the bubble: only the current sentence shows, and the bubble clears when he finishes */
   }catch(e){}
 }
-function goHome(){ stopLeoSpeech(); stopDribble(); stopRunStride(); stopLimbDrivers(); if(typeof closeHintPanel==='function') closeHintPanel(); if(typeof closeToolsMenu==='function') closeToolsMenu(); if(typeof toggleWorkPanel==='function') toggleWorkPanel(false); document.body.classList.remove('playing'); unlockPlaySize(); clearInterval(timerInt); saveP(progress); document.getElementById('practiceView').style.display='none'; var wv=document.getElementById('writingView'); if(wv) wv.style.display='none'; var gv2=document.getElementById('grownView'); if(gv2) gv2.style.display='none'; var sv2=document.getElementById('setupView'); if(sv2) sv2.style.display='none'; var hero2=document.getElementById('heroSection'); if(hero2) hero2.style.display=''; var grv=document.getElementById('gradeView'); if(grv) grv.style.display='none'; document.body.classList.remove('grade-gate-open'); document.getElementById('homeView').style.display='block'; renderGrid(); updateTotals(); if(typeof updateWritingVisibility==='function') updateWritingVisibility(); renderAllPlayers(); window.scrollTo({top:0}); }
+function goHome(){ stopLeoSpeech(); stopDribble(); stopRunStride(); stopLimbDrivers(); if(typeof closeHintPanel==='function') closeHintPanel(); if(typeof closeToolsMenu==='function') closeToolsMenu(); if(typeof toggleWorkPanel==='function') toggleWorkPanel(false); document.body.classList.remove('playing'); unlockPlaySize(); clearInterval(timerInt); saveP(progress); document.getElementById('practiceView').style.display='none'; var wv=document.getElementById('writingView'); if(wv) wv.style.display='none'; var gv2=document.getElementById('grownView'); if(gv2) gv2.style.display='none'; var sv2=document.getElementById('setupView'); if(sv2){ sv2.style.display='none'; sv2.classList.remove('bg-only'); } try{ setupBackgroundOnly=false; }catch(e){} var hero2=document.getElementById('heroSection'); if(hero2) hero2.style.display=''; var grv=document.getElementById('gradeView'); if(grv) grv.style.display='none'; document.body.classList.remove('grade-gate-open'); document.getElementById('homeView').style.display='block'; renderGrid(); updateTotals(); if(typeof updateWritingVisibility==='function') updateWritingVisibility(); renderAllPlayers(); window.scrollTo({top:0}); }
 function goHomeFromOverlay(){
   stopWizAuto(); stopLeoSpeech(); stopFt();
   ['wizardModal','workModal','studioModal','themeModal','trophyModal','bonusModal','winModal','sportModal'].forEach(function(mid){ var m=document.getElementById(mid); if(m) m.classList.remove('open'); });
@@ -8996,6 +9025,13 @@ function closeThemeStudio(){ document.getElementById('themeModal').classList.rem
    screen: the wizard IS Make It Yours. */
 var SETUP_DONE_KEY='karter-setup-done-v1';
 var setupStep=0, setupLastSug='';
+/* UPDATE BACKGROUND mode: true only while the wizard was opened from
+   the ☰ Menu's "Update Background" item. In that mode the wizard
+   shows ONLY its Background step (step 0) — no other step can be
+   reached — and its Next button becomes the Done button that saves
+   the pick and returns home (see setupMove / finishUpdateBackground).
+   Every normal open of the full wizard clears this flag. */
+var setupBackgroundOnly=false;
 /* ===== DEFAULT TOGGLE — keep the original design =====
    His build is the default for both classic and custom. On the custom
    build the wizard opens on that original design, and this toggle —
@@ -9124,6 +9160,15 @@ function setupEsc(v){ return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&
 function openSetupWizard(){
   if(!isCustomUnlocked()){ return; }
   setupStep=0; setupLastSug=suggestedWorldName();
+  /* A normal open is the FULL six-step wizard: clear any
+     background-only state (class + flag) and restore the wizard's
+     own header, so an earlier Update Background visit never leaks
+     into it. openUpdateBackground re-applies its own state after
+     calling this. */
+  setupBackgroundOnly=false;
+  var sv0=document.getElementById('setupView'); if(sv0) sv0.classList.remove('bg-only');
+  var wh=document.querySelector('#setupView .section-head h2'); if(wh) wh.textContent='✨ Let\u2019s Build Your World!';
+  var ws=document.querySelector('#setupView .section-head p'); if(ws) ws.textContent='Coach Leo walks you through it, one step at a time.';
   var sv=document.getElementById('setupView'), gv=document.getElementById('gradeView'), hv=document.getElementById('homeView'), pv=document.getElementById('practiceView');
   var hero=document.getElementById('heroSection');
   if(gv) gv.style.display='none'; if(hv) hv.style.display='none'; if(pv) pv.style.display='none';
@@ -9133,6 +9178,38 @@ function openSetupWizard(){
   if(hero) hero.style.display='none';
   if(sv) sv.style.display='block';
   renderSetup(); window.scrollTo({top:0}); try{ sfx('open'); }catch(e){}
+}
+/* ===== UPDATE BACKGROUND — the ☰ Menu item =====
+   One more option in the menu, beside everything already there
+   (Change Grade, Progress Report, Make It Yours): tapping it opens
+   the setup wizard on its Background step ONLY, so the learner can
+   change their background at any point — not just during the first
+   setup. Only the background options are shown: the six-step chrome
+   is hidden by the .bg-only class, no other step can be reached,
+   and the wizard's Next button reads as the Done button that saves
+   the pick and returns home. Customized link only, like every
+   customization on this page. */
+function openUpdateBackground(){
+  if(!isCustomUnlocked()){ return; }
+  openSetupWizard(); /* full-wizard open first — clears bg-only state */
+  setupBackgroundOnly=true; setupStep=0;
+  var sv=document.getElementById('setupView'); if(sv) sv.classList.add('bg-only');
+  var wh=document.querySelector('#setupView .section-head h2'); if(wh) wh.textContent='🖼️ Update Background';
+  var ws=document.querySelector('#setupView .section-head p'); if(ws) ws.textContent='Pick the background you want — it changes right away.';
+  renderSetup(); window.scrollTo({top:0});
+}
+function finishUpdateBackground(){
+  setupBackgroundOnly=false;
+  try{ saveTheme(); }catch(e){}
+  try{ applyTheme(); }catch(e){}
+  try{ renderAllPlayers(); }catch(e){}
+  try{ renderGrid(); }catch(e){}
+  var sv=document.getElementById('setupView'); if(sv){ sv.style.display='none'; sv.classList.remove('bg-only'); }
+  var hero=document.getElementById('heroSection'); if(hero) hero.style.display='';
+  var hv=document.getElementById('homeView'); if(hv) hv.style.display='block';
+  window.scrollTo({top:0});
+  toast('🖼️ Background updated!');
+  try{ sfx('cheer'); }catch(e){}
 }
 function applySetupGate(){
   if(isCustomUnlocked()&&!isSetupDone()){ openSetupWizard(); return true; }
@@ -9213,7 +9290,7 @@ function renderSetup(){
   var pBar=document.getElementById('setupProgress'); if(pBar) pBar.setAttribute('aria-valuenow', String(setupStep+1));
   var back=document.getElementById('setupBack'), next=document.getElementById('setupNext');
   if(back) back.style.visibility= setupStep===0?'hidden':'visible';
-  if(next) next.textContent= setupStep===5? (gradeIsSaved()? '🎉 Step Into My World →' : '🎒 Pick My Grade →') : 'Next Step →';
+  if(next) next.textContent= setupBackgroundOnly? '✓ Done — Use This Background' : (setupStep===5? (gradeIsSaved()? '🎉 Step Into My World →' : '🎒 Pick My Grade →') : 'Next Step →');
   var h='';
   if(setupStep===1){
     h+='<h3>🎨 Step 2 of 6 — Pick your THREE colors!</h3><div class="opt-group">'+trioPickerHTML('setupPickColor',true)+'</div>';
@@ -9229,7 +9306,7 @@ function renderSetup(){
        and the pick stays live under the keep-original lock, like
        hers — it is the way out of the lock. */
     var bmeta=WORLD_SCENE_META[myTheme.sport]||WORLD_SCENE_META.basketball;
-    h+='<div class="setup-kicker">STEP 1 OF 6 — YOUR BACKGROUND</div><div class="setup-q">Choose Your Background 🖼️</div>';
+    h+='<div class="setup-kicker">'+(setupBackgroundOnly?'UPDATE BACKGROUND':'STEP 1 OF 6 — YOUR BACKGROUND')+'</div><div class="setup-q">Choose Your Background 🖼️</div>';
     h+='<div class="scene-preview" style="margin:0 0 12px">'+worldBackdropSVG(myTheme.sport,themeColor())+'<div class="scene-preview-cap">🖼️ Your background: '+bmeta.name+'</div></div>';
     h+='<div class="opt-row">'+THEME_SPORTS.map(function(x){ var m=WORLD_SCENE_META[x.id]||WORLD_SCENE_META.basketball; return '<button class="big-chip'+(myTheme.sport===x.id?' on':'')+'" onclick="setupPick(\'sport\',\''+x.id+'\')"><span class="bce">'+x.emoji+'</span>'+m.name+'</button>'; }).join('')+'</div>';
   } else if(setupStep===2){
@@ -9274,6 +9351,9 @@ function renderSetup(){
   updateSetupPreview();
 }
 function setupMove(dir){
+  /* Background-only mode (from the menu's Update Background item):
+     there is nowhere to step to — the one button finishes here. */
+  if(setupBackgroundOnly){ if(dir>0) finishUpdateBackground(); return; }
   if(dir>0&&setupStep===3) setupReadCoachInputs();
   if(dir>0&&setupStep===5) setupReadNameInputs();
   if(dir>0&&setupStep>=5){ finishSetup(); return; }
@@ -9354,6 +9434,7 @@ function isCustomUnlocked(){ return !!customUnlocked; }
 function applyVersionUI(){
   var unlocked=isCustomUnlocked();
   var setupItem=document.getElementById('menuSetupItem'); if(setupItem) setupItem.style.display= unlocked?'':'none';
+  var bgItem=document.getElementById('menuUpdateBgItem'); if(bgItem) bgItem.style.display= unlocked?'':'none';
   /* NO STUDIO CARDS ON THE HOMEPAGE in either build: the Player
      Design Studio lives inside the setup
      wizard as step 5, so the hub row always carries just
